@@ -1,0 +1,56 @@
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python app.py
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://delivery_user:delivery_pass@db:5432/delivery_db
+      - DATABASE_URL=postgresql://delivery_user:delivery_pass@db:5432/delivery_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=dev-secret-key
+    depends_on:
+      - db
+      - redis
+
+  # PostgreSQL Database with PostGIS
+  db:
+    image: postgis/postgis:15-3.3
+    restart: always
+    environment:
+      - POSTGRES_USER=delivery_user
+      - POSTGRES_PASSWORD=delivery_pass
+      - POSTGRES_DB=delivery_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis for Socket.IO / Celery
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+  # Frontend (Optional dev server)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+
+volumes:
+  postgres_data:

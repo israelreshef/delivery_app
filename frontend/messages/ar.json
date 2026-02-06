@@ -1,0 +1,15 @@
+{
+    "Navigation": {
+        "home": "الرئيسية",
+        "dashboard": "لوحة التحكم",
+        "orders": "الطلبات",
+        "login": "دخول",
+        "register": "تسجيل"
+    },
+    "Common": {
+        "welcome": "مرحبًا بك في TZIR",
+        "loading": "جاري التحميل...",
+        "error": "خطأ",
+        "submit": "إرسال"
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "Navigation": {
+        "home": "בית",
+        "dashboard": "לוח בקרה",
+        "orders": "הזמנות",
+        "login": "כניסה",
+        "register": "הרשמה"
+    },
+    "Common": {
+        "welcome": "ברוכים הבאים ל-TZIR",
+        "loading": "טוען...",
+        "error": "שגיאה",
+        "submit": "שלח"
+    }
+}

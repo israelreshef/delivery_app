@@ -1,0 +1,15 @@
+{
+    "Navigation": {
+        "home": "Home",
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "login": "Login",
+        "register": "Register"
+    },
+    "Common": {
+        "welcome": "Welcome to TZIR",
+        "loading": "Loading...",
+        "error": "Error",
+        "submit": "Submit"
+    }
+}

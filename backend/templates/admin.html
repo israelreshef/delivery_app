@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת משלוחים - פאנל ניהול</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --btn-height: 48px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Heebo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* תפריט משותף */
+        .topnav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .topnav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .topnav a:hover, .topnav a.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .content-area {
+            flex: 1;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.4em;
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .search-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .order-card {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid var(--primary);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .status-new { background: #4361ee; }
+        .status-processing { background: #f72585; }
+        .status-onway { background: #4cc9f0; }
+        .status-delivered { background: #06d6a0; }
+        .status-cancelled { background: #6c757d; }
+        
+        .courier-card {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .courier-available { border-right: 5px solid #06d6a0; }
+        .courier-busy { border-right: 5px solid #f72585; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-body {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- תפריט משותף -->
+    <div class="topnav">
+        <a href="orders.html"><i class="bi bi-box-seam me-2"></i>פאנל הזמנה</a>
+        <a href="admin.html" class="active"><i class="bi bi-gear me-2"></i>פאנל ניהול</a>
+        <a href="courier.html"><i class="bi bi-person-bounding-box me-2"></i>פאנל שליח</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 פאנל ניהול משלוחים</h1>
+            <p>ניהול הזמנות, שליחים והכנסות בזמן אמת</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h2 class="sidebar-title">תפריט ניהול</h2>
+                <a href="#dashboard" class="nav-link active"><i class="bi bi-house me-2"></i> דשבורד ראשי</a>
+                <a href="#orders" class="nav-link"><i class="bi bi-box-seam me-2"></i> הזמנות</a>
+                <a href="#couriers" class="nav-link"><i class="bi bi-person-bounding-box me-2"></i> שליחים</a>
+                <a href="#new-courier" class="nav-link"><i class="bi bi-person-plus me-2"></i> הוסף שליח</a>
+                <a href="#settings" class="nav-link"><i class="bi bi-gear me-2"></i> הגדרות</a>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- ניהול שליחים -->
+<div class="card" id="couriers">
+    <h2 class="card-title">👨‍🚀 ניהול צוות שליחים</h2>
+    <button class="btn btn-primary mb-3" onclick="createSampleCouriers()">🚀 צור 10 שליחים לדוגמה</button>
+    <div id="couriersGrid" class="orders-grid">
+        <div class="empty-state">טוען שליחים...</div>
+    </div>
+</div>
+
+<!-- יצירת הזמנה חדשה -->
+<div class="card" id="new-order">
+    <h2 class="card-title">➕ צור הזמנה חדשה</h2>
+    <form id="newOrderForm" onsubmit="createOrder(event)">
+        <input type="text" name="customer_name" class="form-control mb-2" placeholder="שם הלקוח" required>
+        <input type="text" name="phone" class="form-control mb-2" placeholder="טלפון" required>
+        <input type="text" name="address" class="form-control mb-2" placeholder="כתובת למשלוח" required>
+        <textarea name="items" class="form-control mb-2" placeholder='פריטים בפורמט JSON, למשל: ["מסמך משפטי", "חוזה"]' required></textarea>
+        <input type="number" name="total" class="form-control mb-2" placeholder="סה"כ (₪)" required>
+        <button type="submit" class="btn btn-primary w-100">צור הזמנה</button>
+    </form>
+</div>
+                <!-- Orders Management -->
+                <div class="card" id="orders">
+                    <h2 class="card-title">🚚 ניהול הזמנות</h2>
+                    <div class="search-group">
+                        <input type="text" class="search-input" placeholder="חיפוש לפי שם/טלפון/מספר הזמנה">
+                        <button class="btn btn-primary"><i class="bi bi-funnel me-2"></i> סינון</button>
+                    </div>
+                    <div class="orders-grid" id="ordersGrid">
+                        <!--.Orders will be loaded here dynamically -->
+                        <div class="empty-state">טוען הזמנות...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Assign Modal -->
+    <div class="modal" id="assignModal">
+        <div class="modal-body">
+            <h2 class="text-center mb-4">הקצאת שליח להזמנה #<span id="assignOrderId"></span></h2>
+            <select class="form-select mb-3" id="courierSelect">
+                <!-- Will be populated dynamically -->
+            </select>
+            <button class="btn btn-primary w-100" onclick="assignCourier()">אישור</button>
+        </div>
+    </div>
+
+        <!-- Price Modal -->
+        <div class="modal" id="priceModal">
+            <div class="modal-body">
+                <h2 class="text-center mb-4">עדכון מחיר להזמנה #<span id="priceOrderId"></span></h2>
+                <div class="mb-3">
+                    <input type="number" id="priceInput" class="form-control" placeholder="הזן מחיר (₪)" />
+                </div>
+                <button class="btn btn-primary w-100" onclick="submitPrice()">שמור מחיר</button>
+            </div>
+        </div>
+
+    <!-- Styles used in HTML rely on Bootstrap utility classes; add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('connect', () => {
+            // join admin room so server can emit admin-only events
+            socket.emit('join', { role: 'admin' });
+        });
+
+        // Helper: escape HTML to avoid XSS when inserting user-provided content
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, function (c) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+            });
+        }
+
+        const STATUS_CLASS_MAP = {
+            'new': 'status-new',
+            'processing': 'status-processing',
+            'onway': 'status-onway',
+            'delivered': 'status-delivered',
+            'cancelled': 'status-cancelled'
+        };
+
+        // Orders
+        async function loadOrders() {
+            try {
+                const res = await fetch('/api/orders');
+                if (!res.ok) throw new Error('Network response was not ok');
+                const orders = await res.json();
+                renderOrders(orders);
+            } catch (err) {
+                document.getElementById('ordersGrid').innerHTML = '<p style="text-align:center;color:#dc3545;">שגיאה בטעינת הזמנות</p>';
+                console.error('loadOrders error:', err);
+            }
+        }
+
+        function renderOrders(orders) {
+            const grid = document.getElementById('ordersGrid');
+            if (!orders || orders.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;color:#666;">אין הזמנות כרגע</p>';
+                return;
+            }
+
+            grid.innerHTML = orders.map(order => {
+                const statusKey = (order.status || '').toString().toLowerCase().replace(/\s+/g, '');
+                const statusClass = STATUS_CLASS_MAP[statusKey] || 'status-cancelled';
+                const itemsDisplay = Array.isArray(order.items) ? escapeHtml(JSON.stringify(order.items)) : escapeHtml(order.items || '[]');
+
+                return `
+                <div class="order-card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <strong>הזמנה #${escapeHtml(order.id)}</strong>
+                        <span class="status-badge ${statusClass}">${escapeHtml(order.status)}</span>
+                    </div>
+                    <p><strong>מאת:</strong> ${escapeHtml(order.customer_name) || 'לא ידוע'}</p>
+                    <p><strong>טלפון:</strong> ${escapeHtml(order.phone) || 'לא ידוע'}</p>
+                    <p><strong>כתובת:</strong> ${escapeHtml(order.address) || 'לא ידוע'}</p>
+                    <p><strong>סה"כ:</strong> ${escapeHtml(order.total) || 0} ₪</p>
+                    <p><strong>פריטים:</strong> ${itemsDisplay}</p>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <button class="btn btn-primary flex-fill" onclick="assignOrder(${escapeHtml(order.id)})">הקצה</button>
+                        <button class="btn btn-warning flex-fill" onclick="alert('עריכה לא מומשת')">ערוך</button>
+                        <button class="btn btn-danger flex-fill" onclick="deleteOrder(${escapeHtml(order.id)})">מחק</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        socket.on('new_order', (order) => {
+            loadOrders();
+        });
+
+        async function deleteOrder(orderId) {
+            if (!confirm('למחוק הזמנה זו לצמיתות?')) return;
+            try {
+                const res = await fetch(`/admin/delete/${orderId}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Delete failed');
+                await loadOrders();
+            } catch (err) {
+                console.error('deleteOrder error:', err);
+                alert('שגיאה במחיקה');
+            }
+        }
+
+        // Couriers
+        async function loadCouriers(populateSelect = false) {
+            try {
+                const res = await fetch('/api/couriers');
+                if (!res.ok) throw new Error('Network response was not ok');
+                const couriers = await res.json();
+                const grid = document.getElementById('couriersGrid');
+                if (!couriers || couriers.length === 0) {
+                    grid.innerHTML = '<p style="text-align:center;color:#666;">אין שליחים</p>';
+                } else {
+                    grid.innerHTML = couriers.map(c => `
+                        <div class="courier-card ${c.is_active ? 'courier-available' : 'courier-busy'}">
+                            <div>
+                                <strong>${escapeHtml(c.full_name)}</strong><br>
+                                <small>${escapeHtml(c.phone)} | ${escapeHtml(c.vehicle_type)}</small>
+                            </div>
+                            <div>
+                                ${c.is_active ? '<span class="status-badge status-delivered">זמין</span>' : '<span class="status-badge status-cancelled">לא זמין</span>'}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                if (populateSelect) return couriers;
+                return couriers;
+            } catch (err) {
+                console.error('loadCouriers error:', err);
+                document.getElementById('couriersGrid').innerHTML = '<p style="text-align:center;color:#dc3545;">שגיאה בטעינת שליחים</p>';
+                return [];
+            }
+        }
+
+        async function createSampleCouriers() {
+            const names = ['אבי', 'דוד', 'יוסי', 'מאיר', 'חיים', 'שלמה', 'נפתלי', 'אפרים', 'מנחם', 'בנימין'];
+            const phones = ['0501001001', '0502002002', '0503003003', '0504004004', '0505005005', '0506006006', '0507007007', '0508008008', '0509009009', '0501010101'];
+            const vehicles = ['scooter', 'scooter', 'scooter', 'scooter', 'bike', 'bike', 'scooter', 'scooter', 'bike', 'scooter'];
+
+            const promises = [];
+            for (let i = 0; i < 10; i++) {
+                const body = {
+                    username: `courier${i + 1}`,
+                    email: `courier${i + 1}@delivery.com`,
+                    password: '123456',
+                    full_name: `${names[i]} כהן`,
+                    id_number: `12345678${i}`,
+                    phone: phones[i],
+                    vehicle_type: vehicles[i],
+                    commission_rate: 0.70
+                };
+
+                promises.push(fetch('/api/couriers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(res => res.json()).catch(err => ({error: err.message})));
+            }
+
+            const results = await Promise.all(promises);
+            const errors = results.filter(r => r && r.error);
+            if (errors.length) alert('חלק מהשליחים לא נוצרו: ' + errors.length);
+            await loadCouriers();
+        }
+
+        // Create order – accept either JSON array in textarea or comma-separated list
+        async function createOrder(event) {
+            event.preventDefault();
+            const form = event.target;
+            let itemsInput = form.items.value.trim();
+            let items;
+            if (!itemsInput) items = [];
+            else {
+                try {
+                    items = JSON.parse(itemsInput);
+                    if (!Array.isArray(items)) throw new Error('items must be array');
+                } catch (e) {
+                    items = itemsInput.split(',').map(i => i.trim()).filter(Boolean);
+                }
+            }
+
+            const data = {
+                customer_name: form.customer_name.value,
+                phone: form.phone.value,
+                address: form.address.value,
+                items: items,
+                total: parseFloat(form.total.value) || 0,
+                status: 'new'
+            };
+
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ deliveries: [data] })
+                });
+                if (!res.ok) throw new Error('Create order failed');
+                await res.json();
+                alert('הזמנה נוצרה בהצלחה!');
+                form.reset();
+                await loadOrders();
+            } catch (err) {
+                console.error('createOrder error:', err);
+                alert('שגיאה ביצירת ההזמנה');
+            }
+        }
+
+        // Assign modal handling
+        async function assignOrder(orderId) {
+            document.getElementById('assignOrderId').textContent = orderId;
+            const select = document.getElementById('courierSelect');
+            select.innerHTML = '<option value="">טוען...</option>';
+            const couriers = await loadCouriers(true);
+            select.innerHTML = '<option value="">בחר שליח</option>' + (couriers || []).map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.full_name)} — ${escapeHtml(c.phone)}</option>`).join('');
+            document.getElementById('assignModal').classList.add('show');
+        }
+
+        async function assignCourier() {
+            const orderId = document.getElementById('assignOrderId').textContent;
+            const courierId = document.getElementById('courierSelect').value;
+            if (!courierId) { alert('בחר שליח'); return; }
+            try {
+                const res = await fetch(`/api/orders/${orderId}/assign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ courier_id: courierId })
+                });
+                if (!res.ok) throw new Error('Assign failed');
+                await res.json();
+                document.getElementById('assignModal').classList.remove('show');
+                await loadOrders();
+            } catch (err) {
+                console.error('assignCourier error:', err);
+                alert('שגיאה בהקצאת שליח');
+            }
+        }
+
+        // Modal close
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', e => {
+                if (e.target === modal) modal.classList.remove('show');
+            });
+        });
+
+        // Initialize
+        loadOrders();
+        loadCouriers();
+    </script>
+
+</body>
+</html>

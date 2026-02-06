@@ -1,0 +1,52 @@
+services:
+  # Backend API (Production)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://delivery_user:delivery_pass@db:5432/delivery_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-prod-secret-key-CHANGE-ME}
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  # PostgreSQL Database
+  db:
+    image: postgis/postgis:15-3.3
+    restart: always
+    environment:
+      - POSTGRES_USER=delivery_user
+      - POSTGRES_PASSWORD=delivery_pass
+      - POSTGRES_DB=delivery_db
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+
+  # Redis
+  redis:
+    image: "redis:alpine"
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_prod_data:/data
+
+  # Frontend (Production)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:3000" # Expose on port 80 for standard web traffic
+    environment:
+      - NEXT_PUBLIC_API_URL=/api # Nginx or internal routing usually handles this
+    restart: always
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:

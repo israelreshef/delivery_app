@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>מערכת משלוחים - פאנל שליח</title>
+  <!-- Optimize font loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- External CSS -->
+  <link rel="stylesheet" href="/static/shared.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5HK1tJpSd6nK0vN+5aJkZq6qFf7d5dUZ2y4qyX5j3N5X5v5q7X5j3N5X5v5q7X5j3N5X5v5q7" crossorigin="anonymous" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --success: #28a745;
+      --danger: #dc3545;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.15);
+      --radius: 12px;
+      --btn-height: 48px;
+    }
+
+    * {
+      font-family: 'Heebo', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    /* תפריט משותף */
+    .topnav {
+        background: white;
+        padding: 15px 30px;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .topnav a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+
+    .topnav a:hover, .topnav a.active {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      color: white;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    .header p {
+      opacity: 0.9;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.5rem;
+      color: var(--dark);
+    }
+
+    .login-form {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 30px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      min-height: var(--btn-height);
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: var(--btn-height);
+      touch-action: manipulation;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover:not(:disabled),
+    .btn:active:not(:disabled) {
+      opacity: 0.9;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-danger  { background: var(--danger); color: white; }
+    .btn-disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 16px;
+      background: #f1f3f5;
+      border-radius: 10px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 4px 0 0;
+    }
+
+    .map-container {
+      height: 400px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .delivery-card,
+    .history-item {
+      background: var(--light);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      border-right: 4px solid var(--primary);
+    }
+
+    .delivery-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .delivery-actions .btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .salary-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .delivery-list,
+    .history-list {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .delivery-list::-webkit-scrollbar,
+    .history-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .delivery-list::-webkit-scrollbar-thumb,
+    .history-list::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .map-container {
+        height: 300px;
+      }
+
+      .delivery-actions {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .card {
+        padding: 16px;
+      }
+    }
+
+    /* Loading & error states */
+    .loading {
+      text-align: center;
+      padding: 10px;
+      color: #666;
+    }
+
+    .error {
+      color: var(--danger);
+      text-align: center;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+    <!-- תפריט משותף -->
+    <div class="topnav">
+        <a href="orders.html"><i class="bi bi-box-seam me-2"></i>פאנל הזמנה</a>
+        <a href="admin.html"><i class="bi bi-gear me-2"></i>פאנל ניהול</a>
+        <a href="courier.html" class="active"><i class="bi bi-person-bounding-box me-2"></i>פאנל שליח</a>
+    </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>🚴 פאנל שליח אישי</h1>
+      <p>קבלת משלוחים, מעקב ומשכורת בזמן אמת</p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="login-form">
+      <h2 class="card-title">כניסה</h2>
+      <div id="loginError" class="error" style="display:none;"></div>
+      <div class="form-group">
+        <label for="username">שם משתמש</label>
+        <input type="text" id="username" class="form-control" placeholder="הזן שם משתמש" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="password">סיסמה</label>
+        <input type="password" id="password" class="form-control" placeholder="הזן סיסמה" autocomplete="current-password" />
+      </div>
+      <button class="btn btn-primary" id="loginBtn">התחבר</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+      <div class="card">
+        <h2 class="card-title">📊 סטטיסטיקות</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="availableCount">0</div>
+            <div class="stat-label">משלוחים זמינים</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="onwayCount">0</div>
+            <div class="stat-label">משלוחים בדרך</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="deliveredCount">0</div>
+            <div class="stat-label">משלוחים הושלמו</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="totalEarnings">0 ₪</div>
+            <div class="stat-label">הכנסות כוללות</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">🗺️ מפת מעקב</h2>
+        <div id="map" class="map-container"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">📦 משלוחים זמינים</h2>
+        <div class="delivery-list" id="availableDeliveries">
+          <div class="loading">טוען...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">🚚 משלוחים פעילים</h2>
+        <div class="delivery-list" id="activeDeliveries">
+          <div class="loading">טוען...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">💰 משכורת</h2>
+        <div class="salary-card">
+          <div class="stat-value" id="monthlyEarnings">0 ₪</div>
+          <div class="stat-label">הכנסות חודשיות</div>
+        </div>
+        <h3>היסטורית משלוחים</h3>
+        <div class="history-list" id="deliveryHistory">
+          <div class="loading">טוען...</div>
+        </div>
+      </div>
+
+      <button class="btn btn-danger" id="logoutBtn">יציאה</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Load Socket.IO only if needed -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    // === Configuration ===
+    const API_BASE = '/api'; // Change if your Flask runs on different path
+    let map = null;
+    let markers = [];
+    let userToken = null;
+    let isProcessing = false;
+
+    // === DOM Elements ===
+    const loginForm = document.getElementById('loginForm');
+    const dashboard = document.getElementById('dashboard');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginError = document.getElementById('loginError');
+
+    // === Helper: Show message ===
+    function showMessage(element, text, isError = false) {
+      element.textContent = text;
+      element.style.display = 'block';
+      if (isError) element.classList.add('error');
+    }
+
+    // === Auth: Login ===
+    async function login() {
+      if (isProcessing) return;
+      isProcessing = true;
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        showMessage(loginError, 'אנא מלא את כל השדות', true);
+        isProcessing = false;
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Important for Flask session if used
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || 'שגיאה באימות');
+        }
+
+        userToken = data.token;
+        localStorage.setItem('delivery_panel_token', data.token); // Optional: for page reload
+        loginForm.style.display = 'none';
+        dashboard.style.display = 'block';
+        initMap();
+        await loadInitialData();
+        initSocket();
+      } catch (err) {
+        showMessage(loginError, err.message, true);
+      } finally {
+        isProcessing = false;
+      }
+    }
+
+    // === Auth: Logout ===
+    function logout() {
+      userToken = null;
+      localStorage.removeItem('delivery_panel_token');
+      if (window.socket) {
+        socket.disconnect();
+      }
+      dashboard.style.display = 'none';
+      loginForm.style.display = 'block';
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+    }
+
+    // === Map ===
+    function initMap() {
+      if (map) return;
+      map = L.map('map').setView([32.0853, 34.7818], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+    }
+
+    // === API: Load initial data ===
+    async function loadInitialData() {
+      try {
+        const [deliveriesRes, historyRes] = await Promise.all([
+          fetch(`${API_BASE}/deliveries`, {
+            headers: { Authorization: `Bearer ${userToken}` }
+          }),
+          fetch(`${API_BASE}/deliveries/history`, {
+            headers: { Authorization: `Bearer ${userToken}` }
+          })
+        ]);
+
+        const deliveries = await deliveriesRes.json();
+        const history = await historyRes.json();
+
+        renderDeliveries(deliveries);
+        renderHistory(history);
+        updateStats(deliveries, history);
+      } catch (err) {
+        console.error('Load data error:', err);
+        showMessage(document.getElementById('availableDeliveries'), 'שגיאה בטעינת הנתונים', true);
+      }
+    }
+
+    // === Render UI ===
+    function renderDeliveries(deliveries) {
+      const available = deliveries.filter(d => d.status === 'available');
+      const active = deliveries.filter(d => d.status === 'active');
+
+      document.getElementById('availableDeliveries').innerHTML = available.length
+        ? available.map(d => `
+            <div class="delivery-card">
+              <strong>#${d.id}</strong>
+              <p>מאת: ${d.from_name || d.from}</p>
+              <p>אל: ${d.to_name || d.to}</p>
+              <p>מרחק: ${d.distance_km} ק"מ | תשלום: ${d.price} ₪</p>
+              <div class="delivery-actions">
+                <button class="btn btn-success" onclick="takeDelivery(${d.id})">קח</button>
+                <button class="btn btn-danger" onclick="rejectDelivery(${d.id})">דחה</button>
+              </div>
+            </div>
+          `).join('')
+        : '<p style="text-align:center;color:#666;">אין משלוחים זמינים כרגע</p>';
+
+      document.getElementById('activeDeliveries').innerHTML = active.length
+        ? active.map(d => `
+            <div class="delivery-card">
+              <strong>#${d.id} (${d.status_he || 'בדרך'})</strong>
+              <p>מאת: ${d.from_name || d.from}</p>
+              <p>אל: ${d.to_name || d.to}</p>
+              <p>ETA: ${d.eta_minutes} דקות</p>
+              <button class="btn btn-primary" onclick="completeDelivery(${d.id})">סמן כהושלם</button>
+            </div>
+          `).join('')
+        : '<p style="text-align:center;color:#666;">אין משלוחים פעילים</p>';
+    }
+
+    function renderHistory(history) {
+      document.getElementById('deliveryHistory').innerHTML = history.length
+        ? history.map(h => `
+            <div class="history-item">
+              <strong>#${h.id}</strong> - ${new Date(h.completed_at).toLocaleDateString('he-IL')} - ${h.price} ₪ (${h.status_he})
+            </div>
+          `).join('')
+        : '<p style="text-align:center;color:#666;">אין היסטוריה</p>';
+    }
+
+    function updateStats(deliveries, history) {
+      const availableCount = deliveries.filter(d => d.status === 'available').length;
+      const onwayCount = deliveries.filter(d => d.status === 'active').length;
+      const deliveredCount = history.length;
+      const total = history.reduce((sum, h) => sum + (h.price || 0), 0);
+
+      document.getElementById('availableCount').textContent = availableCount;
+      document.getElementById('onwayCount').textContent = onwayCount;
+      document.getElementById('deliveredCount').textContent = deliveredCount;
+      document.getElementById('totalEarnings').textContent = `${total} ₪`;
+      document.getElementById('monthlyEarnings').textContent = `${total} ₪`;
+    }
+
+    // === Actions ===
+    window.takeDelivery = async function(id) {
+      try {
+        const res = await fetch(`${API_BASE}/deliveries/${id}/take`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (res.ok) {
+          await loadInitialData();
+          updateMap();
+        } else {
+          const err = await res.json();
+          alert('שגיאה: ' + (err.message || 'לא ניתן לקחת את המשלוח'));
+        }
+      } catch (e) {
+        alert('שגיאה בחיבור לשרת');
+      }
+    };
+
+    window.rejectDelivery = async function(id) {
+      if (!confirm('בטוח שברצונך לדחות את המשלוח?')) return;
+      try {
+        await fetch(`${API_BASE}/deliveries/${id}/reject`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        await loadInitialData();
+      } catch (e) {
+        alert('שגיאה בחיבור לשרת');
+      }
+    };
+
+    window.completeDelivery = async function(id) {
+      try {
+        const res = await fetch(`${API_BASE}/deliveries/${id}/complete`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (res.ok) {
+          await loadInitialData();
+          updateMap();
+        } else {
+          const err = await res.json();
+          alert('שגיאה: ' + (err.message || 'לא ניתן להשלים את המשלוח'));
+        }
+      } catch (e) {
+        alert('שגיאה בחיבור לשרת');
+      }
+    };
+
+    // === Real-time via Socket.IO ===
+    function initSocket() {
+      const socket = io({ 
+        auth: { token: userToken },
+        transports: ['websocket']
+      });
+
+      socket.on('connect', () => {
+        console.log('Socket connected');
+        // join couriers room so server can send courier-specific notifications
+        socket.emit('join', { role: 'courier' });
+      });
+      
+      socket.on('delivery_assigned', (delivery) => {
+        loadInitialData(); // Refresh entire list
+      });
+
+      socket.on('delivery_updated', (delivery) => {
+        loadInitialData();
+      });
+
+      socket.on('delivery_completed', (delivery) => {
+        loadInitialData();
+      });
+
+      window.socket = socket;
+    }
+
+    function updateMap() {
+      // Optional: Clear and re-add markers
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+      // Add real markers from active deliveries if needed
+    }
+
+    // === Event Listeners ===
+    loginBtn.addEventListener('click', login);
+    logoutBtn.addEventListener('click', logout);
+
+    // Auto-login if token exists (optional)
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('delivery_panel_token');
+      if (token) {
+        userToken = token;
+        loginForm.style.display = 'none';
+        dashboard.style.display = 'block';
+        initMap();
+        loadInitialData();
+        initSocket();
+      }
+    });
+  </script>
+</body>
+</html>

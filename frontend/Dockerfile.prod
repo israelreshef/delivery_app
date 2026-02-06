@@ -1,0 +1,40 @@
+# Production Frontend Dockerfile
+
+# Stage 1: Building the code
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build the application
+# Note: Requires NEXT_PUBLIC_API_URL to be set at build time or runtime
+# For Docker, we often set it at build time or use public runtime config
+ENV NEXT_PUBLIC_API_URL=https://api.tzir-delivery.com
+RUN npm run build
+
+# Stage 2: Run the production server
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copy necessary files from builder
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+
+# Expose port
+EXPOSE 3000
+
+# Start Next.js in production mode
+CMD ["npm", "start"]

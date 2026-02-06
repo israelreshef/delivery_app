@@ -1,0 +1,15 @@
+version: 1.0
+runtime: python311
+build:
+  commands:
+    build:
+      - python -m pip install --upgrade pip
+      - python -m pip install -r backend/requirements.txt
+run:
+  # GOLDEN PATH FIX:
+  # 1. Install gunicorn/eventlet explicitly in run phase to guarantee availability
+  # 2. Use 'sh -c' to handle directory change
+  # 3. Use 'python -m gunicorn' to bypass PATH issues
+  command: sh -c "python -m pip install gunicorn eventlet && cd backend && python -m gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:8080 app:app"
+  network:
+    port: 8080

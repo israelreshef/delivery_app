@@ -1,0 +1,28 @@
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-SocketIO==5.3.5
+Flask-CORS==4.0.0
+python-socketio==5.10.0
+python-engineio==4.8.0
+Werkzeug==3.0.1
+PyJWT==2.8.0
+SQLAlchemy==2.0.23
+
+# Database drivers (choose one)
+# For SQLite (included in Python)
+# For PostgreSQL
+# psycopg2-binary==2.9.9
+# For MySQL
+# PyMySQL==1.1.0
+
+# Optional but recommended
+python-dotenv==1.0.0
+Flask-Migrate==4.0.5
+# Production & Real-time
+redis==5.0.1
+flask-cors==4.0.0
+slowapi==0.1.9
+gevent==23.9.1
+psycopg2-binary==2.9.9
+gunicorn==21.2.0
+eventlet==0.33.3
