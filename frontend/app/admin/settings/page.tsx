@@ -111,60 +111,11 @@ export default function SettingsPage() {
                     <CardTitle className="text-lg">פעולות מהירות</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-3">
-                    <Button
-                        variant="outline"
-                        className="border-blue-200 hover:bg-blue-50"
-                        onClick={async () => {
-                            try {
-                                const { api } = await import("@/lib/api");
-                                const { toast } = await import("sonner");
-                                toast.info("מכין קובץ להורדה...");
-
-                                const response = await api.get('/admin/export/users', {
-                                    responseType: 'blob'
-                                });
-
-                                // Create download link
-                                const url = window.URL.createObjectURL(new Blob([response.data]));
-                                const link = document.createElement('a');
-                                link.href = url;
-                                link.setAttribute('download', 'users_export.csv');
-                                document.body.appendChild(link);
-                                link.click();
-                                link.remove();
-                                toast.success("הקובץ ירד בהצלחה");
-                            } catch (e) {
-                                console.error(e);
-
-                                // Dynamic import for toast in case of error
-                                const { toast } = await import("sonner");
-                                toast.error("שגיאה בייצוא הנתונים");
-                            }
-                        }}
-                    >
-                        ייצוא נתונים (CSV)
+                    <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                        ייצוא נתונים
                     </Button>
                     <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
                         גיבוי מערכת
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="border-red-200 hover:bg-red-50 text-red-600"
-                        onClick={async () => {
-                            if (!confirm("האם אתה בטוח? פעולה זו תאלץ את כל המשתמשים לאשר מחדש את תנאי השימוש.")) return;
-                            try {
-                                const { api } = await import("@/lib/api");
-                                const { toast } = await import("sonner");
-                                await api.post("/admin/privacy/reset-all");
-                                toast.success("מדיניות הפרטיות אופסה לכל המשתמשים");
-                            } catch (e) {
-                                console.error(e);
-                                const { toast } = await import("sonner");
-                                toast.error("שגיאה באיפוס המדיניות");
-                            }
-                        }}
-                    >
-                        איפוס מדיניות פרטיות (Force Reset)
                     </Button>
                     <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
                         צפייה בלוגים

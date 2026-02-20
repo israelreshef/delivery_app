@@ -92,7 +92,8 @@ export default function ServiceForm() {
         }, 600);
 
         return () => clearTimeout(timer);
-    }, [watchDeliveryType, watchInsurance, form.watch('insuranceValue')]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [watchDeliveryType, watchInsurance]);
 
     const onSubmit = (data: z.infer<typeof extendedServiceSchema>) => {
         updateService(data);
@@ -175,7 +176,7 @@ export default function ServiceForm() {
 
                     <div className="h-px bg-slate-200"></div>
 
-                    {/* Urgency Section (Existing logic preserved) */}
+                    {/* Urgency Section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-700">
                             2. מתי זה יגיע?

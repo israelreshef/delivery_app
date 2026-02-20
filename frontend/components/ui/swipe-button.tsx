@@ -8,6 +8,7 @@ interface SwipeButtonProps {
     onComplete: () => Promise<void> | void;
     text: string;
     completedText?: string;
+    icon?: React.ReactNode;
     color?: "blue" | "green" | "red" | "purple";
     className?: string;
     disabled?: boolean;
@@ -17,6 +18,7 @@ export default function SwipeButton({
     onComplete,
     text,
     completedText = "הושלם",
+    icon,
     color = "blue",
     className,
     disabled = false
@@ -63,6 +65,7 @@ export default function SwipeButton({
             window.removeEventListener("mouseup", handleMouseUp);
             window.removeEventListener("touchend", handleTouchEnd);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDragging, isCompleted, disabled]);
 
     const startDrag = () => {
@@ -125,10 +128,11 @@ export default function SwipeButton({
             {/* Background Text */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className={cn(
-                    "font-bold text-lg tracking-wide transition-opacity duration-300",
+                    "font-bold text-lg tracking-wide transition-opacity duration-300 flex items-center gap-2",
                     isCompleted ? "opacity-0" : "opacity-100",
                     currentTheme.text
                 )}>
+                    {icon}
                     {text}
                 </span>
                 <div className={cn(

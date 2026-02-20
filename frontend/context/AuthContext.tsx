@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, User } from '@/lib/auth';
 import { useRouter, usePathname } from 'next/navigation';
-import { api } from '@/lib/api';
 
 interface AuthContextType {
     user: User | null;
@@ -29,31 +28,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // בדיקה ראשונית בטעינה
     useEffect(() => {
-        const initAuth = async () => {
-            auth.initialize();
-            if (auth.isAuthenticated()) {
-                // Load from storage first for immediate UI
-                const storedUser = auth.getUser();
-                setUser(storedUser);
-
-                // Fetch fresh data from API to get latest fields (like privacy_policy_accepted_at)
-                try {
-                    const response = await api.get('/auth/me');
-                    const freshUser = response.data;
-
-                    console.log("Updated user from API", freshUser); // Debug log
-
-                    // Update user in state and storage
-                    auth.setSession(auth.getToken()!, freshUser);
-                    setUser(freshUser);
-                } catch (error) {
-                    console.error("Failed to refresh user data", error);
-                    // If 401, maybe logout? For now just keep stored user or do nothing
-                }
-            }
-            setIsLoading(false);
-        };
-        initAuth();
+        auth.initialize();
+        if (auth.isAuthenticated()) {
+            setUser(auth.getUser());
+        }
+        setIsLoading(false);
     }, []);
 
     // פונקציית התחברות

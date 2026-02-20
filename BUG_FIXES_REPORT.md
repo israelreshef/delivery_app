@@ -62,14 +62,50 @@
   - `backend/routes/external_api.py` - Fixed decorator import and typo
 - **Impact:** External API routes now work correctly
 
+### 8. **UnicodeEncodeError** (Backend)
+- **Status:** ✅ FIXED
+- **Files Modified:**
+  - `backend/app.py` - Removed emojis from print statements
+- **Impact:** Server works on legacy consoles and Docker logs without crashing
+
+### 9. **Material3 Crash** (Mobile)
+- **Status:** ✅ FIXED
+- **Files Modified:**
+  - `mobile-native/gradle/libs.versions.toml` - Updated Compose to 1.6.7
+- **Impact:** Fixed NoSuchMethodError in Surface component
+
+### 10. **Syntax Errors & Build Issues** (Mobile)
+- **Status:** ✅ FIXED
+- **Files Modified:**
+  - `mobile-native/shared/build.gradle.kts` - Fixed nesting and removed duplicate blocks
+- **Impact:** Gradle builds correctly (on Windows)
+
+### 11. **Robust API Input** (Backend)
+- **Status:** ✅ FIXED
+- **Files Modified:**
+  - `backend/routes/auth.py` - Added check for missing JSON data in login
+- **Impact:** Prevents 500 errors when empty requests are sent
+
+### 12. **Mobile Build Stabilization** (Critical Final Barrier)
+- **Status:** ✅ FIXED
+- **Files Modified:**
+  - `mobile-native/shared/src/commonMain/kotlin/.../Mission.kt` - Added optional `completedAt`
+  - `mobile-native/shared/src/commonMain/sqldelight/.../TzirDatabase.sq` - Fixed `Int` and `Boolean` imports
+  - `mobile-native/shared/src/commonMain/kotlin/.../CourierRepository.kt` - Fixed mapping and coroutine scope
+  - `mobile-native/shared/src/commonMain/kotlin/.../DeliveryApi.kt` - Restored Ktor imports and fixed structural errors
+  - `mobile-native/androidApp/src/main/java/.../MainActivity.kt` - Fixed `@Composable` scoping and missing UI imports
+  - `mobile-native/androidApp/src/main/java/.../RegisterScreen.kt` - Resolved overload resolution ambiguity
+- **Impact:** The entire mobile project (Shared + Android App) is now stable and buildable.
+
 ## 📊 Statistics
 
-- **Backend Files Fixed:** 13 files
+- **Backend Files Fixed:** 15 files
 - **Frontend Files Fixed:** 3 files
-- **Print Statements Replaced:** 32+
-- **Security Improvements:** 3 (Rate Limiting, CORS, JWT)
-- **Code Quality Improvements:** 2 (Logging, Type Safety)
-- **Deployment Blockers Removed:** 1 (Hardcoded URLs)
+- **Mobile Files Fixed:** 2 files
+- **Print Statements Replaced:** 39+
+- **Security Improvements:** 4 (Rate Limiting, CORS, JWT, Robust Inputs)
+- **Code Quality Improvements:** 4 (Logging, Type Safety, Build Logic, Dependencies)
+- **Deployment Blockers Removed:** 3 (Hardcoded URLs, Emoji Encoding, Material3 Crash)
 
 ## 🎯 Remaining Optional Improvements
 

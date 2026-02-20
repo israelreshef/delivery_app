@@ -70,6 +70,7 @@ export default function TrackingPage() {
         return () => {
             socketRef.current.disconnect();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchOrder = async () => {

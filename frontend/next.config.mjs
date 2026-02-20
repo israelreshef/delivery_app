@@ -1,19 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: false,
-    swcMinify: true,
-    poweredByHeader: false,
-    compiler: {
-        removeConsole: process.env.NODE_ENV === "production",
-    },
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: '**',
-            },
-        ],
-    },
+    reactStrictMode: false, // Sometimes helpful for map/socket debugging preventing double-mount
 };
 
 export default nextConfig;

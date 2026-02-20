@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { X, RotateCcw } from 'lucide-react';
 
 interface SignaturePadProps {
+    onSave: (dataUrl: string, recipientName?: string, recipientId?: string) => void;
+    onCancel: () => void;
     isLegalDelivery?: boolean;
 }
 

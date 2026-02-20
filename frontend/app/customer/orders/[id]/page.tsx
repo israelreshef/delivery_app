@@ -55,6 +55,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
         return () => {
             socket.disconnect();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.id]);
 
     const fetchOrder = async () => {

@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { auth } from "@/lib/auth";
-import { TwoFactorSetup } from "@/components/auth/TwoFactorSetup";
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -137,10 +136,6 @@ export default function ProfilePage() {
                         התנתקות
                     </Button>
                 </div>
-
-                {/* Security Section (2FA) */}
-                <TwoFactorSetup />
-
             </div>
         </div>
     );

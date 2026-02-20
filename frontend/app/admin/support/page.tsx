@@ -71,6 +71,7 @@ export default function SupportPage() {
 
     useEffect(() => {
         fetchTickets();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [statusFilter]);
 
     async function onCreateTicket(values: z.infer<typeof ticketSchema>) {

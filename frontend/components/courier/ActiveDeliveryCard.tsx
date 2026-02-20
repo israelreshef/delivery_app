@@ -129,7 +129,7 @@ export default function ActiveDeliveryCard() {
                         <SwipeButton
                             text="התקשר"
                             completedText="מתקשר"
-                            onComplete={() => window.open(`tel:${activeOrder.status === 'picked_up' ? activeOrder.delivery_contact_phone : activeOrder.pickup_contact_phone}`)}
+                            onComplete={() => { window.open(`tel:${activeOrder.status === 'picked_up' ? activeOrder.delivery_contact_phone : activeOrder.pickup_contact_phone}`); }}
                             icon={<Phone className="w-4 h-4" />}
                             color="blue"
                             className="w-full"
@@ -137,7 +137,7 @@ export default function ActiveDeliveryCard() {
                         <SwipeButton
                             text="שלח הודעה"
                             completedText="נשלח"
-                            onComplete={() => window.open(`sms:${activeOrder.status === 'picked_up' ? activeOrder.delivery_contact_phone : activeOrder.pickup_contact_phone}`)}
+                            onComplete={() => { window.open(`sms:${activeOrder.status === 'picked_up' ? activeOrder.delivery_contact_phone : activeOrder.pickup_contact_phone}`); }}
                             icon={<MessageSquare className="w-4 h-4" />}
                             color="blue"
                             className="w-full"

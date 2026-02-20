@@ -10,53 +10,23 @@ import {
     Settings,
     LogOut,
     Package,
-    FileText,
-    ShieldCheck
+    MessageSquare,
+    BarChart3,
+    LifeBuoy
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
 
 const sidebarItems = [
-    {
-        title: "לוח בקרה",
-        href: "/admin/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "הזמנות",
-        href: "/orders",
-        icon: Package,
-    },
-    {
-        title: "ניהול שליחים",
-        href: "/admin/couriers",
-        icon: Truck,
-    },
-    {
-        title: "ניהול לקוחות",
-        href: "/admin/customers",
-        icon: Users,
-    },
-    {
-        title: "דוחות",
-        href: "/admin/reports",
-        icon: FileText,
-    },
-    {
-        title: "ניהול מלאי",
-        href: "/admin/wms",
-        icon: Package,
-    },
-    {
-        title: "אבטחה ו-OTP",
-        href: "/settings/security",
-        icon: ShieldCheck,
-    },
-    {
-        title: "הגדרות",
-        href: "/admin/settings",
-        icon: Settings,
-    },
+    { title: "לוח בקרה", href: "/admin/dashboard", icon: LayoutDashboard },
+    { title: "הזמנות", href: "/orders", icon: Package },
+    { title: "ניהול שליחים", href: "/admin/couriers", icon: Truck },
+    { title: "ניהול לקוחות", href: "/admin/customers", icon: Users },
+    { title: "ניהול מלאי", href: "/admin/wms", icon: Package },
+    { title: "דוחות ורגולציה", href: "/admin/reports", icon: BarChart3 },
+    { title: "CRM", href: "/admin/crm", icon: MessageSquare },
+    { title: "תמיכה", href: "/admin/support", icon: LifeBuoy },
+    { title: "הגדרות", href: "/admin/settings", icon: Settings },
 ]
 
 export function AdminSidebar() {

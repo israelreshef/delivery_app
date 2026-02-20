@@ -329,3 +329,54 @@ def approve_payout(current_user, payout_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+from utils.pdf_generator import generate_earnings_report
+import tempfile
+
+@freelance_bp.route('/earnings/report', methods=['GET'])
+@token_required
+def get_earnings_report(current_user):
+    """
+    Generate and download a PDF earnings report
+    """
+    try:
+        if current_user.user_type != 'courier':
+             return jsonify({'error': 'Unauthorized'}), 403
+             
+        year = int(request.args.get('year', datetime.now().year))
+        month = int(request.args.get('month', datetime.now().month))
+        
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1) - timedelta(days=1)
+        else:
+            end_date = datetime(year, month + 1, 1) - timedelta(days=1)
+            
+        deliveries = Delivery.query.filter(
+            and_(
+                Delivery.courier_id == current_user.courier.id,
+                Delivery.status == 'delivered',
+                Delivery.delivered_at >= start_date,
+                Delivery.delivered_at <= end_date
+            )
+        ).all()
+        
+        total_amount = sum(d.delivery_fee for d in deliveries if d.delivery_fee)
+        
+        # Create temporary file
+        temp = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+        generate_earnings_report(
+            courier_name=current_user.courier.full_name,
+            period=f"{month:02d}/{year}",
+            deliveries=deliveries,
+            total_amount=total_amount,
+            output_path=temp.name
+        )
+        
+        return send_file(
+            temp.name,
+            as_attachment=True,
+            download_name=f"Earnings_{year}_{month:02d}.pdf"
+        )
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

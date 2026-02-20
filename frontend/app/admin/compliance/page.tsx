@@ -47,6 +47,7 @@ export default function CompliancePage() {
 
     useEffect(() => {
         fetchDocuments();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [statusFilter]);
 
     const handleVerify = async (docId: number, status: 'approved' | 'rejected') => {

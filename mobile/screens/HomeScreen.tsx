@@ -5,7 +5,33 @@ import { useCourierStore } from '../store';
 import { API_URL } from '../config';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../constants/Colors';
-import { Ionicons } from '@expo/vector-icons'; // Ensure @expo/vector-icons is installed
+import { Ionicons } from '@expo/vector-icons';
+
+const ShiftTimer = () => {
+    const [seconds, setSeconds] = useState(0);
+    const { isShiftActive } = useCourierStore();
+
+    useEffect(() => {
+        let interval: any;
+        if (isShiftActive) {
+            interval = setInterval(() => {
+                setSeconds(prev => prev + 1);
+            }, 1000);
+        } else {
+            setSeconds(0);
+        }
+        return () => clearInterval(interval);
+    }, [isShiftActive]);
+
+    const formatTime = (s: number) => {
+        const hrs = Math.floor(s / 3600);
+        const mins = Math.floor((s % 3600) / 60);
+        const secs = s % 60;
+        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    return <Text style={styles.timerText}>{formatTime(seconds)}</Text>;
+};
 
 export default function HomeScreen() {
     const { isConnected, token, logout, courierId, setCourierId, activeOrders, isShiftActive, toggleShift } = useCourierStore();
@@ -101,9 +127,6 @@ export default function HomeScreen() {
                             {isConnected ? 'Online' : 'Offline'}
                         </Text>
                     </View>
-                    <TouchableOpacity onPress={logout} style={styles.logoutSmallBtn}>
-                        <Text style={[styles.logoutText, { color: theme.danger }]}>Logout</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -113,6 +136,7 @@ export default function HomeScreen() {
                     <Text style={styles.statusText}>
                         {isShiftActive ? 'ON SHIFT' : 'OFF SHIFT'}
                     </Text>
+                    {isShiftActive && <ShiftTimer />}
                 </View>
                 <TouchableOpacity
                     style={[styles.actionButton, { backgroundColor: isShiftActive ? theme.warning : theme.primary }]}
@@ -203,13 +227,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '600',
     },
-    logoutSmallBtn: {
-        padding: 4,
-    },
-    logoutText: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
     shiftControl: {
         alignItems: 'center',
         marginBottom: 30,
@@ -242,6 +259,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginTop: 5,
+    },
+    timerText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: '600',
+        marginTop: 2,
+        fontFamily: 'monospace',
     },
     actionButton: {
         width: '100%',

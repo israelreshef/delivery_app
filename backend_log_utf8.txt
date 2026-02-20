@@ -1,0 +1,14 @@
+﻿python : C:\Users\Israel\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0
+\LocalCache\local-packages\Python311\site-packages\flask_limiter\_extension.py:364: UserWarning: 
+Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This 
+is not recommended for production use. See: 
+https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about 
+configuring the storage backend.
+At line:1 char:1
++ python backend/app.py > backend_log.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\Israel...torage backend.:String) [], Remote 
+   Exception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn(

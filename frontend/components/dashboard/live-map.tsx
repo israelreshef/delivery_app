@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useSocket } from '@/lib/socket';
+import { useAuth } from '@/context/AuthContext';
 
 // Fix Leaflet marker icon issue in Next.js
 const icon = L.icon({
@@ -32,7 +33,9 @@ type CourierLocation = {
 };
 
 export default function LiveMap() {
-    const socket = useSocket();
+    const { user } = useAuth();
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const socket = useSocket(token, user?.role || null);
     const [couriers, setCouriers] = useState<Record<number, CourierLocation>>({});
 
     useEffect(() => {
@@ -66,8 +69,8 @@ export default function LiveMap() {
                 style={{ height: '100%', width: '100%' }}
             >
                 <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                    attribution="&copy; Google Maps"
                 />
 
                 {Object.values(couriers).map((courier) => (

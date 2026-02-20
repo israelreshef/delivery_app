@@ -5,7 +5,6 @@ import './globals.css'
 import { Toaster } from 'sonner'
 import StructuredData from '@/components/seo/StructuredData'
 import ChatWindow from '@/components/chat/ChatWindow';
-import { PrivacyConsentModal } from '@/components/privacy/PrivacyConsentModal';
 
 const assistant = Assistant({ subsets: ['hebrew', 'latin'] })
 
@@ -49,13 +48,10 @@ export default function RootLayout({
             <body className={assistant.className}>
                 <Providers>
                     <StructuredData />
-                    <div className="min-h-screen bg-background font-sans antialiased">
-                        <main className="container mx-auto max-w-7xl px-4 py-6">
-                            {children}
-                        </main>
+                    <div className="flex h-screen bg-background text-right font-sans">
+                        {children}
                     </div>
                     <ChatWindow />
-                    <PrivacyConsentModal />
                 </Providers>
                 <Toaster />
             </body>

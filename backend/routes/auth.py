@@ -12,17 +12,21 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from models import db, User, Courier, Customer
 from utils.decorators import token_required
 from extensions import limiter
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 auth_bp = Blueprint('auth', __name__)
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("60 per minute")
 def login():
     """התחברות למערכת"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
         # תמיכה בהתחברות עם אימייל או שם משתמש
         identifier = data.get('email') or data.get('username')
         password = data.get('password')
@@ -90,7 +94,6 @@ def login():
         
         # בדיקה האם 2FA מופעל למשתמש זה
         if user.is_two_factor_enabled or user.two_factor_enforced_by_admin:
-            print(f"🔒 2FA Required for user {user.username}")
             # במקום להחזיר טוקן מלא, אנחנו מסמנים שהמשתמש עבר סיסמה וצריך קוד OTP
             mfa_token = jwt.encode({
                 'user_id': user.id,
@@ -122,18 +125,17 @@ def login():
         
         # קבל פרטים נוספים לפי סוג משתמש
         user_data = {
-            'id': user.id,
+            'id': str(user.id),
             'username': user.username,
             'email': user.email,
             'phone': user.phone,
-            'user_type': user.user_type,
-            'is_two_factor_enabled': user.is_two_factor_enabled
+            'user_type': user.user_type
         }
         
         if user.user_type == 'courier':
             courier = Courier.query.filter_by(user_id=user.id).first()
             if courier:
-                user_data['courier_id'] = courier.id
+                user_data['courier_id'] = str(courier.id)
                 user_data['full_name'] = courier.full_name
                 user_data['vehicle_type'] = courier.vehicle_type
                 user_data['is_available'] = courier.is_available
@@ -141,7 +143,7 @@ def login():
         elif user.user_type == 'customer':
             customer = Customer.query.filter_by(user_id=user.id).first()
             if customer:
-                user_data['customer_id'] = customer.id
+                user_data['customer_id'] = str(customer.id)
                 user_data['full_name'] = customer.full_name
                 user_data['company_name'] = customer.company_name
         
@@ -271,6 +273,7 @@ def logout():
 
 
 @auth_bp.route('/me', methods=['GET'])
+@auth_bp.route('/profile', methods=['GET'])
 def get_current_user():
     """קבלת פרטי המשתמש המחובר"""
     try:
@@ -298,7 +301,7 @@ def get_current_user():
             return jsonify({'error': 'User not found'}), 404
         
         user_data = {
-            'id': user.id,
+            'id': str(user.id),
             'username': user.username,
             'email': user.email,
             'phone': user.phone,
@@ -312,24 +315,20 @@ def get_current_user():
         if user.user_type == 'courier':
             courier = Courier.query.filter_by(user_id=user.id).first()
             if courier:
-                user_data['courier'] = {
-                    'id': courier.id,
-                    'full_name': courier.full_name,
-                    'vehicle_type': courier.vehicle_type,
-                    'is_available': courier.is_available,
-                    'rating': float(courier.rating),
-                    'total_deliveries': courier.total_deliveries
-                }
+                user_data['courier_id'] = str(courier.id)
+                user_data['full_name'] = courier.full_name
+                user_data['vehicle_type'] = courier.vehicle_type
+                user_data['is_available'] = courier.is_available
+                user_data['rating'] = float(courier.rating)
+                user_data['total_deliveries'] = courier.total_deliveries
         
         elif user.user_type == 'customer':
             customer = Customer.query.filter_by(user_id=user.id).first()
             if customer:
-                user_data['customer'] = {
-                    'id': customer.id,
-                    'full_name': customer.full_name,
-                    'company_name': customer.company_name,
-                    'balance': float(customer.balance)
-                }
+                user_data['customer_id'] = str(customer.id)
+                user_data['full_name'] = customer.full_name
+                user_data['company_name'] = customer.company_name
+                user_data['balance'] = float(customer.balance)
         
         return jsonify(user_data), 200
         
@@ -424,6 +423,25 @@ def update_consent(current_user):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@auth_bp.route('/fcm-token', methods=['POST'])
+@token_required
+def update_fcm_token(current_user):
+    """Update FCM token for push notifications"""
+    try:
+        data = request.json
+        token = data.get('fcm_token')
+        
+        if not token:
+            return jsonify({'error': 'FCM token is required'}), 400
+            
+        current_user.fcm_token = token
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'FCM token updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 # ============================================================================
 # Two-Factor Authentication (2FA) Routes
 # ============================================================================
@@ -468,29 +486,6 @@ def verify_and_enable_2fa(current_user):
     else:
         return jsonify({'error': 'Invalid verification code'}), 400
 
-@auth_bp.route('/2fa/disable', methods=['POST'])
-@token_required
-def disable_2fa(current_user):
-    """ביטול 2FA - מאפשר למשתמש להגדיר מחדש"""
-    data = request.json
-    code = data.get('code')
-    
-    if not code:
-        return jsonify({'error': 'Verification code required to disable 2FA'}), 400
-    
-    from utils.two_factor import verify_totp_code
-    
-    # Verify current code before disabling
-    if not verify_totp_code(current_user.two_factor_secret, code):
-        return jsonify({'error': 'Invalid verification code'}), 400
-    
-    # Disable 2FA
-    current_user.is_two_factor_enabled = False
-    current_user.two_factor_secret = None
-    db.session.commit()
-    
-    return jsonify({'message': '2FA disabled successfully'}), 200
-
 @auth_bp.route('/2fa/login-verify', methods=['POST'])
 def login_verify_2fa():
     """אימות קוד OTP במהלך ההתחברות"""
@@ -533,8 +528,7 @@ def login_verify_2fa():
                 'user': {
                     'id': user.id,
                     'username': user.username,
-                    'user_type': user.user_type,
-                    'is_two_factor_enabled': user.is_two_factor_enabled
+                    'user_type': user.user_type
                 }
             }), 200
         else:
@@ -544,3 +538,108 @@ def login_verify_2fa():
         return jsonify({'error': 'MFA session expired, please login again'}), 401
     except Exception as e:
         return jsonify({'error': f'Auth failed: {str(e)}'}), 401
+
+@auth_bp.route('/google', methods=['POST'])
+def google_login():
+    """התחברות באמצעות גוגל"""
+    try:
+        data = request.json
+        token = data.get('token')
+        
+        if not token:
+            return jsonify({'error': 'Token is required'}), 400
+            
+        # וודא את הטוקן מול גוגל
+        GOOGLE_CLIENT_ID = "348912700998-sud2nuq9om7jkdhht8biohof9c6llk4m.apps.googleusercontent.com"
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), GOOGLE_CLIENT_ID)
+        
+        # בדוק את ה-Issuer
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            return jsonify({'error': 'Invalid issuer'}), 401
+            
+        # פרטי المמשתמש מגוגל
+        email = idinfo['email']
+        name = idinfo.get('name', '')
+        google_id = idinfo['sub']
+        
+        # חפש משתמש קיים לפי אימייל
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            # צור משתמש חדש אם לא קיים
+            # הערה: כברירת מחדל נגדיר אותו כ-customer
+            username = email.split('@')[0]
+            # וודא ששם המשתמש ייחודי
+            counter = 1
+            original_username = username
+            while User.query.filter_by(username=username).first():
+                username = f"{original_username}{counter}"
+                counter += 1
+                
+            user = User(
+                username=username,
+                email=email,
+                phone='', # יצטרך לעדכן בהמשך
+                user_type='customer'
+            )
+            # סיסמה אקראית חזקה למשתמש גוגל (לא באמת בשימוש)
+            import secrets
+            user.set_password(secrets.token_urlsafe(32))
+            
+            db.session.add(user)
+            db.session.flush()
+            
+            # צור פרופיל לקוח
+            customer = Customer(
+                user_id=user.id,
+                full_name=name,
+                company_name=''
+            )
+            db.session.add(customer)
+            db.session.commit()
+            
+            from utils.audit import log_audit
+            log_audit(
+                action='OAUTH_REGISTER',
+                user_id=user.id,
+                details=f"New user registered via Google: {email}"
+            )
+        
+        # צור JWT טוקן
+        from flask_jwt_extended import create_access_token
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={
+                'username': user.username,
+                'user_type': user.user_type
+            },
+            expires_delta=datetime.timedelta(days=7)
+        )
+        
+        user_data = {
+            'id': str(user.id),
+            'username': user.username,
+            'email': user.email,
+            'user_type': user.user_type
+        }
+        
+        if user.user_type == 'courier':
+            courier = Courier.query.filter_by(user_id=user.id).first()
+            if courier: user_data['courier_id'] = str(courier.id)
+        elif user.user_type == 'customer':
+            customer = Customer.query.filter_by(user_id=user.id).first()
+            if customer: user_data['customer_id'] = str(customer.id)
+            
+        return jsonify({
+            'success': True,
+            'access_token': access_token,
+            'token': access_token,
+            'user': user_data
+        }), 200
+        
+    except ValueError:
+        return jsonify({'error': 'Invalid token'}), 401
+    except Exception as e:
+        import logging
+        logging.error(f"Google Auth Error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Authentication failed'}), 500

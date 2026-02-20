@@ -1,73 +1,27 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Flask
-instance/
-.webassets-cache
-*.db
-*.sqlite
-*.sqlite3
-
-# Environment variables
-.env
-.env.local
-.flaskenv
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Node.js / Next.js
 node_modules/
 .next/
-out/
-.vercel
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+frontend/.next/
+frontend/node_modules/
+backend/venv/
+backend/__pycache__/
+*.pyc
+*.pbf
+*.osm
+*.pbf
+instance/
+.env
+.env.production
 
-# Logs
-*.log
-logs/
+venv/
+frontend/node_modules/
+frontend/.next/
 
-# Uploads
-uploads/
-backend/uploads/
+__pycache__/
+.gradle/
+build/
+mobile-native/androidApp/build/
+mobile-native/shared/build/
+mobile-native/.idea/
 
-# Temporary files
-*.tmp
-*.temp
-backend/scripts/inspect_admin_2fa.py
-backend/scripts/check_admin_db.py
-backend/scripts/list_users.py
-backend/scripts/check_2fa_status.py
-backend/scripts/test_orders.py
+*.apk
+*.aab

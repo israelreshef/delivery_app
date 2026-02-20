@@ -1,0 +1,97 @@
+﻿> Task :androidApp:preBuild UP-TO-DATE
+> Task :androidApp:preDebugBuild UP-TO-DATE
+> Task :androidApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :androidApp:checkKotlinGradlePluginConfigurationErrors
+> Task :shared:preBuild UP-TO-DATE
+> Task :shared:preDebugBuild UP-TO-DATE
+> Task :shared:writeDebugAarMetadata UP-TO-DATE
+> Task :androidApp:checkDebugAarMetadata UP-TO-DATE
+> Task :androidApp:generateDebugResValues UP-TO-DATE
+> Task :shared:generateDebugResValues UP-TO-DATE
+> Task :shared:generateDebugResources UP-TO-DATE
+> Task :shared:packageDebugResources UP-TO-DATE
+> Task :androidApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :androidApp:generateDebugResources UP-TO-DATE
+> Task :androidApp:mergeDebugResources UP-TO-DATE
+> Task :androidApp:packageDebugResources UP-TO-DATE
+> Task :androidApp:parseDebugLocalResources UP-TO-DATE
+> Task :androidApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :androidApp:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:processDebugManifest UP-TO-DATE
+> Task :androidApp:processDebugMainManifest UP-TO-DATE
+> Task :androidApp:processDebugManifest UP-TO-DATE
+> Task :androidApp:processDebugManifestForPackage UP-TO-DATE
+> Task :shared:compileDebugLibraryResources UP-TO-DATE
+> Task :shared:parseDebugLocalResources UP-TO-DATE
+> Task :shared:generateDebugRFile UP-TO-DATE
+> Task :androidApp:processDebugResources UP-TO-DATE
+> Task :shared:checkKotlinGradlePluginConfigurationErrors
+> Task :shared:generateCommonMainTzirDatabaseInterface UP-TO-DATE
+> Task :shared:compileDebugKotlinAndroid UP-TO-DATE
+> Task :shared:javaPreCompileDebug UP-TO-DATE
+> Task :shared:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :androidApp:javaPreCompileDebug UP-TO-DATE
+> Task :androidApp:mergeDebugShaders UP-TO-DATE
+> Task :androidApp:compileDebugShaders NO-SOURCE
+> Task :androidApp:generateDebugAssets UP-TO-DATE
+> Task :shared:mergeDebugShaders UP-TO-DATE
+> Task :shared:compileDebugShaders NO-SOURCE
+> Task :shared:generateDebugAssets UP-TO-DATE
+> Task :shared:packageDebugAssets UP-TO-DATE
+> Task :androidApp:mergeDebugAssets UP-TO-DATE
+> Task :androidApp:compressDebugAssets UP-TO-DATE
+> Task :shared:processDebugJavaRes UP-TO-DATE
+> Task :androidApp:checkDebugDuplicateClasses UP-TO-DATE
+> Task :androidApp:desugarDebugFileDependencies UP-TO-DATE
+> Task :androidApp:mergeExtDexDebug UP-TO-DATE
+> Task :shared:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :androidApp:mergeDebugJniLibFolders UP-TO-DATE
+> Task :shared:mergeDebugJniLibFolders UP-TO-DATE
+> Task :androidApp:mergeLibDexDebug UP-TO-DATE
+> Task :shared:mergeDebugNativeLibs NO-SOURCE
+> Task :shared:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :androidApp:mergeDebugNativeLibs NO-SOURCE
+> Task :androidApp:stripDebugDebugSymbols NO-SOURCE
+> Task :androidApp:validateSigningDebug UP-TO-DATE
+> Task :androidApp:writeDebugAppMetadata UP-TO-DATE
+> Task :androidApp:writeDebugSigningConfigVersions UP-TO-DATE
+
+> Task :androidApp:compileDebugKotlin
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/MainActivity.kt:48:47 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:74:5 Parameter 'locationManager' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:84:5 Parameter 'onClientsClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:91:9 Variable 'context' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:98:9 Variable 'isNightTime' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:182:57 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:217:57 'ExitToApp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ExitToApp
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:226:13 Name shadowed: context
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:468:21 'CircularProgressIndicator(Float, Modifier = ..., Color = ..., Dp = ..., Color = ..., StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DocumentsScreen.kt:139:32 'KeyboardArrowLeft: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.KeyboardArrowLeft
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionDetailsScreen.kt:43:9 Variable 'isOffline' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionHistoryScreen.kt:37:9 Variable 'isOffline' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionHistoryScreen.kt:38:9 Variable 'scope' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionHistoryScreen.kt:53:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionsScreen.kt:89:32 'Indicator(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Use SecondaryIndicator instead.
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionsScreen.kt:270:18 Parameter 'missions' is never used
+
+> Task :androidApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :androidApp:processDebugJavaRes UP-TO-DATE
+> Task :androidApp:mergeDebugJavaResource UP-TO-DATE
+> Task :androidApp:dexBuilderDebug
+> Task :androidApp:mergeProjectDexDebug
+> Task :androidApp:packageDebug
+> Task :androidApp:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :androidApp:assembleDebug
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 15s
+51 actionable tasks: 6 executed, 45 up-to-date

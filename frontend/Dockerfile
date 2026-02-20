@@ -6,13 +6,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files first (for caching)
-COPY package*.json ./
+COPY frontend/package*.json ./
 
 # Install dependencies (including devDependencies for Next.js build)
 RUN npm install --legacy-peer-deps
 
 # Copy the rest of the app
-COPY . .
+COPY frontend/ .
 
 # Expose port
 EXPOSE 3000

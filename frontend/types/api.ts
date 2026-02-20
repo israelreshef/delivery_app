@@ -10,9 +10,6 @@ export interface User {
     is_active: boolean;
     created_at?: string;
     admin_role?: string;
-    privacy_policy_accepted_at?: string;
-    is_two_factor_enabled?: boolean;
-    two_factor_enforced_by_admin?: boolean;
 }
 
 export interface Courier {

@@ -260,7 +260,6 @@ def get_all_users(current_user):
             'phone': u.phone,
             'user_type': u.user_type,
             'is_active': u.is_active,
-            'is_two_factor_enabled': u.is_two_factor_enabled,
             'created_at': u.created_at.isoformat()
         } for u in users]), 200
     except Exception as e:
@@ -427,44 +426,4 @@ def toggle_user_active(current_user, user_id):
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
-@admin_bp.route('/export/users', methods=['GET'])
-@token_required
-@role_required('admin')
-def export_users_csv(current_user):
-    """Export all users to CSV"""
-    try:
-        import csv
-        import io
-        from flask import make_response
-
-        # Query all users
-        users = User.query.all()
-
-        # Create CSV in memory
-        si = io.StringIO()
-        cw = csv.writer(si)
-        
-        # Header
-        cw.writerow(['ID', 'Username', 'Email', 'Phone', 'Type', 'Active', 'Created At'])
-        
-        # Data
-        for u in users:
-            cw.writerow([
-                u.id,
-                u.username,
-                u.email,
-                u.phone,
-                u.user_type,
-                u.is_active,
-                u.created_at.strftime('%Y-%m-%d %H:%M:%S')
-            ])
-            
-        output = make_response(si.getvalue())
-        output.headers["Content-Disposition"] = "attachment; filename=users_export.csv"
-        output.headers["Content-type"] = "text/csv"
-        return output
-        
-    except Exception as e:
         return jsonify({'error': str(e)}), 500

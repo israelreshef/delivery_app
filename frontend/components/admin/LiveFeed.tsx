@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSocket } from '@/lib/socket';
+import { useAuth } from '@/context/AuthContext';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,9 @@ interface FeedItem {
 }
 
 export default function LiveFeed() {
-    const socket = useSocket();
+    const { user } = useAuth();
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const socket = useSocket(token, user?.role || null);
     const [events, setEvents] = useState<FeedItem[]>([]);
 
     const addEvent = (event: FeedItem) => {
@@ -74,8 +77,8 @@ export default function LiveFeed() {
                 {events.map((item) => (
                     <div key={item.id} className="flex items-start gap-4 border-b pb-3 last:border-0 hover:bg-slate-50 p-2 rounded-lg transition-colors">
                         <div className={`mt-1 p-2 rounded-full ${item.type === 'new_order' ? 'bg-blue-100 text-blue-600' :
-                                item.type === 'alert' ? 'bg-red-100 text-red-600' :
-                                    'bg-green-100 text-green-600'
+                            item.type === 'alert' ? 'bg-red-100 text-red-600' :
+                                'bg-green-100 text-green-600'
                             }`}>
                             {item.type === 'new_order' ? <Package className="w-4 h-4" /> :
                                 item.type === 'alert' ? <AlertCircle className="w-4 h-4" /> :

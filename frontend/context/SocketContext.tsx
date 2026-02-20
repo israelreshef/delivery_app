@@ -31,10 +31,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             return;
         }
 
-
-        // ...
-        // ...
-
         const token = localStorage.getItem('token');
         const newSocket = io(API_URL, {
             auth: { token },
@@ -68,6 +64,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         return () => {
             newSocket.disconnect();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, user?.id]);
 
     return (

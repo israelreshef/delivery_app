@@ -1,0 +1,93 @@
+
+CREATE TABLE CachedMission (
+    id INTEGER NOT NULL PRIMARY KEY,
+    orderNumber TEXT NOT NULL,
+    status TEXT NOT NULL,
+    pickupAddress TEXT NOT NULL,
+    deliveryAddress TEXT NOT NULL,
+    estimatedPrice TEXT NOT NULL,
+    packageDescription TEXT NOT NULL DEFAULT '',
+    isAvailable INTEGER NOT NULL DEFAULT 0,
+    isActive INTEGER NOT NULL DEFAULT 0,
+    distanceKm REAL NOT NULL DEFAULT 0.0,
+    durationMins INTEGER,
+    baseFare REAL NOT NULL DEFAULT 0.0,
+    tip REAL NOT NULL DEFAULT 0.0
+);
+
+CREATE TABLE CachedHistory (
+    id INTEGER NOT NULL PRIMARY KEY,
+    orderNumber TEXT NOT NULL,
+    completedAt TEXT,
+    pickupAddress TEXT NOT NULL,
+    deliveryAddress TEXT NOT NULL,
+    earning REAL NOT NULL,
+    distanceKm REAL NOT NULL DEFAULT 0.0,
+    durationMins INTEGER,
+    baseFare REAL NOT NULL DEFAULT 0.0,
+    tip REAL NOT NULL DEFAULT 0.0
+);
+
+CREATE TABLE CachedStats (
+    id INTEGER NOT NULL PRIMARY KEY,
+    balance TEXT NOT NULL,
+    totalDeliveries INTEGER NOT NULL,
+    todayEarnings TEXT NOT NULL,
+    weeklyEarnings TEXT NOT NULL,
+    rating REAL NOT NULL,
+    performanceIndex REAL NOT NULL DEFAULT 0.0,
+    rankBadge TEXT NOT NULL DEFAULT 'Standard'
+);
+
+CREATE TABLE SyncQueue (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    missionId INTEGER NOT NULL,
+    newStatus TEXT NOT NULL,
+    podSignature TEXT,
+    podImage TEXT,
+    timestamp INTEGER NOT NULL
+);
+
+-- Queries for Missions
+insertMission:
+INSERT OR REPLACE INTO CachedMission(id, orderNumber, status, pickupAddress, deliveryAddress, estimatedPrice, packageDescription, isAvailable, isActive, distanceKm, durationMins, baseFare, tip)
+VALUES (:id, :orderNumber, :status, :pickupAddress, :deliveryAddress, :estimatedPrice, :packageDescription, :isAvailable, :isActive, :distanceKm, :durationMins, :baseFare, :tip);
+
+getAvailableMissions:
+SELECT * FROM CachedMission WHERE isAvailable = 1;
+
+getActiveMissions:
+SELECT * FROM CachedMission WHERE isActive = 1;
+
+clearAvailableMissions:
+DELETE FROM CachedMission WHERE isAvailable = 1;
+
+-- Queries for History
+insertHistoryItem:
+INSERT OR REPLACE INTO CachedHistory(id, orderNumber, completedAt, pickupAddress, deliveryAddress, earning, distanceKm, durationMins, baseFare, tip)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getHistory:
+SELECT * FROM CachedHistory ORDER BY completedAt DESC;
+
+clearHistory:
+DELETE FROM CachedHistory;
+
+-- Queries for Stats
+insertStats:
+INSERT OR REPLACE INTO CachedStats(id, balance, totalDeliveries, todayEarnings, weeklyEarnings, rating, performanceIndex, rankBadge)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+getStats:
+SELECT * FROM CachedStats WHERE id = ?;
+
+-- Queries for SyncQueue
+addToSyncQueue:
+INSERT INTO SyncQueue(missionId, newStatus, podSignature, podImage, timestamp)
+VALUES (?, ?, ?, ?, ?);
+
+getSyncQueue:
+SELECT * FROM SyncQueue ORDER BY timestamp ASC;
+
+deleteSyncItem:
+DELETE FROM SyncQueue WHERE id = ?;

@@ -13,6 +13,7 @@ import { Truck, Bike, Car, Plus, Search, FileSignature, CheckCircle, AlertCircle
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
+import { useSocket } from "@/lib/socket";
 
 export default function AdminCouriersPage() {
     const { user } = useAuth();
@@ -37,6 +38,26 @@ export default function AdminCouriersPage() {
         fetchCouriers();
     }, []);
 
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const socket = useSocket(token, user?.role || null);
+
+    useEffect(() => {
+        if (!socket || user?.role !== 'admin') return;
+
+        const handleUpdate = () => {
+            console.log("Real-time couriers update received");
+            fetchCouriers();
+        };
+
+        socket.on('courier_availability_update', handleUpdate);
+        socket.on('courier_location_update', handleUpdate);
+
+        return () => {
+            socket.off('courier_availability_update', handleUpdate);
+            socket.off('courier_location_update', handleUpdate);
+        };
+    }, [socket, user?.role]);
+
     const fetchCouriers = async () => {
         setLoading(true);
         try {
@@ -51,7 +72,6 @@ export default function AdminCouriersPage() {
             }
         } catch (error) {
             console.error("Failed to fetch couriers", error);
-            toast.error("תקלה בתקשורת עם השרת");
         } finally {
             setLoading(false);
         }

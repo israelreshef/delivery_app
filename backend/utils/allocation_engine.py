@@ -124,24 +124,18 @@ class AllocationEngine:
     def _calculate_score(cls, courier: Courier, distance_km: float) -> float:
         """
         Calculate weighted score (0-100).
+        Now leverages the advanced Performance Index from GamificationService.
         """
         # Distance Score (0-100): Closer is better.
-        # 0km = 100, MAX_RADIUS = 0
         dist_score = max(0, 100 - (distance_km / cls.MAX_RADIUS_KM * 100))
         
-        # Rating Score (0-100)
-        # 5.0 = 100, 1.0 = 20
-        rating_score = (courier.rating or 5.0) * 20
-
-        # Activity Score (0-100)
-        # Cap at 100 deliveries for max score to give new couriers a chance? 
-        # Let's say 500 deliveries is max "experience"
-        activity_score = min(100, (courier.total_deliveries or 0) / 5)
+        # Performance Score (0-100)
+        # Using the advanced index which includes reliability, service, and integrity.
+        perf_score = courier.performance_index or 50.0 # Default to 50 if not set
 
         final_score = (
             dist_score * cls.WEIGHT_DISTANCE +
-            rating_score * cls.WEIGHT_RATING +
-            activity_score * cls.WEIGHT_ACTIVITY
+            perf_score * (1.0 - cls.WEIGHT_DISTANCE)
         )
 
         return final_score

@@ -113,7 +113,6 @@ export default function AdminUsersPage() {
                                         <TableHead className="text-right">אימייל</TableHead>
                                         <TableHead className="text-right">טלפון</TableHead>
                                         <TableHead className="text-right">סוג</TableHead>
-                                        <TableHead className="text-right">2FA</TableHead>
                                         <TableHead className="text-right">סטטוס</TableHead>
                                         <TableHead className="text-right">פעולות</TableHead>
                                     </TableRow>
@@ -127,11 +126,6 @@ export default function AdminUsersPage() {
                                             <TableCell>
                                                 <Badge variant={user.user_type === 'admin' ? 'destructive' : user.user_type === 'courier' ? 'secondary' : 'outline'}>
                                                     {user.user_type === 'customer' ? 'לקוח' : user.user_type === 'courier' ? 'שליח' : 'מנהל'}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={user.is_two_factor_enabled ? 'default' : 'outline'} className={user.is_two_factor_enabled ? 'bg-purple-100 text-purple-800 border-purple-200' : 'text-slate-500'}>
-                                                    {user.is_two_factor_enabled ? 'פעיל' : 'לא'}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>

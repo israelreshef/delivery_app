@@ -73,8 +73,36 @@ export default function CRMPage() {
         }
     };
 
-    // ... (rest of handlers)
+    const handleConvert = async (leadId: number) => {
+        try {
+            await api.post(`/crm/leads/${leadId}/convert`);
+            setIsModalOpen(false);
+            fetchLeads();
+        } catch (error) {
+            console.error("Failed to convert lead", error);
+        }
+    };
 
+    const handleCreateLead = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newLead = {
+            company_name: formData.get('company_name'),
+            contact_name: formData.get('contact_name'),
+            phone: formData.get('phone'),
+            email: formData.get('email'),
+            source: formData.get('source'),
+            estimated_monthly_value: Number(formData.get('estimated_monthly_value')),
+            notes: formData.get('notes'),
+        };
+        try {
+            await api.post('/crm/leads', newLead);
+            setIsNewLeadModalOpen(false);
+            fetchLeads();
+        } catch (error) {
+            console.error("Failed to create lead", error);
+        }
+    };
     if (isLoading) {
         return <div className="h-screen flex items-center justify-center"><LoadingSpinner size="lg" text="טוען לידים..." /></div>;
     }

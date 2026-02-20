@@ -1,6 +1,6 @@
 "use client";
 
-import { Sidebar } from "@/components/dashboard/sidebar";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { Header } from "@/components/dashboard/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -36,6 +36,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
 
     useEffect(() => {
         fetchOrder();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchOrder = async () => {
@@ -61,11 +62,16 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
         }
     };
 
-    // Fetch couriers when opening the assignment selector (or on load if you prefer)
     const fetchCouriers = async () => {
         try {
             const res = await api.get('/couriers');
-            setCouriers(res.data.filter((c: any) => c.is_available));
+            let courierList = [];
+            if (res.data && Array.isArray(res.data.data)) {
+                courierList = res.data.data;
+            } else if (Array.isArray(res.data)) {
+                courierList = res.data;
+            }
+            setCouriers(courierList.filter((c: any) => c.is_available));
         } catch (err) {
             console.error("Failed to load couriers", err);
         }
@@ -103,7 +109,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
 
     return (
         <div className="flex h-screen bg-background text-right" dir="rtl">
-            <Sidebar />
+            <AdminSidebar />
             <div className="flex flex-1 flex-col overflow-hidden">
                 <Header />
                 <main className="flex-1 overflow-y-auto p-6 bg-slate-50/50">

@@ -35,6 +35,7 @@ class User(db.Model):
     user_type = db.Column(db.Enum('admin', 'customer', 'courier', name='user_types'), nullable=False)
     admin_role = db.Column(admin_role_enum, nullable=True) # Only for user_type='admin'
     is_active = db.Column(db.Boolean, default=True)
+    fcm_token = db.Column(db.String(255), nullable=True) # For push notifications
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -144,6 +145,14 @@ class Courier(db.Model):
     rejection_reason = db.Column(db.Text, nullable=True)
     
     rating = db.Column(db.Float, default=5.0)
+    
+    # Performance KPIs (Based on ERP Characterization)
+    reliability_score = db.Column(db.Float, default=1.0) # 0.0 to 1.0 (Punctuality)
+    integrity_score = db.Column(db.Float, default=1.0)   # 0.0 to 1.0 (Package Safety)
+    service_score = db.Column(db.Float, default=1.0)     # 0.0 to 1.0 (Customer Satisfaction)
+    efficiency_score = db.Column(db.Float, default=1.0)   # 0.0 to 1.0 (Speed/Routes)
+    performance_index = db.Column(db.Float, default=100.0) # 0 to 100 (Weighted Score)
+    
     total_deliveries = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -274,6 +283,8 @@ class Delivery(db.Model):
     actual_pickup_time = db.Column(db.DateTime, nullable=True)
     estimated_delivery_time = db.Column(db.DateTime, nullable=True)
     actual_delivery_time = db.Column(db.DateTime, nullable=True)
+    delivered_at = db.Column(db.DateTime, nullable=True) # Alias for convenience
+    delivery_fee = db.Column(db.Float, default=0.0)
     
     distance_km = db.Column(db.Float, nullable=True)
     notes = db.Column(db.Text, nullable=True)
@@ -295,6 +306,10 @@ class Delivery(db.Model):
     pod_location_lat = db.Column(db.Float, nullable=True) # GPS at moment of signature
     pod_location_lng = db.Column(db.Float, nullable=True)
     
+    # OTP Verification
+    otp_code = db.Column(db.String(6), nullable=True)
+    otp_verified = db.Column(db.Boolean, default=False)
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -309,8 +324,6 @@ class Delivery(db.Model):
         db.Index('idx_delivery_status', 'status'),
         db.Index('idx_delivery_created', 'created_at'),
         db.Index('idx_delivery_courier_status', 'courier_id', 'status'),
-        db.Index('idx_delivery_customer', 'customer_id'),
-        db.Index('idx_delivery_points', 'pickup_point_id', 'delivery_point_id'),
         {'extend_existing': True}
     )
 
@@ -473,11 +486,6 @@ class Notification(db.Model):
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    __table_args__ = (
-        db.Index('idx_notif_user_read', 'user_id', 'is_read'),
-        {'extend_existing': True}
-    )
     
     def __repr__(self):
         return f'<Notification {self.title}>'
@@ -680,13 +688,6 @@ class SupportTicket(db.Model):
     messages = db.relationship('TicketMessage', backref='ticket', lazy='dynamic', cascade='all, delete-orphan')
     user = db.relationship('User', foreign_keys=[user_id], backref='tickets')
     assignee = db.relationship('User', foreign_keys=[assigned_to], backref='assigned_tickets')
-
-    __table_args__ = (
-        db.Index('idx_ticket_status', 'status'),
-        db.Index('idx_ticket_user', 'user_id'),
-        db.Index('idx_ticket_assigned', 'assigned_to'),
-        {'extend_existing': True}
-    )
 
     def __repr__(self):
         return f'<SupportTicket {self.id} - {self.subject}>'

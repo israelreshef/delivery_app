@@ -16,7 +16,7 @@ def create_or_update_user(username, email, password, role, phone):
             print(f"Updating existing user: {username}")
 
         # FORCE update password hash
-        user.password_hash = generate_password_hash(password)
+        user.set_password(password)
         user.user_type = role 
         db.session.flush()
 

@@ -7,10 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, Loader2 } from "lucide-react";
+import { Lock, Loader2, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -57,13 +58,31 @@ export default function LoginPage() {
         router.push('/');
     };
 
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        setLoading(true);
+        try {
+            const res = await api.post('/auth/google', {
+                token: credentialResponse.credential
+            });
+            completeLogin(res.data);
+        } catch (err: any) {
+            console.error("Google Login Error:", err);
+            toast.error(err.response?.data?.error || "התחברות עם גוגל נכשלה");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleError = () => {
+        toast.error("שגיאה בהתחברות עם גוגל");
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
             const res = await api.post('/auth/login', formData);
-            console.log("DEBUG LOGIN RESPONSE:", res.data);
 
             if (res.data.requires_2fa) {
                 setShowOTP(true);
@@ -120,6 +139,26 @@ export default function LoginPage() {
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
                                 התחבר
                             </Button>
+
+                            <div className="relative my-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <span className="w-full border-t" />
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-white px-2 text-muted-foreground">או המשך עם</span>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-center w-full">
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={handleGoogleError}
+                                    useOneTap
+                                    theme="outline"
+                                    size="large"
+                                    width="100%"
+                                />
+                            </div>
 
                             <div className="text-center pt-4 space-y-2">
                                 <div className="text-sm text-muted-foreground">

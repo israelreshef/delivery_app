@@ -1,0 +1,107 @@
+{"timestamp": "2026-02-03T19:22:34.336373", "action": "TEST_ACTION", "user_id": null, "ip_address": "SYSTEM", "status": "SUCCESS", "resource": null, "details": "Testing JSON Log"}
+{"timestamp": "2026-02-04T11:58:06.605904", "action": "REGISTER_NEW_USER", "user_id": 1, "ip_address": "172.18.0.1", "status": "SUCCESS", "resource": "User:1", "details": "New user registration: ABA@tzir.com (courier)"}
+{"timestamp": "2026-02-04T11:58:24.154079", "action": "LOGIN", "user_id": 1, "ip_address": "172.18.0.1", "status": "SUCCESS", "resource": null, "details": "User ABA@tzir.com logged in successfully"}
+{"timestamp": "2026-02-04T15:32:05.435632", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T16:12:57.017037", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T17:06:47.525134", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T17:08:36.269366", "action": "CREATE_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:1", "details": "Order ORD-20260204-3A87C1 created with price 52.65"}
+{"timestamp": "2026-02-04T17:18:38.728462", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T17:28:49.991038", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T17:33:27.882698", "action": "CREATE_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:2", "details": "Order ORD-20260204-3F0734 created with price 52.65"}
+{"timestamp": "2026-02-04T17:45:21.129146", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T17:54:09.539934", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T17:55:27.778033", "action": "CREATE_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:3", "details": "Order ORD-20260204-5ADD98 created with price 52.65"}
+{"timestamp": "2026-02-04T18:05:58.057513", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:06:54.342485", "action": "CREATE_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:4", "details": "Order ORD-20260204-8E5703 created with price 52.65"}
+{"timestamp": "2026-02-04T18:13:14.199872", "action": "LOGIN", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_client logged in successfully"}
+{"timestamp": "2026-02-04T18:13:28.744559", "action": "CONSENT_UPDATE", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T18:13:50.309899", "action": "LOGIN", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_client logged in successfully"}
+{"timestamp": "2026-02-04T18:14:44.826837", "action": "CONSENT_UPDATE", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T18:16:18.529955", "action": "LOGIN", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_client logged in successfully"}
+{"timestamp": "2026-02-04T18:16:26.875433", "action": "CONSENT_UPDATE", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T18:16:33.420063", "action": "CONSENT_UPDATE", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T18:16:58.082472", "action": "LOGIN", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_client logged in successfully"}
+{"timestamp": "2026-02-04T18:17:08.933678", "action": "CONSENT_UPDATE", "user_id": 3, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T18:17:32.438610", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:18:12.230527", "action": "CREATE_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:5", "details": "Order ORD-20260204-85961A created with price 52.65"}
+{"timestamp": "2026-02-04T18:32:06.310402", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:32:21.304142", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:5", "details": "User accessed order ORD-20260204-85961A"}
+{"timestamp": "2026-02-04T18:35:16.317135", "action": "CREATE_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:6", "details": "Order ORD-20260204-2BFB59 created with price 52.65"}
+{"timestamp": "2026-02-04T18:35:24.090477", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:6", "details": "User accessed order ORD-20260204-2BFB59"}
+{"timestamp": "2026-02-04T18:38:05.175548", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:39:17.410111", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:45:00.849161", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:45:09.671439", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:6", "details": "User accessed order ORD-20260204-2BFB59"}
+{"timestamp": "2026-02-04T18:47:47.061075", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T18:59:27.252790", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T19:41:45.425703", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T19:42:00.140527", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:6", "details": "User accessed order ORD-20260204-2BFB59"}
+{"timestamp": "2026-02-04T19:42:02.033650", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:6", "details": "User accessed order ORD-20260204-2BFB59"}
+{"timestamp": "2026-02-04T19:43:31.423466", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:5", "details": "User accessed order ORD-20260204-85961A"}
+{"timestamp": "2026-02-04T19:45:19.524309", "action": "LOGIN", "user_id": 6, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User bolbol@tzir.com logged in successfully"}
+{"timestamp": "2026-02-04T19:45:26.508164", "action": "CONSENT_UPDATE", "user_id": 6, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T19:45:34.102647", "action": "CONSENT_UPDATE", "user_id": 6, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T19:45:37.160221", "action": "CONSENT_UPDATE", "user_id": 6, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T19:46:56.156282", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T19:47:15.858111", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:5", "details": "User accessed order ORD-20260204-85961A"}
+{"timestamp": "2026-02-04T20:05:49.481883", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-04T20:12:39.219683", "action": "LOGIN_FAILED", "user_id": 7, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-02-04T20:12:59.111646", "action": "LOGIN_FAILED", "user_id": 7, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-02-04T20:14:03.290531", "action": "LOGIN_FAILED", "user_id": 7, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-02-04T20:14:32.375686", "action": "LOGIN", "user_id": 8, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User abba@tzir.com logged in successfully"}
+{"timestamp": "2026-02-04T20:15:09.153838", "action": "LOGIN", "user_id": 8, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User abba@tzir.com logged in successfully"}
+{"timestamp": "2026-02-04T20:15:14.702477", "action": "CONSENT_UPDATE", "user_id": 8, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T20:15:25.289064", "action": "CONSENT_UPDATE", "user_id": 8, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-04T20:17:45.007500", "action": "CONSENT_UPDATE", "user_id": 8, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-16T19:19:25.982016", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-16T19:20:07.912392", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-16T19:34:52.139573", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-16T20:06:07.072449", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-16T20:18:01.096031", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-16T20:31:44.127204", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-16T22:41:47.567698", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T11:23:35.854612", "action": "LOGIN_FAILED", "user_id": 3, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-02-17T11:27:50.039764", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T17:17:42.212618", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T17:55:35.477816", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T17:55:35.639329", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T18:23:32.640046", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T18:25:17.916509", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T18:32:30.308162", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T21:04:23.749892", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T23:26:18.187428", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T23:33:47.029971", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T23:47:44.964697", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-17T23:55:20.776357", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-18T14:00:27.088966", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-18T14:01:41.110218", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-18T16:36:00.499091", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-18T18:42:41.541928", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-19T11:24:24.861354", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-19T11:27:07.516853", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-19T11:42:58.093568", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-19T11:43:16.409505", "action": "LOGIN_FAILED", "user_id": 4, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-02-19T11:43:16.779492", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-19T11:44:01.554039", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-19T11:44:01.849535", "action": "LOGIN_FAILED", "user_id": 4, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-02-19T11:44:39.465675", "action": "LOGIN_FAILED", "user_id": 4, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-02-19T11:47:35.260361", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-02-19T11:47:35.497058", "action": "LOGIN_FAILED", "user_id": 4, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 4/10"}
+{"timestamp": "2026-02-19T11:48:28.496017", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-19T11:48:28.732602", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-19T21:25:05.749239", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-19T22:00:04.762611", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T06:07:56.122264", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T06:28:46.148387", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-20T18:54:07.813599", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T18:54:37.860822", "action": "CONSENT_UPDATE", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User accepted Terms/Privacy Policy"}
+{"timestamp": "2026-02-20T19:38:24.810151", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-20T19:38:31.525014", "action": "VIEW_ORDER", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "Delivery:1", "details": "User accessed order ORD-20260220-450B19"}
+{"timestamp": "2026-02-20T20:37:25.642280", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-20T20:49:36.479946", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T20:57:07.297420", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T20:58:02.862009", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-02-20T21:00:15.040948", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T21:00:39.458488", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T21:01:03.941571", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-02-20T21:01:22.565203", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}

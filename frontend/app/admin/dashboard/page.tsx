@@ -14,6 +14,7 @@ import LiveFeed from "@/components/admin/LiveFeed";
 import { Badge } from "@/components/ui/badge";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { DashboardStats, RevenueData } from "@/types/api";
+import { useSocket } from "@/lib/socket";
 
 // Dynamically import Map to avoid SSR issues
 const DynamicLiveMap = dynamic(() => import('@/components/admin/LiveMap'), {
@@ -45,38 +46,56 @@ export default function AdminDashboard() {
     });
     const [revenueData, setRevenueData] = useState<RevenueData[]>([]); // Initialize empty
 
-    useEffect(() => {
-        // Prevent fetching if not admin (stops ghost 401s if component leaks)
-        if (user?.role !== 'admin') return;
+    // Fetch stats initially without getting blocked by missing sockets
+    const fetchStats = async () => {
+        try {
+            const statsRes = await api.get('/stats/dashboard');
+            setStats(statsRes.data);
 
-        const fetchStats = async () => {
-            try {
-                // Fetch Dashboard Stats
-                try {
-                    const statsRes = await api.get('/stats/dashboard');
-                    setStats(statsRes.data);
-                } catch (err: any) {
-                    if (err.response?.status === 401) {
-                        console.log("Unauthorized stats fetch - stopping polling");
-                        return;
-                    }
-                    throw err;
-                }
-
-                // Fetch Revenue Data
-                const revRes = await api.get('/stats/revenue');
-                setRevenueData(revRes.data);
-            } catch (error) {
-                console.error("Failed to fetch admin stats", error);
+            // Fetch Revenue Data
+            const revRes = await api.get('/stats/revenue');
+            setRevenueData(revRes.data);
+        } catch (error: any) {
+            if (error.response?.status === 401) {
+                console.log("Unauthorized stats fetch");
+                return;
             }
-        };
+            console.error("Failed to fetch admin stats", error);
+        }
+    };
 
+    useEffect(() => {
+        if (user?.role !== 'admin') return;
         fetchStats();
 
-        // Refresh every 30 seconds
-        const interval = setInterval(fetchStats, 30000);
+        // Fallback polling just in case WebSockets fail
+        const interval = setInterval(fetchStats, 60000); // 1-minute fallback
         return () => clearInterval(interval);
-    }, [user?.role]); // Re-run if role changes
+    }, [user?.role]);
+
+    // WebSocket realtime integration
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const socket = useSocket(token, user?.role || null);
+
+    useEffect(() => {
+        if (!socket || user?.role !== 'admin') return;
+
+        socket.on('courier_availability_update', (data: any) => {
+            console.log("Real-time courier availability update:", data);
+            // Re-fetch entire stats cleanly to ensure consistency
+            fetchStats();
+        });
+
+        // Other relevant events that should trigger a stats refresh
+        socket.on('order_update', () => fetchStats());
+        socket.on('new_order', () => fetchStats());
+
+        return () => {
+            socket.off('courier_availability_update');
+            socket.off('order_update');
+            socket.off('new_order');
+        };
+    }, [socket, user?.role]);
 
     if (isLoading) return <div className="flex h-screen items-center justify-center"><LoadingSpinner size="lg" text="טוען נתוני דאשבורד..." /></div>;
     // if (!isAuthenticated) return null; // Handled by middleware or effect

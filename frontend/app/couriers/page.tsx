@@ -1,6 +1,6 @@
 "use client";
 
-import { Sidebar } from "@/components/dashboard/sidebar";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { Header } from "@/components/dashboard/header";
 import {
     Table,
@@ -60,7 +60,7 @@ export default function CouriersPage() {
 
     return (
         <div className="flex h-screen bg-background text-right" dir="rtl">
-            <Sidebar />
+            <AdminSidebar />
             <div className="flex flex-1 flex-col overflow-hidden">
                 <Header />
                 <main className="flex-1 overflow-y-auto p-6">

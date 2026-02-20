@@ -1,0 +1,221 @@
+﻿To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :androidApp:checkKotlinGradlePluginConfigurationErrors
+> Task :androidApp:preBuild UP-TO-DATE
+> Task :androidApp:preDebugBuild UP-TO-DATE
+> Task :shared:preBuild UP-TO-DATE
+> Task :shared:preDebugBuild UP-TO-DATE
+> Task :shared:writeDebugAarMetadata UP-TO-DATE
+> Task :androidApp:checkDebugAarMetadata UP-TO-DATE
+> Task :androidApp:generateDebugResValues UP-TO-DATE
+> Task :shared:generateDebugResValues UP-TO-DATE
+> Task :shared:generateDebugResources UP-TO-DATE
+> Task :shared:packageDebugResources UP-TO-DATE
+> Task :androidApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :androidApp:generateDebugResources UP-TO-DATE
+> Task :androidApp:mergeDebugResources UP-TO-DATE
+> Task :androidApp:packageDebugResources UP-TO-DATE
+> Task :androidApp:parseDebugLocalResources UP-TO-DATE
+> Task :androidApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :androidApp:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:processDebugManifest UP-TO-DATE
+> Task :androidApp:processDebugMainManifest UP-TO-DATE
+> Task :androidApp:processDebugManifest UP-TO-DATE
+> Task :androidApp:processDebugManifestForPackage UP-TO-DATE
+> Task :shared:compileDebugLibraryResources UP-TO-DATE
+> Task :shared:parseDebugLocalResources UP-TO-DATE
+> Task :shared:generateDebugRFile UP-TO-DATE
+> Task :androidApp:processDebugResources UP-TO-DATE
+> Task :shared:checkKotlinGradlePluginConfigurationErrors
+> Task :shared:generateCommonMainTzirDatabaseInterface UP-TO-DATE
+> Task :shared:compileDebugKotlinAndroid UP-TO-DATE
+> Task :shared:javaPreCompileDebug UP-TO-DATE
+> Task :shared:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared:bundleLibCompileToJarDebug UP-TO-DATE
+
+> Task :androidApp:compileDebugKotlin
+./gradlew : e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java
+/com/tzir/delivery/android/ui/auth/LoginScreen.kt:46:5 Overload resolution ambiguity: 
+At line:1 char:1
++ ./gradlew :androidApp:compileDebugKotlin --no-daemon > build_errors.t ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...ion ambiguity: :String) [], Remote 
+   Exception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file AuthComponents.kt
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/auth/LoginScreen.kt:47:9 @Composable invocations can only happen from the 
+context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/auth/RegisterScreen.kt:65:5 Overload resolution ambiguity: 
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file AuthComponents.kt
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/auth/RegisterScreen.kt:66:9 @Composable invocations can only happen from the 
+context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/auth/SplashScreen.kt:37:5 Overload resolution ambiguity: 
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file AuthComponents.kt
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/auth/SplashScreen.kt:38:9 @Composable invocations can only happen from the 
+context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/components/AuthComponents.kt:124:1 Conflicting overloads: public fun 
+PremiumBackground(content: () -> Unit): Unit defined in com.tzir.delivery.android.ui.components 
+in file AuthComponents.kt, public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/components/PremiumComponents.kt:121:1 Conflicting overloads: public fun 
+PremiumBackground(content: () -> Unit): Unit defined in com.tzir.delivery.android.ui.components 
+in file AuthComponents.kt, public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionDetailsScreen.kt:62:5 Overload resolution ambiguity: 
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file AuthComponents.kt
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionDetailsScreen.kt:64:13 @Composable invocations can only happen 
+from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionDetailsScreen.kt:68:13 @Composable invocations can only happen 
+from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionDetailsScreen.kt:72:13 @Composable invocations can only happen 
+from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionDetailsScreen.kt:76:37 @Composable invocations can only happen 
+from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:48:5 Overload resolution ambiguity: 
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file AuthComponents.kt
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:49:9 @Composable invocations can only happen 
+from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:56:43 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:95:41 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:130:50 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:150:55 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:152:55 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:173:39 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:176:42 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:176:108 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:178:46 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:178:94 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:181:42 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:182:42 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:188:41 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionHistoryScreen.kt:195:37 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:42:19 Unresolved reference: LocalContext
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:43:34 Unresolved reference: CalendarSyncManager
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:53:23 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:53:43 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:53:60 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:73:39 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:135:78 Unresolved reference: addMissionToCalendar
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:148:81 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:148:133 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:199:50 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:229:48 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:231:48 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:236:43 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:250:21 Unresolved reference: CircleShape
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:268:28 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:268:47 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:268:67 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:276:40 Cannot infer a type for this parameter. Please 
+specify it explicitly.
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:276:47 Cannot infer a type for this parameter. Please 
+specify it explicitly.
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:277:17 @Composable invocations can only happen from 
+the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/MissionsScreen.kt:281:49 @Composable invocations can only happen from 
+the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/ProfileScreen.kt:40:5 Overload resolution ambiguity: 
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file AuthComponents.kt
+public fun PremiumBackground(content: () -> Unit): Unit defined in 
+com.tzir.delivery.android.ui.components in file PremiumComponents.kt
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/ProfileScreen.kt:41:9 @Composable invocations can only happen from the 
+context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/de
+livery/android/ui/courier/ProfileScreen.kt:45:33 @Composable invocations can only happen from the 
+context of a @Composable function
+
+> Task :androidApp:compileDebugKotlin FAILED
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':androidApp:compileDebugKotlin'.
+> A failure occurred while executing 
+org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 17s
+27 actionable tasks: 3 executed, 24 up-to-date

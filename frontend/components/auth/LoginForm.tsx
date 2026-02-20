@@ -22,10 +22,6 @@ export function LoginForm({ role }: LoginFormProps) {
     const { login } = useAuth();
     const router = useRouter();
 
-    const [showOTP, setShowOTP] = useState(false);
-    const [otpCode, setOtpCode] = useState("");
-    const [mfaToken, setMfaToken] = useState("");
-
     const roleData = {
         customer: {
             title: "אזור אישי לקוחות",
@@ -55,36 +51,6 @@ export function LoginForm({ role }: LoginFormProps) {
 
     const Icon = roleData.icon;
 
-    const handleVerifyOTP = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        try {
-            const res = await api.post('/auth/2fa/login-verify', {
-                mfa_token: mfaToken,
-                code: otpCode
-            });
-
-            const { token, user } = res.data;
-            const userData: any = {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                role: user.user_type,
-                name: user.full_name || user.username
-            };
-
-            login(token, userData);
-            toast.success(`אימות דו-שלבי עבר בהצלחה!`);
-
-        } catch (error: any) {
-            console.error("OTP verification failed:", error);
-            const msg = error.response?.data?.error || "קוד אימות לא תקין";
-            toast.error(msg);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -95,13 +61,6 @@ export function LoginForm({ role }: LoginFormProps) {
                 password,
                 role
             });
-
-            if (res.data.requires_2fa) {
-                setMfaToken(res.data.mfa_token);
-                setShowOTP(true);
-                toast.info(res.data.message || "נא להזין קוד אימות");
-                return;
-            }
 
             const { token, user } = res.data;
 
@@ -138,112 +97,66 @@ export function LoginForm({ role }: LoginFormProps) {
                     <div className="bg-white/20 p-4 rounded-2xl mb-4 backdrop-blur-sm shadow-inner">
                         <Icon className="w-8 h-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">
-                        {showOTP ? "אימות דו-שלבי" : roleData.title}
-                    </h1>
-                    <p className="text-white/80 font-medium">
-                        {showOTP ? "הזן את הקוד מתוך אפליקציית האימות" : roleData.description}
-                    </p>
+                    <h1 className="text-3xl font-bold tracking-tight mb-2">{roleData.title}</h1>
+                    <p className="text-white/80 font-medium">{roleData.description}</p>
                 </div>
             </div>
 
             <div className="p-8 space-y-6">
-                {!showOTP ? (
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-slate-600 font-medium">אימייל / טלפון נייד</Label>
-                            <div className="relative group">
-                                <Mail className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-                                <Input
-                                    id="email"
-                                    type="text"
-                                    placeholder="name@example.com"
-                                    className="pr-10 h-12 bg-slate-50 border-slate-200 focus:bg-white transition-all"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <Label htmlFor="password" className="text-slate-600 font-medium">סיסמה</Label>
-                                <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">שכחתי סיסמה</Link>
-                            </div>
-                            <div className="relative group">
-                                <Lock className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    className="pr-10 h-12 bg-slate-50 border-slate-200 focus:bg-white transition-all"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <Button
-                            type="submit"
-                            className={`w-full h-12 text-lg font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all bg-gradient-to-r ${roleData.gradient}`}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    מתחבר...
-                                </>
-                            ) : (
-                                <span className="flex items-center gap-2">
-                                    כניסה למערכת
-                                    <ArrowLeft className="w-5 h-5" />
-                                </span>
-                            )}
-                        </Button>
-                    </form>
-                ) : (
-                    <form onSubmit={handleVerifyOTP} className="space-y-5 animate-in slide-in-from-right duration-300">
-                        <div className="space-y-2">
-                            <Label htmlFor="otp" className="text-slate-600 font-medium text-center block">קוד אימות (6 ספרות)</Label>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-slate-600 font-medium">אימייל / טלפון נייד</Label>
+                        <div className="relative group">
+                            <Mail className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                             <Input
-                                id="otp"
-                                placeholder="000000"
-                                maxLength={6}
-                                className="text-center text-3xl tracking-[0.5em] h-14 font-mono font-bold border-slate-200 focus:border-blue-500 transition-all"
+                                id="email"
+                                type="text"
+                                placeholder="name@example.com"
+                                className="pr-10 h-12 bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
-                                value={otpCode}
-                                onChange={(e) => setOtpCode(e.target.value)}
-                                autoFocus
                             />
                         </div>
+                    </div>
 
-                        <Button
-                            type="submit"
-                            className={`w-full h-12 text-lg font-bold shadow-lg shadow-blue-500/20 bg-gradient-to-r ${roleData.gradient}`}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    מאמת...
-                                </>
-                            ) : (
-                                "אמת והתחבר"
-                            )}
-                        </Button>
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <Label htmlFor="password" className="text-slate-600 font-medium">סיסמה</Label>
+                            <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">שכחתי סיסמה</Link>
+                        </div>
+                        <div className="relative group">
+                            <Lock className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                            <Input
+                                id="password"
+                                type="password"
+                                placeholder="••••••••"
+                                className="pr-10 h-12 bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            className="w-full text-slate-500"
-                            onClick={() => setShowOTP(false)}
-                        >
-                            חזרה להתחברות
-                        </Button>
-                    </form>
-                )}
+                    <Button
+                        type="submit"
+                        className={`w-full h-12 text-lg font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all bg-gradient-to-r ${roleData.gradient}`}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                מתחבר...
+                            </>
+                        ) : (
+                            <span className="flex items-center gap-2">
+                                כניסה למערכת
+                                <ArrowLeft className="w-5 h-5" />
+                            </span>
+                        )}
+                    </Button>
+                </form>
 
                 {role === 'customer' && (
                     <div className="text-center pt-2">

@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
 import uuid
+import random
+import string
 
 # Import from parent directory
 import sys
@@ -10,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from models import db, Delivery, Address, PickupPoint, DeliveryPoint, Customer, User, Pricing, Invoice
 from utils.decorators import token_required, role_required
 import logging
+from services.notifications import notify_new_mission
 
 orders_bp = Blueprint('orders', __name__)
 
@@ -231,7 +234,9 @@ def create_order(current_user=None):
                 service_data.get('insuranceRequired') is True
             ),
             
-            estimated_pickup_time=datetime.now() + timedelta(hours=1)
+            estimated_pickup_time=datetime.now() + timedelta(hours=1),
+            otp_code=''.join(random.choices(string.digits, k=6)),
+            otp_verified=False
         )
         db.session.add(delivery)
         db.session.flush()
@@ -266,6 +271,12 @@ def create_order(current_user=None):
                 'status': 'pending',
                 'customer': customer_name
             }, room='admin')
+        
+        # Notify Available Couriers via Push
+        try:
+            notify_new_mission(delivery)
+        except Exception as e:
+            logging.error(f"Failed to trigger PUSH: {e}")
 
         # 9. Automatic Allocation (Algorithm)
         from utils.allocation_engine import AllocationEngine

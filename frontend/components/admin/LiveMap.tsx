@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import { useSocket } from '@/lib/socket';
+import { useAuth } from '@/context/AuthContext';
 import L from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 
@@ -26,7 +27,9 @@ interface CourierLocation {
 }
 
 export default function LiveMap() {
-    const socket = useSocket();
+    const { user } = useAuth();
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const socket = useSocket(token, user?.role || null);
     // Default to Tel Aviv
     const [couriers, setCouriers] = useState<Record<number, CourierLocation>>({});
 
@@ -64,8 +67,8 @@ export default function LiveMap() {
             style={{ height: "100%", width: "100%", borderRadius: "0.5rem" }}
         >
             <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                attribution="&copy; Google Maps"
             />
 
             <MarkerClusterGroup chunkedLoading>

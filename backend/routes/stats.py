@@ -20,7 +20,8 @@ def get_dashboard_stats(current_user):
     active_orders = Delivery.query.filter(Delivery.status.in_(['pending', 'assigned', 'picked_up', 'in_transit'])).count()
     
     # 3. Active Couriers
-    active_couriers = User.query.filter_by(user_type='courier').count() 
+    from models import Courier
+    active_couriers = Courier.query.filter_by(is_available=True).count() 
     
     # 4. Total Revenue Today
     revenue_today = db.session.query(func.sum(Invoice.total_amount)).filter(func.date(Invoice.issue_date) == today, Invoice.status == 'paid').scalar() or 0

@@ -14,7 +14,7 @@ def create_demo_users_logic():
     from werkzeug.security import generate_password_hash
     from models import User, Courier, Customer
     
-    print("🔐 Creating Secure Demo Accounts...")
+    print("Creating Secure Demo Accounts...")
     demos = [
         ('super_admin', 'admin@tzir.com', 'TzirSuper2026!$!', 'admin', 'super_admin', '0501111111'),
         ('finance_admin', 'finance@tzir.com', 'TzirFinance$$99', 'admin', 'finance_admin', '0504444444'),
@@ -50,7 +50,7 @@ def create_demo_users_logic():
             print(f"Error handling {username}: {e}")
     
     db.session.commit()
-    print("✅ Service Accounts Secured.")
+    print("Service Accounts Secured.")
 
 def create_app():
     app = Flask(__name__)
@@ -108,6 +108,8 @@ def create_app():
     from routes.customers import customers_bp
     from routes.external_api import external_api_bp
     from routes.addresses import addresses_bp
+    from routes.ratings import ratings_bp
+    from routes.earnings_reports import earnings_reports_bp
     
     app.register_blueprint(orders_bp, url_prefix='/api/orders')
     app.register_blueprint(couriers_bp, url_prefix='/api/couriers')
@@ -118,6 +120,8 @@ def create_app():
     app.register_blueprint(customers_bp, url_prefix='/api/customers')
     app.register_blueprint(external_api_bp, url_prefix='/api/external')
     app.register_blueprint(addresses_bp, url_prefix='/api/addresses')
+    app.register_blueprint(ratings_bp, url_prefix='/api/ratings')
+    app.register_blueprint(earnings_reports_bp, url_prefix='/api/couriers/earnings')
     from routes.crm import crm_bp
     app.register_blueprint(crm_bp, url_prefix='/api/crm')
     from routes.reports import reports_bp
@@ -138,7 +142,7 @@ def create_app():
     # Create database tables if they don't exist
     with app.app_context():
         db.create_all()
-        print("✅ Database tables initialized!")
+        print("Database tables initialized!")
     
     # HTML Templates routes
     @app.route('/')
@@ -179,7 +183,7 @@ def create_app():
                     identity = None
                     # print(f"DEBUG: JWT Verification Warning: {e}")
 
-                if identity:
+                if identity and 'postgresql' in str(db.engine.url):
                     # Fetch user to check role (adds 1 query overhead but ensures security)
                     from models import User 
                     user = User.query.get(int(identity))
@@ -190,13 +194,13 @@ def create_app():
                         db.session.execute(text("SET LOCAL app.is_admin = 'false'"))
 
                     db.session.execute(text(f"SET LOCAL app.current_user_id = '{identity}'"))
-                else:
+                elif 'postgresql' in str(db.engine.url):
                     # Anonymous
                     db.session.execute(text("SET LOCAL app.current_user_id = '-1'"))
                     db.session.execute(text("SET LOCAL app.is_admin = 'false'"))
                     
             except Exception as e:
-                # Fallback implementation if anything goes wrong with DB context
+                db.session.rollback()
                 # print(f"DEBUG: DB Context Error: {e}")
                 pass
     
@@ -204,7 +208,7 @@ def create_app():
     with app.app_context():
         try:
             db.create_all()
-            print("✅ Database tables checked/created.")
+            print("Database tables checked/created.")
             
             # Check if seeding is needed
             from sqlalchemy import inspect
@@ -212,7 +216,7 @@ def create_app():
             if inspector.has_table("users"):
                 from models import User
                 if User.query.first() is None:
-                     print("🌱 Database empty. Auto-seeding demo users...")
+                     print("Database empty. Auto-seeding demo users...")
                      try:
                          # Run the seeding logic directly
                          create_demo_users_logic()
@@ -262,7 +266,7 @@ def create_app():
         db.session.add(new_key)
         db.session.commit()
         
-        print(f"✅ API Key Created for '{name}'")
+        print(f"API Key Created for '{name}'")
         print(f"🔑 Key: {full_key}")
         print("⚠️  SAVE THIS KEY! It cannot be retrieved later.")
 
@@ -272,7 +276,7 @@ def create_app():
         from models import User, Courier, Customer
         import random
         
-        print("🚀 Starting High-Performance Seeding (10k Couriers)...")
+        print("Starting High-Performance Seeding (10k Couriers)...")
         if User.query.count() > 5000:
             print("⚠️ Database already has significant data. Aborting.")
             return
@@ -300,7 +304,7 @@ def create_app():
                 print(f"   ... Committed batch {i}")
         
         if users: db.session.add_all(users); db.session.add_all(couriers); db.session.commit()
-        print("✅ Data Generation Complete!")
+        print("Data Generation Complete!")
 
     return app
 

@@ -29,6 +29,7 @@ export default function AdminOrders() {
 
     useEffect(() => {
         fetchOrders();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, statusFilter]);
 
     // Debounce search could be added here, for now simple effect
@@ -38,6 +39,7 @@ export default function AdminOrders() {
             else setPage(1); // Reset to page 1 to trigger fetch
         }, 500);
         return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
 
     const fetchOrders = async () => {

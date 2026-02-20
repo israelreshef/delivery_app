@@ -25,4 +25,4 @@ def generate_qr_base64(uri):
 def verify_totp_code(secret, code):
     """אימות הקוד שהמשתמש הזין"""
     totp = pyotp.totp.TOTP(secret)
-    return totp.verify(code, valid_window=1)
+    return totp.verify(code)

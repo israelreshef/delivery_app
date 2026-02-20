@@ -53,6 +53,7 @@ export default function ChatComponent({ userId, role, existingSessionId = null, 
 
             return () => { newSocket.close() }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, userId, role, sessionId])
 
     const handleSendMessage = () => {

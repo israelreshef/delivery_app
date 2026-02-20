@@ -2,8 +2,9 @@ services:
   # Backend API
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: always
     command: python app.py
     ports:
       - "5000:5000"
@@ -39,11 +40,23 @@ services:
     ports:
       - "6379:6379"
 
+  # Go Real-time Engine
+  realtime-engine:
+    build:
+      context: .
+      dockerfile: realtime-engine/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      - redis
+
   # Frontend (Optional dev server)
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     ports:
       - "3000:3000"
     volumes:
