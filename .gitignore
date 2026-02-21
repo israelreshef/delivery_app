@@ -25,3 +25,5 @@ mobile-native/.idea/
 
 *.apk
 *.aab
+
+*.hprof
