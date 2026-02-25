@@ -87,7 +87,7 @@ export default function WmsDashboard() {
                         <div className="flex gap-2">
                             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                                 <DialogTrigger asChild>
-                                    <Button onClick={() => setActionType('in')} className="bg-blue-600 hover:bg-blue-700">
+                                    <Button onClick={() => setActionType('in')} className="bg-brand hover:bg-brand-dark">
                                         <ArrowDown className="ml-2 h-4 w-4" />
                                         קליטת סחורה
                                     </Button>

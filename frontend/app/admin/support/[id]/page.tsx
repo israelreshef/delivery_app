@@ -93,7 +93,7 @@ export default function TicketDetailsPage() {
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <Loader2 className="h-8 w-8 animate-spin text-brand" />
             </div>
         );
     }
@@ -133,7 +133,7 @@ export default function TicketDetailsPage() {
                         >
                             {!msg.is_internal && (
                                 <Avatar className="h-8 w-8">
-                                    <AvatarFallback className={msg.is_staff ? "bg-primary text-primary-foreground" : "bg-slate-200"}>
+                                    <AvatarFallback className={msg.is_staff ? "bg-brand text-primary-foreground" : "bg-slate-200"}>
                                         {msg.sender_name[0]}
                                     </AvatarFallback>
                                 </Avatar>
@@ -147,7 +147,7 @@ export default function TicketDetailsPage() {
                                     <div className={cn(
                                         "rounded-lg p-3 text-sm shadow-sm",
                                         msg.is_staff
-                                            ? "bg-primary text-primary-foreground rounded-tl-none"
+                                            ? "bg-brand text-primary-foreground rounded-tl-none"
                                             : "bg-white border rounded-tr-none"
                                     )}>
                                         {msg.message}
@@ -251,7 +251,7 @@ export default function TicketDetailsPage() {
                     {data.ticket.order_id && (
                         <div className="bg-slate-50 p-3 rounded-lg border text-sm">
                             <span className="text-muted-foreground block mb-1">הזמנה מקושרת</span>
-                            <Link href={`/orders`} className="font-medium text-primary hover:underline">
+                            <Link href={`/orders`} className="font-medium text-brand hover:underline">
                                 #{data.ticket.order_id}
                             </Link>
                         </div>

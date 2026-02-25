@@ -1,8 +1,9 @@
 from gevent import monkey
 monkey.patch_all()
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+from flask_talisman import Talisman
 from extensions import socketio, db, migrate, jwt, limiter
 from datetime import timedelta
 import click
@@ -56,10 +57,12 @@ def create_app():
     app = Flask(__name__)
     
     # Configuration
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+    secret_key = os.environ.get('SECRET_KEY')
+    if not secret_key and os.environ.get('FLASK_ENV') == 'production':
+        raise ValueError("No SECRET_KEY set in environment variables (required for production).")
+    app.config['SECRET_KEY'] = secret_key or 'dev-secret-key-change-in-production'
+    
     # Use PostgreSQL if available, otherwise fallback to local sqlite (though we prefer postgres now)
-    # Use PostgreSQL if available, otherwise fallback to local sqlite (though we prefer postgres now)
-    # Default to SQLite for local development ease if no Env Var is set
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'delivery.db'))
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -80,7 +83,7 @@ def create_app():
     limiter.init_app(app)
     
     # CORS Configuration - Allow frontend to communicate with backend
-    cors_origins = os.environ.get('CORS_ORIGINS', 'http://localhost:3000').split(',')
+    cors_origins = os.environ.get('CORS_ORIGINS', 'http://localhost:3000,http://localhost:3001,http://127.0.0.1:3001').split(',')
     CORS(app, 
          resources={r"/*": {  # Changed from /api/* to /* to cover all routes
              "origins": cors_origins,
@@ -92,6 +95,43 @@ def create_app():
          }},
          supports_credentials=True)
     
+    # Security Headers with Talisman (Enforce HTTPS)
+    csp = {
+        'default-src': [
+            '\'self\'',
+            '\'unsafe-inline\'', # Next.js/React inline styles
+            '*.google.com',
+            '*.googleapis.com',
+            '*.gstatic.com'
+        ]
+    }
+    
+    # Disable HTTPS enforcement strictly if running in local dev mode
+    force_https = os.environ.get('FLASK_ENV') == 'production'
+    
+    Talisman(app, 
+             content_security_policy=csp, 
+             force_https=force_https,
+             strict_transport_security=True,
+             session_cookie_secure=force_https,
+             session_cookie_http_only=True)
+
+    @app.after_request
+    def add_security_headers(response):
+        """Enforce strict security headers for all API requests"""
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        response.headers['Permissions-Policy'] = 'geolocation=(self), microphone=(), camera=()'
+        
+        # Prevent caching of sensitive API requests
+        if request.path.startswith('/api/'):
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+            response.headers['Pragma'] = 'no-cache'
+            
+        return response
+
     # Initialize SocketIO with Redis message queue
     socketio.init_app(app, 
                        cors_allowed_origins="*", 
@@ -122,6 +162,15 @@ def create_app():
     app.register_blueprint(addresses_bp, url_prefix='/api/addresses')
     app.register_blueprint(ratings_bp, url_prefix='/api/ratings')
     app.register_blueprint(earnings_reports_bp, url_prefix='/api/couriers/earnings')
+    
+    from routes.invoices import invoices_bp
+    app.register_blueprint(invoices_bp, url_prefix='/api/invoices')
+    from routes.hr_compliance import hr_compliance_bp
+    app.register_blueprint(hr_compliance_bp, url_prefix='/api/hr')
+    from routes.legal import legal_bp
+    app.register_blueprint(legal_bp, url_prefix='/api/legal')
+    from routes.optimization import optimization_bp
+    app.register_blueprint(optimization_bp, url_prefix='/api/optimize')
     from routes.crm import crm_bp
     app.register_blueprint(crm_bp, url_prefix='/api/crm')
     from routes.reports import reports_bp
@@ -136,13 +185,44 @@ def create_app():
     from routes.wms import wms_bp
     app.register_blueprint(wms_bp, url_prefix='/api/wms')
 
+    from routes.finances import finances_bp
+    app.register_blueprint(finances_bp, url_prefix='/api/finances')
+
     from routes.webauthn import webauthn_bp
     app.register_blueprint(webauthn_bp, url_prefix='/api/webauthn')
     
+    from routes.academy import academy_bp
+    app.register_blueprint(academy_bp, url_prefix='/api/academy')
+    
+    from routes.expenses import expenses_bp
+    app.register_blueprint(expenses_bp, url_prefix='/api/expenses')
+    
+    from routes.archive import archive_bp
+    app.register_blueprint(archive_bp, url_prefix='/api/archive')
+    
+    # Missing blueprints
+    try:
+        from routes.settings import settings_bp
+        app.register_blueprint(settings_bp, url_prefix='/api/settings')
+    except ImportError as e:
+        print(f"Warning: Failed to import settings_bp: {e}")
+        
+    try:
+        from routes.zones import zones_bp
+        app.register_blueprint(zones_bp, url_prefix='/api/zones')
+    except ImportError as e:
+        print(f"Warning: Failed to import zones_bp: {e}")
+    
     # Create database tables if they don't exist
     with app.app_context():
+        # Import ObjectHistory so its table gets created
+        from utils.audit_trail import ObjectHistory, register_audit_listeners
         db.create_all()
         print("Database tables initialized!")
+        
+        # Register the global audit trail event listeners
+        register_audit_listeners(db)
+        print("Database tables checked/created.")
     
     # HTML Templates routes
     @app.route('/')
@@ -310,4 +390,4 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=5001)

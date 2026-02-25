@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl" dir="rtl">
-            <h1 className="text-3xl font-bold mb-6 text-primary">מדיניות פרטיות ותנאי שימוש</h1>
+            <h1 className="text-3xl font-bold mb-6 text-brand">מדיניות פרטיות ותנאי שימוש</h1>
             <p className="text-muted-foreground mb-8">עודכן לאחרונה: פברואר 2026</p>
 
             <div className="prose prose-blue max-w-none dark:prose-invert">
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
 
                 <section className="mb-8">
                     <h2 className="text-xl font-bold mb-4">3. נתוני מיקום (Location Data)</h2>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+                    <div className="bg-brand/10 dark:bg-foreground/20 p-4 rounded-lg border border-brand/20 dark:border-foreground">
                         <p className="font-semibold mb-2">עבור שליחים:</p>
                         <p>
                             האפליקציה אוספת נתוני מיקום <strong>גם כשהאפליקציה סגורה או אינה בשימוש</strong>, כדי לאפשר:

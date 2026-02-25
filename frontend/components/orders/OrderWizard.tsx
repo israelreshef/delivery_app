@@ -197,6 +197,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                     apartment: formData.pickup_apartment,
                     notes: formData.pickup_notes
                 },
+                pickup_contact_name: formData.pickup_contact_name,
+                pickup_contact_phone: formData.pickup_contact_phone,
                 delivery_address: {
                     city: formData.delivery_city,
                     street: formData.delivery_street,
@@ -250,7 +252,7 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                         <div key={step.number} className="flex items-center flex-1">
                             <div className="flex flex-col items-center flex-1">
                                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${currentStep >= step.number
-                                    ? 'bg-blue-600 text-white'
+                                    ? 'bg-brand text-white'
                                     : 'bg-gray-200 text-gray-500'
                                     }`}>
                                     <step.icon className="w-6 h-6" />
@@ -258,7 +260,7 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                                 <span className="text-sm mt-2 font-medium">{step.title}</span>
                             </div>
                             {index < steps.length - 1 && (
-                                <div className={`h-1 flex-1 mx-2 ${currentStep > step.number ? 'bg-blue-600' : 'bg-gray-200'
+                                <div className={`h-1 flex-1 mx-2 ${currentStep > step.number ? 'bg-brand' : 'bg-gray-200'
                                     }`} />
                             )}
                         </div>
@@ -275,35 +277,27 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                     {/* Step 1: Pickup Details */}
                     {currentStep === 1 && (
                         <>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label>עיר *</Label>
-                                    <AddressAutocomplete
-                                        value={formData.pickup_city}
-                                        onChange={(val) => updateField('pickup_city', val)}
-                                        valueKey="city"
-                                        placeholder="תל אביב"
-                                        onSelectAddress={(addr) => {
-                                            updateField('pickup_city', addr.city);
-                                            updateField('pickup_street', addr.street); // Optional: Pre-fill street if user selected by city search
-                                        }}
-                                        error={errors.pickup_city}
-                                    />
-                                </div>
-                                <div>
-                                    <Label>רחוב *</Label>
-                                    <AddressAutocomplete
-                                        value={formData.pickup_street}
-                                        onChange={(val) => updateField('pickup_street', val)}
-                                        placeholder="דיזנגוף"
-                                        onSelectAddress={(addr) => {
-                                            updateField('pickup_city', addr.city);
-                                            updateField('pickup_street', addr.street);
-                                        }}
-                                        error={errors.pickup_street}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label>חפש כתובת איסוף *</Label>
+                                <AddressAutocomplete
+                                    value={formData.pickup_street ? `${formData.pickup_street}${formData.pickup_number ? ' ' + formData.pickup_number : ''}, ${formData.pickup_city}` : ''}
+                                    onChange={() => { }}
+                                    valueKey="full_address"
+                                    placeholder="הקלד כתובת... (למשל: דיזנגוף 100 תל אביב)"
+                                    onSelectAddress={(addr) => {
+                                        updateField('pickup_city', addr.city || '');
+                                        updateField('pickup_street', addr.street || '');
+                                        updateField('pickup_number', addr.number || '');
+                                    }}
+                                    error={errors.pickup_city || errors.pickup_street}
+                                />
                             </div>
+                            {formData.pickup_city && (
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm space-y-1 animate-in fade-in duration-200">
+                                    <div className="font-medium text-green-800">📍 כתובת שנבחרה:</div>
+                                    <div className="text-green-700">{formData.pickup_street} {formData.pickup_number}, {formData.pickup_city}</div>
+                                </div>
+                            )}
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
                                     <Label>מספר בית</Label>
@@ -364,38 +358,29 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                         </>
                     )}
 
-                    {/* Step 2: Delivery Details */}
                     {currentStep === 2 && (
                         <>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label>עיר *</Label>
-                                    <AddressAutocomplete
-                                        value={formData.delivery_city}
-                                        onChange={(val) => updateField('delivery_city', val)}
-                                        valueKey="city"
-                                        placeholder="ירושלים"
-                                        onSelectAddress={(addr) => {
-                                            updateField('delivery_city', addr.city);
-                                            updateField('delivery_street', addr.street);
-                                        }}
-                                        error={errors.delivery_city}
-                                    />
-                                </div>
-                                <div>
-                                    <Label>רחוב *</Label>
-                                    <AddressAutocomplete
-                                        value={formData.delivery_street}
-                                        onChange={(val) => updateField('delivery_street', val)}
-                                        placeholder="יפו"
-                                        onSelectAddress={(addr) => {
-                                            updateField('delivery_city', addr.city);
-                                            updateField('delivery_street', addr.street);
-                                        }}
-                                        error={errors.delivery_street}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label>חפש כתובת מסירה *</Label>
+                                <AddressAutocomplete
+                                    value={formData.delivery_street ? `${formData.delivery_street}${formData.delivery_number ? ' ' + formData.delivery_number : ''}, ${formData.delivery_city}` : ''}
+                                    onChange={() => { }}
+                                    valueKey="full_address"
+                                    placeholder="הקלד כתובת... (למשל: יפו 50 ירושלים)"
+                                    onSelectAddress={(addr) => {
+                                        updateField('delivery_city', addr.city || '');
+                                        updateField('delivery_street', addr.street || '');
+                                        updateField('delivery_number', addr.number || '');
+                                    }}
+                                    error={errors.delivery_city || errors.delivery_street}
+                                />
                             </div>
+                            {formData.delivery_city && (
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm space-y-1 animate-in fade-in duration-200">
+                                    <div className="font-medium text-green-800">📍 כתובת שנבחרה:</div>
+                                    <div className="text-green-700">{formData.delivery_street} {formData.delivery_number}, {formData.delivery_city}</div>
+                                </div>
+                            )}
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
                                     <Label>מספר בית</Label>
@@ -548,7 +533,7 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                     {/* Step 4: Confirmation */}
                     {currentStep === 4 && (
                         <div className="space-y-6">
-                            <div className="bg-blue-50 p-4 rounded-lg">
+                            <div className="bg-brand/10 p-4 rounded-lg">
                                 <h3 className="font-bold mb-2">פרטי איסוף</h3>
                                 <p>{formData.pickup_city}, {formData.pickup_street} {formData.pickup_number}</p>
                                 <p className="text-sm text-gray-600">{formData.pickup_contact_phone}</p>

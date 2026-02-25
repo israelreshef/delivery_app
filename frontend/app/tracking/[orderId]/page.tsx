@@ -33,7 +33,7 @@ interface OrderDetails {
 
 const statusMap = {
     'pending': { label: 'מחפש שליח', step: 1, color: 'bg-yellow-500' },
-    'assigned': { label: 'שליח בדרך', step: 2, color: 'bg-blue-500' },
+    'assigned': { label: 'שליח בדרך', step: 2, color: 'bg-brand' },
     'picked_up': { label: 'באיסוף', step: 3, color: 'bg-purple-500' },
     'in_transit': { label: 'בנסיעה', step: 4, color: 'bg-indigo-500' },
     'delivered': { label: 'נמסר', step: 5, color: 'bg-green-500' },
@@ -87,7 +87,7 @@ export default function TrackingPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand"></div>
             </div>
         );
     }
@@ -194,7 +194,7 @@ export default function TrackingPage() {
                     {order.courier && order.status !== 'pending' && (
                         <div className="absolute bottom-4 right-4 z-[9999] bg-white p-4 rounded-xl shadow-lg border border-slate-100 max-w-[250px]">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                <div className="w-10 h-10 bg-brand/20 rounded-full flex items-center justify-center text-brand">
                                     <User className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -264,7 +264,7 @@ export default function TrackingPage() {
                 {/* Package Info */}
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
                     <h3 className="font-semibold text-slate-700 flex items-center gap-2 mb-2">
-                        <Package className="w-4 h-4 text-blue-500" />
+                        <Package className="w-4 h-4 text-brand" />
                         פרטי חבילה
                     </h3>
                     <div className="flex gap-4 items-center">

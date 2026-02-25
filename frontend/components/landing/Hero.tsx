@@ -6,7 +6,7 @@ export function Hero() {
     return (
         <section className="relative overflow-hidden bg-slate-900 pt-16 pb-32 md:pt-32 md:pb-48">
             {/* Background blobs */}
-            <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+            <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-64 h-64 bg-brand rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
             <div className="absolute top-0 left-0 -translate-y-12 -translate-x-12 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
 
             <div className="container px-4 md:px-6 mx-auto relative z-10">
@@ -18,7 +18,7 @@ export function Hero() {
 
                     <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl max-w-4xl leading-[1.1]">
                         משלוחים חכמים <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand/80 to-purple-400">
                             בלחיצת כפתור
                         </span>
                     </h1>
@@ -30,7 +30,7 @@ export function Hero() {
 
                     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                         <Link href="/register">
-                            <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 bg-blue-600 hover:bg-blue-700 shadow-[0_0_30px_-10px_rgba(37,99,235,0.5)]">
+                            <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 bg-brand hover:bg-brand-dark shadow-[0_0_30px_-10px_rgba(37,99,235,0.5)]">
                                 התחל עכשיו בחינם
                                 <ArrowLeft className="mr-2 h-5 w-5" />
                             </Button>

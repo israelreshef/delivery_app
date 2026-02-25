@@ -38,5 +38,9 @@ data class Mission(
     @SerialName("otp_verified")
     val otpVerified: Boolean = false,
     @SerialName("is_otp_required")
-    val isOtpRequired: Boolean = true
+    val isOtpRequired: Boolean = true,
+    @SerialName("biometric_verification_required")
+    val biometricVerificationRequired: Boolean = false,
+    @SerialName("delivery_type")
+    val deliveryType: String = "standard"
 )

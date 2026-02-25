@@ -58,7 +58,7 @@ export default function RegisterPage() {
         setIsLoading(true);
 
         try {
-            const res = await fetch("http://localhost:5000/api/auth/register", {
+            const res = await fetch("http://localhost:5001/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -94,10 +94,10 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4" dir="rtl">
-            <Card className="w-full max-w-md shadow-xl border-t-4 border-t-blue-600">
+            <Card className="w-full max-w-md shadow-xl border-t-4 border-t-brand">
                 <CardHeader className="text-center space-y-2">
-                    <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
-                        <User className="w-6 h-6 text-blue-600" />
+                    <div className="mx-auto w-12 h-12 bg-brand/20 rounded-full flex items-center justify-center mb-2">
+                        <User className="w-6 h-6 text-brand" />
                     </div>
                     <CardTitle className="text-2xl font-bold text-slate-900">יצירת חשבון חדש</CardTitle>
                     <CardDescription>
@@ -230,7 +230,7 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full h-12 text-lg font-bold bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
+                        <Button type="submit" className="w-full h-12 text-lg font-bold bg-brand hover:bg-brand-dark" disabled={isLoading}>
                             {isLoading ? (
                                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> יוצר חשבון...</>
                             ) : (
@@ -242,7 +242,7 @@ export default function RegisterPage() {
                 <CardFooter className="justify-center flex-col space-y-2 bg-slate-50/50 p-6">
                     <div className="text-sm text-slate-600">
                         כבר יש לך חשבון?{" "}
-                        <Link href="/auth/login" className="text-blue-600 font-bold hover:underline">
+                        <Link href="/auth/login" className="text-brand font-bold hover:underline">
                             התחבר כאן
                         </Link>
                     </div>

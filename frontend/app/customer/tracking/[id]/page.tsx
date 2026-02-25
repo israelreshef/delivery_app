@@ -24,7 +24,7 @@ const MapView = ({ courierParams, pickup, delivery }: any) => {
             {courierParams && (
                 <div className="absolute transition-all duration-1000 ease-linear flex flex-col items-center z-20"
                     style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                    <div className="bg-blue-600 p-2 rounded-full shadow-lg ring-4 ring-blue-600/20">
+                    <div className="bg-brand p-2 rounded-full shadow-lg ring-4 ring-brand/20">
                         <Truck className="h-6 w-6 text-white" />
                     </div>
                     <div className="bg-white px-2 py-1 rounded shadow text-xs font-bold mt-1">
@@ -51,7 +51,7 @@ export default function TrackingPage() {
         fetchOrder();
 
         // Socket Connection
-        socketRef.current = io('http://localhost:5000');
+        socketRef.current = io('http://localhost:5001');
         socketRef.current.emit('join', { role: 'customer', id: 'guest' }); // In real app use user ID
 
         // Listen for specific delivery updates
@@ -187,7 +187,7 @@ export default function TrackingPage() {
                                 </div>
                                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur p-4 rounded-xl shadow-lg border space-y-1">
                                     <p className="text-xs text-muted-foreground">זמן משוער</p>
-                                    <p className="text-xl font-bold font-mono text-blue-600">{eta}</p>
+                                    <p className="text-xl font-bold font-mono text-brand">{eta}</p>
                                 </div>
                             </div>
                         </Card>

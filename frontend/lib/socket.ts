@@ -10,7 +10,7 @@ export const useSocket = (token: string | null, role: string | null) => {
         if (!token || !role) return;
 
         // Initialize socket connection with auth
-        const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+        const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5001';
         socketRef.current = io(SOCKET_URL, {
             transports: ['websocket'],
             autoConnect: true,
@@ -43,7 +43,7 @@ export const useSocket = (token: string | null, role: string | null) => {
 
 // Singleton removed to prevent unauthorized global connections
 // Components should use the hook or manage their own connection
-export const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000', {
+export const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5001', {
     transports: ['websocket'],
     autoConnect: false
 });

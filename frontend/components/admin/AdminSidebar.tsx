@@ -12,18 +12,22 @@ import {
     Package,
     MessageSquare,
     BarChart3,
-    LifeBuoy
+    LifeBuoy,
+    Map,
+    Wallet
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
 
 const sidebarItems = [
     { title: "לוח בקרה", href: "/admin/dashboard", icon: LayoutDashboard },
-    { title: "הזמנות", href: "/orders", icon: Package },
+    { title: "הזמנות", href: "/admin/orders", icon: Package },
     { title: "ניהול שליחים", href: "/admin/couriers", icon: Truck },
     { title: "ניהול לקוחות", href: "/admin/customers", icon: Users },
+    { title: "מרכז פיננסי", href: "/admin/finance", icon: Wallet },
     { title: "ניהול מלאי", href: "/admin/wms", icon: Package },
     { title: "דוחות ורגולציה", href: "/admin/reports", icon: BarChart3 },
+    { title: "תכנון מסלולים", href: "/admin/map", icon: Map },
     { title: "CRM", href: "/admin/crm", icon: MessageSquare },
     { title: "תמיכה", href: "/admin/support", icon: LifeBuoy },
     { title: "הגדרות", href: "/admin/settings", icon: Settings },
@@ -36,7 +40,7 @@ export function AdminSidebar() {
     return (
         <div className="flex flex-col h-full w-64 bg-slate-900 text-white shadow-xl" dir="rtl">
             <div className="p-6 border-b border-slate-800">
-                <h2 className="text-2xl font-bold tracking-tight text-blue-400">TZIR ADMIN</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-brand/80">TZIR ADMIN</h2>
                 <p className="text-xs text-slate-400 mt-1">מערכת ניהול מתקדמת</p>
             </div>
 
@@ -47,7 +51,7 @@ export function AdminSidebar() {
                             className={cn(
                                 "flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium",
                                 pathname === item.href || pathname?.startsWith(item.href + '/')
-                                    ? "bg-blue-600 text-white shadow-md"
+                                    ? "bg-brand text-white shadow-md"
                                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
                             )}
                         >

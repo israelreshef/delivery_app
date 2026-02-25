@@ -42,8 +42,8 @@ export function HowItWorks() {
 
                     {steps.map((step, index) => (
                         <div key={index} className="relative z-10 flex flex-col items-center text-center group">
-                            <div className="w-24 h-24 bg-white border-4 border-slate-50 flex items-center justify-center rounded-full shadow-lg mb-6 group-hover:border-blue-100 group-hover:scale-110 transition-all duration-300">
-                                <span className="text-3xl font-black text-slate-200 group-hover:text-blue-600 transition-colors">
+                            <div className="w-24 h-24 bg-white border-4 border-slate-50 flex items-center justify-center rounded-full shadow-lg mb-6 group-hover:border-brand/20 group-hover:scale-110 transition-all duration-300">
+                                <span className="text-3xl font-black text-slate-200 group-hover:text-brand transition-colors">
                                     {step.num}
                                 </span>
                             </div>

@@ -8,6 +8,10 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Key, Eye, EyeOff } from "lucide-react"
+import { toast } from "sonner"
 import { api } from '@/lib/api'
 
 export default function AdminUsersPage() {
@@ -17,6 +21,10 @@ export default function AdminUsersPage() {
     const [loading, setLoading] = useState(true)
     const [targetRole, setTargetRole] = useState('courier')
     const [generatedCode, setGeneratedCode] = useState(null)
+    const [resetUser, setResetUser] = useState<any>(null)
+    const [newPass, setNewPass] = useState("")
+    const [showPass, setShowPass] = useState(false)
+    const [isResettling, setIsResettling] = useState(false)
 
     useEffect(() => {
         fetchUsers()
@@ -83,6 +91,24 @@ export default function AdminUsersPage() {
         }
     }
 
+    const handleResetPassword = async () => {
+        if (!resetUser || !newPass) return
+        setIsResettling(true)
+        try {
+            await api.post('/auth/admin/reset-password', {
+                user_id: resetUser.id,
+                password: newPass
+            })
+            toast.success(`הסיסמה עבור ${resetUser.username} אופסה בהצלחה!`)
+            setResetUser(null)
+            setNewPass("")
+        } catch (error: any) {
+            toast.error(error.response?.data?.error || "שגיאה באיפוס סיסמה")
+        } finally {
+            setIsResettling(false)
+        }
+    }
+
     return (
         <div className="container mx-auto py-10 space-y-8" dir="rtl">
             <div className="flex justify-between items-center">
@@ -134,15 +160,25 @@ export default function AdminUsersPage() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                {user.user_type !== 'admin' && (
+                                                <div className="flex gap-2">
+                                                    {user.user_type !== 'admin' && (
+                                                        <Button
+                                                            variant={user.is_active ? "destructive" : "outline"}
+                                                            size="sm"
+                                                            onClick={() => handleBanUser(user.id, user.is_active)}
+                                                        >
+                                                            {user.is_active ? 'חסום' : 'הפעל'}
+                                                        </Button>
+                                                    )}
                                                     <Button
-                                                        variant={user.is_active ? "destructive" : "outline"}
+                                                        variant="outline"
                                                         size="sm"
-                                                        onClick={() => handleBanUser(user.id, user.is_active)}
+                                                        title="איפוס סיסמה"
+                                                        onClick={() => setResetUser(user)}
                                                     >
-                                                        {user.is_active ? 'חסום' : 'הפעל'}
+                                                        <Key className="w-4 h-4 text-orange-500" />
                                                     </Button>
-                                                )}
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -199,6 +235,7 @@ export default function AdminUsersPage() {
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         value={targetRole}
                                         onChange={(e) => setTargetRole(e.target.value)}
+                                        title="בחר תפקיד להזמנה"
                                     >
                                         <option value="courier">שליח</option>
                                         <option value="customer">לקוח עסקי</option>
@@ -278,6 +315,41 @@ export default function AdminUsersPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <Dialog open={!!resetUser} onOpenChange={(open) => !open && setResetUser(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>איפוס סיסמה למשתמש - {resetUser?.username}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2 text-right">
+                            <Label>סיסמה חדשה</Label>
+                            <div className="relative">
+                                <Input
+                                    type={showPass ? "text" : "password"}
+                                    value={newPass}
+                                    onChange={e => setNewPass(e.target.value)}
+                                    placeholder="הכנס סיסמה מנהלתית חדשה..."
+                                    className="text-right"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPass(!showPass)}
+                                    className="absolute left-3 top-3 text-slate-400 hover:text-slate-600"
+                                >
+                                    {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setResetUser(null)}>ביטול</Button>
+                        <Button onClick={handleResetPassword} disabled={isResettling || !newPass}>
+                            {isResettling ? "מעדכן..." : "אפס סיסמה"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

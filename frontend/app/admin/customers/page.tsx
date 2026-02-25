@@ -110,7 +110,7 @@ export default function AdminCustomersPage() {
                                     <TableRow key={customer.id}>
                                         <TableCell className="font-medium">
                                             <div className="flex items-center gap-2">
-                                                {customer.company_name ? <Building2 className="h-4 w-4 text-blue-500" /> : <User className="h-4 w-4 text-gray-500" />}
+                                                {customer.company_name ? <Building2 className="h-4 w-4 text-brand" /> : <User className="h-4 w-4 text-gray-500" />}
                                                 <div>
                                                     <div className="flex items-center gap-2">
                                                         {customer.full_name}

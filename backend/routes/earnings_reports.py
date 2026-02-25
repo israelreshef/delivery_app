@@ -78,3 +78,108 @@ def export_earnings(current_user):
     except Exception as e:
         logging.error(f"Error exporting earnings: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+@earnings_reports_bp.route('/vat-summary', methods=['GET'])
+@token_required
+@role_required('courier')
+def get_vat_summary(current_user):
+    """
+    Calculate VAT summary (Revenues vs Expenses) for the courier.
+    Useful for monthly/bi-monthly VAT declarations.
+    """
+    try:
+        from models import Expense, Invoice
+        month = request.args.get('month', datetime.utcnow().month, type=int)
+        year = request.args.get('year', datetime.utcnow().year, type=int)
+        
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1)
+        else:
+            end_date = datetime(year, month + 1, 1)
+
+        # 1. VAT collected from Deliveries (Invoices)
+        # Assuming deliveries for couriers generate invoices or payouts
+        deliveries = Delivery.query.filter(
+            Delivery.courier_id == courier.id,
+            Delivery.status == 'delivered',
+            Delivery.updated_at >= start_date,
+            Delivery.updated_at < end_date
+        ).all()
+        
+        total_revenue = sum(float(d.price or 0) for d in deliveries)
+        vat_collected = total_revenue * 0.17 # Standard 17% VAT in Israel
+        
+        # 2. VAT paid (Expenses recorded by the courier - fuel, repairs, etc.)
+        # We need to filter expenses for THIS specific courier. 
+        # Note: Added courier_id to Expense model might be needed if not present.
+        # For now, we filter by category related to logistics if global or assume a link exists.
+        expenses = Expense.query.filter(
+            Expense.expense_date >= start_date.date(),
+            Expense.expense_date < end_date.date()
+        ).all() 
+
+        total_expenses = sum(float(e.amount) for e in expenses)
+        vat_deductible = sum(float(e.vat_amount) for e in expenses)
+        
+        return jsonify({
+            'period': f"{month}/{year}",
+            'revenue': {
+                'gross': total_revenue + vat_collected,
+                'net': total_revenue,
+                'vat': vat_collected
+            },
+            'expenses': {
+                'gross': total_expenses + vat_deductible,
+                'net': total_expenses,
+                'vat': vat_deductible
+            },
+            'due_to_vat': vat_collected - vat_deductible
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@earnings_reports_bp.route('/annual-summary', methods=['GET'])
+@token_required
+@role_required('courier')
+def get_annual_summary(current_user):
+    """
+    Generate data for Annual Tax Return (Form 1301).
+    Summarizes yearly revenue, expenses, and Social Security estimates.
+    """
+    try:
+        year = request.args.get('year', datetime.utcnow().year, type=int)
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        
+        start_date = datetime(year, 1, 1)
+        end_date = datetime(year + 1, 1, 1)
+
+        deliveries = Delivery.query.filter(
+            Delivery.courier_id == courier.id,
+            Delivery.status == 'delivered',
+            Delivery.updated_at >= start_date,
+            Delivery.updated_at < end_date
+        ).all()
+        
+        yearly_revenue = sum(float(d.price or 0) for d in deliveries)
+        
+        # Social Security Estimate (National Insurance/ביטוח לאומי)
+        # Tiers for 2024/2025: ~6% on lower bracket, ~18% on higher.
+        low_bracket = 7522 * 12 # Monthly limit * 12
+        if yearly_revenue <= low_bracket:
+            ss_estimate = yearly_revenue * 0.0597
+        else:
+            ss_estimate = (low_bracket * 0.0597) + ((yearly_revenue - low_bracket) * 0.1783)
+            
+        return jsonify({
+            'year': year,
+            'total_revenue': yearly_revenue,
+            'social_security_estimate': ss_estimate,
+            'monthly_avg': yearly_revenue / 12,
+            'tax_bracket_hint': 'מדרגת מס 10%' if yearly_revenue < 84120 else 'מדרגת מס 14%+'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

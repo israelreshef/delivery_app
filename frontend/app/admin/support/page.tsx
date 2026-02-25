@@ -94,7 +94,7 @@ export default function SupportPage() {
 
     const getStatusBadge = (status: TicketStatus) => {
         const styles = {
-            open: "bg-blue-100 text-blue-800 hover:bg-blue-100",
+            open: "bg-brand/20 text-foreground hover:bg-brand-dark/20",
             in_progress: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
             waiting_for_customer: "bg-purple-100 text-purple-800 hover:bg-purple-100",
             resolved: "bg-green-100 text-green-800 hover:bg-green-100",
@@ -115,7 +115,7 @@ export default function SupportPage() {
     const getPriorityBadge = (priority: TicketPriority) => {
         const styles = {
             low: "bg-slate-100 text-slate-700",
-            medium: "bg-blue-50 text-blue-700",
+            medium: "bg-brand/10 text-brand",
             high: "bg-orange-100 text-orange-800",
             urgent: "bg-red-100 text-red-800",
         };
@@ -133,7 +133,7 @@ export default function SupportPage() {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold flex items-center gap-2">
-                        <LifeBuoy className="h-8 w-8 text-primary" />
+                        <LifeBuoy className="h-8 w-8 text-brand" />
                         מרכז תמיכה
                     </h1>
                     <p className="text-muted-foreground mt-1">

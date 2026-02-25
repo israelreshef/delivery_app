@@ -10,13 +10,13 @@ export default function PricingPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white" dir="rtl">
             {/* Hero Section */}
-            <div className="bg-gradient-to-l from-blue-600 to-blue-800 text-white py-20">
+            <div className="bg-gradient-to-l from-brand to-foreground text-white py-20">
                 <div className="max-w-6xl mx-auto px-6 text-center">
                     <h1 className="text-5xl font-bold mb-4">מחירון שקוף ומשתלם</h1>
-                    <p className="text-xl text-blue-100 mb-8">
+                    <p className="text-xl text-brand/20 mb-8">
                         3 מודלים של עבודה המותאמים לכל צורך
                     </p>
-                    <p className="text-lg text-blue-200">
+                    <p className="text-lg text-brand/20">
                         מינימום משלוח: <span className="font-bold text-2xl">₪50</span>
                     </p>
                 </div>
@@ -25,7 +25,7 @@ export default function PricingPage() {
             <div className="max-w-7xl mx-auto px-6 py-16">
                 {/* Service Models Overview */}
                 <div className="grid md:grid-cols-3 gap-6 mb-16">
-                    <Card className="border-2 hover:border-blue-500 transition-all">
+                    <Card className="border-2 hover:border-brand transition-all">
                         <CardHeader>
                             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                                 <Clock className="w-6 h-6 text-green-600" />
@@ -318,25 +318,25 @@ export default function PricingPage() {
 
                 {/* Additional Info */}
                 <div className="mt-16 grid md:grid-cols-2 gap-6">
-                    <Card className="bg-blue-50 border-blue-200">
+                    <Card className="bg-brand/10 border-brand/20">
                         <CardHeader>
                             <CardTitle>תנאים כלליים</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex items-start gap-2">
-                                <Check className="w-5 h-5 text-blue-600 mt-0.5" />
+                                <Check className="w-5 h-5 text-brand mt-0.5" />
                                 <p className="text-sm">מינימום משלוח: ₪50 לכל סוגי המשלוחים</p>
                             </div>
                             <div className="flex items-start gap-2">
-                                <Check className="w-5 h-5 text-blue-600 mt-0.5" />
+                                <Check className="w-5 h-5 text-brand mt-0.5" />
                                 <p className="text-sm">חישוב מרחק לפי קו אווירי בין נקודות</p>
                             </div>
                             <div className="flex items-start gap-2">
-                                <Check className="w-5 h-5 text-blue-600 mt-0.5" />
+                                <Check className="w-5 h-5 text-brand mt-0.5" />
                                 <p className="text-sm">מחירים כולל מע"מ</p>
                             </div>
                             <div className="flex items-start gap-2">
-                                <Check className="w-5 h-5 text-blue-600 mt-0.5" />
+                                <Check className="w-5 h-5 text-brand mt-0.5" />
                                 <p className="text-sm">ביטוח חבילה זמין בתוספת תשלום</p>
                             </div>
                         </CardContent>
@@ -369,10 +369,10 @@ export default function PricingPage() {
 
                 {/* CTA */}
                 <div className="mt-16 text-center">
-                    <Card className="bg-gradient-to-l from-blue-600 to-blue-800 text-white border-0">
+                    <Card className="bg-gradient-to-l from-brand to-foreground text-white border-0">
                         <CardContent className="py-12">
                             <h3 className="text-3xl font-bold mb-4">מוכנים להתחיל?</h3>
-                            <p className="text-blue-100 mb-8 text-lg">
+                            <p className="text-brand/20 mb-8 text-lg">
                                 הצטרפו לאלפי עסקים שכבר חוסכים זמן וכסף עם TZIR
                             </p>
                             <div className="flex gap-4 justify-center">

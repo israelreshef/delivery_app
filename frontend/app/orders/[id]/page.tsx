@@ -97,7 +97,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
 
     const statusMap: Record<string, { label: string; color: string; icon: any }> = {
         'pending': { label: 'ממתין לשיבוץ', color: 'bg-yellow-500', icon: Clock },
-        'assigned': { label: 'שובץ לשליח', color: 'bg-blue-500', icon: Truck },
+        'assigned': { label: 'שובץ לשליח', color: 'bg-brand', icon: Truck },
         'picked_up': { label: 'נאסף', color: 'bg-purple-500', icon: Package },
         'in_transit': { label: 'בדרך', color: 'bg-indigo-500', icon: MapPin },
         'delivered': { label: 'נמסר', color: 'bg-green-500', icon: CheckCircle },
@@ -163,7 +163,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
 
                                         {/* A - Pickup */}
                                         <div className="flex gap-4 relative">
-                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 ring-4 ring-white z-10">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/20 text-brand ring-4 ring-white z-10">
                                                 <span className="font-bold">A</span>
                                             </div>
                                             <div className="flex-1 space-y-1">
@@ -172,7 +172,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                     <span className="font-medium text-foreground">{order.pickup.contact}</span>
                                                     <span>•</span>
-                                                    <a href={`tel:${order.pickup.phone}`} className="hover:text-blue-600 flex items-center gap-1">
+                                                    <a href={`tel:${order.pickup.phone}`} className="hover:text-brand flex items-center gap-1">
                                                         <Phone className="h-3 w-3" />
                                                         {order.pickup.phone}
                                                     </a>
@@ -191,7 +191,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                     <span className="font-medium text-foreground">{order.delivery.recipient}</span>
                                                     <span>•</span>
-                                                    <a href={`tel:${order.delivery.phone}`} className="hover:text-blue-600 flex items-center gap-1">
+                                                    <a href={`tel:${order.delivery.phone}`} className="hover:text-brand flex items-center gap-1">
                                                         <Phone className="h-3 w-3" />
                                                         {order.delivery.phone}
                                                     </a>
@@ -377,7 +377,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                                             {order.status_history && order.status_history.map((h: any, i: number) => (
                                                 <div key={i} className="flex gap-3 text-sm">
                                                     <div className="flex flex-col items-center">
-                                                        <div className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-blue-600' : 'bg-slate-300'}`} />
+                                                        <div className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-brand' : 'bg-slate-300'}`} />
                                                         {i !== order.status_history.length - 1 && <div className="w-0.5 h-full bg-slate-100 my-1" />}
                                                     </div>
                                                     <div>

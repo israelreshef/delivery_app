@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, ChevronLeft, ChevronRight, Eye, Truck } from "lucide-react";
+import { Search, Filter, ChevronLeft, ChevronRight, Eye, Truck, MapPin } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -109,7 +109,7 @@ export default function AdminOrders() {
     const getStatusBadge = (status: string) => {
         const styles: Record<string, string> = {
             pending: "bg-yellow-100 text-yellow-800",
-            assigned: "bg-blue-100 text-blue-800",
+            assigned: "bg-brand/20 text-foreground",
             picked_up: "bg-purple-100 text-purple-800",
             delivered: "bg-green-100 text-green-800",
             cancelled: "bg-red-100 text-red-800",
@@ -153,9 +153,11 @@ export default function AdminOrders() {
                         <div className="flex items-center gap-2">
                             <Filter className="h-4 w-4 text-slate-500" />
                             <select
-                                className="border rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="border rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand"
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
+                                aria-label="סנן לפי סטטוס"
+                                title="סנן לפי סטטוס"
                             >
                                 <option value="all">כל הסטטוסים</option>
                                 <option value="pending">ממתין</option>
@@ -215,13 +217,18 @@ export default function AdminOrders() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                            className="text-brand hover:text-brand hover:bg-brand-dark/10"
                                                             title="שבץ שליח"
                                                             onClick={() => openAssignDialog(order.id)}
                                                         >
                                                             <Truck className="w-4 h-4" />
                                                         </Button>
                                                     )}
+                                                    <a href={`https://waze.com/ul?q=${encodeURIComponent(order.delivery_address)}&navigate=yes`} target="_blank" rel="noreferrer" title="נווט ב-Waze">
+                                                        <Button variant="ghost" size="icon" title="נווט ליעד (Waze)">
+                                                            <MapPin className="w-4 h-4 text-blue-500" />
+                                                        </Button>
+                                                    </a>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -287,7 +294,7 @@ export default function AdminOrders() {
                         <Button
                             onClick={handleAssignCourier}
                             disabled={!selectedCourierId}
-                            className="bg-blue-600 hover:bg-blue-700"
+                            className="bg-brand hover:bg-brand-dark"
                         >
                             שבץ שליח
                         </Button>

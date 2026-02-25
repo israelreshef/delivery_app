@@ -51,12 +51,12 @@ export function WizardLayout({ children }: { children: React.ReactNode }) {
                                 <div key={step.number} className="flex flex-col items-center bg-white px-2">
                                     <div
                                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 border-2
-                                        ${isActive ? 'border-blue-600 bg-blue-600 text-white shadow-md scale-110' :
+                                        ${isActive ? 'border-brand bg-brand text-white shadow-md scale-110' :
                                                 isCompleted ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-200 bg-white text-slate-400'}`}
                                     >
                                         {isCompleted ? <Check className="w-4 h-4" /> : step.number}
                                     </div>
-                                    <span className={`text-xs mt-2 font-medium ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
+                                    <span className={`text-xs mt-2 font-medium ${isActive ? 'text-brand' : 'text-slate-400'}`}>
                                         {step.title}
                                     </span>
                                 </div>

@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 
 export default function NewOrderWizard() {
     const router = useRouter();
@@ -196,7 +197,7 @@ export default function NewOrderWizard() {
                                 className={cn(
                                     "w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 border-2",
                                     currentStep >= step.number
-                                        ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200"
+                                        ? "bg-brand border-brand text-navy-950 shadow-lg shadow-amber/30"
                                         : "bg-white border-slate-200 text-slate-400"
                                 )}
                             >
@@ -204,7 +205,7 @@ export default function NewOrderWizard() {
                             </div>
                             <span className={cn(
                                 "text-xs mt-2 font-bold transition-colors duration-300",
-                                currentStep >= step.number ? "text-blue-700" : "text-slate-400"
+                                currentStep >= step.number ? "text-brand" : "text-slate-400"
                             )}>{step.title}</span>
                         </div>
                     ))}
@@ -215,7 +216,7 @@ export default function NewOrderWizard() {
             <Card className="border-none shadow-xl shadow-slate-200/50 overflow-hidden">
                 <CardHeader className="bg-slate-50 border-b border-slate-100">
                     <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                        {currentStep === 1 && <MapPin className="text-blue-500" />}
+                        {currentStep === 1 && <MapPin className="text-brand" />}
                         {currentStep === 2 && <MapPin className="text-green-500" />}
                         {currentStep === 3 && <Package className="text-purple-500" />}
                         {currentStep === 4 && <CheckCircle className="text-indigo-500" />}
@@ -234,26 +235,27 @@ export default function NewOrderWizard() {
                     {/* Step 1: Pickup Details */}
                     {currentStep === 1 && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>עיר *</Label>
-                                    <Input
-                                        value={formData.pickup_city}
-                                        onChange={(e) => updateField('pickup_city', e.target.value)}
-                                        placeholder="תל אביב"
-                                        className="h-11"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>רחוב *</Label>
-                                    <Input
-                                        value={formData.pickup_street}
-                                        onChange={(e) => updateField('pickup_street', e.target.value)}
-                                        placeholder="דיזנגוף"
-                                        className="h-11"
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label>חפש כתובת איסוף *</Label>
+                                <AddressAutocomplete
+                                    value={formData.pickup_street ? `${formData.pickup_street}${formData.pickup_number ? ' ' + formData.pickup_number : ''}, ${formData.pickup_city}` : ''}
+                                    onChange={() => { }}
+                                    valueKey="full_address"
+                                    placeholder="הקלד כתובת... (למשל: דיזנגוף 100 תל אביב)"
+                                    onSelectAddress={(addr) => {
+                                        updateField('pickup_city', addr.city || '');
+                                        updateField('pickup_street', addr.street || '');
+                                        updateField('pickup_number', addr.number || '');
+                                    }}
+                                />
                             </div>
+                            {/* Auto-filled address details */}
+                            {formData.pickup_city && (
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm space-y-1 animate-in fade-in duration-200">
+                                    <div className="font-medium text-green-800">📍 כתובת שנבחרה:</div>
+                                    <div className="text-green-700">{formData.pickup_street} {formData.pickup_number}, {formData.pickup_city}</div>
+                                </div>
+                            )}
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label>מספר בית</Label>
@@ -318,30 +320,31 @@ export default function NewOrderWizard() {
                     {/* Step 2: Delivery Details */}
                     {currentStep === 2 && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-700 flex items-center gap-2">
+                            <div className="bg-brand/10 border border-brand/20 rounded-lg p-3 text-sm text-brand flex items-center gap-2">
                                 <MapPin className="w-4 h-4" />
                                 <span>השליח ינווט לכתובת זו לאחר האיסוף</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>עיר *</Label>
-                                    <Input
-                                        value={formData.delivery_city}
-                                        onChange={(e) => updateField('delivery_city', e.target.value)}
-                                        placeholder="ירושלים"
-                                        className="h-11"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>רחוב *</Label>
-                                    <Input
-                                        value={formData.delivery_street}
-                                        onChange={(e) => updateField('delivery_street', e.target.value)}
-                                        placeholder="יפו"
-                                        className="h-11"
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label>חפש כתובת מסירה *</Label>
+                                <AddressAutocomplete
+                                    value={formData.delivery_street ? `${formData.delivery_street}${formData.delivery_number ? ' ' + formData.delivery_number : ''}, ${formData.delivery_city}` : ''}
+                                    onChange={() => { }}
+                                    valueKey="full_address"
+                                    placeholder="הקלד כתובת... (למשל: יפו 50 ירושלים)"
+                                    onSelectAddress={(addr) => {
+                                        updateField('delivery_city', addr.city || '');
+                                        updateField('delivery_street', addr.street || '');
+                                        updateField('delivery_number', addr.number || '');
+                                    }}
+                                />
                             </div>
+                            {/* Auto-filled address details */}
+                            {formData.delivery_city && (
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm space-y-1 animate-in fade-in duration-200">
+                                    <div className="font-medium text-green-800">📍 כתובת שנבחרה:</div>
+                                    <div className="text-green-700">{formData.delivery_street} {formData.delivery_number}, {formData.delivery_city}</div>
+                                </div>
+                            )}
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label>מספר בית</Label>
@@ -448,9 +451,9 @@ export default function NewOrderWizard() {
 
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-blue-600 font-bold">רמת דחיפות</Label>
+                                    <Label className="text-brand font-bold">רמת דחיפות</Label>
                                     <Select value={formData.urgency} onValueChange={(val) => updateField('urgency', val)}>
-                                        <SelectTrigger className="h-11 border-blue-200 bg-blue-50/50">
+                                        <SelectTrigger className="h-11 border-brand/20 bg-brand/10/50">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -481,7 +484,7 @@ export default function NewOrderWizard() {
                                     id="insurance"
                                     checked={formData.insurance_required}
                                     onChange={(e) => updateField('insurance_required', e.target.checked)}
-                                    className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                                    className="w-5 h-5 text-brand rounded focus:ring-brand"
                                 />
                                 <div className="flex-1">
                                     <Label htmlFor="insurance" className="font-bold">ביטוח תכולה</Label>
@@ -509,7 +512,7 @@ export default function NewOrderWizard() {
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             {/* Price Quote Banner */}
                             <div className="bg-slate-900 text-white p-6 rounded-xl shadow-lg relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-10 -mt-10"></div>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-brand rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-10 -mt-10"></div>
                                 <div className="flex justify-between items-end relative z-10">
                                     <div>
                                         <p className="text-slate-400 text-sm font-medium mb-1">סה"כ לתשלום (מוערך)</p>
@@ -529,7 +532,7 @@ export default function NewOrderWizard() {
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div className="bg-white border rounded-lg p-5 space-y-3">
                                     <div className="flex items-center gap-2 border-b pb-2 mb-2">
-                                        <MapPin className="w-4 h-4 text-blue-500" />
+                                        <MapPin className="w-4 h-4 text-brand" />
                                         <h3 className="font-bold text-slate-800">איסוף</h3>
                                     </div>
                                     <p className="font-medium">{formData.pickup_city}, {formData.pickup_street} {formData.pickup_number}</p>
@@ -597,7 +600,7 @@ export default function NewOrderWizard() {
                     </Button>
 
                     {currentStep < 4 ? (
-                        <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 w-32">
+                        <Button onClick={handleNext} className="bg-brand hover:bg-brand-dark w-32">
                             המשך
                             <ChevronLeft className="w-4 h-4 mr-2" />
                         </Button>

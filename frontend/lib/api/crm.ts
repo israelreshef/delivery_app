@@ -1,6 +1,6 @@
 import { Lead, CreateLeadDTO, UpdateLeadDTO, SalesActivity } from "@/types/crm";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
 function getHeaders() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';

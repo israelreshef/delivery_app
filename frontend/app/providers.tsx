@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthProvider } from "@/context/AuthContext";
+import { BrandingProvider } from "@/context/BrandingProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -9,7 +10,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <GoogleOAuthProvider clientId={clientId}>
             <AuthProvider>
-                {children}
+                <BrandingProvider>
+                    {children}
+                </BrandingProvider>
             </AuthProvider>
         </GoogleOAuthProvider>
     );

@@ -95,7 +95,7 @@ export default function ConsentModal() {
                     <div className="flex items-center space-x-2 space-x-reverse">
                         <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={(c) => setPrivacyAccepted(!!c)} />
                         <Label htmlFor="privacy" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            אני מסכים <a href="/privacy" target="_blank" className="text-blue-600 underline hover:text-blue-800">למדיניות הפרטיות</a> ולאיסוף נתוני מיקום
+                            אני מסכים <a href="/privacy" target="_blank" className="text-brand underline hover:text-foreground">למדיניות הפרטיות</a> ולאיסוף נתוני מיקום
                         </Label>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ export default function ConsentModal() {
                     </Button>
                     <Button
                         type="button"
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-brand hover:bg-brand-dark text-white"
                         onClick={handleSubmit}
                         disabled={!termsAccepted || !privacyAccepted || loading}
                     >

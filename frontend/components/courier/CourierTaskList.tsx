@@ -80,7 +80,7 @@ export default function CourierTaskList({ orders, onAccept, onReject }: CourierT
                                     {/* Route visual */}
                                     <div className="relative pl-4 border-l-2 border-slate-100 ml-1 space-y-4 mb-4">
                                         <div className="relative">
-                                            <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full border-2 border-blue-500 bg-white" />
+                                            <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full border-2 border-brand bg-white" />
                                             <p className="text-sm font-medium text-slate-900 line-clamp-1">{order.pickup_address}</p>
                                             <p className="text-xs text-slate-500">איסוף</p>
                                         </div>
@@ -114,7 +114,7 @@ export default function CourierTaskList({ orders, onAccept, onReject }: CourierT
                                         </Button>
                                         <Button
                                             onClick={() => onAccept(order.id)}
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                                            className="w-full bg-brand hover:bg-brand-dark text-white shadow-sm"
                                         >
                                             קבל משלוח
                                         </Button>

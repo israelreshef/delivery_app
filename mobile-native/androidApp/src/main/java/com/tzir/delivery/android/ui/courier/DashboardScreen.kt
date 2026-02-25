@@ -64,17 +64,27 @@ fun DashboardScreen(
     onSupportClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
     onDocumentsClick: () -> Unit = {},
-    onClientsClick: () -> Unit = {}
+    onClientsClick: () -> Unit = {},
+    onAcademyClick: () -> Unit = {}
 ) {
     val missions by repository.availableMissions.collectAsState()
     val activeMissions by repository.activeMissions.collectAsState()
     val stats by repository.stats.collectAsState()
     val isOffline by repository.isOffline.collectAsState()
+    val gamificationProfile by repository.gamificationProfile.collectAsState()
     
     val context = LocalContext.current
     val activeMission = activeMissions.firstOrNull()
     var isOnline by remember { mutableStateOf(true) }
     var weatherText by remember { mutableStateOf("טוען מזג אוויר...") }
+    val shiftStatus by repository.shiftStatus.collectAsState()
+    var showVibeDialog by remember { mutableStateOf(false) }
+    var showRestWarning by remember { mutableStateOf(false) }
+    var showForceStopDialog by remember { mutableStateOf(false) }
+    
+    // Milestones State
+    var showMilestoneCelebration by remember { mutableStateOf<Map<String, Any>?>(null) }
+    val prefs = remember { context.getSharedPreferences("TzirAcademy", android.content.Context.MODE_PRIVATE) }
 
     // Auto Day/Night map style based on current hour
     val currentHour = remember { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
@@ -84,6 +94,7 @@ fun DashboardScreen(
         repository.refreshAvailableMissions()
         repository.refreshActiveMissions()
         repository.refreshStats(user.id.toIntOrNull() ?: 0)
+        repository.refreshGamificationProfile()
         try {
             val lat = 32.0853
             val lon = 34.7818
@@ -106,6 +117,31 @@ fun DashboardScreen(
             weatherText = "$desc, ${temp}°C"
         } catch (e: Exception) {
             weatherText = "🌡️ נעים, 24°C"
+        }
+    }
+
+    LaunchedEffect(shiftStatus) {
+        shiftStatus?.let { status ->
+            if (status["force_stop"] == true && isOnline) {
+                isOnline = false
+                showForceStopDialog = true
+            } else if (status["recommend_rest"] == true) {
+                showRestWarning = true
+            }
+        }
+    }
+
+    LaunchedEffect(gamificationProfile) {
+        gamificationProfile?.let { profile ->
+            val milestones = profile["earned_milestones"] as? List<Map<String, Any>>
+            milestones?.forEach { milestone ->
+                val id = (milestone["id"] as? Number)?.toInt() ?: 0
+                if (id > 0 && !prefs.getBoolean("milestone_shown_$id", false)) {
+                    showMilestoneCelebration = milestone
+                    prefs.edit().putBoolean("milestone_shown_$id", true).apply()
+                    return@forEach // Show one at a time
+                }
+            }
         }
     }
 
@@ -145,6 +181,13 @@ fun DashboardScreen(
                             selected = false,
                             onClick = { scope.launch { drawerState.close(); onDocumentsClick() } },
                             icon = { Icon(Icons.Default.List, contentDescription = null) },
+                            colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent, unselectedIconColor = TextOfficial, unselectedTextColor = TextOfficial)
+                        )
+                        NavigationDrawerItem(
+                            label = { Text("האקדמיה של ציר", fontWeight = FontWeight.Medium) },
+                            selected = false,
+                            onClick = { scope.launch { drawerState.close(); onAcademyClick() } },
+                            icon = { Icon(Icons.Default.School, contentDescription = null) },
                             colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent, unselectedIconColor = TextOfficial, unselectedTextColor = TextOfficial)
                         )
                         NavigationDrawerItem(
@@ -258,17 +301,21 @@ fun DashboardScreen(
                     }
 
                     // Center (Availability Toggle)
-                    val toggleBgColor by animateColorAsState(if (isOnline) Color(0xFF10B981) else Color(0xFF64748B), label = "bg")
+                    val toggleBgColor by animateColorAsState(if (isOnline) Color(0xFF4CAF50) else Color(0xFF64748B), label = "bg")
                     
                     Box(
                         modifier = Modifier
                             .padding(top = 4.dp)
-                            .shadow(elevation = if (isOnline) 12.dp else 4.dp, shape = RoundedCornerShape(32.dp), spotColor = if (isOnline) Color(0xFF10B981) else Color.Black)
+                            .shadow(elevation = if (isOnline) 12.dp else 4.dp, shape = RoundedCornerShape(32.dp), spotColor = if (isOnline) Color(0xFF4CAF50) else Color.Black)
                             .clip(RoundedCornerShape(32.dp))
                             .background(toggleBgColor)
                             .clickable {
-                                isOnline = !isOnline
-                                scope.launch { repository.updateAvailability(isOnline) }
+                                if (!isOnline) {
+                                    showVibeDialog = true
+                                } else {
+                                    isOnline = false
+                                    scope.launch { repository.updateAvailability(false) }
+                                }
                             }
                             .padding(horizontal = 24.dp, vertical = 12.dp)
                     ) {
@@ -418,6 +465,146 @@ fun DashboardScreen(
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // --- TZIR Academy Dialogs ---
+            if (showVibeDialog) {
+                AlertDialog(
+                    onDismissRequest = { showVibeDialog = false },
+                    title = { Text("איך הווייב היום?", fontWeight = FontWeight.Bold, color = PrimaryTurquoise) },
+                    text = { Text("בחר את סגנון המשלוחים שמועדף עליך כרגע כדי שנתאים לך משימות טוב יותר.") },
+                    confirmButton = {
+                        TextButton(onClick = { 
+                            showVibeDialog = false
+                            isOnline = true
+                            scope.launch { 
+                                repository.startShift("general") 
+                                repository.updateAvailability(true)
+                            }
+                        }) { Text("הכל זורם") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { 
+                            showVibeDialog = false
+                            isOnline = true
+                            scope.launch { 
+                                repository.startShift("action") 
+                                repository.updateAvailability(true)
+                            }
+                        }) { Text("אקשן ומהירות") }
+                    },
+                    containerColor = Color.White
+                )
+            }
+            
+            if (showRestWarning) {
+                AlertDialog(
+                    onDismissRequest = { showRestWarning = false },
+                    title = { Text("המלצת מנוחה ☕", fontWeight = FontWeight.Bold, color = Color(0xFFF57C00)) },
+                    text = { Text("אתה באוויר כבר מעל 6 שעות ברצף. מחקרים מראים שמנוחה קצרה של 15 דקות משפרת פוקוס ומונעת תאונות. קח רגע לנשום!") },
+                    confirmButton = {
+                        Button(
+                            onClick = { 
+                                showRestWarning = false
+                                isOnline = false
+                                scope.launch { repository.updateAvailability(false) }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF57C00))
+                        ) { Text("צודקים, לוקח הפסקה") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showRestWarning = false }) { Text("ממשיך לעבוד") }
+                    },
+                    containerColor = Color.White
+                )
+            }
+            
+            if (showForceStopDialog) {
+                AlertDialog(
+                    onDismissRequest = { }, // Force user to acknowledge
+                    title = { Text("משמרת הסתיימה אוטומטית 🛑", fontWeight = FontWeight.Bold, color = Color.Red) },
+                    text = { Text("הגעת למקסימום המותר של 8 שעות עבודה רצופות לפי פרוטוקול בטיחות. המערכת ניתקה אותך כדי למנוע שחיקה חמורה וסיכון בטיחותי. נתראה מחר!") },
+                    confirmButton = {
+                        Button(
+                            onClick = { showForceStopDialog = false },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) { Text("הבנתי") }
+                    },
+                    containerColor = Color.White
+                )
+            }
+            
+            // --- MILESTONE CELEBRATION OVERLAY ---
+            AnimatedVisibility(
+                visible = showMilestoneCelebration != null,
+                enter = fadeIn() + scaleIn(initialScale = 0.5f),
+                exit = fadeOut() + scaleOut(targetScale = 0.5f),
+                modifier = Modifier.fillMaxSize().zIndex(100f)
+            ) {
+                showMilestoneCelebration?.let { milestone ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.85f))
+                            .clickable { showMilestoneCelebration = null },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("🎉🎆🎊", fontSize = 64.sp)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("הישג חדש נפתח!", color = Color(0xFFFFD700), fontWeight = FontWeight.Black, fontSize = 28.sp)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            
+                            Card(
+                                modifier = Modifier.padding(24.dp).fillMaxWidth(0.8f),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                shape = RoundedCornerShape(24.dp),
+                                elevation = CardDefaults.cardElevation(16.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("🏆", fontSize = 64.sp)
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = milestone["title"] as? String ?: "תותח",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp,
+                                        color = PrimaryTurquoise,
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = milestone["description"] as? String ?: "",
+                                        color = TextGray,
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    val rewardXp = (milestone["reward_xp"] as? Number)?.toInt() ?: 0
+                                    Surface(
+                                        color = Color(0xFF4CAF50).copy(alpha = 0.1f),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Text(
+                                            text = "+$rewardXp XP",
+                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                            color = Color(0xFF2E7D32),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                            
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Button(
+                                onClick = { showMilestoneCelebration = null },
+                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryTurquoise),
+                                shape = RoundedCornerShape(32.dp),
+                                modifier = Modifier.height(56.dp).padding(horizontal = 32.dp)
+                            ) {
+                                Text("מדהים, ממשיכים לחקור!", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                             }
                         }
                     }

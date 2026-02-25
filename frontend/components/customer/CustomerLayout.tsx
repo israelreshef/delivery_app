@@ -26,7 +26,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-white h-screen sticky top-0 z-40">
                 <div className="p-6 border-b border-slate-800 flex items-center justify-center">
-                    <h1 className="text-2xl font-black tracking-tighter text-blue-400">TZIR<span className="text-white">.Customer</span></h1>
+                    <h1 className="text-2xl font-black tracking-tighter text-brand/80">TZIR<span className="text-white">.Customer</span></h1>
                 </div>
 
                 <div className="p-4 flex flex-col gap-2 flex-1 mt-4">
@@ -45,11 +45,11 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group",
                                     isActive
-                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
+                                        ? "bg-brand text-navy-950 shadow-lg shadow-amber/20"
                                         : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                 )}
                             >
-                                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
+                                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-500 group-hover:text-brand/80")} />
                                 <span className="font-medium">{item.label}</span>
                             </Link>
                         );
@@ -70,7 +70,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
             {/* Mobile Header */}
             <header className="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-30">
-                <span className="font-black text-xl text-blue-400">TZIR</span>
+                <span className="font-black text-xl text-brand/80">TZIR</span>
                 <div className="text-sm font-medium">{user?.username}</div>
             </header>
 
@@ -94,7 +94,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
                                 href={item.href}
                                 className={cn(
                                     "flex flex-col items-center justify-center w-full h-full gap-1 transition-colors",
-                                    isActive ? "text-blue-600" : "text-slate-400 hover:text-slate-600"
+                                    isActive ? "text-brand" : "text-slate-400 hover:text-slate-600"
                                 )}
                             >
                                 <Icon className={cn("w-5 h-5", isActive && "fill-current/20")} />

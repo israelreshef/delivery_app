@@ -178,7 +178,7 @@ export default function RecipientForm() {
                         <Button type="button" variant="outline" size="lg" onClick={prevStep}>
                             <ArrowRight className="ml-2 h-4 w-4" /> חזרה
                         </Button>
-                        <Button type="submit" size="lg" className="px-8 bg-blue-600 hover:bg-blue-700">
+                        <Button type="submit" size="lg" className="px-8 bg-brand hover:bg-brand-dark">
                             המשך לפרטי חבילה
                             <ArrowLeft className="mr-2 h-4 w-4" />
                         </Button>

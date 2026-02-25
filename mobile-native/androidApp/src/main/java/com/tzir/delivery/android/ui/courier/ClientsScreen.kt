@@ -91,7 +91,7 @@ fun ClientItem(client: ClientEntry) {
                 color = PrimaryTurquoise.copy(alpha = 0.1f)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text(client.name.take(1), fontWeight = FontWeight.Bold, color = Color(0xFF001C44))
+                    Text(client.name.take(1), fontWeight = FontWeight.Bold, color = Color(0xFF1C3D2A))
                 }
             }
             

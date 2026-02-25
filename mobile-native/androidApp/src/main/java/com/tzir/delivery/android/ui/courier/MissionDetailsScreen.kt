@@ -233,12 +233,19 @@ fun MissionDetailsScreen(
                                                         android.util.Base64.encodeToString(outputStream.toByteArray(), android.util.Base64.NO_WRAP)
                                                     }
 
+                                                    // Grab real-time location for Proof of Delivery (GPS Timestamping)
+                                                    val loc = com.tzir.delivery.shared.location.LocationManager.instance?.currentLocation?.value
+                                                    val lat = loc?.first
+                                                    val lng = loc?.second
+
                                                     if (repository.verifyOTP(mission.id, otpCode)) {
                                                         repository.updateMissionStatus(
                                                             mission.id, 
                                                             "delivered", 
                                                             podSignature = podSignatureBase64,
-                                                            podImage = podImageBase64
+                                                            podImage = podImageBase64,
+                                                            lat = lat,
+                                                            lng = lng
                                                         )
                                                         isVerifyingOTP = false
                                                         showRating = true
@@ -349,7 +356,7 @@ fun FeedbackToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 14.sp, color = Color(0xFF001C44), fontWeight = FontWeight.Medium)
+        Text(label, fontSize = 14.sp, color = Color(0xFF1C3D2A), fontWeight = FontWeight.Medium)
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,

@@ -10,16 +10,16 @@ export default function RegisterPage() {
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden" dir="rtl">
 
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-3xl -mr-32 -mt-32 z-0"></div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/20/50 rounded-full blur-3xl -mr-32 -mt-32 z-0"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-3xl -ml-32 -mb-32 z-0"></div>
 
             <div className="max-w-5xl w-full space-y-12 relative z-10">
                 <div className="text-center space-y-4">
-                    <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-2">
+                    <div className="inline-block px-4 py-1.5 bg-brand/20 text-brand rounded-full text-sm font-semibold mb-2">
                         הצטרפו למהפכה
                     </div>
                     <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl text-slate-900 leading-tight">
-                        הצטרפו לקהילת <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">TZIR</span>
+                        הצטרפו לקהילת <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">TZIR</span>
                     </h1>
                     <p className="text-xl text-slate-500 max-w-2xl mx-auto">
                         בחרו את המסלול המתאים לכם והתחילו לעבוד עם מערכת המשלוחים החכמה בישראל
@@ -51,10 +51,10 @@ export default function RegisterPage() {
                     {/* Customer Card */}
                     <Link href="/register/customer" className="group">
                         <div className="h-full bg-white rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden border border-slate-100 flex flex-col">
-                            <div className="h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+                            <div className="h-2 bg-gradient-to-r from-brand to-brand-dark"></div>
                             <div className="p-10 flex flex-col items-center text-center space-y-6 flex-1">
-                                <div className="h-28 w-28 bg-blue-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
-                                    <Building2 className="h-14 w-14 text-blue-600" />
+                                <div className="h-28 w-28 bg-brand/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
+                                    <Building2 className="h-14 w-14 text-brand" />
                                 </div>
                                 <div>
                                     <h2 className="text-3xl font-bold text-slate-900 mb-2">אני עסק / לקוח</h2>
@@ -62,7 +62,7 @@ export default function RegisterPage() {
                                         צריכים פתרון שילוח מהיר ואמין? נהלו את המשלוחים שלכם בקלות, עקבו בזמן אמת וקבלו שירות VIP.
                                     </p>
                                 </div>
-                                <Button className="w-full mt-auto h-12 text-lg bg-white text-blue-600 border-2 border-blue-100 hover:bg-blue-50 hover:border-blue-200 shadow-none hover:shadow-md transition-all group-hover:bg-blue-600 group-hover:text-white group-hover:border-transparent">
+                                <Button className="w-full mt-auto h-12 text-lg bg-white text-brand border-2 border-brand/20 hover:bg-brand-dark/10 hover:border-brand/20 shadow-none hover:shadow-md transition-all group-hover:bg-brand-dark group-hover:text-white group-hover:border-transparent">
                                     להרשמה כלקוח עסקי <ArrowLeft className="mr-2 h-5 w-5" />
                                 </Button>
                             </div>
@@ -71,7 +71,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="text-center mt-12 pb-8">
-                    <Link href="/login" className="inline-flex items-center text-slate-500 hover:text-blue-600 transition-colors font-medium">
+                    <Link href="/login" className="inline-flex items-center text-slate-500 hover:text-brand transition-colors font-medium">
                         כבר רשומים למערכת? התחברו כאן <ArrowLeft className="mr-1 h-4 w-4" />
                     </Link>
                 </div>

@@ -12,7 +12,7 @@ import Link from "next/link";
 import { AddLeadModal } from "@/components/admin/crm/AddLeadModal";
 
 const STATUS_COLUMNS = [
-    { id: 'new', label: 'חדש', color: 'bg-blue-100 text-blue-800' },
+    { id: 'new', label: 'חדש', color: 'bg-brand/20 text-foreground' },
     { id: 'contacted', label: 'נוצר קשר', color: 'bg-yellow-100 text-yellow-800' },
     { id: 'meeting', label: 'פגישה', color: 'bg-purple-100 text-purple-800' },
     { id: 'proposal', label: 'הצעת מחיר', color: 'bg-orange-100 text-orange-800' },
@@ -84,7 +84,7 @@ export default function LeadsPage() {
 
             {loading ? (
                 <div className="flex justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <Loader2 className="w-8 h-8 animate-spin text-brand" />
                 </div>
             ) : (
                 <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-250px)]">

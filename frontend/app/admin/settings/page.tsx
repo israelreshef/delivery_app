@@ -19,7 +19,7 @@ export default function SettingsPage() {
             description: "הגדרת אזורים גיאוגרפיים ומחירים",
             icon: MapPin,
             href: "/admin/settings/zones",
-            color: "from-blue-500 to-cyan-600"
+            color: "from-brand to-cyan-600"
         },
         {
             title: "התראות ועדכונים",
@@ -40,7 +40,7 @@ export default function SettingsPage() {
             description: "שליחים, לקוחות ומשתמשי מערכת",
             icon: Users,
             href: "/admin/users",
-            color: "from-indigo-500 to-blue-600"
+            color: "from-indigo-500 to-primary"
         },
         {
             title: "עיצוב ומיתוג",
@@ -62,7 +62,7 @@ export default function SettingsPage() {
         <div className="p-6 space-y-6">
             {/* Header */}
             <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-lg">
+                <div className="bg-gradient-to-br from-brand to-primary p-3 rounded-xl shadow-lg">
                     <Settings className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -77,14 +77,14 @@ export default function SettingsPage() {
                     const Icon = category.icon;
                     return (
                         <Link key={index} href={category.href}>
-                            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-blue-200 h-full">
+                            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-brand/20 h-full">
                                 <CardHeader>
                                     <div className="flex items-start justify-between">
                                         <div className={`bg-gradient-to-br ${category.color} p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                                             <Icon className="h-6 w-6 text-white" />
                                         </div>
                                     </div>
-                                    <CardTitle className="text-xl mt-4 group-hover:text-blue-600 transition-colors">
+                                    <CardTitle className="text-xl mt-4 group-hover:text-brand transition-colors">
                                         {category.title}
                                     </CardTitle>
                                     <CardDescription className="text-sm">
@@ -94,7 +94,7 @@ export default function SettingsPage() {
                                 <CardContent>
                                     <Button
                                         variant="ghost"
-                                        className="w-full group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors"
+                                        className="w-full group-hover:bg-brand-dark/10 group-hover:text-brand transition-colors"
                                     >
                                         פתח הגדרות
                                     </Button>
@@ -106,21 +106,21 @@ export default function SettingsPage() {
             </div>
 
             {/* Quick Actions */}
-            <Card className="bg-gradient-to-br from-slate-50 to-blue-50 border-blue-100">
+            <Card className="bg-gradient-to-br from-slate-50 to-primary/10 border-brand/20">
                 <CardHeader>
                     <CardTitle className="text-lg">פעולות מהירות</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-3">
-                    <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
                         ייצוא נתונים
                     </Button>
-                    <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
                         גיבוי מערכת
                     </Button>
-                    <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
                         צפייה בלוגים
                     </Button>
-                    <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
                         בדיקת מערכת
                     </Button>
                 </CardContent>

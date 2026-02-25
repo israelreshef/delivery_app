@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create a configured axios instance
 export const api = axios.create({
-    baseURL: 'http://localhost:5000/api', // Flask Backend URL
+    baseURL: 'http://localhost:5001/api', // Flask Backend URL
     headers: {
         'Content-Type': 'application/json',
     },
@@ -35,10 +35,10 @@ export const fetchDashboardStats = async () => {
         // Transform backend format to frontend format
         const data = response.data;
         return {
-            onlineCouriers: data.couriers.active,
-            activeOrders: data.orders.active,
-            completedOrders: data.orders.delivered,
-            totalRevenue: data.performance.revenue_today,
+            onlineCouriers: data.active_couriers,
+            activeOrders: data.active_orders,
+            completedOrders: data.orders_today,
+            totalRevenue: data.revenue_today,
             recentActivity: data.recent_activity || []
         };
     } catch (error) {

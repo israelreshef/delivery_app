@@ -40,7 +40,7 @@ fun ErrorState(
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00E5FF))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B8F3E))
         ) {
             Text(stringResource(R.string.try_again), color = Color.White, fontWeight = FontWeight.Bold)
         }

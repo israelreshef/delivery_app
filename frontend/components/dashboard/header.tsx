@@ -22,7 +22,7 @@ export function Header() {
                     <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
                 </button>
 
-                <div className="h-8 w-8 rounded-full bg-primary/10" />
+                <div className="h-8 w-8 rounded-full bg-brand/10" />
             </div>
         </header>
     );

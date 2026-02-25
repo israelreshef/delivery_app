@@ -23,13 +23,19 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.draw.clip
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.shared.repository.CourierRepository
+import com.tzir.delivery.shared.location.LocationManager
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun RouteOptimizationScreen(onBack: () -> Unit, onApprove: () -> Unit) {
+fun RouteOptimizationScreen(repository: CourierRepository, onBack: () -> Unit, onApprove: () -> Unit) {
     var step by remember { mutableStateOf(0) } // 0: Input, 1: Calculation, 2: Result
     var address by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
+    var optimizedPoints by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
     
     PremiumBackground {
         Column(
@@ -100,7 +106,29 @@ fun RouteOptimizationScreen(onBack: () -> Unit, onApprove: () -> Unit) {
                     
                     AppleButton(
                         text = "חשב מסלול אופטימלי",
-                        onClick = { step = 1 },
+                        onClick = { 
+                            step = 1 
+                            scope.launch {
+                                // Default location if GPS missing (Tel Aviv)
+                                val lat = LocationManager.instance?.currentLocation?.value?.first ?: 32.0853
+                                val lng = LocationManager.instance?.currentLocation?.value?.second ?: 34.7818
+                                
+                                val res = repository.optimizeRoute(lat, lng)
+                                if (res != null && res["optimized_route"] != null) {
+                                    val points = res["optimized_route"] as? List<Map<String, Any>>
+                                    if (points != null && points.isNotEmpty()) {
+                                        optimizedPoints = points
+                                        step = 2
+                                    } else {
+                                        errorMessage = "לא נמצאו נקודות למסלול בשרת"
+                                        step = 0
+                                    }
+                                } else {
+                                    errorMessage = res?.get("message") as? String ?: "חישוב המסלול נכשל"
+                                    step = 0
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp)
@@ -109,10 +137,7 @@ fun RouteOptimizationScreen(onBack: () -> Unit, onApprove: () -> Unit) {
             }
             
             AnimatedVisibility(visible = step == 1) {
-                LaunchedEffect(Unit) {
-                    delay(3000) // Simulate calculation
-                    step = 2
-                }
+                // Calculation runs in coroutine, just show loader
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -140,9 +165,13 @@ fun RouteOptimizationScreen(onBack: () -> Unit, onApprove: () -> Unit) {
                                 Text("מסלול נוכחי משודרג", fontWeight = FontWeight.Bold)
                             }
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                            RouteStep("10:00", "איסוף - רחוב הרצל 45")
-                            RouteStep("10:20", "מסירה - ז'בוטינסקי 10")
-                            RouteStep("10:45", "הגעה ליעד - פארק הייטק")
+                            
+                            optimizedPoints.forEachIndexed { index, point ->
+                                val type = point["type"] as? String ?: ""
+                                val orderNum = point["order_number"] as? String
+                                val desc = if (type == "courier_location") "המיקום שלך" else "${if (type == "pickup") "איסוף" else "מסירה"} - הזמנה $orderNum"
+                                RouteStep(time = "STEP ${index+1}", description = desc)
+                            }
                         }
                     }
                     

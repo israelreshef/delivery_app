@@ -80,8 +80,8 @@ fun TzirButton(
             .shadow(
                 elevation = if (isPressed) 4.dp else 12.dp,
                 shape = RoundedCornerShape(20.dp),
-                ambientColor = Color(0xFF00D4FF).copy(alpha = 0.5f),
-                spotColor = Color(0xFF00D4FF).copy(alpha = 0.5f)
+                ambientColor = Color(0xFF6B8F3E).copy(alpha = 0.5f),
+                spotColor = Color(0xFF6B8F3E).copy(alpha = 0.5f)
             ),
         shape = RoundedCornerShape(20.dp),
         color = Color.Transparent,
@@ -93,9 +93,9 @@ fun TzirButton(
                 .background(
                     Brush.linearGradient(
                         colors = listOf(
-                            Color(0xFF001C44), // Deep Navy
-                            Color(0xFF004E92), // Royal Blue
-                            Color(0xFF00D4FF)  // Cyan
+                            Color(0xFF1C3D2A), // Deep Navy
+                            Color(0xFF1C3D2A), // Royal Blue
+                            Color(0xFF6B8F3E)  // Cyan
                         )
                     ),
                     alpha = alpha

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, Lead, LeadActivity, User, Customer, lead_status_enum, lead_source_enum, activity_type_enum
+from models import db, Lead, LeadActivity, User, Customer, CustomerPricingOverride, lead_status_enum, lead_source_enum, activity_type_enum
 from utils.decorators import token_required, role_required
 import logging
 from datetime import datetime
@@ -217,4 +217,72 @@ def get_pipeline_stats(current_user):
         return jsonify(result), 200
         
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# =====================================================================
+# Customer B2B Pricing Management
+# =====================================================================
+
+@crm_bp.route('/customers/<int:customer_id>/pricing', methods=['GET'])
+@token_required
+@role_required(['admin', 'sales', 'finance_admin'])
+def get_customer_pricing(current_user, customer_id):
+    """Fetch custom B2B pricing overrides for a customer"""
+    try:
+        customer = Customer.query.get_or_404(customer_id)
+        override = CustomerPricingOverride.query.filter_by(customer_id=customer.id).first()
+        
+        if not override:
+            return jsonify({'message': 'No custom overrides. Customer uses standard global pricing.'}), 200
+            
+        return jsonify({
+            'base_price': float(override.base_price) if override.base_price else None,
+            'price_per_km': float(override.price_per_km) if override.price_per_km else None,
+            'price_per_kg': float(override.price_per_kg) if override.price_per_kg else None,
+            'discount_percentage': override.discount_percentage
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@crm_bp.route('/customers/<int:customer_id>/pricing', methods=['PUT'])
+@token_required
+@role_required(['admin', 'finance_admin'])
+def update_customer_pricing(current_user, customer_id):
+    """Set or update B2B pricing overrides for a customer"""
+    try:
+        data = request.json
+        customer = Customer.query.get_or_404(customer_id)
+        override = CustomerPricingOverride.query.filter_by(customer_id=customer.id).first()
+        
+        if not override:
+            override = CustomerPricingOverride(customer_id=customer.id)
+            db.session.add(override)
+            
+        if 'base_price' in data:
+            override.base_price = data['base_price']
+        if 'price_per_km' in data:
+            override.price_per_km = data['price_per_km']
+        if 'price_per_kg' in data:
+            override.price_per_kg = data['price_per_kg']
+        if 'discount_percentage' in data:
+            override.discount_percentage = float(data['discount_percentage'])
+            
+        # Ensure customer is marked as business
+        if customer.customer_type != 'business':
+             customer.customer_type = 'business'
+             
+        db.session.commit()
+        
+        from utils.audit import log_audit
+        log_audit(
+            action='UPDATE_B2B_PRICING',
+            user_id=current_user.id,
+            resource_type='Customer',
+            resource_id=customer.id,
+            details=f"Updated override: Base={override.base_price}, Discount={override.discount_percentage}"
+        )
+        
+        return jsonify({'message': 'Customer B2B pricing updated successfully.'}), 200
+    except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500

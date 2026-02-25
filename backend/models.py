@@ -96,7 +96,16 @@ class Customer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     full_name = db.Column(db.String(100), nullable=False)
     company_name = db.Column(db.String(100), nullable=True)
-    business_id = db.Column(db.String(20), nullable=True) # H.P. / Company ID
+    
+    # B2B vs Private Classification
+    customer_type = db.Column(db.Enum('private', 'business', name='customer_type_enum'), default='private')
+    
+    # Israeli Compliance Fields
+    tax_id = db.Column(db.String(20), nullable=True) # ח.פ / עוסק מורשה / ת.ז
+    vat_status = db.Column(db.Enum('exempt', 'authorized_dealer', 'company', 'standard', name='vat_statuses'), default='authorized_dealer')
+    payment_terms = db.Column(db.String(50), default='net_30', nullable=True) # e.g. EOM+30
+    
+    business_id = db.Column(db.String(20), nullable=True) # Kept for backward compatibility
     contact_person = db.Column(db.String(100), nullable=True) # Name of contact if company
     default_address = db.Column(db.Text, nullable=True)
     billing_address = db.Column(db.Text, nullable=True)
@@ -141,6 +150,7 @@ class Courier(db.Model):
     drivers_license_number = db.Column(db.String(20), nullable=True)
     insurance_policy_number = db.Column(db.String(50), nullable=True)
     is_freelance_declared = db.Column(db.Boolean, default=False)
+    employment_type = db.Column(db.Enum('freelance', 'employee', name='employment_types'), default='freelance')
     onboarding_status = db.Column(onboarding_status_enum, default='new')
     rejection_reason = db.Column(db.Text, nullable=True)
     
@@ -161,6 +171,11 @@ class Courier(db.Model):
     tracking = db.relationship('DeliveryTracking', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
     ratings = db.relationship('Rating', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
     documents = db.relationship('CourierDocument', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
+    gamification = db.relationship('CourierGamification', backref='courier', uselist=False, cascade='all, delete-orphan')
+    daily_missions = db.relationship('DailyMission', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
+    shift_sessions = db.relationship('ShiftSession', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
+    earned_milestones = db.relationship('EarnedMilestone', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
+    certifications = db.relationship('CourierCertification', backref='courier', lazy='dynamic', cascade='all, delete-orphan')
     
     __table_args__ = (
         db.Index('idx_courier_available', 'is_available'),
@@ -171,6 +186,149 @@ class Courier(db.Model):
     def __repr__(self):
         return f'<Courier {self.full_name}>'
 
+# ============================================================================
+# Gamification, Shift & Milestone Models (TZIR Academy)
+# ============================================================================
+
+class Milestone(db.Model):
+    __tablename__ = 'milestones'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False) # e.g., "10,000 KM Driven"
+    description = db.Column(db.Text, nullable=True)
+    trigger_type = db.Column(db.String(50), nullable=False) # e.g., 'total_deliveries', 'total_distance'
+    trigger_value = db.Column(db.Integer, nullable=False) # e.g., 10000
+    reward_xp = db.Column(db.Integer, default=0)
+    reward_cash = db.Column(db.Float, default=0.0)
+    medal_icon_url = db.Column(db.String(255), nullable=True)
+    
+    def __repr__(self):
+        return f'<Milestone {self.title}>'
+
+class EarnedMilestone(db.Model):
+    __tablename__ = 'earned_milestones'
+    __table_args__ = (
+        db.UniqueConstraint('courier_id', 'milestone_id', name='uq_courier_milestone'),
+        {'extend_existing': True}
+    )
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    milestone_id = db.Column(db.Integer, db.ForeignKey('milestones.id'), nullable=False)
+    earned_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    milestone = db.relationship('Milestone')
+    
+    def __repr__(self):
+        return f'<EarnedMilestone Courier:{self.courier_id} Milestone:{self.milestone_id}>'
+
+class CourierGamification(db.Model):
+    __tablename__ = 'courier_gamification'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False, unique=True)
+    level = db.Column(db.Integer, default=1, nullable=False)
+    xp = db.Column(db.Integer, default=0, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CourierGamification Courier:{self.courier_id} Lvl:{self.level} XP:{self.xp}>'
+
+class DailyMission(db.Model):
+    __tablename__ = 'daily_missions'
+    __table_args__ = (
+        db.UniqueConstraint('courier_id', 'mission_date', name='uq_courier_mission_date'),
+        {'extend_existing': True}
+    )
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    mission_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    
+    completed_deliveries = db.Column(db.Integer, default=0)
+    fast_deliveries = db.Column(db.Integer, default=0)
+    five_star_reviews = db.Column(db.Integer, default=0)
+    canceled_deliveries = db.Column(db.Integer, default=0)
+    
+    streak_days = db.Column(db.Integer, default=0)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<DailyMission Courier:{self.courier_id} Date:{self.mission_date}>'
+
+class ShiftSession(db.Model):
+    __tablename__ = 'shift_sessions'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    start_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=True)
+    
+    is_active = db.Column(db.Boolean, default=True)
+    rest_recommended_shown = db.Column(db.Boolean, default=False)
+    forced_stop_applied = db.Column(db.Boolean, default=False)
+    
+    vibe_selected = db.Column(db.String(50), nullable=True) # offices, restaurants, etc
+    
+    def __repr__(self):
+        return f'<ShiftSession Courier:{self.courier_id} Start:{self.start_time} Active:{self.is_active}>'
+
+# ============================================================================
+# Academy & Certifications Models (TZIR Academy Phase 3)
+# ============================================================================
+
+class Course(db.Model):
+    __tablename__ = 'courses'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    required_level = db.Column(db.Integer, default=1)
+    badge_icon_url = db.Column(db.String(255), nullable=True) # Icon for passing
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    lessons = db.relationship('CourseLesson', backref='course', lazy='dynamic', cascade='all, delete-orphan')
+
+class CourseLesson(db.Model):
+    __tablename__ = 'course_lessons'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    content_text = db.Column(db.Text, nullable=True)
+    video_url = db.Column(db.String(255), nullable=True)
+    order_index = db.Column(db.Integer, default=0)
+
+class CourierCertification(db.Model):
+    __tablename__ = 'courier_certifications'
+    __table_args__ = (
+        db.UniqueConstraint('courier_id', 'course_id', name='uq_courier_course_cert'),
+        {'extend_existing': True}
+    )
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    # Statuses: locked, training, temporary, permanent
+    status = db.Column(db.String(50), default='locked')
+    
+    progress_percent = db.Column(db.Float, default=0.0)
+    temporary_orders_completed = db.Column(db.Integer, default=0) # For On-The-Job Training
+    
+    issued_at = db.Column(db.DateTime, nullable=True)
+
+    course = db.relationship('Course')
+
+    def __repr__(self):
+        return f'<CourierCertification Courier:{self.courier_id} Course:{self.course_id} Status:{self.status}>'
 
 # ============================================================================
 # Address Model
@@ -384,7 +542,10 @@ class Invoice(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
+    # invoice_number MUST strictly be consecutive according to Israeli law (ניהול ספרים)
     invoice_number = db.Column(db.String(50), unique=True, nullable=False)
+    document_type = db.Column(db.Enum('tax_invoice_receipt', 'receipt', 'tax_invoice', 'transaction_invoice', 'credit_note', name='invoice_document_types'), nullable=False, server_default='tax_invoice_receipt')
+    
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False, unique=True)
     
@@ -392,6 +553,7 @@ class Invoice(db.Model):
     due_date = db.Column(db.DateTime, nullable=True)
     
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
+    vat_rate = db.Column(db.Float, default=0.17, nullable=False) # 17% in Israel
     vat_amount = db.Column(db.Numeric(10, 2), nullable=False)
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
     
@@ -871,3 +1033,283 @@ class ApiKey(db.Model):
 
     def __repr__(self):
         return f'<ApiKey {self.merchant_name} ({self.prefix})>'
+
+
+# ============================================================================
+# API Usage Tracking Model (for Expenses Dashboard)
+# ============================================================================
+
+class ApiUsage(db.Model):
+    __tablename__ = 'api_usage'
+    __table_args__ = (
+        db.UniqueConstraint('service_name', 'usage_date', name='uq_service_date'),
+        {'extend_existing': True}
+    )
+    
+    id = db.Column(db.Integer, primary_key=True)
+    service_name = db.Column(db.String(50), nullable=False)  # 'google_places', 'nominatim', 'hosting', etc.
+    usage_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    
+    call_count = db.Column(db.Integer, default=0)
+    cost_per_call = db.Column(db.Float, default=0.0)  # Cost in USD per call
+    total_cost = db.Column(db.Float, default=0.0)  # Calculated total cost
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ApiUsage {self.service_name} {self.usage_date}: {self.call_count} calls, ${self.total_cost}>'
+
+
+# ============================================================================
+# Phase 3: Legal Deliveries & HR Models
+# ============================================================================
+
+class LegalDeliveryEvidence(db.Model):
+    __tablename__ = 'legal_delivery_evidence'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False, unique=True)
+    
+    # Mandatory Geolocation + Timestamp at time of signature
+    signed_lat = db.Column(db.Float, nullable=False)
+    signed_lng = db.Column(db.Float, nullable=False)
+    signed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    # Digital Signature Reference (hash or ID from external service like DocuSign)
+    digital_signature_id = db.Column(db.String(255), nullable=True)
+    chain_of_custody_log = db.Column(db.Text, nullable=True) # JSON array of handlers and times
+    
+    delivery = db.relationship('Delivery', backref=db.backref('legal_evidence', uselist=False))
+
+    def __repr__(self):
+        return f'<LegalDeliveryEvidence Delivery:{self.delivery_id}>'
+
+class InsurancePolicy(db.Model):
+    __tablename__ = 'insurance_policies'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    policy_type = db.Column(db.Enum('vehicle', 'professional_liability', name='insurance_policy_types'), nullable=False)
+    provider_name = db.Column(db.String(100), nullable=False)
+    policy_number = db.Column(db.String(100), nullable=False)
+    
+    valid_from = db.Column(db.Date, nullable=False)
+    first_name = db.Column(db.String(50), nullable=True)
+    last_name = db.Column(db.String(50), nullable=True)
+    
+    # Financial/Regulatory Fields
+    tax_id = db.Column(db.String(20), nullable=True)  # H.P or C.N
+    withholding_tax_rate = db.Column(db.Float, default=0.0) # ניכוי מס במקור
+    withholding_expiry = db.Column(db.Date, nullable=True)
+    
+    is_available = db.Column(db.Boolean, default=False)
+    verified_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    courier = db.relationship('Courier', backref='insurance_policies')
+
+    def __repr__(self):
+        return f'<InsurancePolicy {self.policy_type} for Courier:{self.courier_id}>'
+
+class EmploymentContract(db.Model):
+    __tablename__ = 'employment_contracts'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    contract_type = db.Column(db.Enum('freelance', 'employee', name='contract_types'), nullable=False)
+    
+    document_url = db.Column(db.String(255), nullable=False)
+    digital_signature_id = db.Column(db.String(255), nullable=True)
+    
+    signed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    courier = db.relationship('Courier', backref='employment_contracts')
+
+    def __repr__(self):
+        return f'<EmploymentContract {self.contract_type} for Courier:{self.courier_id}>'
+
+# ============================================================================
+# Phase 4: B2B CRM Pricing Overrides
+# ============================================================================
+
+class CustomerPricingOverride(db.Model):
+    __tablename__ = 'customer_pricing_overrides'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False, unique=True)
+    
+    # Specific Overrides (Leave null to fallback to global Pricing)
+    base_price = db.Column(db.Numeric(10, 2), nullable=True)
+    price_per_km = db.Column(db.Numeric(10, 2), nullable=True)
+    price_per_kg = db.Column(db.Numeric(10, 2), nullable=True)
+    
+    # Blanket discount (e.g. 0.10 for 10% off)
+    discount_percentage = db.Column(db.Float, default=0.0)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    customer = db.relationship('Customer', backref=db.backref('pricing_override', uselist=False))
+
+    def __repr__(self):
+        return f'<CustomerPricingOverride Customer:{self.customer_id}>'
+
+# ============================================================================
+# Phase 7: Regulatory Reports & Traffic Compliance
+# ============================================================================
+
+class Expense(db.Model):
+    __tablename__ = 'expenses'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(255), nullable=False)
+    
+    # Linked to Courier (Contributor/Supplier)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
+    
+    # Breakdown for PCN 874 / Israeli Tax
+    base_amount = db.Column(db.Numeric(10, 2), nullable=False) # Without VAT
+    vat_amount = db.Column(db.Numeric(10, 2), default=0.0)
+    withholding_tax_deducted = db.Column(db.Numeric(10, 2), default=0.0) # Tax deducted by us (for contractors)
+    total_amount = db.Column(db.Numeric(10, 2), nullable=False) # Final paid amount (base + vat - withholding)
+    
+    expense_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    category = db.Column(db.String(100), nullable=True)
+    vendor_name = db.Column(db.String(100), nullable=True)
+    payment_method = db.Column(db.String(50), nullable=True) # Cash, Bank Transfer, Credit Card
+    receipt_url = db.Column(db.String(255), nullable=True)
+    is_contractor_invoice = db.Column(db.Boolean, default=False)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    courier = db.relationship('Courier', backref=db.backref('agent_expenses', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<Expense {self.id}: {self.description} - {self.total_amount}>'
+
+class TrafficScore(db.Model):
+    __tablename__ = 'traffic_scores'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    points = db.Column(db.Integer, default=0)
+    violation_type = db.Column(db.String(100), nullable=False) # e.g. "Speeding", "Red Light"
+    violation_date = db.Column(db.DateTime, nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    courier = db.relationship('Courier', backref=db.backref('traffic_records', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<TrafficScore {self.points}pts Courier:{self.courier_id}>'
+
+class LegalCase(db.Model):
+    __tablename__ = 'legal_cases'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    case_number = db.Column(db.String(100), unique=True, nullable=False)
+    status = db.Column(db.Enum('open', 'in_progress', 'closed', name='legal_case_status'), default='open')
+    description = db.Column(db.Text, nullable=False)
+    lawyer_assigned = db.Column(db.String(255), nullable=True)
+    court_date = db.Column(db.DateTime, nullable=True)
+    documents_url = db.Column(db.String(255), nullable=True)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    courier = db.relationship('Courier', backref=db.backref('legal_cases', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<LegalCase {self.case_number} Courier:{self.courier_id}>'
+
+# ============================================================================
+# Phase 9: Advanced Route Builder 2.0
+# ============================================================================
+
+class SavedRoute(db.Model):
+    __tablename__ = 'saved_routes'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    status = db.Column(db.Enum('draft', 'published', 'assigned', 'completed', name='route_status'), default='draft')
+    
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
+    scheduled_at = db.Column(db.DateTime, nullable=True)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    stops = db.relationship('RouteStop', backref='route', lazy='dynamic', cascade='all, delete-orphan', order_by='RouteStop.sequence_number')
+    courier = db.relationship('Courier', backref=db.backref('assigned_saved_routes', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<SavedRoute {self.name} Status:{self.status}>'
+
+class RouteStop(db.Model):
+    __tablename__ = 'route_stops'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    route_id = db.Column(db.Integer, db.ForeignKey('saved_routes.id'), nullable=False)
+    sequence_number = db.Column(db.Integer, nullable=False)
+    
+    address = db.Column(db.String(255), nullable=False) # Full address
+    city = db.Column(db.String(100), nullable=True)
+    street = db.Column(db.String(200), nullable=True)
+    building_number = db.Column(db.String(10), nullable=True)
+    floor = db.Column(db.String(10), nullable=True)
+    apartment = db.Column(db.String(10), nullable=True)
+    
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    
+    contact_name = db.Column(db.String(100), nullable=True)
+    contact_phone = db.Column(db.String(20), nullable=True)
+    
+    note = db.Column(db.Text, nullable=True)
+    time_window_start = db.Column(db.DateTime, nullable=True)
+    time_window_end = db.Column(db.DateTime, nullable=True)
+    
+    # Optional link to an existing order
+    order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=True)
+    
+    stop_type = db.Column(db.Enum('pickup', 'delivery', 'waypoint', name='stop_type'), default='delivery')
+    is_completed = db.Column(db.Boolean, default=False)
+    completed_at = db.Column(db.DateTime, nullable=True)
+
+    def __repr__(self):
+        return f'<RouteStop {self.sequence_number} Route:{self.route_id} Address:{self.address}>'
+
+class CompanySettings(db.Model):
+    __tablename__ = 'company_settings'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    legal_name = db.Column(db.String(100), nullable=False)
+    tax_id = db.Column(db.String(20), nullable=False) # H.P
+    address = db.Column(db.String(255), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
+    email = db.Column(db.String(100), nullable=True)
+    
+    # Reporting Settings
+    vat_reporting_frequency = db.Column(db.String(20), default='monthly') # monthly, bimonthly
+    income_tax_advance_rate = db.Column(db.Float, default=0.0)
+    
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CompanySettings {self.legal_name}>'

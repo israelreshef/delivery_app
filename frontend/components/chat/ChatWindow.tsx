@@ -136,14 +136,14 @@ export default function ChatWindow() {
                 isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 translate-y-10 invisible"
             )}>
                 {/* Header */}
-                <div className="bg-blue-600 p-4 text-white flex justify-between items-center shrink-0">
+                <div className="bg-brand p-4 text-white flex justify-between items-center shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <User className="w-6 h-6" />
                         </div>
                         <div>
                             <div className="font-bold">תמיכת לקוחות</div>
-                            <div className="text-xs text-blue-100 flex items-center gap-1">
+                            <div className="text-xs text-brand/20 flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
                                 מחוברים כעת
                             </div>
@@ -158,7 +158,7 @@ export default function ChatWindow() {
                 <div className="flex-1 bg-slate-50 p-4 overflow-y-auto space-y-4">
                     {loading ? (
                         <div className="flex justify-center py-4">
-                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-brand border-t-transparent"></div>
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="text-center text-slate-400 mt-10 space-y-4">
@@ -185,11 +185,11 @@ export default function ChatWindow() {
                                 <div className={cn(
                                     "max-w-[80%] p-3 rounded-2xl text-sm shadow-sm",
                                     msg.is_me
-                                        ? "bg-blue-600 text-white rounded-tr-none"
+                                        ? "bg-brand text-white rounded-tr-none"
                                         : "bg-white text-slate-800 border border-slate-100 rounded-tl-none"
                                 )}>
                                     <div>{msg.message}</div>
-                                    <div className={cn("text-[10px] mt-1 opacity-70 text-right", msg.is_me ? "text-blue-100" : "text-slate-400")}>
+                                    <div className={cn("text-[10px] mt-1 opacity-70 text-right", msg.is_me ? "text-brand/20" : "text-slate-400")}>
                                         {format(new Date(msg.timestamp), "HH:mm")}
                                     </div>
                                 </div>
@@ -203,12 +203,12 @@ export default function ChatWindow() {
                 <div className="p-3 bg-white border-t border-slate-100 flex gap-2">
                     <Input
                         placeholder="כתוב הודעה..."
-                        className="bg-slate-50 border-0 focus-visible:ring-1 focus-visible:ring-blue-200"
+                        className="bg-slate-50 border-0 focus-visible:ring-1 focus-visible:ring-brand/20"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyPress}
                     />
-                    <Button size="icon" className="bg-blue-600 hover:bg-blue-700" onClick={sendMessage}>
+                    <Button size="icon" className="bg-brand hover:bg-brand-dark" onClick={sendMessage}>
                         <Send className="w-4 h-4 ml-1" />
                     </Button>
                 </div>
@@ -218,7 +218,7 @@ export default function ChatWindow() {
             <Button
                 onClick={toggleChat}
                 className={cn(
-                    "h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white pointer-events-auto transition-transform active:scale-95",
+                    "h-14 w-14 rounded-full shadow-lg bg-brand hover:bg-brand-dark text-white pointer-events-auto transition-transform active:scale-95",
                     isOpen && "rotate-90 scale-0 opacity-0"
                 )}
             >

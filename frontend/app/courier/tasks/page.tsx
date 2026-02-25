@@ -144,7 +144,7 @@ export default function CourierTasksPage() {
 
                         {/* Navigation Buttons */}
                         <div className="grid grid-cols-2 gap-4">
-                            <Button className="h-12 text-lg bg-blue-600 hover:bg-blue-700 gap-2">
+                            <Button className="h-12 text-lg bg-brand hover:bg-brand-dark gap-2">
                                 <Navigation className="h-5 w-5" />
                                 Waze
                             </Button>

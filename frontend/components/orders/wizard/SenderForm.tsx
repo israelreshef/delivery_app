@@ -40,7 +40,7 @@ export default function SenderForm() {
     return (
         <div className="p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-xl font-bold mb-6 text-slate-800 flex items-center gap-2">
-                <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
+                <div className="w-1 h-6 bg-brand rounded-full"></div>
                 פרטי איסוף (שולח)
             </h2>
 
@@ -79,7 +79,7 @@ export default function SenderForm() {
 
                     <div className="space-y-4 pt-4 border-t border-slate-100">
                         <h3 className="font-semibold text-slate-700 flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-blue-500" />
+                            <MapPin className="w-4 h-4 text-brand" />
                             כתובת לאיסוף
                         </h3>
 
@@ -177,7 +177,7 @@ export default function SenderForm() {
                     </div>
 
                     <div className="pt-6 flex justify-end">
-                        <Button type="submit" size="lg" className="px-8 bg-blue-600 hover:bg-blue-700">
+                        <Button type="submit" size="lg" className="px-8 bg-brand hover:bg-brand-dark">
                             המשך לפרטי מקבל
                             <ArrowLeft className="mr-2 h-4 w-4" />
                         </Button>

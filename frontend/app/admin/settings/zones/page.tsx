@@ -50,7 +50,7 @@ export default function ZoneManagementPage() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/zones', {
+            const res = await fetch('http://localhost:5001/api/zones', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -69,7 +69,7 @@ export default function ZoneManagementPage() {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:5000/api/zones/${id}`, {
+            const res = await fetch(`http://localhost:5001/api/zones/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -95,7 +95,7 @@ export default function ZoneManagementPage() {
                 polygon_coords: [[32.08, 34.78], [32.09, 34.79], [32.07, 34.79]] // Triangle
             };
 
-            const res = await fetch('http://localhost:5000/api/zones', {
+            const res = await fetch('http://localhost:5001/api/zones', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -178,7 +178,7 @@ export default function ZoneManagementPage() {
                 <Card className="lg:col-span-2 border-none shadow-md overflow-hidden">
                     <CardHeader className="bg-slate-100 border-b">
                         <CardTitle className="flex items-center gap-2">
-                            <Map className="w-5 h-5 text-blue-600" />
+                            <Map className="w-5 h-5 text-brand" />
                             מפת אזורים
                         </CardTitle>
                     </CardHeader>

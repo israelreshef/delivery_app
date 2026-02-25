@@ -81,7 +81,7 @@ export default function SecuritySettingsPage() {
     if (statusLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-brand" />
             </div>
         )
     }
@@ -125,7 +125,7 @@ export default function SecuritySettingsPage() {
                                             </div>
                                             <div className="flex-1 space-y-4">
                                                 <div className="flex items-center gap-2 font-semibold text-lg">
-                                                    <Smartphone className="h-5 w-5 text-blue-600" />
+                                                    <Smartphone className="h-5 w-5 text-brand" />
                                                     שלב 1: סרוק את הברקוד
                                                 </div>
                                                 <p className="text-sm text-muted-foreground">
@@ -142,7 +142,7 @@ export default function SecuritySettingsPage() {
 
                                         <div className="border-t pt-6 space-y-4">
                                             <div className="flex items-center gap-2 font-semibold text-lg">
-                                                <KeyRound className="h-5 w-5 text-blue-600" />
+                                                <KeyRound className="h-5 w-5 text-brand" />
                                                 שלב 2: הזן קוד אימות
                                             </div>
                                             <p className="text-sm text-muted-foreground">

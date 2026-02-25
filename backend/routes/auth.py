@@ -26,13 +26,13 @@ def login():
     try:
         data = request.json
         if not data:
-            return jsonify({'error': 'No data provided'}), 400
+            return jsonify({'error': 'No data provided', 'message': 'לא התקבלו נתונים'}), 400
         # תמיכה בהתחברות עם אימייל או שם משתמש
         identifier = data.get('email') or data.get('username')
         password = data.get('password')
         
         if not identifier or not password:
-            return jsonify({'error': 'Email/Username and password required'}), 400
+            return jsonify({'error': 'Email/Username and password required', 'message': 'יש להזין אימייל וסיסמה'}), 400
         
         # מצא משתמש לפי שם משתמש או אימייל
         from sqlalchemy import or_
@@ -41,12 +41,15 @@ def login():
         if not user:
             # Fake hash check to prevent timing attacks
             # check_password_hash('pbkdf2:sha256:600000$dummy$dummy', 'dummy') 
-            return jsonify({'error': 'Invalid username or password'}), 401
+            return jsonify({'error': 'Invalid username or password', 'message': 'שם משתמש או סיסמה שגויים'}), 401
             
         # Check Account Lockout
         if user.locked_until and user.locked_until > datetime.datetime.utcnow():
             wait_time = (user.locked_until - datetime.datetime.utcnow()).seconds // 60
-            return jsonify({'error': f'Account locked due to too many failed attempts. Try again in {wait_time + 1} minutes.'}), 403
+            return jsonify({
+                'error': f'Account locked. Try again in {wait_time + 1} minutes.',
+                'message': f'החשבון נעול. נסה שוב בעוד {wait_time + 1} דקות.'
+            }), 403
         
         # בדוק סיסמה
         if not user.check_password(password):
@@ -76,15 +79,17 @@ def login():
             )
             
             remaining = 10 - user.failed_login_attempts
-            msg = 'Invalid username or password'
+            msg_en = 'Invalid username or password'
+            msg_he = 'שם משתמש או סיסמה שגויים'
             if remaining <= 3 and remaining > 0:
-                 msg += f'. Warning: {remaining} attempts remaining before lockout.'
+                 msg_en += f'. Warning: {remaining} attempts remaining before lockout.'
+                 msg_he += f'. אזהרה: נותרו עוד {remaining} ניסיונות לפני נעילת החשבון.'
             
-            return jsonify({'error': msg}), 401
+            return jsonify({'error': msg_en, 'message': msg_he}), 401
         
         # בדוק אם המשתמש פעיל
         if not user.is_active:
-            return jsonify({'error': 'Account is disabled'}), 403
+            return jsonify({'error': 'Account is disabled', 'message': 'החשבון מושבת'}), 403
 
         # Login Successful - Reset counters
         if user.failed_login_attempts > 0 or user.locked_until is not None:
@@ -442,6 +447,54 @@ def update_fcm_token(current_user):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+@auth_bp.route('/admin/reset-password', methods=['POST'])
+@token_required
+def admin_reset_password(current_user):
+    """
+    קביעת סיסמה חדשה למשתמש ע"י אדמין בלבד.
+    """
+    from utils.decorators import role_required
+    
+    # Check admin role
+    if current_user.user_type != 'admin' or current_user.admin_role != 'super_admin':
+        return jsonify({'error': 'Unauthorized. Requires Super Admin role.'}), 403
+        
+    try:
+        data = request.json
+        target_user_id = data.get('user_id')
+        new_password = data.get('password')
+        
+        if not target_user_id or not new_password:
+            return jsonify({'error': 'User ID and Password are required'}), 400
+            
+        target_user = User.query.get(target_user_id)
+        if not target_user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        # Update password
+        target_user.set_password(new_password)
+        target_user.failed_login_attempts = 0
+        target_user.locked_until = None
+        
+        db.session.commit()
+        
+        # AUDIT LOG
+        from utils.audit import log_audit
+        log_audit(
+            action='PASSWORD_RESET_BY_ADMIN',
+            user_id=current_user.id,
+            resource_type='User',
+            resource_id=target_user.id,
+            details=f"Admin {current_user.username} reset password for user {target_user.username}",
+            status='SUCCESS'
+        )
+        
+        return jsonify({'success': True, 'message': f'Password for {target_user.username} has been reset.'}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 # ============================================================================
 # Two-Factor Authentication (2FA) Routes
 # ============================================================================

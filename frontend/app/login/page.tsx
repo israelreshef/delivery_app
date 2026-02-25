@@ -162,7 +162,7 @@ export default function LoginPage() {
 
                             <div className="text-center pt-4 space-y-2">
                                 <div className="text-sm text-muted-foreground">
-                                    אין לך חשבון? <Link href="/register" className="text-blue-600 font-medium hover:underline">הירשם כאן</Link>
+                                    אין לך חשבון? <Link href="/register" className="text-brand font-medium hover:underline">הירשם כאן</Link>
                                 </div>
                             </div>
                         </form>

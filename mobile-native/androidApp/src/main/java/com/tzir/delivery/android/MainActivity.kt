@@ -25,6 +25,9 @@ import com.tzir.delivery.android.ui.courier.ClientsScreen
 import com.tzir.delivery.android.ui.courier.SettingsScreen
 import com.tzir.delivery.android.ui.courier.WorkerRatingScreen
 import com.tzir.delivery.android.ui.courier.RouteOptimizationScreen
+import com.tzir.delivery.android.ui.courier.ManualRoutePlannerScreen
+import com.tzir.delivery.android.ui.courier.AcademyScreen
+import com.tzir.delivery.android.ui.courier.CourseDetailScreen
 import com.tzir.delivery.shared.location.LocationManager
 import com.tzir.delivery.shared.network.DeliveryApiImpl
 import com.tzir.delivery.shared.network.KtorClientFactory
@@ -90,11 +93,14 @@ class MainActivity : ComponentActivity() {
                         var showClients by remember { mutableStateOf(false) }
                         var showSettings by remember { mutableStateOf(false) }
                         var showWorkerRating by remember { mutableStateOf(false) }
-                var showRouteOptimization by remember { mutableStateOf(false) }
+                        var showRouteOptimization by remember { mutableStateOf(false) }
+                        var showManualRoutePlanner by remember { mutableStateOf(false) }
+                        var showAcademy by remember { mutableStateOf(false) }
+                        var selectedCourseId by remember { mutableStateOf<Int?>(null) }
                         
                         Scaffold(
                             bottomBar = {
-                                if (selectedMissionId == null && !showHistory && !showNotifications && !showSupport && !showDocuments && !showCalendar && !showClients && !showSettings && !showWorkerRating) {
+                                if (selectedMissionId == null && selectedCourseId == null && !showHistory && !showNotifications && !showSupport && !showDocuments && !showCalendar && !showClients && !showSettings && !showWorkerRating && !showAcademy && !showManualRoutePlanner) {
                                     NavigationBar(
                                         containerColor = Color.White,
                                         tonalElevation = 8.dp
@@ -109,11 +115,11 @@ class MainActivity : ComponentActivity() {
                                                 icon = { Icon(item.icon, contentDescription = stringResource(item.labelRes)) },
                                                 label = { Text(stringResource(item.labelRes)) },
                                                 colors = NavigationBarItemDefaults.colors(
-                                                    selectedIconColor = Color(0xFF00E5FF),
-                                                    selectedTextColor = Color(0xFF001C44),
+                                                    selectedIconColor = Color(0xFF6B8F3E),
+                                                    selectedTextColor = Color(0xFF1C3D2A),
                                                     unselectedIconColor = Color.Gray,
                                                     unselectedTextColor = Color.Gray,
-                                                    indicatorColor = Color(0xFFE0F7FA)
+                                                    indicatorColor = Color(0xFFF5F5F0)
                                                 )
                                             )
                                         }
@@ -121,7 +127,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         ) { innerPadding ->
-                            Box(modifier = Modifier.padding(if (selectedMissionId == null && !showHistory && !showNotifications && !showSupport && !showDocuments && !showCalendar && !showClients && !showSettings && !showWorkerRating) innerPadding else PaddingValues(0.dp))) {
+                            Box(modifier = Modifier.padding(if (selectedMissionId == null && selectedCourseId == null && !showHistory && !showNotifications && !showSupport && !showDocuments && !showCalendar && !showClients && !showSettings && !showWorkerRating && !showAcademy && !showManualRoutePlanner) innerPadding else PaddingValues(0.dp))) {
                                 if (selectedMissionId != null) {
                                     MissionDetailsScreen(
                                         missionId = selectedMissionId!!,
@@ -149,6 +155,18 @@ class MainActivity : ComponentActivity() {
                                     CalendarScreen(
                                         onBack = { showCalendar = false }
                                     )
+                                } else if (selectedCourseId != null) {
+                                    CourseDetailScreen(
+                                        courseId = selectedCourseId!!,
+                                        repository = courierRepository,
+                                        onBack = { selectedCourseId = null }
+                                    )
+                                } else if (showAcademy) {
+                                    AcademyScreen(
+                                        repository = courierRepository,
+                                        onBack = { showAcademy = false },
+                                        onCourseClick = { id -> selectedCourseId = id }
+                                    )
                                 } else if (showClients) {
                                     ClientsScreen(
                                         onBack = { showClients = false }
@@ -161,8 +179,18 @@ class MainActivity : ComponentActivity() {
                                     WorkerRatingScreen(
                                         onBack = { showWorkerRating = false }
                                     )
+                                } else if (showManualRoutePlanner) {
+                                    ManualRoutePlannerScreen(
+                                        repository = courierRepository,
+                                        onBack = { showManualRoutePlanner = false },
+                                        onStartNavigation = { stops ->
+                                            showManualRoutePlanner = false
+                                            // Handle start navigation logic here if needed
+                                        }
+                                    )
                                 } else if (showRouteOptimization) {
                                     RouteOptimizationScreen(
+                                        repository = courierRepository,
                                         onBack = { showRouteOptimization = false },
                                         onApprove = { showRouteOptimization = false }
                                     )
@@ -181,11 +209,12 @@ class MainActivity : ComponentActivity() {
                                             onReportsClick = { showHistory = true },
                                             onProfileClick = { currentNav = NavItem.PROFILE },
                                             onSettingsClick = { showSettings = true },
-                                            onRouteClick = { showRouteOptimization = true },
+                                            onRouteClick = { showManualRoutePlanner = true },
                                             onSupportClick = { showSupport = true },
                                             onCalendarClick = { showCalendar = true },
                                             onDocumentsClick = { showDocuments = true },
-                                            onClientsClick = { showClients = true }
+                                            onClientsClick = { showClients = true },
+                                            onAcademyClick = { showAcademy = true }
                                         )
                                         NavItem.MISSIONS -> MissionsScreen(
                                             repository = courierRepository,
@@ -241,14 +270,14 @@ fun GreetingView(text: String) {
 @Composable
 fun MyApplicationTheme(content: @Composable () -> Unit) {
     val colorScheme = lightColorScheme(
-        primary = Color(0xFF00D4FF),    // Modern Cyan
+        primary = Color(0xFF6B8F3E),    // Modern Cyan
         onPrimary = Color.White,
-        secondary = Color(0xFF001C44),  // Premium Deep Navy
+        secondary = Color(0xFF1C3D2A),  // Premium Deep Navy
         onSecondary = Color.White,
-        tertiary = Color(0xFF1565C0),   // Royal Blue
-        background = Color(0xFFF8FBFE), // Airy Light Blue
+        tertiary = Color(0xFF1A7A8A),   // Royal Blue
+        background = Color(0xFFF5F5F0), // Airy Light Blue
         surface = Color.White,
-        onSurface = Color(0xFF001C44),
+        onSurface = Color(0xFF1C3D2A),
         error = Color(0xFFE91E63)      // Modern Pinkish-Red
     )
 
@@ -259,29 +288,29 @@ fun MyApplicationTheme(content: @Composable () -> Unit) {
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 32.sp,
                 letterSpacing = (-0.5).sp,
-                color = Color(0xFF001C44)
+                color = Color(0xFF1C3D2A)
             ),
             headlineMedium = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 letterSpacing = 0.sp,
-                color = Color(0xFF001C44)
+                color = Color(0xFF1C3D2A)
             ),
             titleLarge = TextStyle(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
-                color = Color(0xFF001C44)
+                color = Color(0xFF1C3D2A)
             ),
             bodyLarge = TextStyle(
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp,
                 letterSpacing = 0.5.sp,
-                color = Color(0xFF001C44).copy(alpha = 0.8f)
+                color = Color(0xFF1C3D2A).copy(alpha = 0.8f)
             ),
             labelLarge = TextStyle(
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
-                color = Color(0xFF001C44).copy(alpha = 0.6f)
+                color = Color(0xFF1C3D2A).copy(alpha = 0.6f)
             )
         ),
         content = content

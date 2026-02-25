@@ -23,7 +23,7 @@ export default function CourierStatsPage() {
             try {
                 const token = localStorage.getItem('token');
                 // Fetch stats
-                const statsRes = await fetch('http://localhost:5000/api/courier/stats', {
+                const statsRes = await fetch('http://localhost:5001/api/courier/stats', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (statsRes.ok) {
@@ -32,7 +32,7 @@ export default function CourierStatsPage() {
                 }
 
                 // Fetch history
-                const historyRes = await fetch('http://localhost:5000/api/courier/history', {
+                const historyRes = await fetch('http://localhost:5001/api/courier/history', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (historyRes.ok) {
@@ -78,7 +78,7 @@ export default function CourierStatsPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">משלוחים היום</CardTitle>
-                        <Package className="h-4 w-4 text-blue-600" />
+                        <Package className="h-4 w-4 text-brand" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.today_deliveries}</div>

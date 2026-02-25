@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileDown, Calendar as CalendarIcon, TrendingUp, Package, Users } from "lucide-react";
+import { FileDown, Calendar as CalendarIcon, TrendingUp, Package, Users, Wallet } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { format, subDays } from "date-fns";
 
@@ -88,16 +89,16 @@ export default function ReportsPage() {
 
             {summary && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-blue-50 border-blue-100">
+                    <Card className="bg-brand/10 border-brand/20">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-lg font-medium text-blue-900 flex items-center gap-2">
+                            <CardTitle className="text-lg font-medium text-foreground flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5" />
                                 סה"כ הכנסות
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-blue-700">₪{summary.total_revenue?.toLocaleString()}</div>
-                            <p className="text-sm text-blue-600 mt-1">לתקופה הנבחרת</p>
+                            <div className="text-3xl font-bold text-brand">₪{summary.total_revenue?.toLocaleString()}</div>
+                            <p className="text-sm text-brand mt-1">לתקופה הנבחרת</p>
                         </CardContent>
                     </Card>
                     <Card className="bg-green-50 border-green-100">
@@ -137,6 +138,20 @@ export default function ReportsPage() {
             <div className="mt-8">
                 <h2 className="text-xl font-bold mb-4">דוחות חוקיים ורגולציה</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Card className="border-brand bg-brand/5 shadow-md">
+                        <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2">
+                                <Wallet className="w-4 h-4 text-brand" />
+                                מרכז פיננסי לשליח
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-xs text-slate-500 mb-4">ניהול מע"מ, דו"ח שנתי וביטוח לאומי באופן עצמאי במערכת.</p>
+                            <Link href="/admin/reports/courier-finance">
+                                <Button className="w-full bg-brand hover:bg-brand-dark">כניסה למרכז הפיננסי</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-base">דוח מע"מ</CardTitle>

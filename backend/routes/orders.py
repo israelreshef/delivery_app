@@ -44,13 +44,46 @@ def create_order(current_user=None):
         package_data = data.get('package', {})
         service_data = data.get('service', {})
         
-        # Fallback fields for old API compatibility
-        if not sender_data and 'customer_phone' in data:
+        # --- תמיכה במבנה שטוח או אלטרנטיבי (OrderWizard.tsx) ---
+        # אם אין נתוני שולח/מקבל מקוננים, ננסה לחלץ מהשדות השטוחים
+        if not sender_data:
+            # נסה לחפש pickup_address או שדות ישירים
+            pickup_addr_data = data.get('pickup_address', {})
             sender_data = {
-                'senderName': data.get('customer_name'),
-                'senderPhone': data.get('customer_phone'),
-                'senderAddress': {'street': data.get('pickup_address'), 'notes': data.get('notes')}
+                'senderName': data.get('pickup_contact_name') or data.get('sender_name') or data.get('customer_name'),
+                'senderPhone': data.get('pickup_contact_phone') or data.get('sender_phone') or data.get('customer_phone'),
+                'senderAddress': pickup_addr_data if isinstance(pickup_addr_data, dict) else {'street': pickup_addr_data}
             }
+        
+        if not recipient_data:
+            delivery_addr_data = data.get('delivery_address', {})
+            recipient_data = {
+                'recipientName': data.get('recipient_name'),
+                'recipientPhone': data.get('recipient_phone'),
+                'recipientAddress': delivery_addr_data if isinstance(delivery_addr_data, dict) else {'street': delivery_addr_data}
+            }
+        
+        if not package_data:
+            package_data = {
+                'packageContent': data.get('package_content') or data.get('package_description'),
+                'packageWeight': data.get('package_weight'),
+                'packageSize': data.get('package_size')
+            }
+            
+        if not service_data:
+            service_data = {
+                'deliveryType': data.get('delivery_type'),
+                'urgency': data.get('urgency'),
+                'insuranceRequired': data.get('insurance_required'),
+                'insuranceValue': data.get('insurance_value')
+            }
+
+        # Fallback fields for old API compatibility
+        if not sender_data.get('senderPhone') and 'customer_phone' in data:
+            sender_data['senderPhone'] = data.get('customer_phone')
+            sender_data['senderName'] = data.get('customer_name')
+            if not sender_data.get('senderAddress'):
+                sender_data['senderAddress'] = {'street': data.get('pickup_address'), 'notes': data.get('notes')}
         
         # 1. טיפול בלקוח/יוצר ההזמנה
         # במצב אידיאלי, current_user הוא הלקוח.
@@ -87,15 +120,22 @@ def create_order(current_user=None):
              
              # Generate random password
              temp_password = secrets.token_urlsafe(8)
-             new_username = customer_phone # Use phone as username for simplicity
              
-             # Check if username taken (unlikely if phone check passed, but possible with different phone)
-             if User.query.filter_by(username=new_username).first():
-                 new_username = f"{new_username}_{secrets.token_hex(2)}"
+             # Ensure we have a username even if phone is missing
+             if customer_phone:
+                 new_username = customer_phone
+             elif customer_name:
+                 new_username = f"guest_{customer_name.replace(' ', '_')}_{secrets.token_hex(2)}"
+             else:
+                 new_username = f"guest_{secrets.token_hex(4)}"
+             
+             # Check if username taken
+             while User.query.filter_by(username=new_username).first():
+                 new_username = f"guest_{secrets.token_hex(4)}"
              
              new_user = User(
                  username=new_username, 
-                 email=f"{customer_phone}@guest.local", # Dummy email
+                 email=f"{new_username}@guest.local", # Use username to ensure unique dummy email
                  phone=customer_phone,
                  user_type='customer'
              )
@@ -199,7 +239,8 @@ def create_order(current_user=None):
             urgency=urgency,
             delivery_type=delivery_type,
             insurance_value=insurance_value,
-            weight_kg=package_weight
+            weight_kg=package_weight,
+            customer_id=customer.id
         )
         
         price = calculation['final_price']
@@ -398,18 +439,35 @@ def get_orders(current_user):
         
         result = []
         for d in deliveries:
+            # Safely access addresses
+            pickup_address = ""
+            if d.pickup_point and d.pickup_point.address:
+                pickup_address = f"{d.pickup_point.address.street} {d.pickup_point.address.building_number}, {d.pickup_point.address.city}"
+            elif hasattr(d, 'pickup_address') and d.pickup_address:
+                 pickup_address = d.pickup_address
+
+            delivery_address = ""
+            if d.delivery_point and d.delivery_point.address:
+                delivery_address = f"{d.delivery_point.address.street} {d.delivery_point.address.building_number}, {d.delivery_point.address.city}"
+            elif hasattr(d, 'delivery_address') and d.delivery_address:
+                 delivery_address = d.delivery_address
+
             result.append({
                 'id': d.id,
                 'order_number': d.order_number,
                 'customer_name': d.customer.full_name if d.customer else 'לא ידוע',
                 'phone': d.customer.user.phone if d.customer and d.customer.user else '',
-                'address': d.delivery_point.address.street if d.delivery_point else '',
+                'address': delivery_address,
                 'status': d.status,
-                'total': float(d.invoice.total_amount) if d.invoice else 0,
-                'items': d.package_description or '[]',
+                'total': float(d.invoice.total_amount) if d.invoice else 0.0,
+                'items': d.package_description or '',
                 'created_at': d.created_at.isoformat() if d.created_at else None,
-                'pickup_address': d.pickup_point.address.street if d.pickup_point else '',
-                'delivery_address': d.delivery_point.address.street if d.delivery_point else ''
+                'pickup_address': pickup_address,
+                'delivery_address': delivery_address,
+                'pickup_lat': d.pickup_point.address.latitude if d.pickup_point and d.pickup_point.address else None,
+                'pickup_lng': d.pickup_point.address.longitude if d.pickup_point and d.pickup_point.address else None,
+                'delivery_lat': d.delivery_point.address.latitude if d.delivery_point and d.delivery_point.address else None,
+                'delivery_lng': d.delivery_point.address.longitude if d.delivery_point and d.delivery_point.address else None
             })
         
         return jsonify(result), 200
@@ -454,12 +512,12 @@ def get_order(current_user, order_id):
                 }
             },
             'delivery': {
-                'address': delivery.delivery_point.address.street,
-                'recipient': delivery.delivery_point.recipient_name,
+                'address': delivery.delivery_point.address.street if delivery.delivery_point and delivery.delivery_point.address else 'Unknown',
+                'contact': delivery.delivery_point.recipient_name, # Changed from recipient to contact to match frontend
                 'phone': delivery.delivery_point.recipient_phone,
                 'coords': {
-                    'lat': delivery.delivery_point.address.latitude,
-                    'lon': delivery.delivery_point.address.longitude
+                    'lat': delivery.delivery_point.address.latitude if delivery.delivery_point and delivery.delivery_point.address else None,
+                    'lon': delivery.delivery_point.address.longitude if delivery.delivery_point and delivery.delivery_point.address else None
                 }
             },
             'package': {

@@ -76,7 +76,7 @@ export default function LiveFeed() {
                 )}
                 {events.map((item) => (
                     <div key={item.id} className="flex items-start gap-4 border-b pb-3 last:border-0 hover:bg-slate-50 p-2 rounded-lg transition-colors">
-                        <div className={`mt-1 p-2 rounded-full ${item.type === 'new_order' ? 'bg-blue-100 text-blue-600' :
+                        <div className={`mt-1 p-2 rounded-full ${item.type === 'new_order' ? 'bg-brand/20 text-brand' :
                             item.type === 'alert' ? 'bg-red-100 text-red-600' :
                                 'bg-green-100 text-green-600'
                             }`}>

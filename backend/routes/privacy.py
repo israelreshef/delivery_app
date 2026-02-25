@@ -135,3 +135,17 @@ def delete_account(current_user):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@privacy_bp.route('/consent', methods=['POST'])
+@token_required
+def record_consent(current_user):
+    """
+    Record that the user has accepted the Privacy Policy and Terms of Service (Cookie Banner)
+    """
+    try:
+        current_user.privacy_consent_at = datetime.utcnow()
+        db.session.commit()
+        return jsonify({'message': 'Privacy consent recorded successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

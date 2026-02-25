@@ -75,7 +75,7 @@ class AllocationEngine:
                 continue
 
             # 4. Calculate Score
-            score = cls._calculate_score(courier, dist)
+            score = cls._calculate_score(courier, dist, delivery)
             scored_candidates.append({
                 'courier': courier,
                 'score': score,
@@ -98,15 +98,8 @@ class AllocationEngine:
     def _check_constraints(cls, courier: Courier, delivery: Delivery) -> bool:
         """
         Check hard constraints like vehicle type vs package size.
+        Also check Academy certifications for restricted delivery types.
         """
-        # Package Size Constraints
-        # 'small' (envelope) -> Any vehicle
-        # 'medium' (box) -> Scooter, Motorcycle, Car, Van
-        # 'large' -> Car, Van
-        # 'xlarge' -> Van only
-        
-        # Vehicle Types: 'bicycle', 'scooter', 'motorcycle', 'car', 'van'
-        
         allowed_vehicles = {
             'small': ['bicycle', 'scooter', 'motorcycle', 'car', 'van'],
             'medium': ['scooter', 'motorcycle', 'car', 'van'],
@@ -117,25 +110,62 @@ class AllocationEngine:
         package_size = delivery.package_size or 'small'
         if courier.vehicle_type not in allowed_vehicles.get(package_size, []):
             return False
+            
+        # Phase 3: Academy Certification Checks
+        # If order type is 'medical' or 'legal_document', check if courier has certification
+        restricted_types = {
+            'medical': 'Medical Logistics',
+            'legal_document': 'Legal Custody'
+        }
+        
+        req_type = delivery.delivery_type
+        if req_type in restricted_types:
+            has_cert = False
+            for c in courier.certifications:
+                if c.course.title == restricted_types[req_type]:
+                    # They can do it if temporary or permanent
+                    if c.status in ['temporary', 'permanent']:
+                        has_cert = True
+                        break
+            if not has_cert:
+                return False
 
         return True
 
     @classmethod
-    def _calculate_score(cls, courier: Courier, distance_km: float) -> float:
+    def _calculate_score(cls, courier: Courier, distance_km: float, delivery: Delivery) -> float:
         """
-        Calculate weighted score (0-100).
-        Now leverages the advanced Performance Index from GamificationService.
+        Calculate weighted score (0-100+).
+        Now leverages the advanced Performance Index from GamificationService,
+        plus Academy phase 3 logic (Level multipliers + OJT routing).
         """
         # Distance Score (0-100): Closer is better.
         dist_score = max(0, 100 - (distance_km / cls.MAX_RADIUS_KM * 100))
         
         # Performance Score (0-100)
-        # Using the advanced index which includes reliability, service, and integrity.
-        perf_score = courier.performance_index or 50.0 # Default to 50 if not set
+        perf_score = courier.performance_index or 50.0
 
         final_score = (
             dist_score * cls.WEIGHT_DISTANCE +
             perf_score * (1.0 - cls.WEIGHT_DISTANCE)
         )
+        
+        # Phase 3 Boost: High-level couriers get a slight edge (1% per level up to 20%)
+        level = 1
+        if courier.gamification:
+            level = max(1, courier.gamification.level)
+        
+        level_bonus = min(0.20, (level - 1) * 0.01)
+        final_score *= (1.0 + level_bonus)
+        
+        # Phase 3 Boost (OJT - On-The-Job Training)
+        # If the order is a restricted type and the courier is in 'temporary' status, prioritize heavily!
+        restricted_types = {'medical': 'Medical Logistics', 'legal_document': 'Legal Custody'}
+        req_type = delivery.delivery_type
+        if req_type in restricted_types:
+            for c in courier.certifications:
+                if c.course.title == restricted_types[req_type] and c.status == 'temporary':
+                    final_score += 50.0  # Big bump to secure their real-world practice
+                    break
 
         return final_score

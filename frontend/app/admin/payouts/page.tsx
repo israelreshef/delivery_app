@@ -105,7 +105,7 @@ export default function PayoutsPage() {
         switch (status) {
             case 'draft': return <Badge variant="outline">טיוטה</Badge>;
             case 'approved': return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">מאושר לתשלום</Badge>;
-            case 'paid': return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">שולם</Badge>;
+            case 'paid': return <Badge className="bg-brand/20 text-foreground hover:bg-brand-dark/20">שולם</Badge>;
             case 'cancelled': return <Badge variant="destructive">בוטל</Badge>;
             default: return null;
         }
@@ -116,7 +116,7 @@ export default function PayoutsPage() {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold flex items-center gap-2">
-                        <DollarSign className="h-8 w-8 text-primary" />
+                        <DollarSign className="h-8 w-8 text-brand" />
                         ניהול כספים ופרילנסרים
                     </h1>
                     <p className="text-muted-foreground mt-1">

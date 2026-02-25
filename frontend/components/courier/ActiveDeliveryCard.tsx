@@ -79,7 +79,7 @@ export default function ActiveDeliveryCard() {
                 />
             )}
 
-            <Card className="bg-blue-600 text-white border-none shadow-xl overflow-hidden relative">
+            <Card className="bg-brand text-white border-none shadow-xl overflow-hidden relative">
                 {/* Background Pattern */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-xl"></div>
 
@@ -105,7 +105,7 @@ export default function ActiveDeliveryCard() {
                         <div className="flex items-start gap-3">
                             <MapPin className="w-5 h-5 shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-blue-100 text-xs uppercase tracking-wider">
+                                <p className="text-brand/20 text-xs uppercase tracking-wider">
                                     {activeOrder.status === 'picked_up' ? 'כתובת מסירה' : 'כתובת איסוף'}
                                 </p>
                                 <p className="font-bold text-lg leading-tight">
@@ -147,7 +147,7 @@ export default function ActiveDeliveryCard() {
 
                 <CardFooter className="pt-2">
                     <Button
-                        className="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold h-12 text-lg shadow-lg"
+                        className="w-full bg-white text-brand hover:bg-brand-dark/10 font-bold h-12 text-lg shadow-lg"
                         onClick={handleNextStep}
                     >
                         {currentStep.btnText}

@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import { Assistant } from 'next/font/google'
 import { Providers } from './providers'
 import './globals.css'
 import { Toaster } from 'sonner'
 import StructuredData from '@/components/seo/StructuredData'
 import ChatWindow from '@/components/chat/ChatWindow';
-
-const assistant = Assistant({ subsets: ['hebrew', 'latin'] })
+import { CookieBanner } from '@/components/CookieBanner';
 
 export const metadata: Metadata = {
     title: {
@@ -45,13 +43,16 @@ export default function RootLayout({
 }) {
     return (
         <html lang="he" dir="rtl">
-            <body className={assistant.className}>
+            <body className="font-sans">
                 <Providers>
                     <StructuredData />
-                    <div className="flex h-screen bg-background text-right font-sans">
-                        {children}
+                    <div className="flex h-screen w-full bg-background text-right font-sans">
+                        <div className="flex-1 w-full min-w-0">
+                            {children}
+                        </div>
                     </div>
                     <ChatWindow />
+                    <CookieBanner />
                 </Providers>
                 <Toaster />
             </body>

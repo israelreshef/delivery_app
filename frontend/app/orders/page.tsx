@@ -64,7 +64,7 @@ export default function OrdersPage() {
     const statusColor = (status: string) => {
         switch (status) {
             case 'pending': return 'bg-yellow-500';
-            case 'assigned': return 'bg-blue-500';
+            case 'assigned': return 'bg-brand';
             case 'picked_up': return 'bg-purple-500';
             case 'in_transit': return 'bg-indigo-500';
             case 'delivered': return 'bg-green-500';
@@ -129,7 +129,7 @@ export default function OrdersPage() {
                                     {deliveries.map((d) => (
                                         <TableRow key={d.id}>
                                             <TableCell className="font-mono text-sm">
-                                                <Link href={`/orders/${d.id}`} className="text-blue-600 hover:underline">
+                                                <Link href={`/orders/${d.id}`} className="text-brand hover:underline">
                                                     {d.order_number}
                                                 </Link>
                                             </TableCell>

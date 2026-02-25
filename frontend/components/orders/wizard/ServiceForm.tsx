@@ -103,7 +103,7 @@ export default function ServiceForm() {
     return (
         <div className="p-6 md:p-8 animate-in fade-in slide-in-from-right-4 duration-500 max-w-4xl mx-auto" dir="rtl">
             <h2 className="text-2xl font-bold mb-2 text-slate-800 flex items-center gap-2">
-                <div className="w-1 h-8 bg-blue-600 rounded-full"></div>
+                <div className="w-1 h-8 bg-brand rounded-full"></div>
                 אפשרויות שילוח מתקדמות
             </h2>
             <p className="text-muted-foreground mb-8 mr-3">
@@ -131,8 +131,8 @@ export default function ServiceForm() {
                                         >
                                             <FormItem>
                                                 <FormControl><RadioGroupItem value="standard" className="peer sr-only" /></FormControl>
-                                                <FormLabel className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:bg-blue-50/50 cursor-pointer transition-all h-full">
-                                                    <div className="w-12 h-12 rounded-full bg-blue-100/50 text-blue-600 flex items-center justify-center mb-3">
+                                                <FormLabel className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10/50 cursor-pointer transition-all h-full">
+                                                    <div className="w-12 h-12 rounded-full bg-brand/20/50 text-brand flex items-center justify-center mb-3">
                                                         <FileText className="w-6 h-6" />
                                                     </div>
                                                     <div className="text-center">
@@ -195,11 +195,11 @@ export default function ServiceForm() {
                                             {/* Regular */}
                                             <FormItem>
                                                 <FormControl><RadioGroupItem value="regular" className="peer sr-only" /></FormControl>
-                                                <FormLabel className="relative flex flex-col justify-between rounded-xl border-2 border-muted bg-white p-6 hover:bg-slate-50 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:shadow-lg cursor-pointer transition-all h-full">
-                                                    {calculating && <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10"><Loader2 className="animate-spin text-blue-600" /></div>}
+                                                <FormLabel className="relative flex flex-col justify-between rounded-xl border-2 border-muted bg-white p-6 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:shadow-lg cursor-pointer transition-all h-full">
+                                                    {calculating && <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10"><Loader2 className="animate-spin text-brand" /></div>}
                                                     <div>
                                                         <div className="flex justify-between items-start mb-4">
-                                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                            <div className="w-10 h-10 rounded-full bg-brand/20 text-brand flex items-center justify-center">
                                                                 <Clock className="w-5 h-5" />
                                                             </div>
                                                             <span className="text-xl font-bold text-slate-900">₪{prices.regular}</span>
@@ -257,7 +257,7 @@ export default function ServiceForm() {
                     {(watchDeliveryType === 'valuable' || watchDeliveryType === 'legal_document') && (
                         <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 animate-in fade-in slide-in-from-top-2">
                             <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-700 mb-4">
-                                <ShieldCheck className="w-5 h-5 text-blue-600" />
+                                <ShieldCheck className="w-5 h-5 text-brand" />
                                 הגנות וביטוח
                             </h3>
 
@@ -308,7 +308,7 @@ export default function ServiceForm() {
                         <Button type="button" variant="outline" size="lg" onClick={prevStep}>
                             <ArrowRight className="ml-2 h-4 w-4" /> חזרה
                         </Button>
-                        <Button type="submit" size="lg" className="px-8 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200">
+                        <Button type="submit" size="lg" className="px-8 bg-brand hover:bg-brand-dark shadow-lg shadow-primary/30">
                             המשך לתשלום
                             <ArrowLeft className="mr-2 h-4 w-4" />
                         </Button>

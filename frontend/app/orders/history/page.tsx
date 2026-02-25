@@ -29,7 +29,7 @@ interface Order {
 
 const statusMap: Record<string, { label: string; color: string }> = {
     'pending': { label: 'ממתין לשליח', color: 'bg-yellow-100 text-yellow-800' },
-    'assigned': { label: 'שליח בדרך', color: 'bg-blue-100 text-blue-800' },
+    'assigned': { label: 'שליח בדרך', color: 'bg-brand/20 text-foreground' },
     'picked_up': { label: 'נאסף', color: 'bg-purple-100 text-purple-800' },
     'in_transit': { label: 'בנסיעה', color: 'bg-indigo-100 text-indigo-800' },
     'delivered': { label: 'נמסר', color: 'bg-green-100 text-green-800' },
@@ -169,7 +169,7 @@ export default function OrderHistoryPage() {
 
                                     <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
                                         <span className="text-xs text-slate-400">לחץ למעקב ופרטים נוספים</span>
-                                        <ChevronLeft className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                                        <ChevronLeft className="w-5 h-5 text-slate-300 group-hover:text-brand transition-colors" />
                                     </div>
                                 </div>
                             );

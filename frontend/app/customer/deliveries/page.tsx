@@ -32,7 +32,7 @@ export default function CustomerDeliveriesPage() {
 
     const statusMap: any = {
         'pending': { label: 'ממתין', color: 'bg-yellow-500' },
-        'assigned': { label: 'שובץ לשליח', color: 'bg-blue-500' },
+        'assigned': { label: 'שובץ לשליח', color: 'bg-brand' },
         'picked_up': { label: 'בדרך (נאסף)', color: 'bg-purple-500' },
         'delivered': { label: 'נמסר', color: 'bg-green-500' },
         'cancelled': { label: 'בוטל', color: 'bg-red-500' }

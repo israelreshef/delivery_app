@@ -17,30 +17,30 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold text-white mb-4">מוצר</h4>
                         <ul className="space-y-2 text-sm">
-                            <li><Link href="/features" className="hover:text-blue-400">פיצ'רים</Link></li>
-                            <li><Link href="/pricing" className="hover:text-blue-400">מחירון</Link></li>
-                            <li><Link href="/api" className="hover:text-blue-400">API</Link></li>
-                            <li><Link href="/integrations" className="hover:text-blue-400">אינטגרציות</Link></li>
+                            <li><Link href="/features" className="hover:text-brand/80">פיצ'רים</Link></li>
+                            <li><Link href="/pricing" className="hover:text-brand/80">מחירון</Link></li>
+                            <li><Link href="/api" className="hover:text-brand/80">API</Link></li>
+                            <li><Link href="/integrations" className="hover:text-brand/80">אינטגרציות</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="font-bold text-white mb-4">חברה</h4>
                         <ul className="space-y-2 text-sm">
-                            <li><Link href="/about" className="hover:text-blue-400">אודות</Link></li>
-                            <li><Link href="/careers" className="hover:text-blue-400">דרושים</Link></li>
-                            <li><Link href="/blog" className="hover:text-blue-400">בלוג</Link></li>
-                            <li><Link href="/contact" className="hover:text-blue-400">צור קשר</Link></li>
+                            <li><Link href="/about" className="hover:text-brand/80">אודות</Link></li>
+                            <li><Link href="/careers" className="hover:text-brand/80">דרושים</Link></li>
+                            <li><Link href="/blog" className="hover:text-brand/80">בלוג</Link></li>
+                            <li><Link href="/contact" className="hover:text-brand/80">צור קשר</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="font-bold text-white mb-4">עקבו אחרינו</h4>
                         <div className="flex gap-4">
-                            <Link href="#" className="hover:text-blue-400 transition-colors"><Facebook className="w-5 h-5" /></Link>
+                            <Link href="#" className="hover:text-brand/80 transition-colors"><Facebook className="w-5 h-5" /></Link>
                             <Link href="#" className="hover:text-pink-400 transition-colors"><Instagram className="w-5 h-5" /></Link>
-                            <Link href="#" className="hover:text-blue-500 transition-colors"><Twitter className="w-5 h-5" /></Link>
-                            <Link href="#" className="hover:text-blue-600 transition-colors"><Linkedin className="w-5 h-5" /></Link>
+                            <Link href="#" className="hover:text-brand transition-colors"><Twitter className="w-5 h-5" /></Link>
+                            <Link href="#" className="hover:text-brand transition-colors"><Linkedin className="w-5 h-5" /></Link>
                         </div>
                     </div>
                 </div>

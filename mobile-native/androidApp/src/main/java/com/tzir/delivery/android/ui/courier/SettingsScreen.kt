@@ -184,7 +184,7 @@ fun SettingsRadioRow(label: String, selected: Boolean, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 15.sp, color = Color(0xFF001C44), fontWeight = FontWeight.Medium)
+        Text(label, fontSize = 15.sp, color = Color(0xFF1C3D2A), fontWeight = FontWeight.Medium)
         if (selected) {
             Surface(
                 color = PrimaryTurquoise,

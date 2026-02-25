@@ -15,7 +15,7 @@ export default function LandingPage() {
             {/* Transparent Header Overlay */}
             <header className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center max-w-7xl mx-auto w-full backdrop-blur-sm">
                 <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">T</div>
+                    <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-amber/30">T</div>
                     <span className="text-2xl font-bold tracking-tighter text-white">TZIR</span>
                 </div>
                 <div className="space-x-4 space-x-reverse">
@@ -23,7 +23,7 @@ export default function LandingPage() {
                         <Button variant="ghost" className="text-slate-200 hover:text-white hover:bg-white/10">התחברות</Button>
                     </Link>
                     <Link href="/register">
-                        <Button className="font-semibold bg-white text-blue-600 hover:bg-blue-50">הרשמה ללקוחות</Button>
+                        <Button className="font-semibold bg-white text-brand hover:bg-brand-dark/10">הרשמה ללקוחות</Button>
                     </Link>
                 </div>
             </header>
@@ -38,12 +38,12 @@ export default function LandingPage() {
                             {/* Customer Card */}
                             <Link href="/login/customer" className="group">
                                 <div className="h-full bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center space-y-4 border border-slate-100">
-                                    <div className="p-4 bg-blue-50 rounded-2xl group-hover:bg-blue-100 transition-colors">
-                                        <User className="w-8 h-8 text-blue-600" />
+                                    <div className="p-4 bg-brand/10 rounded-2xl group-hover:bg-brand-dark/20 transition-colors">
+                                        <User className="w-8 h-8 text-brand" />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900">אני לקוח</h3>
                                     <p className="text-gray-500 text-sm">הזמן משלוח, עקוב אחרי חבילות ונהל את ההיסטוריה שלך.</p>
-                                    <Button variant="outline" className="w-full mt-auto group-hover:bg-blue-600 group-hover:text-white transition-colors border-blue-200 text-blue-700">
+                                    <Button variant="outline" className="w-full mt-auto group-hover:bg-brand-dark group-hover:text-white transition-colors border-brand/20 text-brand">
                                         כניסת לקוחות <ArrowLeft className="mr-2 h-4 w-4" />
                                     </Button>
                                 </div>

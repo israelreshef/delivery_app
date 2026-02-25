@@ -30,7 +30,7 @@ export default function ChatComponent({ userId, role, existingSessionId = null, 
 
     useEffect(() => {
         if (isOpen && !socket) {
-            const newSocket = io('http://localhost:5000', {
+            const newSocket = io('http://localhost:5001', {
                 transports: ['websocket'],
                 query: { user_id: userId, role: role } // Simplify auth for demo
             })
@@ -119,7 +119,7 @@ export default function ChatComponent({ userId, role, existingSessionId = null, 
                             >
                                 <div
                                     className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${msg.sender_id === userId
-                                        ? 'bg-primary text-primary-foreground' // My messages
+                                        ? 'bg-brand text-primary-foreground' // My messages
                                         : 'bg-muted' // Others
                                         }`}
                                 >

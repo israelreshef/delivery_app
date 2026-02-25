@@ -93,7 +93,7 @@ export default function BiometricScanner({ open, onClose, onVerified }: Biometri
         <Dialog open={open} onOpenChange={(val) => !val && !verifying && onClose()}>
             <DialogContent className="sm:max-w-md bg-slate-900 border-slate-800 text-white">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-blue-400">
+                    <DialogTitle className="flex items-center gap-2 text-brand/80">
                         <ShieldCheck className="h-5 w-5" />
                         אימות זהות ביומטרי
                     </DialogTitle>
@@ -105,8 +105,8 @@ export default function BiometricScanner({ open, onClose, onVerified }: Biometri
                 <div className="relative aspect-video bg-black rounded-lg overflow-hidden border border-slate-700 shadow-inner">
                     {verifying ? (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm z-10">
-                            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-                            <p className="text-blue-400 animate-pulse font-medium">מאמת זהות...</p>
+                            <div className="w-16 h-16 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4" />
+                            <p className="text-brand/80 animate-pulse font-medium">מאמת זהות...</p>
                         </div>
                     ) : (
                         <>
@@ -118,7 +118,7 @@ export default function BiometricScanner({ open, onClose, onVerified }: Biometri
                                 mirrored
                             />
                             {/* Scanning Overlay UI */}
-                            <div className="absolute inset-0 border-[3px] border-blue-500/30 rounded-lg pointer-events-none">
+                            <div className="absolute inset-0 border-[3px] border-brand/30 rounded-lg pointer-events-none">
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-64 border-2 border-dashed border-white/50 rounded-full" />
                             </div>
                         </>
@@ -139,14 +139,14 @@ export default function BiometricScanner({ open, onClose, onVerified }: Biometri
                         disabled={verifying}
                         className="bg-slate-800 hover:bg-slate-700 text-slate-200 h-auto py-3 flex flex-col gap-1 items-center justify-center border border-slate-700"
                     >
-                        <Fingerprint className="h-6 w-6 text-blue-400" />
+                        <Fingerprint className="h-6 w-6 text-brand/80" />
                         <span className="text-xs">זיהוי מכשיר (טביעת אצבע/פנים)</span>
                     </Button>
 
                     <Button
                         onClick={capture}
                         disabled={verifying}
-                        className="bg-blue-600 hover:bg-blue-700 h-auto py-3 flex flex-col gap-1 items-center justify-center"
+                        className="bg-brand hover:bg-brand-dark h-auto py-3 flex flex-col gap-1 items-center justify-center"
                     >
                         <Camera className="h-6 w-6" />
                         <span className="text-xs">צילום סלפי לאימות</span>

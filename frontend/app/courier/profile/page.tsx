@@ -310,7 +310,7 @@ export default function CourierProfilePage() {
                                             {documents.map((doc, index) => (
                                                 <div key={index} className="p-4 border rounded-lg flex justify-between items-center">
                                                     <div className="flex items-center gap-3">
-                                                        <FileText className="w-5 h-5 text-blue-600" />
+                                                        <FileText className="w-5 h-5 text-brand" />
                                                         <div>
                                                             <p className="font-medium">{doc.type}</p>
                                                             <p className="text-sm text-slate-600">תוקף: {doc.expiry_date}</p>
@@ -422,7 +422,7 @@ export default function CourierProfilePage() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
-                                        <Shield className="w-5 h-5 text-blue-600" />
+                                        <Shield className="w-5 h-5 text-brand" />
                                         מרכז הפרטיות
                                     </CardTitle>
                                 </CardHeader>
@@ -445,7 +445,7 @@ export default function CourierProfilePage() {
                                         <p className="text-slate-600">
                                             קרא את תנאי השימוש ומדיניות הפרטיות שלנו כדי להבין כיצד אנו מעבדים את הנתונים שלך.
                                         </p>
-                                        <Button variant="link" className="gap-2 px-0 text-blue-600">
+                                        <Button variant="link" className="gap-2 px-0 text-brand">
                                             <ExternalLink className="w-4 h-4" />
                                             צפייה במדיניות הפרטיות
                                         </Button>
@@ -456,7 +456,7 @@ export default function CourierProfilePage() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
-                                        <Fingerprint className="w-5 h-5 text-blue-600" />
+                                        <Fingerprint className="w-5 h-5 text-brand" />
                                         זיהוי ביומטרי (WebAuthn)
                                     </CardTitle>
                                 </CardHeader>
@@ -464,7 +464,7 @@ export default function CourierProfilePage() {
                                     <p className="text-slate-600">
                                         רשום את המכשיר שלך (FaceID, TouchID, Windows Hello) כדי לבצע אימות מהיר במשלוחים רגישים ללא צורך בסלפי.
                                     </p>
-                                    <Button onClick={handleRegisterWebAuthn} variant="outline" className="gap-2 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
+                                    <Button onClick={handleRegisterWebAuthn} variant="outline" className="gap-2 border-brand/20 bg-brand/10 text-brand hover:bg-brand-dark/20">
                                         <Fingerprint className="w-4 h-4" />
                                         רשום מכשיר זה
                                     </Button>

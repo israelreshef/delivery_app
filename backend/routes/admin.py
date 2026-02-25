@@ -10,6 +10,89 @@ import logging
 
 admin_bp = Blueprint('admin', __name__)
 
+
+@admin_bp.route('/dashboard', methods=['GET'])
+@token_required
+@role_required('admin')
+def get_dashboard(current_user):
+    """Dashboard aggregation: today's stats, recent orders, weekly revenue"""
+    try:
+        from sqlalchemy import func
+        from models import Courier, Customer, Invoice
+        from datetime import timedelta
+
+        now = datetime.utcnow()
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        week_ago = today_start - timedelta(days=7)
+
+        # Today's orders
+        today_orders = Delivery.query.filter(Delivery.created_at >= today_start).count()
+        today_delivered = Delivery.query.filter(
+            Delivery.created_at >= today_start,
+            Delivery.status == 'delivered'
+        ).count()
+
+        # Today's revenue
+        today_revenue = db.session.query(func.sum(Invoice.total_amount)).join(
+            Delivery
+        ).filter(
+            Delivery.created_at >= today_start,
+            Delivery.status == 'delivered'
+        ).scalar() or 0
+
+        # Active couriers
+        active_couriers = Courier.query.filter_by(is_available=True).count()
+        total_couriers = Courier.query.count()
+
+        # Active orders
+        active_orders = Delivery.query.filter(
+            Delivery.status.in_(['assigned', 'picked_up', 'in_transit'])
+        ).count()
+
+        # Recent orders (last 5)
+        recent = Delivery.query.order_by(Delivery.created_at.desc()).limit(5).all()
+        recent_list = [{
+            'id': d.id,
+            'order_number': d.order_number,
+            'status': d.status,
+            'customer': d.customer.full_name if d.customer else 'Unknown',
+            'created_at': d.created_at.isoformat()
+        } for d in recent]
+
+        # Weekly revenue (by day)
+        weekly = []
+        for i in range(7):
+            day = today_start - timedelta(days=6 - i)
+            day_end = day + timedelta(days=1)
+            rev = db.session.query(func.sum(Invoice.total_amount)).join(
+                Delivery
+            ).filter(
+                Delivery.created_at >= day,
+                Delivery.created_at < day_end,
+                Delivery.status == 'delivered'
+            ).scalar() or 0
+            weekly.append({
+                'date': day.strftime('%Y-%m-%d'),
+                'revenue': float(rev)
+            })
+
+        return jsonify({
+            'today': {
+                'orders': today_orders,
+                'delivered': today_delivered,
+                'revenue': float(today_revenue),
+            },
+            'active_couriers': active_couriers,
+            'total_couriers': total_couriers,
+            'active_orders': active_orders,
+            'recent_orders': recent_list,
+            'weekly_revenue': weekly
+        }), 200
+
+    except Exception as e:
+        logging.error(f"Dashboard error: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
 @admin_bp.route('/delete/<int:order_id>', methods=['DELETE'])
 @token_required
 @role_required('admin')

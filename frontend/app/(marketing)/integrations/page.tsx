@@ -56,7 +56,7 @@ export default function IntegrationsPage() {
             purple: { bg: "bg-purple-100", text: "text-purple-600", border: "border-purple-200" },
             green: { bg: "bg-green-100", text: "text-green-600", border: "border-green-200" },
             orange: { bg: "bg-orange-100", text: "text-orange-600", border: "border-orange-200" },
-            blue: { bg: "bg-blue-100", text: "text-blue-600", border: "border-blue-200" },
+            blue: { bg: "bg-brand/20", text: "text-brand", border: "border-brand/20" },
             cyan: { bg: "bg-cyan-100", text: "text-cyan-600", border: "border-cyan-200" },
             yellow: { bg: "bg-yellow-100", text: "text-yellow-600", border: "border-yellow-200" }
         };
@@ -144,8 +144,8 @@ export default function IntegrationsPage() {
                     <div className="grid md:grid-cols-4 gap-6">
                         <Card>
                             <CardContent className="pt-6 text-center">
-                                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <span className="text-2xl font-bold text-blue-600">1</span>
+                                <div className="w-12 h-12 bg-brand/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span className="text-2xl font-bold text-brand">1</span>
                                 </div>
                                 <h3 className="font-bold mb-2">בחר פלטפורמה</h3>
                                 <p className="text-sm text-slate-600">בחר את הפלטפורמה שאתה משתמש בה</p>
@@ -210,7 +210,7 @@ export default function IntegrationsPage() {
                             </div>
                             <div className="hidden md:block">
                                 <div className="bg-white/10 backdrop-blur rounded-lg p-8 border border-white/20">
-                                    <Code className="w-16 h-16 text-blue-400 mb-4" />
+                                    <Code className="w-16 h-16 text-brand/80 mb-4" />
                                     <p className="text-sm text-slate-300">
                                         REST API, Webhooks, SDKs ועוד...
                                     </p>

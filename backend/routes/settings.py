@@ -1,9 +1,47 @@
 from flask import Blueprint, request, jsonify
 from models import db, Pricing
 import logging
+import os
 from utils.decorators import token_required, role_required
 
 settings_bp = Blueprint('settings', __name__)
+
+
+@settings_bp.route('/', methods=['GET'])
+@token_required
+@role_required('admin')
+def get_all_settings(current_user):
+    """Aggregated settings: pricing + branding + general"""
+    try:
+        pricing = Pricing.query.filter_by(is_active=True).first()
+        pricing_data = {
+            'base_price': float(pricing.base_price) if pricing else 20.0,
+            'price_per_km': float(pricing.price_per_km) if pricing else 5.0,
+            'price_per_kg': float(pricing.price_per_kg) if pricing else 2.0,
+            'express_fee': float(pricing.express_fee) if pricing else 30.0,
+            'weekend_fee': float(pricing.weekend_fee) if pricing else 15.0,
+            'night_fee': float(pricing.night_fee) if pricing else 25.0,
+            'city_surcharge': float(pricing.city_surcharge) if pricing else 10.0,
+        }
+
+        try:
+            branding_data = _load_branding()
+        except Exception:
+            branding_data = {}
+
+        return jsonify({
+            'pricing': pricing_data,
+            'branding': branding_data,
+            'general': {
+                'company_name': 'TZIR',
+                'currency': 'ILS',
+                'timezone': 'Asia/Jerusalem',
+                'language': 'he',
+            }
+        }), 200
+    except Exception as e:
+        logging.error(f"Settings aggregation error: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 @settings_bp.route('/pricing', methods=['GET'])
 @token_required
@@ -78,3 +116,80 @@ def update_pricing_settings(current_user):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+# ── Phase: Brand Design Settings ──────────────────────────────────────
+
+import json
+
+BRANDING_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'branding.json')
+
+DEFAULT_BRANDING = {
+    'primaryColor': '#F5A623',
+    'primaryDark': '#C8821A',
+    'primaryLight': '#FEF3DC',
+    'navyDark': '#05101F',
+    'navyMid': '#0A1929',
+    'navyLight': '#122845',
+    'accentColor': '#F5A623',
+    'successColor': '#16A34A',
+    'destructiveColor': '#EF4444',
+    'borderRadius': '10',
+    'fontFamily': 'Inter',
+    'logoUrl': '',
+    'faviconUrl': '',
+    'companyName': 'TZIR',
+    'companyTagline': 'שליחויות חכמות'
+}
+
+
+def _load_branding():
+    """Load saved branding or return defaults"""
+    try:
+        if os.path.exists(BRANDING_FILE):
+            with open(BRANDING_FILE, 'r', encoding='utf-8') as f:
+                saved = json.load(f)
+                merged = {**DEFAULT_BRANDING, **saved}
+                return merged
+    except Exception:
+        pass
+    return DEFAULT_BRANDING.copy()
+
+
+def _save_branding(data):
+    """Save branding to disk"""
+    with open(BRANDING_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+@settings_bp.route('/branding/public', methods=['GET'])
+def get_branding_public():
+    """Public GET — load brand colors without auth (used by global CSS provider)"""
+    return jsonify(_load_branding()), 200
+
+
+@settings_bp.route('/branding', methods=['GET'])
+@token_required
+@role_required('admin')
+def get_branding(current_user):
+    """GET current brand settings (admin only)"""
+    return jsonify(_load_branding()), 200
+
+
+@settings_bp.route('/branding', methods=['PUT'])
+@token_required
+@role_required('admin')
+def update_branding(current_user):
+    """PUT / save brand settings"""
+    try:
+        data = request.json
+        current = _load_branding()
+        # Only update provided keys
+        for key in DEFAULT_BRANDING:
+            if key in data:
+                current[key] = data[key]
+        _save_branding(current)
+        return jsonify({'success': True, 'branding': current}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+

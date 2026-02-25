@@ -31,7 +31,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
         fetchOrder();
 
         // Socket connection for realtime updates
-        const socket = io('http://localhost:5000');
+        const socket = io('http://localhost:5001');
 
         socket.on('connect', () => {
             console.log('Connected to websocket');
@@ -106,7 +106,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
 
     const statusMap: Record<string, { label: string; color: string; icon: any; step: number }> = {
         'pending': { label: 'התקבל במערכת', color: 'bg-yellow-500', icon: Clock, step: 1 },
-        'assigned': { label: 'שליח בדרך לאיסוף', color: 'bg-blue-500', icon: Truck, step: 2 },
+        'assigned': { label: 'שליח בדרך לאיסוף', color: 'bg-brand', icon: Truck, step: 2 },
         'picked_up': { label: 'נאסף - בדרך ליעד', color: 'bg-indigo-500', icon: Package, step: 3 },
         'delivered': { label: 'נמסר בהצלחה', color: 'bg-green-500', icon: CheckCircle, step: 4 },
         'cancelled': { label: 'בוטל', color: 'bg-red-500', icon: CheckCircle, step: 0 },
@@ -192,7 +192,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
                             <Card className="border-slate-100 shadow-sm">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-blue-500" />
+                                        <MapPin className="w-4 h-4 text-brand" />
                                         איסוף
                                     </CardTitle>
                                 </CardHeader>
@@ -252,7 +252,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
                                         return (
                                             <div key={s.step} className="relative z-10 flex items-center gap-4 py-3">
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors duration-300
-                                                    ${isCompleted || isCurrent ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200 text-slate-300'}
+                                                    ${isCompleted || isCurrent ? 'bg-brand border-brand text-white' : 'bg-white border-slate-200 text-slate-300'}
                                                 `}>
                                                     <s.icon className="w-4 h-4" />
                                                 </div>
@@ -268,7 +268,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
 
                         {/* Courier Info */}
                         {order.courier ? (
-                            <Card className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-0 shadow-lg shadow-blue-500/20">
+                            <Card className="bg-gradient-to-br from-brand to-brand-dark text-white border-0 shadow-lg shadow-amber/20">
                                 <CardHeader>
                                     <CardTitle className="text-white flex items-center gap-2">
                                         <Truck className="w-5 h-5" />
@@ -282,10 +282,10 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
                                         </div>
                                         <div>
                                             <p className="font-bold text-lg">{order.courier.name}</p>
-                                            <p className="text-blue-100 text-sm">כרגע במשלוח</p>
+                                            <p className="text-brand/20 text-sm">כרגע במשלוח</p>
                                         </div>
                                     </div>
-                                    <Button variant="secondary" className="w-full gap-2 text-blue-700 hover:text-blue-800" asChild>
+                                    <Button variant="secondary" className="w-full gap-2 text-brand hover:text-foreground" asChild>
                                         <a href={`tel:${order.courier.phone}`}>
                                             <Phone className="w-4 h-4" />
                                             התקשר לשליח

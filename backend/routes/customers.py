@@ -24,10 +24,10 @@ def get_customers(current_user):
                 'company_name': c.company_name,
                 'business_id': c.business_id, # H.P.
                 'contact_person': c.contact_person,
-                'balance': float(c.balance),
-                'credit_limit': float(c.credit_limit),
-                'total_orders': c.total_orders,
-                'rating': float(c.rating),
+                'balance': float(c.balance or 0.0),
+                'credit_limit': float(c.credit_limit or 0.0),
+                'total_orders': c.total_orders or 0,
+                'rating': float(c.rating or 5.0),
                 'is_active': c.user.is_active if c.user else False,
                 'two_factor_enforced_by_admin': c.user.two_factor_enforced_by_admin if c.user else False
             })

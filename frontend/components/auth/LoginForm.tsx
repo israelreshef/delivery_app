@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Lock, Mail, Truck, User, ArrowRight, ArrowLeft } from "lucide-react";
+import { Loader2, Lock, Mail, Truck, User, ArrowRight, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from 'next/link';
 
 interface LoginFormProps {
@@ -19,6 +19,8 @@ export function LoginForm({ role }: LoginFormProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const { login } = useAuth();
     const router = useRouter();
 
@@ -27,9 +29,9 @@ export function LoginForm({ role }: LoginFormProps) {
             title: "אזור אישי לקוחות",
             description: "נהל את המשלוחים שלך בקלות",
             icon: User,
-            gradient: "from-blue-600 to-indigo-600",
-            bg: "bg-blue-50",
-            text: "text-blue-600"
+            gradient: "from-brand to-brand-dark",
+            bg: "bg-brand/10",
+            text: "text-brand"
         },
         courier: {
             title: "אזור אישי שליחים",
@@ -79,7 +81,9 @@ export function LoginForm({ role }: LoginFormProps) {
 
         } catch (error: any) {
             console.error("Login failed:", error);
-            const msg = error.response?.data?.message || "שגיאה בהתחברות. אנא בדוק את הפרטים.";
+            const msg = error.response?.data?.message ||
+                error.response?.data?.error ||
+                "שגיאה בהתחברות. אנא בדוק את החיבור לאינטרנט או נסה שוב מאוחר יותר.";
             toast.error(msg);
         } finally {
             setIsLoading(false);
@@ -107,7 +111,7 @@ export function LoginForm({ role }: LoginFormProps) {
                     <div className="space-y-2">
                         <Label htmlFor="email" className="text-slate-600 font-medium">אימייל / טלפון נייד</Label>
                         <div className="relative group">
-                            <Mail className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                            <Mail className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-brand transition-colors" />
                             <Input
                                 id="email"
                                 type="text"
@@ -123,25 +127,45 @@ export function LoginForm({ role }: LoginFormProps) {
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
                             <Label htmlFor="password" className="text-slate-600 font-medium">סיסמה</Label>
-                            <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">שכחתי סיסמה</Link>
+                            <Link href="/forgot-password" className="text-xs text-brand hover:underline">שכחתי סיסמה</Link>
                         </div>
                         <div className="relative group">
-                            <Lock className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                            <Lock className="absolute right-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-brand transition-colors" />
                             <Input
                                 id="password"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 placeholder="••••••••"
-                                className="pr-10 h-12 bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                                className="pr-10 pl-10 h-12 bg-slate-50 border-slate-200 focus:bg-white transition-all"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
+                            <button
+                                type="button"
+                                tabIndex={-1}
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute left-3 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                                aria-label={showPassword ? "הסתר סיסמה" : "הצג סיסמה"}
+                            >
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
                         </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="remember"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer"
+                        />
+                        <label htmlFor="remember" className="text-sm text-slate-500 cursor-pointer select-none">זכור אותי</label>
                     </div>
 
                     <Button
                         type="submit"
-                        className={`w-full h-12 text-lg font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all bg-gradient-to-r ${roleData.gradient}`}
+                        className={`w-full h-12 text-lg font-bold shadow-lg shadow-amber/20 hover:shadow-brand/90/30 transition-all bg-gradient-to-r ${roleData.gradient}`}
                         disabled={isLoading}
                     >
                         {isLoading ? (
@@ -162,7 +186,7 @@ export function LoginForm({ role }: LoginFormProps) {
                     <div className="text-center pt-2">
                         <p className="text-slate-500 text-sm">
                             עדיין לא הצטרפת?{' '}
-                            <Link href="/register" className="font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+                            <Link href="/register" className="font-bold text-brand hover:text-brand hover:underline transition-colors">
                                 צור חשבון חדש בחינם
                             </Link>
                         </p>

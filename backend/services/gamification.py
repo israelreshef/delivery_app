@@ -1,4 +1,4 @@
-from models import db, Courier, Rating, Delivery
+from models import db, Courier, Rating, Delivery, CourierGamification, DailyMission, ShiftSession, Milestone, EarnedMilestone
 from datetime import datetime, timedelta
 import logging
 
@@ -83,3 +83,132 @@ class GamificationService:
         if performance_index >= 85: return "Elite Gold"
         if performance_index >= 70: return "Professional Silver"
         return "Standard"
+
+    @staticmethod
+    def award_xp(courier_id, amount, reason=""):
+        """מעניק XP לשליח ובודק עליית רמה"""
+        try:
+            gamification = CourierGamification.query.filter_by(courier_id=courier_id).first()
+            if not gamification:
+                gamification = CourierGamification(courier_id=courier_id, level=1, xp=0)
+                db.session.add(gamification)
+
+            gamification.xp += amount
+            logging.info(f"🏆 Courier {courier_id} awarded {amount} XP for: {reason}. Total XP: {gamification.xp}")
+
+            # Check Level Up
+            next_level_xp = gamification.level * 1000
+            if gamification.xp >= next_level_xp:
+                gamification.level += 1
+                logging.info(f"🎉 Courier {courier_id} LEVELED UP to Level {gamification.level}!")
+                # TODO: Trigger real-time push notification for level up
+                
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error awarding XP: {e}")
+
+    @staticmethod
+    def process_delivery_completion(courier_id, delivery_id):
+        """נקרא כאשר שליח מסיים משלוח תקין - מעדכן משימות ו-XP"""
+        try:
+            courier = Courier.query.get(courier_id)
+            delivery = Delivery.query.get(delivery_id)
+            if not courier or not delivery: return
+            
+            # Base XP
+            GamificationService.award_xp(courier_id, 10, "סיום משלוח תקין")
+            
+            # Check Fast Delivery
+            is_fast = False
+            if delivery.actual_delivery_time and delivery.estimated_delivery_time:
+                if delivery.actual_delivery_time <= delivery.estimated_delivery_time:
+                    is_fast = True
+                    GamificationService.award_xp(courier_id, 25, "משלוח מהיר מהיעד")
+            
+            # Process Daily Missions
+            today = datetime.utcnow().date()
+            mission = DailyMission.query.filter_by(courier_id=courier_id, mission_date=today).first()
+            if not mission:
+                mission = DailyMission(courier_id=courier_id, mission_date=today)
+                db.session.add(mission)
+                
+            mission.completed_deliveries += 1
+            if is_fast: mission.fast_deliveries += 1
+            
+            if mission.completed_deliveries == 5:
+                GamificationService.award_xp(courier_id, 100, "5 משלוחים ביום אחד")
+                
+            db.session.commit()
+            
+            # Check Milestones asynchronously or here
+            GamificationService.check_and_award_milestones(courier_id)
+            
+            # Update overall KPI scores asynchronously or here
+            GamificationService.update_courier_performance(courier_id)
+            
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error in gamification processing: {e}")
+
+    @staticmethod
+    def check_and_award_milestones(courier_id):
+        """בודק אם השליח הגיע לאבני דרך ומעניק לו פרס ובונוס הפתעה"""
+        try:
+            courier = Courier.query.get(courier_id)
+            if not courier: return
+
+            # Get all milestones
+            all_milestones = Milestone.query.all()
+            
+            # Get already earned milestones
+            earned_ids = {em.milestone_id for em in EarnedMilestone.query.filter_by(courier_id=courier_id).all()}
+            
+            for milestone in all_milestones:
+                if milestone.id in earned_ids:
+                    continue
+                
+                achieved = False
+                
+                if milestone.trigger_type == 'total_deliveries':
+                    if courier.total_deliveries >= milestone.trigger_value:
+                        achieved = True
+                        
+                elif milestone.trigger_type == 'total_distance':
+                    # Need to sum distance of all completed deliveries
+                    # Doing a quick query for this (Warning: can be slow for many deliveries)
+                    total_dist_query = db.session.query(db.func.sum(Delivery.distance_km)).filter(
+                        Delivery.courier_id == courier_id,
+                        Delivery.status == 'delivered'
+                    ).scalar()
+                    total_dist = total_dist_query or 0.0
+                    
+                    if total_dist >= milestone.trigger_value:
+                        achieved = True
+
+                if achieved:
+                    # Grant Milestone
+                    new_earned = EarnedMilestone(courier_id=courier_id, milestone_id=milestone.id)
+                    db.session.add(new_earned)
+                    
+                    # Grant Rewards
+                    if milestone.reward_xp > 0:
+                        GamificationService.award_xp(courier_id, milestone.reward_xp, f"Milestone: {milestone.title}")
+                    
+                    logging.info(f"💎 Courier {courier.full_name} ACHIEVED MILESTONE: {milestone.title} (+{milestone.reward_xp}XP)")
+                    
+                    # Send Socket.IO event to trigger Lottie Celebration Animation on mobile Device
+                    try:
+                        from app import socketio
+                        socketio.emit(
+                            'milestone_unlocked', 
+                            {'title': milestone.title, 'xp': milestone.reward_xp, 'cash': milestone.reward_cash}, 
+                            room=f'courier_{courier_id}'
+                        )
+                    except ImportError:
+                        pass
+                    
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error checking milestones: {e}")

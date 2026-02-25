@@ -55,6 +55,6 @@ def notify_new_mission(order):
     send_push_notification(
         tokens=["MOCK_TOKEN"], # Replace with actual tokens from DB
         title="משימה חדשה זמינה! 📦",
-        body=f"מאיסוף: {order.pickup_address} | שווי: ₪{order.estimated_price}",
+        body=f"מאיסוף: {order.pickup_point.address.street if order.pickup_point and order.pickup_point.address else 'לא ידוע'} | שווי: ₪{order.delivery_fee}",
         data={"order_id": order.id, "type": "new_mission"}
     )

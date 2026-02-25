@@ -69,7 +69,7 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
             {/* Desktop Right Sidebar */}
             <aside className="hidden md:flex flex-col w-64 bg-white border-l h-screen sticky top-0 z-40 shadow-sm">
                 <div className="p-6 border-b flex items-center justify-center">
-                    <h1 className="text-2xl font-black text-blue-600 tracking-tighter">TZIR<span className="text-slate-400">.</span></h1>
+                    <h1 className="text-2xl font-black text-brand tracking-tighter">TZIR<span className="text-slate-400">.</span></h1>
                 </div>
 
                 <div className="p-4 flex flex-col gap-2 flex-1">
@@ -91,11 +91,11 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group",
                                     isActive
-                                        ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                                        : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
+                                        ? "bg-brand text-navy-950 shadow-md shadow-amber/30"
+                                        : "text-slate-600 hover:bg-slate-50 hover:text-brand"
                                 )}
                             >
-                                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-400 group-hover:text-blue-600")} />
+                                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-400 group-hover:text-brand")} />
                                 <span className="font-medium text-sm">{item.label}</span>
                             </Link>
                         );
@@ -168,7 +168,7 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
                                 href={item.href}
                                 className={cn(
                                     "flex flex-col items-center justify-center w-full h-full gap-1 transition-colors",
-                                    isActive ? "text-blue-600" : "text-slate-500 hover:text-slate-800"
+                                    isActive ? "text-brand" : "text-slate-500 hover:text-slate-800"
                                 )}
                             >
                                 <Icon className={cn("w-6 h-6", isActive && "fill-current/10")} />

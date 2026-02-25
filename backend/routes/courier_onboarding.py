@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import db, Courier, CourierDocument, User
 from utils.decorators import token_required, role_required
+from models import db, Courier, CourierDocument, User, EmploymentContract
 import logging
 
 courier_onboarding_bp = Blueprint('courier_onboarding', __name__)
@@ -198,4 +198,71 @@ def get_document(current_user, doc_id):
             
     except Exception as e:
         logging.error(f"Error retrieving document: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@courier_onboarding_bp.route('/sign-contract', methods=['POST'])
+@token_required
+@role_required('courier')
+def sign_employment_contract(current_user):
+    """
+    Allows a newly onboarding courier to digitally sign their employment or freelance contract.
+    Creates a legally binding record in the EmploymentContract table.
+    """
+    try:
+        data = request.json
+        contract_type = data.get('contract_type')
+        digital_signature_id = data.get('digital_signature_id')
+        
+        if contract_type not in ['freelance', 'employee']:
+            return jsonify({'error': 'Invalid contract type specified.'}), 400
+            
+        if not digital_signature_id:
+            return jsonify({'error': 'A valid digital signature ID must be provided to sign the contract.'}), 400
+            
+        courier = current_user.courier
+        if not courier:
+            return jsonify({'error': 'Courier profile not found.'}), 404
+            
+        # Optional: Prevent signing if a contract is already active
+        existing_contract = EmploymentContract.query.filter_by(courier_id=courier.id, is_active=True).first()
+        if existing_contract:
+             return jsonify({'error': 'An active contract already exists for this courier.'}), 400
+             
+        contract = EmploymentContract(
+            courier_id=courier.id,
+            contract_type=contract_type,
+            document_url=f"/api/hr/contracts/template/{contract_type}.pdf", # Example generated document path
+            digital_signature_id=digital_signature_id,
+            signed_at=datetime.utcnow(),
+            is_active=True
+        )
+        
+        db.session.add(contract)
+        
+        # Automatically update the master courier profile to reflect their signed choice
+        courier.employment_type = contract_type
+        courier.is_freelance_declared = (contract_type == 'freelance')
+        courier.onboarding_status = 'approved' # Or move to next step 'pending_approval' if admin review needed
+        
+        db.session.commit()
+        
+        # Audit Logging
+        from utils.audit import log_audit
+        log_audit(
+            action='CONTRACT_SIGNED',
+            user_id=current_user.id,
+            resource_type='Courier',
+            resource_id=courier.id,
+            details=f"Courier digitally signed a {contract_type} contract (Sig: {digital_signature_id})"
+        )
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully signed {contract_type} contract.',
+            'contract_id': contract.id
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error signing contract: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500

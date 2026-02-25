@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,7 +22,16 @@ interface CustomerDetailsModalProps {
 export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: CustomerDetailsModalProps) {
     const [loading, setLoading] = useState(false)
     const [resetLoading, setResetLoading] = useState(false)
+    const [pricingLoading, setPricingLoading] = useState(false)
     const [editMode, setEditMode] = useState(false)
+    const [activeTab, setActiveTab] = useState("info")
+
+    const [pricingData, setPricingData] = useState({
+        base_price: '',
+        price_per_km: '',
+        price_per_kg: '',
+        discount_percentage: '0'
+    })
 
     const [formData, setFormData] = useState({
         full_name: customer?.full_name || '',
@@ -75,6 +84,52 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
         }
     }
 
+    const fetchPricing = async () => {
+        if (!customer?.id) return
+        setPricingLoading(true)
+        try {
+            const res = await api.get(`/crm/customers/${customer.id}/pricing`)
+            if (res.data) {
+                setPricingData({
+                    base_price: res.data.base_price || '',
+                    price_per_km: res.data.price_per_km || '',
+                    price_per_kg: res.data.price_per_kg || '',
+                    discount_percentage: res.data.discount_percentage ? (res.data.discount_percentage * 100).toString() : '0'
+                })
+            }
+        } catch (error) {
+            console.error("Failed to fetch customer pricing", error)
+        } finally {
+            setPricingLoading(false)
+        }
+    }
+
+    const savePricing = async () => {
+        setPricingLoading(true)
+        try {
+            const payload = {
+                base_price: pricingData.base_price ? parseFloat(pricingData.base_price) : null,
+                price_per_km: pricingData.price_per_km ? parseFloat(pricingData.price_per_km) : null,
+                price_per_kg: pricingData.price_per_kg ? parseFloat(pricingData.price_per_kg) : null,
+                discount_percentage: pricingData.discount_percentage ? parseFloat(pricingData.discount_percentage) / 100.0 : 0
+            }
+            await api.put(`/crm/customers/${customer.id}/pricing`, payload)
+            toast.success("מחירון הלקוח עודכן בהצלחה")
+            fetchPricing()
+        } catch (error: any) {
+            toast.error("שגיאה בשמירת מחירון")
+        } finally {
+            setPricingLoading(false)
+        }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        if (isOpen && activeTab === 'pricing') {
+            fetchPricing()
+        }
+    }, [isOpen, activeTab, customer?.id])
+
     if (!customer) return null
 
     return (
@@ -84,7 +139,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                     <div className="flex justify-between items-start">
                         <div>
                             <DialogTitle className="text-2xl flex items-center gap-2">
-                                {customer.company_name ? <Building2 className="h-6 w-6 text-blue-600" /> : <User className="h-6 w-6 text-gray-600" />}
+                                {customer.company_name ? <Building2 className="h-6 w-6 text-brand" /> : <User className="h-6 w-6 text-gray-600" />}
                                 {customer.full_name}
                             </DialogTitle>
                             <DialogDescription>
@@ -97,9 +152,10 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                     </div>
                 </DialogHeader>
 
-                <Tabs defaultValue="info" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="info">מידע כללי</TabsTrigger>
+                        <TabsTrigger value="pricing">מחירון עסק</TabsTrigger>
                         <TabsTrigger value="security">אבטחה ו-2FA</TabsTrigger>
                         <TabsTrigger value="history">היסטוריה</TabsTrigger>
                     </TabsList>
@@ -178,6 +234,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                                         <Label htmlFor="enforce-2fa">חייב 2FA</Label>
                                         <input
                                             type="checkbox"
+                                            title="Enforce 2FA checkbox"
                                             id="enforce-2fa"
                                             checked={formData.two_factor_enforced}
                                             onChange={(e) => {
@@ -206,6 +263,66 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                                             אפס סיסמה
                                         </Button>
                                     </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="pricing" className="space-y-4 pt-4">
+                        <Card>
+                            <CardContent className="pt-6">
+                                <p className="text-sm text-muted-foreground mb-6">
+                                    הגדר מחירון מותאם אישית ללקוח עסקי זה. השארת שדה ריק תשתמש במחירון הגלובלי הסטנדרטי. שים לב: אחוזי הנחה חלים כהנחה גורפת על הסה"כ.
+                                </p>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label>מחיר בסיס (₪)</Label>
+                                        <Input
+                                            type="number"
+                                            placeholder="ברירת מחדל: 45₪+"
+                                            value={pricingData.base_price}
+                                            onChange={(e) => setPricingData({ ...pricingData, base_price: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>תוספת לכל ק"מ (₪)</Label>
+                                        <Input
+                                            type="number"
+                                            placeholder="ברירת מחדל: 4₪/ק״מ"
+                                            value={pricingData.price_per_km}
+                                            onChange={(e) => setPricingData({ ...pricingData, price_per_km: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>חריגת משקל מעל 10 ק"ג (₪/ק"ג)</Label>
+                                        <Input
+                                            type="number"
+                                            placeholder="ברירת מחדל: 5₪"
+                                            value={pricingData.price_per_kg}
+                                            onChange={(e) => setPricingData({ ...pricingData, price_per_kg: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>אחוז הנחה גורף (%)</Label>
+                                        <div className="relative">
+                                            <Input
+                                                type="number"
+                                                placeholder="0"
+                                                min="0"
+                                                max="100"
+                                                className="pe-8"
+                                                value={pricingData.discount_percentage}
+                                                onChange={(e) => setPricingData({ ...pricingData, discount_percentage: e.target.value })}
+                                            />
+                                            <span className="absolute left-3 top-2.5 text-muted-foreground">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex justify-end">
+                                    <Button onClick={savePricing} disabled={pricingLoading}>
+                                        {pricingLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                                        עדכן מחירון לקוח
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>

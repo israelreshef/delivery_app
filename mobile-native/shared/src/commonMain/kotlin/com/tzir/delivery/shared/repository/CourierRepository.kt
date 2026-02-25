@@ -5,11 +5,16 @@ import com.tzir.delivery.shared.db.TzirDatabase
 import com.tzir.delivery.shared.model.Mission
 import com.tzir.delivery.shared.model.CourierStats
 import com.tzir.delivery.shared.network.DeliveryApi
+import com.tzir.delivery.shared.model.AutocompleteSuggestion
+import com.tzir.delivery.shared.model.GeocodeResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonArray
 
 class CourierRepository(
     private val api: DeliveryApi,
@@ -33,6 +38,16 @@ class CourierRepository(
 
     private val _isOffline = MutableStateFlow(false)
     val isOffline: StateFlow<Boolean> = _isOffline.asStateFlow()
+
+    // TZIR Academy Flow States
+    private val _shiftStatus = MutableStateFlow<JsonElement?>(null)
+    val shiftStatus: StateFlow<JsonElement?> = _shiftStatus.asStateFlow()
+
+    private val _gamificationProfile = MutableStateFlow<Map<String, Any>?>(null)
+    val gamificationProfile: StateFlow<Map<String, Any>?> = _gamificationProfile.asStateFlow()
+
+    private val _academyCourses = MutableStateFlow<List<Map<String, Any>>>(emptyList())
+    val academyCourses: StateFlow<List<Map<String, Any>>> = _academyCourses.asStateFlow()
 
     init {
         loadFromCache()
@@ -183,6 +198,34 @@ class CourierRepository(
         }
     }
 
+    suspend fun optimizeRoute(lat: Double, lng: Double): JsonElement? {
+        return try {
+            val result = api.optimizeRoute(lat, lng)
+            if (result.success) result.data else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun optimizeManualRoute(lat: Double, lng: Double, stops: List<Map<String, Any?>>): JsonElement? {
+        return try {
+            val result = api.optimizeManualRoute(lat, lng, stops)
+            if (result.success) result.data else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun autocompleteAddress(query: String): List<AutocompleteSuggestion> {
+        return api.autocompleteAddress(query)
+    }
+
+    suspend fun geocodeAddress(query: String? = null, placeId: String? = null): GeocodeResult? {
+        return api.geocodeAddress(query, placeId)
+    }
+
     suspend fun updateMissionStatus(
         missionId: Int, 
         status: String, 
@@ -280,6 +323,69 @@ class CourierRepository(
             // For now, we just return success/failure
             success
         } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun startShift(vibe: String): Boolean {
+        return try {
+            val result = api.startShift(vibe)
+            if (result.success) {
+                refreshShiftStatus()
+            }
+            result.success
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun refreshShiftStatus() {
+        try {
+            val result = api.getShiftStatus()
+            if (result.success) {
+                _shiftStatus.value = result.data
+            }
+        } catch (e: Exception) {
+            // keep old state or handle error
+        }
+    }
+
+    suspend fun refreshGamificationProfile() {
+        try {
+            val response = api.getGamificationProfile()
+            _gamificationProfile.value = response
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun refreshAcademyCourses() {
+        try {
+            val response = api.getAcademyCourses()
+            _academyCourses.value = response
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun getCourseDetails(courseId: Int): Map<String, Any> {
+        return try {
+            api.getCourseDetails(courseId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyMap()
+        }
+    }
+
+    suspend fun completeCourseQuiz(courseId: Int): Boolean {
+        return try {
+            val response = api.completeCourseQuiz(courseId)
+            // Refresh courses + gamification profile after completion
+            refreshAcademyCourses()
+            refreshGamificationProfile()
+            response["success"] as? Boolean == true
+        } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
     }

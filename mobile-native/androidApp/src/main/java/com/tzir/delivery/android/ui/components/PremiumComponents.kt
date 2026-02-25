@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 // --- Apple-Level Color Palette ---
-val PrimaryTurquoise = Color(0xFF00C4B4)
-val SoftLightBlue = Color(0xFFE3F2FD)
+val PrimaryTurquoise = Color(0xFF6B8F3E)
+val SoftLightBlue = Color(0xFFF5F5F0)
 val AppleWhite = Color(0xFFFFFFFF)
 val AppleGray = Color(0xFFF5F5F7)
 val TextOfficial = Color(0xFF1D1D1F)
@@ -75,8 +75,8 @@ fun OfficialCard(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF004D40), // Deep Turquoise
-                        Color(0xFF00251A)
+                        Color(0xFF1A7A8A), // Deep Turquoise
+                        Color(0xFF1C3D2A)
                     )
                 )
             )
@@ -193,7 +193,7 @@ fun ActiveMissionCard(mission: com.tzir.delivery.shared.model.Mission, onDetails
             .shadow(8.dp, RoundedCornerShape(24.dp))
             .clip(RoundedCornerShape(24.dp))
             .clickable(onClick = onDetailsClick),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF004D40)), // Official Deep Turquoise
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A7A8A)), // Official Deep Turquoise
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -268,7 +268,7 @@ fun StatCard(label: String, value: String, modifier: Modifier = Modifier) {
                 text = value, 
                 style = MaterialTheme.typography.headlineSmall, 
                 fontWeight = FontWeight.ExtraBold, 
-                color = Color(0xFF001C44)
+                color = Color(0xFF1C3D2A)
             )
         }
     }

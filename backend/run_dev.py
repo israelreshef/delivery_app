@@ -9,14 +9,14 @@ if __name__ == '__main__':
     
     app = create_app()
     
-    print("\n✅ Server starting on http://localhost:5000")
+    print("\n✅ Server starting on http://localhost:5001")
     print("📝 Press CTRL+C to stop the server\n")
     print("=" * 60)
     
     # Run with Flask's built-in server (simpler, no gevent)
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=5001,
         debug=True,
         use_reloader=False  # Disable reloader to avoid double startup
     )

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Truck, Bike, Car, Plus, Search, FileSignature, CheckCircle, AlertCircle } from "lucide-react";
+import { Truck, Bike, Car, Plus, Search, FileSignature, CheckCircle, AlertCircle, Key, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
@@ -21,6 +21,10 @@ export default function AdminCouriersPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddOpen, setIsAddOpen] = useState(false);
+    const [resetTokenUser, setResetTokenUser] = useState<any>(null);
+    const [newPassword, setNewPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [isResetLoading, setIsResetLoading] = useState(false);
 
     // New Courier Form State
     const [newCourier, setNewCourier] = useState({
@@ -111,6 +115,24 @@ export default function AdminCouriersPage() {
         );
     };
 
+    const handleResetPassword = async () => {
+        if (!resetTokenUser || !newPassword) return;
+        setIsResetLoading(true);
+        try {
+            await api.post('/auth/admin/reset-password', {
+                user_id: resetTokenUser.user_id,
+                password: newPassword
+            });
+            toast.success(`הסיסמה עבור ${resetTokenUser.full_name} אופסה בהצלחה!`);
+            setResetTokenUser(null);
+            setNewPassword("");
+        } catch (error: any) {
+            toast.error(error.response?.data?.error || "שגיאה באיפוס סיסמה");
+        } finally {
+            setIsResetLoading(false);
+        }
+    };
+
     const getVehicleIcon = (type: string) => {
         switch (type) {
             case 'car': return <Car className="h-4 w-4" />;
@@ -133,7 +155,7 @@ export default function AdminCouriersPage() {
                 </div>
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
+                        <Button className="gap-2 bg-brand hover:bg-brand-dark">
                             <Plus className="w-4 h-4" />
                             גיוס שליח חדש
                         </Button>
@@ -277,6 +299,9 @@ export default function AdminCouriersPage() {
                                                 <Button size="icon" variant="ghost" title="שלח חוזה" onClick={() => sendContract(courier.id)}>
                                                     <FileSignature className="w-4 h-4 text-purple-600" />
                                                 </Button>
+                                                <Button size="icon" variant="ghost" title="איפוס סיסמה" onClick={() => setResetTokenUser(courier)}>
+                                                    <Key className="w-4 h-4 text-orange-500" />
+                                                </Button>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -286,6 +311,42 @@ export default function AdminCouriersPage() {
                     </Table>
                 </CardContent>
             </Card>
+
+            <Dialog open={!!resetTokenUser} onOpenChange={(open) => !open && setResetTokenUser(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>איפוס סיסמה - {resetTokenUser?.full_name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2 text-right">
+                            <Label>סיסמה חדשה</Label>
+                            <div className="relative">
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    placeholder="הכנס סיסמה חזקה..."
+                                    className="text-right"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute left-3 top-3 text-slate-400 hover:text-slate-600"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                            <p className="text-[10px] text-slate-500">מומלץ להשתמש בסיסמה של 8 תווים לפחות הכוללת אותיות ומספרים.</p>
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setResetTokenUser(null)}>ביטול</Button>
+                        <Button onClick={handleResetPassword} disabled={isResetLoading || !newPassword}>
+                            {isResetLoading ? "מעדכן..." : "אפס סיסמה"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

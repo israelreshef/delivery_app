@@ -53,8 +53,8 @@ export default function CourierRegisterPage() {
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4" dir="rtl">
             <Card className="max-w-lg w-full">
                 <CardHeader className="text-center space-y-2">
-                    <div className="mx-auto bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                        <Truck className="w-8 h-8 text-blue-600" />
+                    <div className="mx-auto bg-brand/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                        <Truck className="w-8 h-8 text-brand" />
                     </div>
                     <CardTitle className="text-2xl font-bold">הרשמת שליח חדש</CardTitle>
                     <CardDescription>
@@ -120,7 +120,7 @@ export default function CourierRegisterPage() {
                         </Button>
 
                         <div className="text-center pt-4">
-                            <Link href="/register" className="text-sm text-muted-foreground hover:text-primary flex items-center justify-center gap-1">
+                            <Link href="/register" className="text-sm text-muted-foreground hover:text-brand flex items-center justify-center gap-1">
                                 <ArrowRight className="w-4 h-4" /> חזרה לבחירה
                             </Link>
                         </div>

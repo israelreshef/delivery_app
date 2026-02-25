@@ -57,7 +57,7 @@ export default function PaymentForm() {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const res = await fetch('http://localhost:5000/api/orders', {
+            const res = await fetch('http://localhost:5001/api/orders', {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(payload)
@@ -121,8 +121,8 @@ export default function PaymentForm() {
                                     >
                                         <FormItem>
                                             <FormControl><RadioGroupItem value="credit_card" className="peer sr-only" /></FormControl>
-                                            <FormLabel className="flex items-center gap-4 rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all">
-                                                <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                            <FormLabel className="flex items-center gap-4 rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10 cursor-pointer transition-all">
+                                                <div className="w-12 h-12 rounded-full bg-brand/20 text-brand flex items-center justify-center shrink-0">
                                                     <CreditCard className="w-6 h-6" />
                                                 </div>
                                                 <div className="flex-1">
@@ -139,8 +139,8 @@ export default function PaymentForm() {
 
                                         <FormItem>
                                             <FormControl><RadioGroupItem value="bit" className="peer sr-only" /></FormControl>
-                                            <FormLabel className="flex items-center gap-4 rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all">
-                                                <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                            <FormLabel className="flex items-center gap-4 rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10 cursor-pointer transition-all">
+                                                <div className="w-12 h-12 rounded-full bg-brand/20 text-brand flex items-center justify-center shrink-0">
                                                     <Wallet className="w-6 h-6" />
                                                 </div>
                                                 <div className="flex-1">

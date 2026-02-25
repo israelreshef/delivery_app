@@ -10,7 +10,7 @@ from sqlalchemy import func
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import db, Courier, User, Delivery
+from models import db, Courier, User, Delivery, ShiftSession, CourierGamification, DailyMission
 from werkzeug.security import generate_password_hash
 from utils.decorators import token_required, role_required
 import logging
@@ -39,6 +39,44 @@ def upload_file(current_user):
         # Return the path that can be saved in the database
         return jsonify({'url': f"/uploads/pod/{filename}"}), 200
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@couriers_bp.route('/documents', methods=['GET'])
+@token_required
+@role_required(['courier', 'admin'])
+def get_documents(current_user):
+    """Get courier's uploaded documents"""
+    try:
+        from models import CourierDocument, Courier
+
+        # Admin can query any courier's docs, courier sees their own
+        courier_id = request.args.get('courier_id', type=int)
+
+        if current_user.user_type == 'courier':
+            courier = Courier.query.filter_by(user_id=current_user.id).first()
+            if not courier:
+                return jsonify({'error': 'Courier profile not found'}), 404
+            courier_id = courier.id
+        elif not courier_id:
+            return jsonify({'error': 'courier_id is required for admin'}), 400
+
+        docs = CourierDocument.query.filter_by(courier_id=courier_id).order_by(
+            CourierDocument.uploaded_at.desc()
+        ).all()
+
+        return jsonify([{
+            'id': d.id,
+            'document_type': d.document_type,
+            'file_path': d.file_path,
+            'status': d.status,
+            'expiry_date': d.expiry_date.isoformat() if d.expiry_date else None,
+            'uploaded_at': d.uploaded_at.isoformat() if d.uploaded_at else None,
+            'reviewed_at': d.reviewed_at.isoformat() if d.reviewed_at else None
+        } for d in docs]), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching documents: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 @couriers_bp.route('', methods=['GET'])
@@ -442,6 +480,13 @@ def update_delivery_status(current_user, order_id):
                 details=f"Delivery completed. Recipient ID: {delivery.pod_recipient_id}. Digital Hash: {delivery_hash}",
                 status='SUCCESS'
              )
+             
+             # --- TZIR Academy Gamification Trigger ---
+             try:
+                 from services.gamification import GamificationService
+                 GamificationService.process_delivery_completion(courier.id, delivery.id)
+             except Exception as e:
+                 logging.error(f"Gamification update failed: {e}")
         
         db.session.commit()
         
@@ -511,7 +556,7 @@ def verify_order_otp(current_user, order_id):
             # --- Trigger Gamification & Smart Scoring Update ---
             try:
                 from services.gamification import GamificationService
-                GamificationService.update_courier_performance(courier.id)
+                GamificationService.process_delivery_completion(courier.id, delivery.id)
             except Exception as e:
                 logging.error(f"Gamification update failed: {e}")
             
@@ -531,6 +576,140 @@ def verify_order_otp(current_user, order_id):
         else:
             return jsonify({'success': False, 'error': 'Invalid OTP code'}), 400
             
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# ============================================================================
+# TZIR Academy: Gamification & Shift Management Flow
+# ============================================================================
+
+@couriers_bp.route('/shift/start', methods=['POST'])
+@token_required
+@role_required('courier')
+def start_shift(current_user):
+    """תחילת משמרת וקביעת הווייב היומי"""
+    try:
+        data = request.json or {}
+        vibe = data.get('vibe', 'general')
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        if not courier: return jsonify({'error': 'Courier not found'}), 404
+
+        # Close any active shifts
+        active_shifts = ShiftSession.query.filter_by(courier_id=courier.id, is_active=True).all()
+        for shift in active_shifts:
+            shift.is_active = False
+            shift.end_time = datetime.utcnow()
+
+        new_shift = ShiftSession(
+            courier_id=courier.id,
+            start_time=datetime.utcnow(),
+            is_active=True,
+            vibe_selected=vibe
+        )
+        courier.is_available = True
+        db.session.add(new_shift)
+        
+        # Initialize gamification if missing
+        gamification = CourierGamification.query.filter_by(courier_id=courier.id).first()
+        if not gamification:
+            gamification = CourierGamification(courier_id=courier.id, level=1, xp=0)
+            db.session.add(gamification)
+            
+        db.session.commit()
+        return jsonify({'success': True, 'shift_id': new_shift.id, 'vibe': vibe}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@couriers_bp.route('/shift/status', methods=['GET'])
+@token_required
+@role_required('courier')
+def get_shift_status(current_user):
+    """בדיקת סטטוס משמרת והגנת שחיקה"""
+    try:
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        if not courier: return jsonify({'error': 'Courier not found'}), 404
+        
+        active_shift = ShiftSession.query.filter_by(courier_id=courier.id, is_active=True).first()
+        if not active_shift:
+            return jsonify({'is_active': False}), 200
+
+        # Calculate duration
+        duration = datetime.utcnow() - active_shift.start_time
+        hours_active = duration.total_seconds() / 3600.0
+
+        recommend_rest = False
+        force_stop = False
+
+        if hours_active >= 8.0:
+            force_stop = True
+            active_shift.forced_stop_applied = True
+            active_shift.is_active = False
+            courier.is_available = False
+            active_shift.end_time = datetime.utcnow()
+            db.session.commit()
+        elif hours_active >= 6.0 and not active_shift.rest_recommended_shown:
+            recommend_rest = True
+            active_shift.rest_recommended_shown = True
+            db.session.commit()
+
+        return jsonify({
+            'is_active': active_shift.is_active,
+            'hours_active': round(hours_active, 2),
+            'recommend_rest': recommend_rest,
+            'force_stop': force_stop,
+            'vibe': active_shift.vibe_selected
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@couriers_bp.route('/gamification/profile', methods=['GET'])
+@token_required
+@role_required('courier')
+def get_gamification_profile(current_user):
+    """קבלת פרופיל גיימיפיקציה"""
+    try:
+        from models import EarnedMilestone
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        if not courier: return jsonify({'error': 'Courier not found'}), 404
+        
+        gamification = CourierGamification.query.filter_by(courier_id=courier.id).first()
+        if not gamification:
+            gamification = CourierGamification(courier_id=courier.id, level=1, xp=0)
+            db.session.add(gamification)
+            db.session.commit()
+
+        earned = EarnedMilestone.query.filter_by(courier_id=courier.id).all()
+        earned_list = [{
+            'id': e.milestone.id,
+            'title': e.milestone.title,
+            'description': e.milestone.description,
+            'reward_xp': e.milestone.reward_xp,
+            'earned_at': e.earned_at.isoformat()
+        } for e in earned if e.milestone]
+
+        # Get or create today's mission
+        today = datetime.utcnow().date()
+        mission = DailyMission.query.filter_by(courier_id=courier.id, mission_date=today).first()
+        if not mission:
+            mission = DailyMission(courier_id=courier.id, mission_date=today)
+            db.session.add(mission)
+            db.session.commit()
+
+        return jsonify({
+            'level': gamification.level,
+            'xp': gamification.xp,
+            'next_level_xp': gamification.level * 1000,
+            'daily_mission': {
+                'completed_deliveries': mission.completed_deliveries,
+                'target_deliveries': 10,
+                'fast_deliveries': mission.fast_deliveries,
+                'streak_days': mission.streak_days
+            },
+            'earned_milestones': earned_list
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

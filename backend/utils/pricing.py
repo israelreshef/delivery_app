@@ -37,21 +37,33 @@ class PricingEngine:
     @classmethod
     def calculate_price(cls, distance_km: float, package_size: str, urgency: str, 
                        delivery_type: str = 'standard', insurance_value: float = 0.0,
-                       weight_kg: float = 0.0) -> dict:
+                       weight_kg: float = 0.0, customer_id: int = None) -> dict:
         """
-        Calculate precise delivery price based on all factors.
+        Calculate precise delivery price based on all factors, including B2B overrides.
         Returns detailed breakdown.
         """
+        from models import CustomerPricingOverride
+        
+        # Load Overrides if B2B Customer is provided
+        override = CustomerPricingOverride.query.filter_by(customer_id=customer_id).first() if customer_id else None
+        
+        # Overridable Base Rates
+        base_rate_km = float(override.price_per_km) if override and override.price_per_km else cls.BASE_RATE_PER_KM
+        min_base_price = float(override.base_price) if override and override.base_price else cls.MINIMUM_BASE_PRICE
+        discount_pct = override.discount_percentage if override else 0.0
         
         # 1. Base Distance Price
         if distance_km <= 50:
-            distance_price = distance_km * cls.BASE_RATE_PER_KM
+            distance_price = distance_km * base_rate_km
         else:
-            # First 50km at base rate, rest at discounted rate
-            distance_price = (50 * cls.BASE_RATE_PER_KM) + ((distance_km - 50) * cls.LONG_DISTANCE_RATE_PER_KM)
+            # First 50km at base rate, rest at discounted rate (or custom override applies to all)
+            if override and override.price_per_km:
+                distance_price = distance_km * base_rate_km # Custom B2B usually gets flat rate
+            else:
+                distance_price = (50 * base_rate_km) + ((distance_km - 50) * cls.LONG_DISTANCE_RATE_PER_KM)
             
         # Ensure minimum
-        base_price = max(distance_price, cls.MINIMUM_BASE_PRICE)
+        base_price = max(distance_price, min_base_price)
         
         # 2. Size Multiplier
         size_mult = cls.PACKAGE_SIZE_MULTIPLIERS.get(package_size, 1.0)
@@ -67,10 +79,16 @@ class PricingEngine:
         
         # 5. Weight Surcharge (e.g. over 10kg)
         weight_surcharge = 0.0
+        price_per_extra_kg = float(override.price_per_kg) if override and override.price_per_kg else 5.0
+        
         if weight_kg > 10:
-            weight_surcharge = (weight_kg - 10) * 5.0 # 5 NIS per extra kg
+            weight_surcharge = (weight_kg - 10) * price_per_extra_kg 
             
         subtotal = price_after_type + weight_surcharge
+        
+        # 5.5 Apply B2B Blanket Discount
+        if discount_pct > 0.0:
+            subtotal = subtotal * (1.0 - discount_pct)
         
         # 6. Insurance
         insurance_cost = 0.0

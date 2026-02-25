@@ -232,7 +232,7 @@ export default function CourierDashboard() {
                                 variant={viewMode === 'map' ? 'secondary' : 'ghost'}
                                 size="sm"
                                 onClick={() => setViewMode('map')}
-                                className={viewMode === 'map' ? 'shadow-sm text-blue-600 bg-white' : 'text-slate-500'}
+                                className={viewMode === 'map' ? 'shadow-sm text-brand bg-white' : 'text-slate-500'}
                                 aria-label="תצוגת מפה"
                             >
                                 <MapPin className="w-4 h-4 mr-1" /> מפה
@@ -241,7 +241,7 @@ export default function CourierDashboard() {
                                 variant={viewMode === 'list' ? 'secondary' : 'ghost'}
                                 size="sm"
                                 onClick={() => setViewMode('list')}
-                                className={viewMode === 'list' ? 'shadow-sm text-blue-600 bg-white' : 'text-slate-500'}
+                                className={viewMode === 'list' ? 'shadow-sm text-brand bg-white' : 'text-slate-500'}
                                 aria-label="תצוגת רשימה"
                             >
                                 <List className="w-4 h-4 mr-1" /> רשימה
@@ -262,7 +262,7 @@ export default function CourierDashboard() {
                                 <div className="absolute bottom-4 left-4 right-4 z-[500] max-h-[40vh] overflow-y-auto space-y-2 pointer-events-auto">
                                     {availableOrders.length > 0 ? (
                                         availableOrders.map((order) => (
-                                            <Card key={order.id} className="bg-white/95 backdrop-blur shadow-lg border-blue-100">
+                                            <Card key={order.id} className="bg-white/95 backdrop-blur shadow-lg border-brand/20">
                                                 <CardContent className="p-4">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <div>
@@ -278,7 +278,7 @@ export default function CourierDashboard() {
                                                         <p className="text-xs text-slate-500 truncate">🏁 {order.delivery_address}</p>
                                                     </div>
                                                     <div className="flex gap-2">
-                                                        <Button onClick={() => handleAcceptOrder(order.id)} className="flex-1 bg-blue-600 h-8 text-xs">קבל</Button>
+                                                        <Button onClick={() => handleAcceptOrder(order.id)} className="flex-1 bg-brand h-8 text-xs">קבל</Button>
                                                         <Button onClick={() => handleRejectOrder(order.id)} variant="outline" className="flex-1 h-8 text-xs">דחה</Button>
                                                     </div>
                                                 </CardContent>
@@ -321,7 +321,7 @@ export default function CourierDashboard() {
                                     <div className="flex justify-between items-center">
                                         <CardTitle>הזמנה #{activeOrder.order_number}</CardTitle>
                                         <Badge className={
-                                            activeOrder.status === 'delivered' ? 'bg-green-500' : 'bg-blue-500'
+                                            activeOrder.status === 'delivered' ? 'bg-green-500' : 'bg-brand'
                                         }>{activeOrder.status}</Badge>
                                     </div>
                                 </CardHeader>
@@ -331,7 +331,7 @@ export default function CourierDashboard() {
                                         <Button
                                             variant="outline"
                                             onClick={() => openWaze(activeOrder.pickup_address)}
-                                            className="w-full text-blue-600 border-blue-200 hover:bg-blue-50"
+                                            className="w-full text-brand border-brand/20 hover:bg-brand-dark/10"
                                         >
                                             <Navigation className="w-4 h-4 ml-2" /> Waze לאיסוף
                                         </Button>
@@ -349,8 +349,8 @@ export default function CourierDashboard() {
                                         <div className="absolute top-2 bottom-2 right-[19px] w-0.5 bg-slate-200" />
 
                                         <div className="relative flex gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 z-10 border-4 border-white shadow-sm">
-                                                <span className="text-blue-600 font-bold">1</span>
+                                            <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center shrink-0 z-10 border-4 border-white shadow-sm">
+                                                <span className="text-brand font-bold">1</span>
                                             </div>
                                             <div>
                                                 <p className="font-medium">איסוף</p>

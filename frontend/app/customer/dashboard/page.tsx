@@ -22,7 +22,7 @@ interface Order {
 
 const statusMap: Record<string, { label: string; color: string }> = {
     pending: { label: "ממתין לשליח", color: "bg-yellow-100 text-yellow-800" },
-    assigned: { label: "שליח בדרך", color: "bg-blue-100 text-blue-800" },
+    assigned: { label: "שליח בדרך", color: "bg-brand/20 text-foreground" },
     picked_up: { label: "נאסף", color: "bg-purple-100 text-purple-800" },
     in_transit: { label: "במשלוח", color: "bg-indigo-100 text-indigo-800" },
     delivered: { label: "נמסר", color: "bg-green-100 text-green-800" },
@@ -65,7 +65,7 @@ export default function CustomerDashboard() {
         return (
             <CustomerLayout>
                 <div className="flex items-center justify-center h-full">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    <Loader2 className="w-8 h-8 animate-spin text-brand" />
                 </div>
             </CustomerLayout>
         );
@@ -81,7 +81,7 @@ export default function CustomerDashboard() {
                         <p className="text-slate-500">סקירת פעילות והזמנות אחרונות</p>
                     </div>
                     <Link href="/customer/orders/new">
-                        <Button className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-lg shadow-lg shadow-blue-200">
+                        <Button className="h-12 px-6 bg-brand hover:bg-brand-dark text-lg shadow-lg shadow-primary/30">
                             <PlusCircle className="ml-2 h-5 w-5" /> הזמנה חדשה
                         </Button>
                     </Link>
@@ -92,7 +92,7 @@ export default function CustomerDashboard() {
                     <Card className="border-none shadow-md bg-white">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium text-slate-500">משלוחים פעילים</CardTitle>
-                            <Truck className="h-4 w-4 text-blue-600" />
+                            <Truck className="h-4 w-4 text-brand" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-slate-900">{stats.active}</div>
@@ -171,7 +171,7 @@ export default function CustomerDashboard() {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <Link href={`/customer/orders/${order.id}`}>
-                                                            <Button variant="ghost" size="sm" className="hover:bg-blue-50 hover:text-blue-600">
+                                                            <Button variant="ghost" size="sm" className="hover:bg-brand-dark/10 hover:text-brand">
                                                                 <ArrowLeft className="w-4 h-4 ml-1" /> פרטים
                                                             </Button>
                                                         </Link>

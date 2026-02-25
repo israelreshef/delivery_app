@@ -30,7 +30,7 @@ export default function SwipeButton({
     const sliderRef = useRef<HTMLDivElement>(null);
 
     const colors = {
-        blue: { bg: "bg-blue-600", track: "bg-blue-100", text: "text-blue-600" },
+        blue: { bg: "bg-brand", track: "bg-brand/20", text: "text-brand" },
         green: { bg: "bg-green-600", track: "bg-green-100", text: "text-green-600" },
         red: { bg: "bg-red-600", track: "bg-red-100", text: "text-red-600" },
         purple: { bg: "bg-purple-600", track: "bg-purple-100", text: "text-purple-600" },

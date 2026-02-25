@@ -22,7 +22,7 @@ const iconPerson = new L.Icon({
 
 // Custom div icon provider
 const createCustomIcon = (type: string) => {
-    let color = "#3b82f6"; // blue-500
+    let color = "#2E5480"; // navy-400
     let iconHtml = '<div style="background-color: #3b82f6; width: 100%; height: 100%; border-radius: 50%;"></div>';
 
     if (type === 'motorcycle' || type === 'scooter') {

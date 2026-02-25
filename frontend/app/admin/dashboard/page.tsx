@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import dynamic from 'next/dynamic';
 import LiveFeed from "@/components/admin/LiveFeed";
+import ExpensesDashboard from "@/components/admin/ExpensesDashboard";
 import { Badge } from "@/components/ui/badge";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { DashboardStats, RevenueData } from "@/types/api";
@@ -109,7 +110,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-wrap gap-3 w-full md:w-auto">
                     <Link href="/orders/new" className="flex-1 md:flex-none">
-                        <Button className="gap-2 bg-blue-600 hover:bg-blue-700 shadow-sm w-full md:w-auto">
+                        <Button className="gap-2 bg-brand hover:bg-brand-dark shadow-sm w-full md:w-auto">
                             <Package className="w-4 h-4" />
                             הזמנה חדשה
                         </Button>
@@ -142,7 +143,7 @@ export default function AdminDashboard() {
                 <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-slate-500">משלוחים פעילים</CardTitle>
-                        <Activity className="h-4 w-4 text-blue-500" />
+                        <Activity className="h-4 w-4 text-brand" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold text-slate-900">{stats.active_orders || 0}</div>
@@ -214,7 +215,7 @@ export default function AdminDashboard() {
                         <div className="flex justify-between items-center">
                             <div>
                                 <CardTitle className="flex items-center gap-2">
-                                    <MapPin className="w-5 h-5 text-blue-600" />
+                                    <MapPin className="w-5 h-5 text-brand" />
                                     מפה חיה
                                 </CardTitle>
                                 <CardDescription>מיקום שליחים בזמן אמת</CardDescription>
@@ -241,12 +242,15 @@ export default function AdminDashboard() {
                 </Card>
             </div>
 
+            {/* Expenses Monitor */}
+            <ExpensesDashboard />
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Link href="/admin/couriers" className="block">
                     <Card className="hover:bg-slate-50 transition-colors cursor-pointer border-dashed border-2 box-content">
                         <CardHeader className="flex flex-row items-center gap-4">
-                            <div className="p-2 bg-blue-100 rounded-full">
-                                <Truck className="h-6 w-6 text-blue-600" />
+                            <div className="p-2 bg-brand/20 rounded-full">
+                                <Truck className="h-6 w-6 text-brand" />
                             </div>
                             <div>
                                 <CardTitle className="text-base">ניהול שליחים</CardTitle>
@@ -270,15 +274,16 @@ export default function AdminDashboard() {
                     </Card>
                 </Link>
 
-                <Link href="/reports" className="block">
-                    <Card className="hover:bg-slate-50 transition-colors cursor-pointer border-dashed border-2 box-content">
+                <Link href="/admin/finance" className="block">
+                    <Card className="hover:bg-slate-50 transition-colors cursor-pointer border-dashed border-2 box-content relative">
+                        <Badge className="absolute top-2 left-2 bg-brand text-white text-[10px]">חדש</Badge>
                         <CardHeader className="flex flex-row items-center gap-4">
                             <div className="p-2 bg-green-100 rounded-full">
                                 <TrendingUp className="h-6 w-6 text-green-600" />
                             </div>
                             <div>
-                                <CardTitle className="text-base">דוחות כספיים</CardTitle>
-                                <CardDescription>ייצוא דוחות וחשבוניות</CardDescription>
+                                <CardTitle className="text-base">מרכז פיננסי</CardTitle>
+                                <CardDescription>ניהול הכנסות ודיווחים רגולטוריים</CardDescription>
                             </div>
                         </CardHeader>
                     </Card>

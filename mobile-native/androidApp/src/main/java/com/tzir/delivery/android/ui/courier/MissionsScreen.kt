@@ -208,7 +208,7 @@ fun MissionCard(
                     Spacer(modifier = Modifier.height(6.dp))
                     if (!showAcceptButton) {
                         Surface(
-                            color = Color(0xFF00D4FF).copy(alpha = 0.1f),
+                            color = Color(0xFF6B8F3E).copy(alpha = 0.1f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
@@ -310,7 +310,7 @@ fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
                         text = "February 2026",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        color = Color(0xFF001C44),
+                        color = Color(0xFF1C3D2A),
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                 }
@@ -324,7 +324,7 @@ fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
                                     .weight(1f)
                                     .height(60.dp)
                                     .background(
-                                        if (time == "10:00" || time == "14:00") Color(0xFFE0F7FA) else Color(0xFFF5F5F5),
+                                        if (time == "10:00" || time == "14:00") Color(0xFFF5F5F0) else Color(0xFFF5F5F5),
                                         RoundedCornerShape(8.dp)
                                     )
                                     .padding(8.dp)

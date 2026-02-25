@@ -1,62 +1,94 @@
 package com.tzir.delivery.android.ui.theme
 
 import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import java.util.Calendar
 
-private val Purple80 = Color(0xFFD0BCFF)
-private val PurpleGrey80 = Color(0xFFCCC2DC)
-private val Pink80 = Color(0xFFEFB8C8)
+private val TZIRLightColorScheme = lightColorScheme(
+    primary          = Amber,
+    onPrimary        = Navy950,
+    primaryContainer = AmberLight,
+    onPrimaryContainer = Navy700,
 
-private val Purple40 = Color(0xFF6650a4)
-private val PurpleGrey40 = Color(0xFF625b71)
-private val Pink40 = Color(0xFF7D5260)
+    secondary        = Navy600,
+    onSecondary      = Color.White,
+    secondaryContainer = Navy100,
+    onSecondaryContainer = Navy900,
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    background       = BackgroundLight,
+    onBackground     = TextPrimaryLight,
+
+    surface          = SurfaceLight,
+    onSurface        = TextPrimaryLight,
+    surfaceVariant   = Surface2Light,
+    onSurfaceVariant = TextSecondaryLight,
+
+    outline          = BorderLight,
+    outlineVariant   = Color(0xFFC5D5E4),
+
+    error            = ErrorRed,
+    onError          = Color.White,
+    errorContainer   = ErrorBg,
+    onErrorContainer = ErrorRed,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+private val TZIRDarkColorScheme = darkColorScheme(
+    primary          = Amber,
+    onPrimary        = Navy950,
+    primaryContainer = Color(0xFF3D2800),
+    onPrimaryContainer = AmberLight,
+
+    secondary        = Navy200,
+    onSecondary      = Navy950,
+    secondaryContainer = Navy700,
+    onSecondaryContainer = Navy100,
+
+    background       = BackgroundDark,
+    onBackground     = TextPrimaryDark,
+
+    surface          = SurfaceDark,
+    onSurface        = TextPrimaryDark,
+    surfaceVariant   = Surface2Dark,
+    onSurfaceVariant = TextSecondaryDark,
+
+    outline          = BorderDark,
+    outlineVariant   = Color(0x0F5C8AB0),
+
+    error            = ErrorRed,
+    onError          = Color.White,
+    errorContainer   = ErrorBg,
+    onErrorContainer = ErrorRed,
 )
+
+fun getDefaultTheme(): Boolean {
+    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    return hour >= 20 || hour < 7  // true = dark
+}
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    darkTheme: Boolean = getDefaultTheme(), // Use TZIR Time-based fallback
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = if (darkTheme) TZIRDarkColorScheme else TZIRLightColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        content = content
+        // typography  = TZIRTypography, // Not applied yet since Type.kt is next
+        content     = content
     )
 }

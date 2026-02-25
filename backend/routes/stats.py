@@ -20,17 +20,24 @@ def get_dashboard_stats(current_user):
     active_orders = Delivery.query.filter(Delivery.status.in_(['pending', 'assigned', 'picked_up', 'in_transit'])).count()
     
     # 3. Active Couriers
-    from models import Courier
+    from models import Courier, Customer
     active_couriers = Courier.query.filter_by(is_available=True).count() 
+    available_couriers = active_couriers # Alias for frontend compatibility 
     
     # 4. Total Revenue Today
     revenue_today = db.session.query(func.sum(Invoice.total_amount)).filter(func.date(Invoice.issue_date) == today, Invoice.status == 'paid').scalar() or 0
+    
+    # 5. New Customers (Last 7 days)
+    week_ago = datetime.utcnow() - timedelta(days=7)
+    new_customers = Customer.query.filter(Customer.created_at >= week_ago).count()
     
     return jsonify({
         'orders_today': orders_today,
         'active_orders': active_orders,
         'active_couriers': active_couriers,
-        'revenue_today': float(revenue_today)
+        'available_couriers': available_couriers,
+        'revenue_today': float(revenue_today),
+        'new_customers': new_customers
     }), 200
 
 @stats_bp.route('/revenue', methods=['GET'])

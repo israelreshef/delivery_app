@@ -58,7 +58,7 @@ export default function IncomingOrderModal() {
                             <Clock className="w-4 h-4 text-yellow-400 animate-pulse" />
                             <span>00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}</span>
                         </div>
-                        <Badge variant="secondary" className="bg-blue-600 text-white border-none shadow-lg">
+                        <Badge variant="secondary" className="bg-brand text-white border-none shadow-lg">
                             הצעה חדשה
                         </Badge>
                     </div>
@@ -79,7 +79,7 @@ export default function IncomingOrderModal() {
                     <div className="space-y-4">
                         <div className="flex items-start gap-4">
                             <div className="flex flex-col items-center gap-1 mt-1">
-                                <div className="w-3 h-3 rounded-full bg-blue-600 ring-4 ring-blue-50" />
+                                <div className="w-3 h-3 rounded-full bg-brand ring-4 ring-brand/10" />
                                 <div className="w-0.5 h-10 bg-slate-200" />
                                 <div className="w-3 h-3 rounded-full bg-green-600 ring-4 ring-green-50" />
                             </div>
@@ -101,7 +101,7 @@ export default function IncomingOrderModal() {
 
                     {/* Package Info */}
                     <div className="bg-slate-50 rounded-xl p-3 flex items-center gap-3 text-sm text-slate-600 border border-slate-100">
-                        <Package className="w-5 h-5 text-blue-500" />
+                        <Package className="w-5 h-5 text-brand" />
                         <span className="font-medium">{incomingOrder.package_description || "חבילה רגילה"}</span>
                         <span className="w-1 h-1 rounded-full bg-slate-300 mx-auto" />
                         <span>עד 5 ק"ג</span>
@@ -119,7 +119,7 @@ export default function IncomingOrderModal() {
                         </Button>
                         <Button
                             onClick={handleAccept}
-                            className="col-span-3 h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-lg font-bold shadow-xl shadow-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            className="col-span-3 h-14 rounded-2xl bg-brand hover:bg-brand-dark text-lg font-bold shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
                         >
                             <CheckCircle2 className="w-6 h-6 ml-2" />
                             קבל (₪{incomingOrder.estimated_price || incomingOrder.price || 45})

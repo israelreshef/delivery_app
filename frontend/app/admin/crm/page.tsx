@@ -25,7 +25,7 @@ interface Lead {
 }
 
 const STATUS_COLUMNS = [
-    { key: 'new', label: 'חדש', color: 'bg-blue-100 text-blue-700' },
+    { key: 'new', label: 'חדש', color: 'bg-brand/20 text-brand' },
     { key: 'contacted', label: 'יצרנו קשר', color: 'bg-purple-100 text-purple-700' },
     { key: 'negotiation', label: 'משא ומתן', color: 'bg-yellow-100 text-yellow-700' },
     { key: 'won', label: '✅ נסגר', color: 'bg-green-100 text-green-700' },
@@ -123,7 +123,7 @@ export default function CRMPage() {
             <div className="flex gap-4 overflow-x-auto pb-6 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-5 md:overflow-visible custom-scrollbar">
                 {STATUS_COLUMNS.map(column => (
                     <div key={column.key} className="space-y-3 min-w-[280px] md:min-w-0">
-                        <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm border-t-4 border-blue-500 sticky top-0 z-10">
+                        <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm border-t-4 border-brand sticky top-0 z-10">
                             <h3 className="font-bold text-sm">{column.label}</h3>
                             <Badge variant="outline" className={column.color}>
                                 {groupedLeads[column.key]?.length || 0}
@@ -133,7 +133,7 @@ export default function CRMPage() {
                             {groupedLeads[column.key]?.map(lead => (
                                 <Card
                                     key={lead.id}
-                                    className="cursor-pointer hover:shadow-lg transition-shadow border-r-4 border-blue-400 active:scale-95 transition-transform"
+                                    className="cursor-pointer hover:shadow-lg transition-shadow border-r-4 border-brand/80 active:scale-95 transition-transform"
                                     onClick={() => { setSelectedLead(lead); setIsModalOpen(true); }}
                                 >
                                     <CardContent className="p-4 space-y-2">
@@ -165,11 +165,11 @@ export default function CRMPage() {
                                     <p className="font-semibold">{selectedLead.contact_name}</p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Phone className="w-4 h-4 text-blue-600" />
+                                    <Phone className="w-4 h-4 text-brand" />
                                     <span className="text-sm">{selectedLead.phone}</span>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Mail className="w-4 h-4 text-blue-600" />
+                                    <Mail className="w-4 h-4 text-brand" />
                                     <span className="text-sm">{selectedLead.email}</span>
                                 </div>
                                 <div>

@@ -36,7 +36,7 @@ export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-slate-50 pb-20 text-slate-900" dir="rtl">
             {/* Header */}
-            <div className="bg-blue-600 text-white pb-12 pt-8 px-6 rounded-b-[2.5rem] shadow-lg">
+            <div className="bg-brand text-white pb-12 pt-8 px-6 rounded-b-[2.5rem] shadow-lg">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-2xl font-bold">הפרופיל שלי</h1>
                     <Button variant="ghost" size="icon" className="text-white hover:bg-white/20" onClick={() => router.push('/dashboard/customer')}>
@@ -51,7 +51,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                         <h2 className="text-xl font-bold">{user?.username || 'אורח'}</h2>
-                        <p className="text-blue-100 text-sm">{user?.email || 'guest@example.com'}</p>
+                        <p className="text-brand/20 text-sm">{user?.email || 'guest@example.com'}</p>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@ export default function ProfilePage() {
                 {/* Personal Info Card */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                        <User className="w-5 h-5 text-blue-500" />
+                        <User className="w-5 h-5 text-brand" />
                         פרטים אישיים
                     </h3>
                     <div className="space-y-4">
@@ -87,7 +87,7 @@ export default function ProfilePage() {
                             <MapPin className="w-5 h-5 text-green-500" />
                             כתובות שמורות
                         </h3>
-                        <Button size="sm" variant="ghost" className="text-blue-600 hover:bg-blue-50">
+                        <Button size="sm" variant="ghost" className="text-brand hover:bg-brand-dark/10">
                             <Plus className="w-4 h-4 ml-1" />
                             הוסף
                         </Button>
@@ -123,7 +123,7 @@ export default function ProfilePage() {
 
                 {/* Actions */}
                 <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start h-12 text-slate-700 hover:text-blue-600 hover:border-blue-200">
+                    <Button variant="outline" className="w-full justify-start h-12 text-slate-700 hover:text-brand hover:border-brand/20">
                         <Shield className="w-5 h-5 ml-3" />
                         שינוי סיסמה
                     </Button>

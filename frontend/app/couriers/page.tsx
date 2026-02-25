@@ -151,7 +151,7 @@ export default function CouriersPage() {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 gap-1"
+                                                        className="text-brand hover:text-brand hover:bg-brand-dark/10 gap-1"
                                                         onClick={() => handleSendContract(courier.id, courier.full_name)}
                                                     >
                                                         <FileText className="h-3 w-3" />

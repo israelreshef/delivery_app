@@ -4,70 +4,97 @@
 
 @layer base {
   :root {
-    /* Premium Corporate Blue Theme */
-    --background: 210 40% 98%; /* Very light blue-grey */
-    --foreground: 222 47% 11%; /* Deep navy text */
+    /* ── Navy Scale ── */
+    --navy-950: #05101F;
+    --navy-900: #0A1929;
+    --navy-800: #0D2137;
+    --navy-700: #122845;
+    --navy-600: #1A3557;
+    --navy-400: #2E5480;
+    --navy-200: #5C8AB0;
+    --navy-100: #A8C8E0;
+
+    /* ── Amber (Primary Brand Accent) ── */
+    --amber: #F5A623;
+    --amber-dark: #C8821A;
+    --amber-light: #FEF3DC;
+    --amber-dim: rgba(245, 166, 35, 0.10);
+    --amber-glow: rgba(245, 166, 35, 0.20);
+
+    /* ── Light Mode Surfaces ── */
+    --background: 210 25% 95%;
+    /* #EEF3F8 */
+    --foreground: 214 80% 8%;
+    /* #05101F */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 214 80% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 214 80% 8%;
 
-    /* Vivid Primary Blue */
-    --primary: 221 83% 53%; /* #2563EB - Royal Blue */
-    --primary-foreground: 210 40% 98%;
+    --primary: 38 91% 55%;
+    /* #F5A623 — Amber */
+    --primary-foreground: 214 80% 8%;
+    /* Navy on Amber */
 
-    /* Soft Blue Secondary */
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 210 25% 95%;
+    --secondary-foreground: 214 50% 30%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 210 30% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 38 91% 55%;
+    --accent-foreground: 214 80% 8%;
 
-    /* Professional Error Red */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --success: 142 76% 36%;
+    /* #16A34A */
 
-    --radius: 0.75rem; /* Slightly more rounded for modern feel */
+    --border: 210 25% 88%;
+    --input: 210 25% 88%;
+    --ring: 38 91% 55%;
+    /* Amber focus ring */
+
+    --radius: 0.625rem;
+    /* 10px — precise, not rounded */
   }
 
   .dark {
-    /* Dark Mode - Deep Navy Background */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --background: 214 80% 8%;
+    /* #05101F — Deep Navy */
+    --foreground: 210 40% 92%;
+    /* #E2EEF7 */
 
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
+    --card: 212 70% 12%;
+    /* #0A1929 */
+    --card-foreground: 210 40% 92%;
 
-    --popover: 217 33% 17%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 212 70% 12%;
+    --popover-foreground: 210 40% 92%;
 
-    --primary: 217 91% 60%; /* Brighter blue for dark mode */
-    --primary-foreground: 222 47.4% 11.2%;
+    --primary: 38 91% 55%;
+    /* Amber stays the same */
+    --primary-foreground: 214 80% 8%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 212 60% 16%;
+    /* #0D2137 */
+    --secondary-foreground: 210 30% 70%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 212 60% 16%;
+    --muted-foreground: 210 25% 50%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 38 91% 55%;
+    --accent-foreground: 214 80% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 212 40% 22%;
+    --input: 212 40% 22%;
+    --ring: 38 91% 55%;
   }
 }
 
@@ -75,17 +102,70 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
+  /* TZIR Command Typography Scale */
+  h1 {
+    @apply text-[22px] font-bold tracking-[-0.3px];
+  }
+
+  h2 {
+    @apply text-[18px] font-bold tracking-[-0.2px];
+  }
+
+  h3 {
+    @apply text-[15px] font-bold;
+  }
+
+  h4 {
+    @apply text-[13.5px] font-bold;
+  }
+
+  .label-mono {
+    font-family: var(--font-mono);
+    @apply text-[10px] tracking-[1.5px] uppercase text-muted-foreground;
+  }
+
+  .id-tag {
+    font-family: var(--font-mono);
+    @apply text-[11px] px-[7px] py-[3px] rounded-md bg-muted border border-border text-muted-foreground;
+  }
+
+  /* Focus and Interactions */
+  *:focus-visible {
+    outline: 2px solid #F5A623 !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #F5A623 !important;
+    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.12) !important;
+  }
+
   /* Custom Scrollbar for Webkit */
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 4px;
+    height: 4px;
   }
+
   ::-webkit-scrollbar-track {
-    @apply bg-secondary;
+    background: transparent;
   }
+
   ::-webkit-scrollbar-thumb {
-    @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+    background: #2E5480;
+    /* Navy400 */
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5C8AB0;
+    /* Navy200 */
   }
 }

@@ -10,6 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,9 +35,11 @@ fun ProfileScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var documents by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
+    val gamificationProfile by repository.gamificationProfile.collectAsState()
     
     LaunchedEffect(Unit) {
         documents = repository.getDocuments()
+        repository.refreshGamificationProfile()
     }
 
     PremiumBackground {
@@ -88,6 +92,68 @@ fun ProfileScreen(
                         ) {
                             Text("⭐ 4.9", fontWeight = FontWeight.Black, fontSize = 18.sp, color = TextOfficial)
                             Text(stringResource(R.string.worker_rating), fontSize = 10.sp, color = TextOfficial)
+                        }
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Gamification Progress Bar
+            gamificationProfile?.let { profile ->
+                val level = (profile["level"] as? Number)?.toInt() ?: 1
+                val xp = (profile["xp"] as? Number)?.toInt() ?: 0
+                val nextLevelXp = (profile["next_level_xp"] as? Number)?.toInt() ?: 1000
+                val progress = if (nextLevelXp > 0) xp.toFloat() / nextLevelXp.toFloat() else 0f
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("רמה $level", fontWeight = FontWeight.Black, fontSize = 20.sp, color = PrimaryTurquoise)
+                            Text("$xp / $nextLevelXp XP", color = Color.Gray, fontSize = 14.sp)
+                        }
+                        
+                        Spacer(modifier = Modifier.height(12.dp))
+                        
+                        // Custom Progress Bar
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(12.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(Color.LightGray.copy(alpha=0.3f))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(fraction = progress.coerceIn(0f, 1f))
+                                    .height(12.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(PrimaryTurquoise)
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // Daily Missions Preview
+                        val dailyMission = profile["daily_mission"] as? Map<*,*>
+                        val dailyCompleted = (dailyMission?.get("completed_deliveries") as? Number)?.toInt() ?: 0
+                        val dailyTarget = (dailyMission?.get("target_deliveries") as? Number)?.toInt() ?: 10
+                        
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("🎯 משימה יומית: $dailyCompleted/$dailyTarget משלוחים", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            if (dailyCompleted >= dailyTarget) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("✅ הושלם (+100 XP)", color = Color(0xFF2E7D32), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                 }

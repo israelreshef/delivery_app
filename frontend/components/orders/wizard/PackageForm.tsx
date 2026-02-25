@@ -61,7 +61,7 @@ export default function PackageForm() {
                                             <FormControl>
                                                 <RadioGroupItem value="envelope" className="peer sr-only" />
                                             </FormControl>
-                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-500 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all">
+                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10 cursor-pointer transition-all">
                                                 <Box className="mb-3 h-6 w-6 text-slate-500" />
                                                 <span className="text-sm font-semibold">מעטפה</span>
                                                 <span className="text-xs text-slate-400 mt-1">עד 0.5 ק"ג</span>
@@ -71,7 +71,7 @@ export default function PackageForm() {
                                             <FormControl>
                                                 <RadioGroupItem value="small" className="peer sr-only" />
                                             </FormControl>
-                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-500 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all">
+                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10 cursor-pointer transition-all">
                                                 <Box className="mb-3 h-8 w-8 text-slate-600" />
                                                 <span className="text-sm font-semibold">קטנה</span>
                                                 <span className="text-xs text-slate-400 mt-1">עד 2 ק"ג</span>
@@ -81,7 +81,7 @@ export default function PackageForm() {
                                             <FormControl>
                                                 <RadioGroupItem value="medium" className="peer sr-only" />
                                             </FormControl>
-                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-500 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all">
+                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10 cursor-pointer transition-all">
                                                 <Box className="mb-3 h-10 w-10 text-slate-700" />
                                                 <span className="text-sm font-semibold">בינונית</span>
                                                 <span className="text-xs text-slate-400 mt-1">עד 10 ק"ג</span>
@@ -91,7 +91,7 @@ export default function PackageForm() {
                                             <FormControl>
                                                 <RadioGroupItem value="large" className="peer sr-only" />
                                             </FormControl>
-                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-blue-500 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all">
+                                            <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand/10 cursor-pointer transition-all">
                                                 <Box className="mb-3 h-12 w-12 text-slate-800" />
                                                 <span className="text-sm font-semibold">גדולה</span>
                                                 <span className="text-xs text-slate-400 mt-1">עד 25 ק"ג</span>
@@ -170,7 +170,7 @@ export default function PackageForm() {
                                         </FormControl>
                                         <div className="space-y-1 leading-none">
                                             <FormLabel className="flex items-center gap-2 cursor-pointer">
-                                                <Snowflake className="h-4 w-4 text-blue-500" />
+                                                <Snowflake className="h-4 w-4 text-brand" />
                                                 דורש קירור
                                             </FormLabel>
                                         </div>
@@ -230,7 +230,7 @@ export default function PackageForm() {
                         <Button type="button" variant="outline" size="lg" onClick={prevStep}>
                             <ArrowRight className="ml-2 h-4 w-4" /> חזרה
                         </Button>
-                        <Button type="submit" size="lg" className="px-8 bg-blue-600 hover:bg-blue-700">
+                        <Button type="submit" size="lg" className="px-8 bg-brand hover:bg-brand-dark">
                             המשך לבחירת שירות
                             <ArrowLeft className="mr-2 h-4 w-4" />
                         </Button>

@@ -95,7 +95,7 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
+                <Button className="gap-2 bg-brand hover:bg-brand-dark">
                     <Plus className="h-4 w-4" />
                     לקוח חדש
                 </Button>
@@ -205,7 +205,7 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
 
                         {isBusiness && (
                             <div className="space-y-4 border-t pt-4 mt-4">
-                                <h4 className="font-medium text-sm text-blue-600">פרטי עסק</h4>
+                                <h4 className="font-medium text-sm text-brand">פרטי עסק</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <FormField
                                         control={form.control}

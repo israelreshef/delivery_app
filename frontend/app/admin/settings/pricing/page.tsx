@@ -31,7 +31,7 @@ export default function PricingSettingsPage() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/settings/pricing', {
+            const res = await fetch('http://localhost:5001/api/settings/pricing', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -51,7 +51,7 @@ export default function PricingSettingsPage() {
         setSaving(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/settings/pricing', {
+            const res = await fetch('http://localhost:5001/api/settings/pricing', {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -177,7 +177,7 @@ export default function PricingSettingsPage() {
                 </Card>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-md text-blue-800 text-sm">
+            <div className="bg-brand/10 p-4 rounded-md text-foreground text-sm">
                 * כל המחירים נקובים בשקלים חדשים ואינם כוללים מע"מ.
                 <br />
                 * עדכון המחירון ייכנס לתוקף באופן מיידי עבור כל הזמנה חדשה שתיפתח.

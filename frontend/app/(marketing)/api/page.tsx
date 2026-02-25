@@ -17,7 +17,7 @@ export default function APIPage() {
             {/* Hero */}
             <div className="bg-gradient-to-l from-slate-800 to-slate-900 text-white py-20">
                 <div className="max-w-6xl mx-auto px-6">
-                    <Badge className="mb-4 bg-blue-600">API Documentation</Badge>
+                    <Badge className="mb-4 bg-brand">API Documentation</Badge>
                     <h1 className="text-5xl font-bold mb-4">TZIR API</h1>
                     <p className="text-xl text-slate-300 max-w-2xl">
                         שלב את שירותי המשלוחים שלנו ישירות לתוך המערכת שלך עם API פשוט וחזק
@@ -32,8 +32,8 @@ export default function APIPage() {
                     <div className="grid md:grid-cols-3 gap-6">
                         <Card>
                             <CardHeader>
-                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                    <Shield className="w-6 h-6 text-blue-600" />
+                                <div className="w-12 h-12 bg-brand/20 rounded-lg flex items-center justify-center mb-4">
+                                    <Shield className="w-6 h-6 text-brand" />
                                 </div>
                                 <CardTitle>1. קבל API Key</CardTitle>
                             </CardHeader>
@@ -156,7 +156,7 @@ export default function APIPage() {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="flex items-center gap-3">
-                                        <Badge className="bg-blue-600">GET</Badge>
+                                        <Badge className="bg-brand">GET</Badge>
                                         <code className="text-lg">/orders/:id</code>
                                     </CardTitle>
                                 </div>
@@ -183,7 +183,7 @@ export default function APIPage() {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="flex items-center gap-3">
-                                        <Badge className="bg-blue-600">GET</Badge>
+                                        <Badge className="bg-brand">GET</Badge>
                                         <code className="text-lg">/orders/:id/track</code>
                                     </CardTitle>
                                 </div>
@@ -247,7 +247,7 @@ export default function APIPage() {
                     <div className="grid md:grid-cols-3 gap-4">
                         <Card>
                             <CardContent className="p-6 text-center">
-                                <Code className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+                                <Code className="w-12 h-12 mx-auto mb-4 text-brand" />
                                 <h3 className="font-bold mb-2">Node.js</h3>
                                 <Button variant="outline" size="sm" className="gap-2">
                                     <ExternalLink className="w-4 h-4" />
@@ -279,10 +279,10 @@ export default function APIPage() {
                 </div>
 
                 {/* Support */}
-                <Card className="bg-gradient-to-l from-blue-600 to-blue-800 text-white border-0">
+                <Card className="bg-gradient-to-l from-brand to-foreground text-white border-0">
                     <CardContent className="p-12 text-center">
                         <h3 className="text-3xl font-bold mb-4">צריך עזרה?</h3>
-                        <p className="text-blue-100 mb-6">
+                        <p className="text-brand/20 mb-6">
                             הצוות הטכני שלנו כאן כדי לעזור לך
                         </p>
                         <div className="flex gap-4 justify-center">

@@ -1,0 +1,17 @@
+{
+  "primaryColor": "#F5A623",
+  "primaryDark": "#C8821A",
+  "primaryLight": "#FEF3DC",
+  "navyDark": "#05101F",
+  "navyMid": "#0A1929",
+  "navyLight": "#122845",
+  "accentColor": "#F5A623",
+  "successColor": "#16A34A",
+  "destructiveColor": "#EF4444",
+  "borderRadius": "10",
+  "fontFamily": "Inter",
+  "logoUrl": "",
+  "faviconUrl": "",
+  "companyName": "TZIR",
+  "companyTagline": "שליחויות חכמות"
+}

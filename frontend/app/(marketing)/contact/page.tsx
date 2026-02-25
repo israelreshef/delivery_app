@@ -34,10 +34,10 @@ export default function ContactPage() {
     return (
         <div className="min-h-screen bg-slate-50" dir="rtl">
             {/* Hero */}
-            <div className="bg-gradient-to-l from-blue-600 to-blue-800 text-white py-20">
+            <div className="bg-gradient-to-l from-brand to-foreground text-white py-20">
                 <div className="max-w-6xl mx-auto px-6 text-center">
                     <h1 className="text-5xl font-bold mb-4">צור קשר</h1>
-                    <p className="text-xl text-blue-100">
+                    <p className="text-xl text-brand/20">
                         נשמח לעמוד לשירותך ולענות על כל שאלה
                     </p>
                 </div>
@@ -113,8 +113,8 @@ export default function ContactPage() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                            <Phone className="w-5 h-5 text-blue-600" />
+                                        <div className="w-10 h-10 bg-brand/20 rounded-lg flex items-center justify-center">
+                                            <Phone className="w-5 h-5 text-brand" />
                                         </div>
                                         טלפון
                                     </CardTitle>
@@ -186,9 +186,9 @@ export default function ContactPage() {
                         {/* Map Placeholder */}
                         <Card className="mt-6">
                             <CardContent className="p-0">
-                                <div className="h-64 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                                <div className="h-64 bg-gradient-to-br from-brand/20 to-purple-100 flex items-center justify-center">
                                     <div className="text-center">
-                                        <MapPin className="w-12 h-12 mx-auto mb-2 text-blue-600" />
+                                        <MapPin className="w-12 h-12 mx-auto mb-2 text-brand" />
                                         <p className="text-slate-600">מפה אינטראקטיבית</p>
                                     </div>
                                 </div>
