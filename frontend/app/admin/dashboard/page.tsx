@@ -8,6 +8,7 @@ import { Package, Truck, Users, Activity, TrendingUp, DollarSign, MapPin } from 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from './dashboard.module.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import dynamic from 'next/dynamic';
 import LiveFeed from "@/components/admin/LiveFeed";
@@ -33,6 +34,8 @@ const mockRevenueData = [
     { name: 'ו', total: 2390 },
     { name: 'ש', total: 3490 },
 ];
+
+import { auth } from "@/lib/auth";
 
 export default function AdminDashboard() {
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -75,7 +78,7 @@ export default function AdminDashboard() {
     }, [user?.role]);
 
     // WebSocket realtime integration
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token = auth.getToken();
     const socket = useSocket(token, user?.role || null);
 
     useEffect(() => {
@@ -102,87 +105,88 @@ export default function AdminDashboard() {
     // if (!isAuthenticated) return null; // Handled by middleware or effect
 
     return (
-        <div className="p-4 md:p-8 space-y-6 md:space-y-8 bg-slate-50 min-h-screen" dir="rtl">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className={styles.dashboardContainer}>
+            <header className={styles.headerArea}>
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">לוח בקרה ניהולי</h1>
-                    <p className="text-slate-500 mt-2">סקירה כללית על ביצועי המערכת בזמן אמת</p>
+                    <h1 className={styles.title}>לוח בקרה ניהולי</h1>
+                    <p className={styles.subtitle}>סקירה כללית על ביצועי המערכת בזמן אמת</p>
                 </div>
-                <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                    <Link href="/orders/new" className="flex-1 md:flex-none">
-                        <Button className="gap-2 bg-brand hover:bg-brand-dark shadow-sm w-full md:w-auto">
-                            <Package className="w-4 h-4" />
-                            הזמנה חדשה
-                        </Button>
+                <div className={styles.headerActions}>
+                    <Link href="/orders/new" className={styles.btnPrimary}>
+                        <Package size={18} />
+                        הזמנה חדשה
                     </Link>
-                    <Link href="/admin/couriers" className="flex-1 md:flex-none">
-                        <Button variant="outline" className="gap-2 w-full md:w-auto">
-                            <Truck className="w-4 h-4" />
-                            ניהול שליחים
-                        </Button>
+                    <Link href="/admin/couriers" className={styles.btnOutline}>
+                        <Truck size={18} />
+                        ניהול שליחים
                     </Link>
                 </div>
             </header>
 
             {/* Key Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500">הכנסות היום</CardTitle>
-                        <DollarSign className="h-4 w-4 text-green-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-slate-900">₪{stats.revenue_today?.toLocaleString() || 0}</div>
-                        <p className="text-xs text-green-600 flex items-center mt-1">
+            <div className={styles.metricsGrid}>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>הכנסות היום</div>
+                        <div className={styles.metricValue}>₪{stats.revenue_today?.toLocaleString() || 0}</div>
+                        <p className="text-xs text-green-500 flex items-center mt-1">
                             <TrendingUp className="h-3 w-3 mr-1" />
                             מתעדכן בזמן אמת
                         </p>
-                    </CardContent>
-                </Card>
+                    </div>
+                    <div className={`${styles.metricIcon} ${styles.iconGreen}`}>
+                        <DollarSign size={24} />
+                    </div>
+                </div>
 
-                <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500">משלוחים פעילים</CardTitle>
-                        <Activity className="h-4 w-4 text-brand" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-slate-900">{stats.active_orders || 0}</div>
-                        <p className="text-xs text-slate-500 mt-1">מתוך {stats.orders_today || 0} הזמנות היום</p>
-                    </CardContent>
-                </Card>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>משלוחים פעילים</div>
+                        <div className={styles.metricValue}>{stats.active_orders || 0}</div>
+                        <p className="text-xs text-slate-400 mt-1">מתוך {stats.orders_today || 0} הזמנות היום</p>
+                    </div>
+                    <div className={`${styles.metricIcon} ${styles.iconBrand}`}>
+                        <Activity size={24} />
+                    </div>
+                </div>
 
-                <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500">שליחים פעילים</CardTitle>
-                        <Truck className="h-4 w-4 text-orange-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-slate-900">{stats.active_couriers || 0}</div>
-                        <p className="text-xs text-slate-500 mt-1">מחוברים כעת</p>
-                    </CardContent>
-                </Card>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>שליחים פעילים</div>
+                        <div className={styles.metricValue}>{stats.active_couriers || 0}</div>
+                        <p className="text-xs text-slate-400 mt-1">מחוברים כעת</p>
+                    </div>
+                    <div className={`${styles.metricIcon} ${styles.iconOrange}`}>
+                        <Truck size={24} />
+                    </div>
+                </div>
 
-                <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500">לקוחות חדשים</CardTitle>
-                        <Users className="h-4 w-4 text-purple-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-slate-900">+{stats.new_customers}</div>
-                        <p className="text-xs text-slate-500 mt-1">הצטרפו השבוע</p>
-                    </CardContent>
-                </Card>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>לקוחות חדשים</div>
+                        <div className={styles.metricValue}>+{stats.new_customers}</div>
+                        <p className="text-xs text-slate-400 mt-1">הצטרפו השבוע</p>
+                    </div>
+                    <div className={`${styles.metricIcon} ${styles.iconPurple}`}>
+                        <Users size={24} />
+                    </div>
+                </div>
             </div>
 
+            {/* Expenses Monitor */}
+            <ExpensesDashboard />
+
             {/* Charts & Map Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+            <div className={`${styles.sectionGrid} ${styles.sectionGrid7}`}>
                 {/* Revenue Chart */}
-                <Card className="col-span-4 border-none shadow-md">
-                    <CardHeader>
-                        <CardTitle>הכנסות שבועיות</CardTitle>
-                        <CardDescription>סיכום הכנסות משליחויות ב-7 הימים האחרונים</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pl-2">
+                <div className={`${styles.panelCard} ${styles.colSpan4}`}>
+                    <div className={styles.panelHeader}>
+                        <div>
+                            <div className={styles.panelTitle}>הכנסות שבועיות</div>
+                            <div className={styles.panelDescription}>סיכום הכנסות משליחויות ב-7 הימים האחרונים</div>
+                        </div>
+                    </div>
+                    <div className={styles.panelContent}>
                         <ResponsiveContainer width="100%" height={350}>
                             <BarChart data={revenueData}>
                                 <XAxis
@@ -200,96 +204,81 @@ export default function AdminDashboard() {
                                     tickFormatter={(value) => `₪${value}`}
                                 />
                                 <Tooltip
-                                    cursor={{ fill: 'transparent' }}
-                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                                    contentStyle={{ backgroundColor: '#1E293B', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                                    itemStyle={{ color: '#fff' }}
                                 />
                                 <Bar dataKey="amount" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
                 {/* Live Map */}
-                <Card className="col-span-3 border-none shadow-md flex flex-col h-[450px]">
-                    <CardHeader className="pb-2">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <CardTitle className="flex items-center gap-2">
-                                    <MapPin className="w-5 h-5 text-brand" />
-                                    מפה חיה
-                                </CardTitle>
-                                <CardDescription>מיקום שליחים בזמן אמת</CardDescription>
+                <div className={`${styles.panelCard} ${styles.colSpan3} ${styles.liveMapContainer}`}>
+                    <div className={styles.panelHeader}>
+                        <div>
+                            <div className={styles.panelTitle}>
+                                <MapPin className="text-brand" size={20} />
+                                מפה חיה
                             </div>
-                            <Badge variant="outline" className="bg-green-50 text-green-700 animate-pulse">Live</Badge>
+                            <div className={styles.panelDescription}>מיקום שליחים בזמן אמת</div>
                         </div>
-                    </CardHeader>
-                    <CardContent className="flex-1 p-0 relative overflow-hidden rounded-b-lg">
+                        <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30 animate-pulse">Live</Badge>
+                    </div>
+                    <div className={styles.panelContentNoPadding}>
                         <DynamicLiveMap />
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
 
             {/* Live Feed Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <Card className="col-span-1 border-none shadow-md">
-                    <CardHeader>
-                        <CardTitle>עדכונים אחרונים</CardTitle>
-                        <CardDescription>פיד פעילות מבצעית</CardDescription>
-                    </CardHeader>
-                    <CardContent>
+            <div className={`${styles.sectionGrid} ${styles.sectionGrid3}`}>
+                <div className={`${styles.panelCard} ${styles.colSpan1}`}>
+                    <div className={styles.panelHeader}>
+                        <div>
+                            <div className={styles.panelTitle}>עדכונים אחרונים</div>
+                            <div className={styles.panelDescription}>פיד פעילות מבצעית</div>
+                        </div>
+                    </div>
+                    <div className={styles.panelContent}>
                         <LiveFeed />
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
 
-            {/* Expenses Monitor */}
-            <ExpensesDashboard />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Link href="/admin/couriers" className="block">
-                    <Card className="hover:bg-slate-50 transition-colors cursor-pointer border-dashed border-2 box-content">
-                        <CardHeader className="flex flex-row items-center gap-4">
-                            <div className="p-2 bg-brand/20 rounded-full">
-                                <Truck className="h-6 w-6 text-brand" />
-                            </div>
-                            <div>
-                                <CardTitle className="text-base">ניהול שליחים</CardTitle>
-                                <CardDescription>צפייה, עריכה וגיוס שליחים</CardDescription>
-                            </div>
-                        </CardHeader>
-                    </Card>
+            <div className={`${styles.sectionGrid} ${styles.sectionGrid3}`}>
+                <Link href="/admin/couriers" className={styles.quickLinkCard}>
+                    <div className={`${styles.quickLinkIcon} bg-brand/20`}>
+                        <Truck className="text-brand" size={24} />
+                    </div>
+                    <div>
+                        <div className={styles.quickLinkTitle}>ניהול שליחים</div>
+                        <div className={styles.quickLinkDesc}>צפייה, עריכה וגיוס שליחים</div>
+                    </div>
                 </Link>
 
-                <Link href="/admin/customers" className="block">
-                    <Card className="hover:bg-slate-50 transition-colors cursor-pointer border-dashed border-2 box-content">
-                        <CardHeader className="flex flex-row items-center gap-4">
-                            <div className="p-2 bg-purple-100 rounded-full">
-                                <Users className="h-6 w-6 text-purple-600" />
-                            </div>
-                            <div>
-                                <CardTitle className="text-base">ניהול לקוחות</CardTitle>
-                                <CardDescription>לקוחות עסקיים, חיובים ואשראי</CardDescription>
-                            </div>
-                        </CardHeader>
-                    </Card>
+                <Link href="/admin/customers" className={styles.quickLinkCard}>
+                    <div className={`${styles.quickLinkIcon} bg-purple-500/20`}>
+                        <Users className="text-purple-400" size={24} />
+                    </div>
+                    <div>
+                        <div className={styles.quickLinkTitle}>ניהול לקוחות</div>
+                        <div className={styles.quickLinkDesc}>לקוחות עסקיים, חיובים ואשראי</div>
+                    </div>
                 </Link>
 
-                <Link href="/admin/finance" className="block">
-                    <Card className="hover:bg-slate-50 transition-colors cursor-pointer border-dashed border-2 box-content relative">
-                        <Badge className="absolute top-2 left-2 bg-brand text-white text-[10px]">חדש</Badge>
-                        <CardHeader className="flex flex-row items-center gap-4">
-                            <div className="p-2 bg-green-100 rounded-full">
-                                <TrendingUp className="h-6 w-6 text-green-600" />
-                            </div>
-                            <div>
-                                <CardTitle className="text-base">מרכז פיננסי</CardTitle>
-                                <CardDescription>ניהול הכנסות ודיווחים רגולטוריים</CardDescription>
-                            </div>
-                        </CardHeader>
-                    </Card>
+                <Link href="/admin/finance" className={styles.quickLinkCard}>
+                    <Badge className="absolute top-4 left-4 bg-brand text-white border-0 z-10" variant="default">חדש</Badge>
+                    <div className={`${styles.quickLinkIcon} bg-green-500/20`}>
+                        <TrendingUp className="text-green-400" size={24} />
+                    </div>
+                    <div>
+                        <div className={styles.quickLinkTitle}>מרכז פיננסי</div>
+                        <div className={styles.quickLinkDesc}>ניהול הכנסות ודיווחים רגולטוריים</div>
+                    </div>
                 </Link>
             </div>
-
         </div>
     );
 }

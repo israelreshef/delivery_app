@@ -72,8 +72,10 @@ const config: Config = {
                 xl: '18px',
             },
             boxShadow: {
-                'amber': '0 4px 14px rgba(245,166,35,0.30)',
-                'amber-lg': '0 8px 28px rgba(245,166,35,0.25)',
+                'amber': '0 4px 14px color-mix(in srgb, var(--amber) 30%, transparent)',
+                'amber-lg': '0 8px 28px color-mix(in srgb, var(--amber) 25%, transparent)',
+                'brand': '0 4px 14px color-mix(in srgb, var(--amber) 30%, transparent)',
+                'brand-lg': '0 8px 28px color-mix(in srgb, var(--amber) 25%, transparent)',
                 'navy': '0 4px 20px rgba(5,16,31,0.12)',
             },
             fontFamily: {

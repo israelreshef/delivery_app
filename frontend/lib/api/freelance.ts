@@ -1,22 +1,16 @@
-import { getHeaders, API_URL } from '@/lib/auth';
 import { CourierDocument, Payout, PayoutCalculation, CreatePayoutDTO } from '@/types/freelance';
+import { api } from "../api";
 
 export const freelanceApi = {
     uploadDocument: async (formData: FormData): Promise<void> => {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('tzir_auth_token') : '';
-
-        const res = await fetch(`${API_URL}/api/freelance/documents`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-                // Don't set Content-Type for FormData, browser will set it with boundary
-            },
-            body: formData
-        });
-
-        if (!res.ok) {
-            const error = await res.json();
-            throw new Error(error.error || 'Failed to upload document');
+        try {
+            await api.post('/freelance/documents', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        } catch (error: any) {
+            throw new Error(error.response?.data?.error || 'Failed to upload document');
         }
     },
 
@@ -25,73 +19,60 @@ export const freelanceApi = {
         if (filters?.courier_id) queryParams.append('courier_id', filters.courier_id.toString());
         if (filters?.status) queryParams.append('status', filters.status);
 
-        const res = await fetch(`${API_URL}/api/freelance/documents?${queryParams.toString()}`, {
-            headers: getHeaders()
-        });
-
-        if (!res.ok) throw new Error('Failed to fetch documents');
-        return res.json();
+        const res = await api.get(`/freelance/documents?${queryParams.toString()}`);
+        return res.data;
     },
 
     verifyDocument: async (docId: number, status: 'approved' | 'rejected'): Promise<void> => {
-        const res = await fetch(`${API_URL}/api/freelance/documents/${docId}/verify`, {
-            method: 'PUT',
-            headers: getHeaders(),
-            body: JSON.stringify({ status })
-        });
-
-        if (!res.ok) throw new Error('Failed to verify document');
+        try {
+            await api.put(`/freelance/documents/${docId}/verify`, { status });
+        } catch (error: any) {
+            throw new Error(error.response?.data?.error || 'Failed to verify document');
+        }
     },
 
     getDocumentFile: (docId: number): string => {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('tzir_auth_token') : '';
+        // Since this is used for direct image source, we might need a token in the URL if the backend doesn't check cookies/session for GET /file
+        const token = typeof window !== 'undefined' ? (sessionStorage.getItem('tzir_auth_token') || localStorage.getItem('tzir_auth_token') || localStorage.getItem('token')) : '';
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
         return `${API_URL}/api/freelance/documents/${docId}/file?token=${token}`;
     },
 
     calculatePayout: async (courierId: number, periodStart: string, periodEnd: string): Promise<PayoutCalculation> => {
-        const res = await fetch(`${API_URL}/api/freelance/payouts/calculate`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({
+        try {
+            const res = await api.post('/freelance/payouts/calculate', {
                 courier_id: courierId,
                 period_start: periodStart,
                 period_end: periodEnd
-            })
-        });
-
-        if (!res.ok) throw new Error('Failed to calculate payout');
-        return res.json();
+            });
+            return res.data;
+        } catch (error: any) {
+            throw new Error(error.response?.data?.error || 'Failed to calculate payout');
+        }
     },
 
     createPayout: async (data: CreatePayoutDTO): Promise<{ message: string; id: number }> => {
-        const res = await fetch(`${API_URL}/api/freelance/payouts`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify(data)
-        });
-
-        if (!res.ok) throw new Error('Failed to create payout');
-        return res.json();
+        try {
+            const res = await api.post('/freelance/payouts', data);
+            return res.data;
+        } catch (error: any) {
+            throw new Error(error.response?.data?.error || 'Failed to create payout');
+        }
     },
 
     getPayouts: async (courierId?: number): Promise<Payout[]> => {
         const queryParams = new URLSearchParams();
         if (courierId) queryParams.append('courier_id', courierId.toString());
 
-        const res = await fetch(`${API_URL}/api/freelance/payouts?${queryParams.toString()}`, {
-            headers: getHeaders()
-        });
-
-        if (!res.ok) throw new Error('Failed to fetch payouts');
-        return res.json();
+        const res = await api.get(`/freelance/payouts?${queryParams.toString()}`);
+        return res.data;
     },
 
     approvePayout: async (payoutId: number): Promise<void> => {
-        const res = await fetch(`${API_URL}/api/freelance/payouts/${payoutId}/approve`, {
-            method: 'PUT',
-            headers: getHeaders()
-        });
-
-        if (!res.ok) throw new Error('Failed to approve payout');
+        try {
+            await api.put(`/freelance/payouts/${payoutId}/approve`);
+        } catch (error: any) {
+            throw new Error(error.response?.data?.error || 'Failed to approve payout');
+        }
     }
 };

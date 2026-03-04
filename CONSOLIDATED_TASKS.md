@@ -2,6 +2,19 @@
 
 להלן ריכוז כל המשימות הפתוחות שטרם בוצעו, מתוך כלל קבצי התכנון (`PROJECT_MASTER_PLAN.md` ו-`task.md`).
 
+## 🚨 משימות דחופות למנהל המערכת (הגדרת Google Calendar)
+כדי שסנכרון יומן גוגל יעבוד בפועל ולא יחזיר שגיאת "אפליקציה לא מוגדרת", עליך לבצע את השלבים הבאים:
+- [ ] 1. לפתוח אפליקציה ב-[console.cloud.google.com](https://console.cloud.google.com/).
+- [ ] 2. להפעיל בענן את ה-**Google Calendar API**.
+- [ ] 3. להגדיר **OAuth Consent Screen** (מסך הסכמה).
+- [ ] 4. ליצור Credentials מסוג **Web Application**.
+- [ ] 5. להגדיר ב-Google את כתובת ה-Callback הבאה: `http://localhost:5000/api/auth/google/callback`.
+- [ ] 6. להעתיק את ה-**Client ID** ואת ה-**Client Secret**.
+- [ ] 7. להוסיף אותם לקובץ ה-`.env` בתיקיית ה-`backend/` תחת השמות:
+  - `GOOGLE_CLIENT_ID=הערך_שלך`
+  - `GOOGLE_CLIENT_SECRET=הערך_שלך`
+- [ ] 8. להפעיל מחדש את השרת (`python app.py`).
+
 ## 🛠 משימות דחופות (Courier Dashboard)
 מתוך העבודה הנוכחית על אפליקציית השליחים:
 - [x] יישום מודל "קבל/דחה" (Accept/Reject Modal) להצעות משלוח חדשות. *(עיצוב משופר עם מפה, טיימר ומחיר מודגש)*.

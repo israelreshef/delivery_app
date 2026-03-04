@@ -1,11 +1,18 @@
-from flask import Blueprint, request, jsonify
-from models import db, Expense, Invoice, Customer, Courier, CompanySettings
+from flask import Blueprint, request, jsonify, send_from_directory
+from models import db, Expense, Invoice, Customer, Courier, CompanySettings, FinanceDocument
 from utils.decorators import token_required, role_required
 from datetime import datetime
 import logging
 from sqlalchemy import func
+from werkzeug.utils import secure_filename
+import os
+import uuid
+from datetime import timedelta
 
 finances_bp = Blueprint('finances', __name__)
+
+FINANCE_DOCS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'files', 'finance_docs')
+os.makedirs(FINANCE_DOCS_DIR, exist_ok=True)
 
 @finances_bp.route('/income/manual', methods=['POST'])
 @token_required
@@ -173,4 +180,190 @@ def get_report_preview(current_user):
         return jsonify(result), 200
 
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@finances_bp.route('/documents', methods=['GET'])
+@token_required
+@role_required(['admin', 'finance_admin'])
+def list_finance_documents(current_user):
+    try:
+        year = request.args.get('year', type=int)
+        doc_type = request.args.get('doc_type')
+        status = request.args.get('status')
+
+        query = FinanceDocument.query
+        if year:
+            query = query.filter(FinanceDocument.year == year)
+        if doc_type:
+            query = query.filter(FinanceDocument.doc_type == doc_type)
+        if status:
+            query = query.filter(FinanceDocument.status == status)
+
+        docs = query.order_by(FinanceDocument.created_at.desc()).all()
+        return jsonify([{
+            'id': d.id,
+            'title': d.title,
+            'description': d.description,
+            'doc_type': d.doc_type,
+            'authority': d.authority,
+            'submitted_by': d.submitted_by,
+            'entity_type': d.entity_type,
+            'status': d.status,
+            'year': d.year,
+            'period': d.period,
+            'due_date': d.due_date.isoformat() if d.due_date else None,
+            'filed_date': d.filed_date.isoformat() if d.filed_date else None,
+            'amount_due': float(d.amount_due) if d.amount_due is not None else None,
+            'file_name': d.file_name,
+            'mime_type': d.mime_type,
+            'file_size': d.file_size,
+            'created_at': d.created_at.isoformat() if d.created_at else None
+        } for d in docs]), 200
+    except Exception as e:
+        logging.error(f"Error listing finance documents: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@finances_bp.route('/documents', methods=['POST'])
+@token_required
+@role_required(['admin', 'finance_admin'])
+def upload_finance_document(current_user):
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+
+        file = request.files['file']
+        if not file or file.filename == '':
+            return jsonify({'error': 'Empty filename'}), 400
+
+        title = request.form.get('title') or file.filename
+        doc_type = request.form.get('doc_type') or 'other'
+        year = request.form.get('year', type=int)
+        period = request.form.get('period')
+        authority = request.form.get('authority')
+        submitted_by = request.form.get('submitted_by')
+        entity_type = request.form.get('entity_type')
+        status = request.form.get('status') or 'archived'
+        description = request.form.get('description')
+        due_date_str = request.form.get('due_date')
+        filed_date_str = request.form.get('filed_date')
+        amount_due = request.form.get('amount_due', type=float)
+
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date() if due_date_str else None
+        filed_date = datetime.strptime(filed_date_str, '%Y-%m-%d').date() if filed_date_str else None
+
+        ext = os.path.splitext(file.filename)[1].lower()
+        safe_name = secure_filename(os.path.splitext(file.filename)[0])
+        stored_name = f"{safe_name}_{uuid.uuid4().hex[:8]}{ext}"
+        file_path = os.path.join(FINANCE_DOCS_DIR, stored_name)
+        file.save(file_path)
+
+        doc = FinanceDocument(
+            title=title,
+            description=description,
+            doc_type=doc_type,
+            authority=authority,
+            submitted_by=submitted_by,
+            entity_type=entity_type,
+            status=status,
+            year=year,
+            period=period,
+            due_date=due_date,
+            filed_date=filed_date,
+            amount_due=amount_due,
+            file_name=stored_name,
+            file_path=file_path,
+            mime_type=file.mimetype,
+            file_size=os.path.getsize(file_path),
+            uploaded_by=current_user.id
+        )
+        db.session.add(doc)
+        db.session.commit()
+
+        return jsonify({'success': True, 'document_id': doc.id}), 201
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error uploading finance document: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@finances_bp.route('/documents/<int:doc_id>/download', methods=['GET'])
+@token_required
+@role_required(['admin', 'finance_admin'])
+def download_finance_document(current_user, doc_id):
+    try:
+        doc = FinanceDocument.query.get_or_404(doc_id)
+        return send_from_directory(FINANCE_DOCS_DIR, doc.file_name, as_attachment=True)
+    except Exception as e:
+        logging.error(f"Error downloading finance document: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@finances_bp.route('/documents/<int:doc_id>', methods=['PUT'])
+@token_required
+@role_required(['admin', 'finance_admin'])
+def update_finance_document(current_user, doc_id):
+    try:
+        doc = FinanceDocument.query.get_or_404(doc_id)
+        data = request.json or {}
+
+        editable_fields = [
+            'title', 'description', 'doc_type', 'authority', 'submitted_by',
+            'entity_type', 'status', 'year', 'period', 'amount_due'
+        ]
+        for key in editable_fields:
+            if key in data:
+                setattr(doc, key, data[key])
+
+        due_date_str = data.get('due_date')
+        filed_date_str = data.get('filed_date')
+        if due_date_str is not None:
+            doc.due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date() if due_date_str else None
+        if filed_date_str is not None:
+            doc.filed_date = datetime.strptime(filed_date_str, '%Y-%m-%d').date() if filed_date_str else None
+
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error updating finance document: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@finances_bp.route('/documents/alerts', methods=['GET'])
+@token_required
+@role_required(['admin', 'finance_admin'])
+def finance_document_alerts(current_user):
+    try:
+        days = request.args.get('days', 30, type=int)
+        today = datetime.utcnow().date()
+        soon_limit = today + timedelta(days=days)
+
+        base_query = FinanceDocument.query.filter(FinanceDocument.due_date.isnot(None))
+        active_query = base_query.filter(FinanceDocument.status != 'accepted')
+
+        overdue = active_query.filter(FinanceDocument.due_date < today).order_by(FinanceDocument.due_date.asc()).all()
+        due_soon = active_query.filter(FinanceDocument.due_date >= today, FinanceDocument.due_date <= soon_limit).order_by(FinanceDocument.due_date.asc()).all()
+
+        def serialize(d):
+            return {
+                'id': d.id,
+                'title': d.title,
+                'doc_type': d.doc_type,
+                'authority': d.authority,
+                'status': d.status,
+                'year': d.year,
+                'due_date': d.due_date.isoformat() if d.due_date else None
+            }
+
+        return jsonify({
+            'days': days,
+            'overdue': [serialize(d) for d in overdue],
+            'due_soon': [serialize(d) for d in due_soon],
+            'overdue_count': len(overdue),
+            'due_soon_count': len(due_soon)
+        }), 200
+    except Exception as e:
+        logging.error(f"Error fetching finance alerts: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500

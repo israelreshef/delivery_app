@@ -1,5 +1,7 @@
-
 package com.tzir.delivery.android
+
+import android.content.Intent
+import android.os.Build
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -83,6 +85,22 @@ class MainActivity : ComponentActivity() {
                     if (showSplash) {
                         SplashScreen(onAnimationFinish = { showSplash = false })
                     } else if (currentUser != null) {
+                        // Start LocationService when user is authenticated
+                        LaunchedEffect(currentUser) {
+                            currentUser?.let { user ->
+                                if (user.role == com.tzir.delivery.shared.model.UserRole.COURIER) {
+                                    val intent = Intent(this@MainActivity, com.tzir.delivery.android.services.LocationService::class.java).apply {
+                                        putExtra("courier_id", user.id)
+                                    }
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        startForegroundService(intent)
+                                    } else {
+                                        startService(intent)
+                                    }
+                                }
+                            }
+                        }
+                        
                         var currentNav by remember { mutableStateOf(NavItem.CONTROL) }
                         var selectedMissionId by remember { mutableStateOf<Int?>(null) }
                         var showHistory by remember { mutableStateOf(false) }

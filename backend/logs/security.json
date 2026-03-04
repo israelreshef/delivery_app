@@ -155,3 +155,81 @@
 {"timestamp": "2026-02-25T16:00:24.707046", "action": "CREATE_ORDER", "user_id": 1, "ip_address": null, "status": "SUCCESS", "resource": "Delivery:2", "details": "Order ORD-20260225-F9A603 created with price 80.73"}
 {"timestamp": "2026-02-25T16:01:34.055629", "action": "CREATE_ORDER", "user_id": 1, "ip_address": null, "status": "SUCCESS", "resource": "Delivery:3", "details": "Order ORD-20260225-73885E created with price 80.73"}
 {"timestamp": "2026-02-25T16:01:34.069825", "action": "VIEW_ORDER", "user_id": 1, "ip_address": null, "status": "SUCCESS", "resource": "Delivery:3", "details": "User accessed order ORD-20260225-73885E"}
+{"timestamp": "2026-02-25T16:25:57.620415", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T17:03:06.347384", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T17:36:21.739035", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T17:44:47.225377", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T18:56:21.288206", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T18:58:42.215819", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T19:34:32.334115", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T20:11:09.159745", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T20:49:53.023096", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-25T21:27:17.434125", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-26T13:16:52.835109", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-26T17:17:24.374322", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-26T18:33:36.412761", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-27T13:57:32.808703", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-27T14:40:48.696331", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-02-27T14:41:23.135622", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-02-27T14:41:38.725088", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-02-27T14:44:14.936956", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-27T19:47:19.517582", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-28T17:39:01.679703", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-28T18:29:56.286781", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-02-28T19:45:53.544242", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-02-28T19:46:04.667926", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-02-28T19:46:37.795508", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-02-28T20:08:34.122488", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T04:57:00.298615", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T05:43:20.174978", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-03-01T05:43:59.540428", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-03-01T05:44:37.068123", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-03-01T05:45:03.633859", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 4/10"}
+{"timestamp": "2026-03-01T05:46:27.505165", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T07:22:28.092684", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 5/10"}
+{"timestamp": "2026-03-01T07:22:59.055720", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 6/10"}
+{"timestamp": "2026-03-01T07:23:05.712294", "action": "LOGIN_FAILED", "user_id": 5, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 7/10"}
+{"timestamp": "2026-03-01T07:23:35.382126", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T08:00:50.781350", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T08:36:15.658421", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T09:19:14.086611", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T09:19:14.367791", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-01T12:18:21.816669", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-03-01T12:21:02.977615", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-02T05:20:38.504625", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-03-02T05:20:50.632038", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-03-02T05:20:50.817547", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-03-02T05:21:07.715982", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 4/10"}
+{"timestamp": "2026-03-02T05:21:15.091053", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 5/10"}
+{"timestamp": "2026-03-02T05:21:45.844208", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 6/10"}
+{"timestamp": "2026-03-02T05:22:34.844406", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 7/10"}
+{"timestamp": "2026-03-02T05:23:07.784625", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-02T06:17:35.520070", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-02T06:50:21.266172", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-03-02T06:50:32.113312", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-03-02T06:50:40.957060", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-03-02T09:24:10.530735", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 4/10"}
+{"timestamp": "2026-03-02T09:24:59.114172", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 5/10"}
+{"timestamp": "2026-03-02T09:25:14.082199", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 6/10"}
+{"timestamp": "2026-03-02T09:26:09.691159", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-02T09:46:04.431256", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-03-02T11:35:36.373994", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 2/10"}
+{"timestamp": "2026-03-02T11:35:56.107582", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 3/10"}
+{"timestamp": "2026-03-02T11:37:30.909768", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 4/10"}
+{"timestamp": "2026-03-02T11:50:08.949751", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 5/10"}
+{"timestamp": "2026-03-02T11:50:16.142012", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 6/10"}
+{"timestamp": "2026-03-02T12:06:32.846280", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 7/10"}
+{"timestamp": "2026-03-02T12:07:34.272679", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-02T13:15:49.951352", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-02T16:25:19.874163", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T09:57:52.184402", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T10:55:25.140919", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T11:38:17.249061", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T11:47:24.864442", "action": "LOGIN_FAILED", "user_id": 1, "ip_address": "127.0.0.1", "status": "FAILURE", "resource": null, "details": "Failed login attempt 1/10"}
+{"timestamp": "2026-03-03T12:13:11.356457", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T13:00:13.236211", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T16:09:01.792425", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T17:29:37.079938", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T20:46:25.305340", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-03T21:22:54.048024", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-04T05:01:44.006313", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}

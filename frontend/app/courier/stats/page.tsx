@@ -8,6 +8,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { DollarSign, Package, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { format } from "date-fns";
 
+import { api } from "@/lib/api";
+
 export default function CourierStatsPage() {
     const { user } = useAuth();
     const [history, setHistory] = useState<any[]>([]);
@@ -21,26 +23,15 @@ export default function CourierStatsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const token = localStorage.getItem('token');
                 // Fetch stats
-                const statsRes = await fetch('http://localhost:5001/api/courier/stats', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (statsRes.ok) {
-                    const data = await statsRes.json();
-                    setStats(data);
-                }
+                const statsRes = await api.get('/couriers/stats');
+                setStats(statsRes.data);
 
                 // Fetch history
-                const historyRes = await fetch('http://localhost:5001/api/courier/history', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (historyRes.ok) {
-                    const data = await historyRes.json();
-                    setHistory(data);
-                }
+                const historyRes = await api.get('/couriers/history');
+                setHistory(historyRes.data);
             } catch (err) {
-                console.error(err);
+                console.error("Failed to fetch courier stats/history", err);
             }
         };
         fetchData();

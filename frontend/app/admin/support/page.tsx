@@ -1,29 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { LifeBuoy, Search, Filter, Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { supportApi } from "@/lib/api/support";
 import { SupportTicket, TicketStatus, TicketPriority } from "@/types/support";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +12,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import styles from './support.module.css';
 
 const ticketSchema = z.object({
     subject: z.string().min(3, "נושא קצר מדי"),
@@ -93,15 +75,15 @@ export default function SupportPage() {
     );
 
     const getStatusBadge = (status: TicketStatus) => {
-        const styles = {
-            open: "bg-brand/20 text-foreground hover:bg-brand-dark/20",
-            in_progress: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-            waiting_for_customer: "bg-purple-100 text-purple-800 hover:bg-purple-100",
-            resolved: "bg-green-100 text-green-800 hover:bg-green-100",
-            closed: "bg-gray-100 text-gray-800 hover:bg-gray-100",
+        const statusClassMap: Record<TicketStatus, string> = {
+            open: styles.badgeOpen,
+            in_progress: styles.badgeInProgress,
+            waiting_for_customer: styles.badgeWaiting,
+            resolved: styles.badgeResolved,
+            closed: styles.badgeClosed,
         };
 
-        const labels = {
+        const labels: Record<TicketStatus, string> = {
             open: "פתוח",
             in_progress: "בטיפול",
             waiting_for_customer: "ממתין ללקוח",
@@ -109,48 +91,46 @@ export default function SupportPage() {
             closed: "סגור",
         };
 
-        return <Badge className={styles[status]}>{labels[status]}</Badge>;
+        return <span className={`${styles.badge} ${statusClassMap[status]}`}>{labels[status]}</span>;
     };
 
     const getPriorityBadge = (priority: TicketPriority) => {
-        const styles = {
-            low: "bg-slate-100 text-slate-700",
-            medium: "bg-brand/10 text-brand",
-            high: "bg-orange-100 text-orange-800",
-            urgent: "bg-red-100 text-red-800",
+        const priorityClassMap: Record<TicketPriority, string> = {
+            low: styles.priLow,
+            medium: styles.priMed,
+            high: styles.priHigh,
+            urgent: styles.priUrg,
         };
-        const labels = {
+        const labels: Record<TicketPriority, string> = {
             low: "נמוכה",
             medium: "רגילה",
             high: "גבוהה",
             urgent: "דחופה"
         };
-        return <Badge variant="outline" className={styles[priority]}>{labels[priority]}</Badge>;
+        return <span className={`${styles.badge} ${priorityClassMap[priority]}`}>{labels[priority]}</span>;
     };
 
     return (
-        <div className="p-8 space-y-6 bg-slate-50 min-h-screen" dir="rtl">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold flex items-center gap-2">
-                        <LifeBuoy className="h-8 w-8 text-brand" />
-                        מרכז תמיכה
-                    </h1>
-                    <p className="text-muted-foreground mt-1">
-                        ניהול פניות שירות ותקלות
-                    </p>
+        <div className={styles.supportContainer}>
+            <div className={styles.headerArea}>
+                <div className={styles.titleWrapper}>
+                    <LifeBuoy className="h-8 w-8 text-brand" style={{ color: '#3B82F6' }} />
+                    <div>
+                        <h1 className={styles.title}>מרכז תמיכה</h1>
+                        <p className={styles.subtitle}>ניהול פניות שירות ותקלות</p>
+                    </div>
                 </div>
 
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2">
+                        <button className={styles.btnPrimary}>
                             <Plus className="h-4 w-4" />
                             קריאה חדשה
-                        </Button>
+                        </button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent style={{ backgroundColor: '#0F172A', color: '#F8FAFC', border: '1px solid rgba(255,255,255,0.1)' }}>
                         <DialogHeader>
-                            <DialogTitle>פתיחת קריאת שירות</DialogTitle>
+                            <DialogTitle style={{ color: '#fff' }}>פתיחת קריאת שירות</DialogTitle>
                         </DialogHeader>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onCreateTicket)} className="space-y-4">
@@ -158,12 +138,12 @@ export default function SupportPage() {
                                     control={form.control}
                                     name="subject"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>נושא</FormLabel>
+                                        <FormItem className={styles.formGroup}>
+                                            <FormLabel className={styles.formLabel}>נושא</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="תיאור קצר של הבעיה" {...field} />
+                                                <input className={styles.formInput} placeholder="תיאור קצר של הבעיה" {...field} />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage style={{ color: '#F87171' }} />
                                         </FormItem>
                                     )}
                                 />
@@ -171,22 +151,19 @@ export default function SupportPage() {
                                     control={form.control}
                                     name="priority"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>דחיפות</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="low">נמוכה</SelectItem>
-                                                    <SelectItem value="medium">רגילה</SelectItem>
-                                                    <SelectItem value="high">גבוהה</SelectItem>
-                                                    <SelectItem value="urgent">דחופה</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
+                                        <FormItem className={styles.formGroup}>
+                                            <FormLabel className={styles.formLabel}>דחיפות</FormLabel>
+                                            <select
+                                                className={styles.formInput}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            >
+                                                <option value="low">נמוכה</option>
+                                                <option value="medium">רגילה</option>
+                                                <option value="high">גבוהה</option>
+                                                <option value="urgent">דחופה</option>
+                                            </select>
+                                            <FormMessage style={{ color: '#F87171' }} />
                                         </FormItem>
                                     )}
                                 />
@@ -194,101 +171,97 @@ export default function SupportPage() {
                                     control={form.control}
                                     name="message"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>פירוט</FormLabel>
+                                        <FormItem className={styles.formGroup}>
+                                            <FormLabel className={styles.formLabel}>פירוט</FormLabel>
                                             <FormControl>
-                                                <Textarea placeholder="תאר את הבעיה בהרחבה..." {...field} />
+                                                <textarea className={styles.formTextarea} placeholder="תאר את הבעיה בהרחבה..." {...field} />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage style={{ color: '#F87171' }} />
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="w-full">צור קריאה</Button>
+                                <button type="submit" className={styles.btnPrimary} style={{ width: '100%', marginTop: '1rem' }}>צור קריאה</button>
                             </form>
                         </Form>
                     </DialogContent>
                 </Dialog>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <CardTitle>קריאות שירות</CardTitle>
-                        <div className="flex gap-2">
-                            <div className="relative w-64">
-                                <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="חיפוש לפי נושא או לקוח..."
-                                    className="pr-9"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                            <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-[180px]">
-                                    <Filter className="w-4 h-4 ml-2" />
-                                    <SelectValue placeholder="סינון לפי סטטוס" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">כל הסטטוסים</SelectItem>
-                                    <SelectItem value="open">פתוח</SelectItem>
-                                    <SelectItem value="in_progress">בטיפול</SelectItem>
-                                    <SelectItem value="waiting_for_customer">ממתין ללקוח</SelectItem>
-                                    <SelectItem value="resolved">נפתר</SelectItem>
-                                </SelectContent>
-                            </Select>
+            <div className={styles.panelCard}>
+                <div className={styles.panelHeader}>
+                    <div className={styles.panelTitle}>קריאות שירות</div>
+                    <div className={styles.filtersRow}>
+                        <div className={styles.searchInputContainer}>
+                            <Search className={styles.searchIcon} size={18} />
+                            <input
+                                placeholder="חיפוש לפי נושא או לקוח..."
+                                className={styles.searchInput}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                         </div>
+                        <select
+                            className={styles.selectInput}
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">כל הסטטוסים</option>
+                            <option value="open">פתוח</option>
+                            <option value="in_progress">בטיפול</option>
+                            <option value="waiting_for_customer">ממתין ללקוח</option>
+                            <option value="resolved">נפתר</option>
+                        </select>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[100px]">מס' קריאה</TableHead>
-                                <TableHead>נושא</TableHead>
-                                <TableHead>לקוח</TableHead>
-                                <TableHead>סטטוס</TableHead>
-                                <TableHead>דחיפות</TableHead>
-                                <TableHead>תאריך פתיחה</TableHead>
-                                <TableHead className="text-left">פעולות</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                </div>
+                <div className={styles.panelContent} style={{ padding: 0, overflowX: 'auto' }}>
+                    <table className={styles.customTable}>
+                        <thead>
+                            <tr>
+                                <th>מס' קריאה</th>
+                                <th style={{ textAlign: 'center' }}>נושא</th>
+                                <th style={{ textAlign: 'center' }}>לקוח</th>
+                                <th style={{ textAlign: 'center' }}>סטטוס</th>
+                                <th style={{ textAlign: 'center' }}>דחיפות</th>
+                                <th style={{ textAlign: 'center' }}>תאריך פתיחה</th>
+                                <th style={{ textAlign: 'center' }}>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {loading ? (
-                                <TableRow>
-                                    <TableCell colSpan={7} className="h-24 text-center">
-                                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-                                    </TableCell>
-                                </TableRow>
+                                <tr>
+                                    <td colSpan={7} style={{ height: '6rem', textAlign: 'center' }}>
+                                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-500" />
+                                    </td>
+                                </tr>
                             ) : filteredTickets.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                                <tr>
+                                    <td colSpan={7} style={{ height: '6rem', textAlign: 'center', color: '#94A3B8' }}>
                                         לא נמצאו קריאות שירות
-                                    </TableCell>
-                                </TableRow>
+                                    </td>
+                                </tr>
                             ) : (
                                 filteredTickets.map((ticket) => (
-                                    <TableRow key={ticket.id}>
-                                        <TableCell>#{ticket.id}</TableCell>
-                                        <TableCell className="font-medium">{ticket.subject}</TableCell>
-                                        <TableCell>{ticket.user_name}</TableCell>
-                                        <TableCell>{getStatusBadge(ticket.status)}</TableCell>
-                                        <TableCell>{getPriorityBadge(ticket.priority)}</TableCell>
-                                        <TableCell dir="ltr" className="text-right">{ticket.created_at}</TableCell>
-                                        <TableCell className="text-left">
-                                            <Button variant="ghost" size="sm" asChild>
-                                                <Link href={`/admin/support/${ticket.id}`}>
+                                    <tr key={ticket.id}>
+                                        <td className={styles.cellId}>#{ticket.id}</td>
+                                        <td style={{ fontWeight: 500, textAlign: 'center' }}>{ticket.subject}</td>
+                                        <td style={{ textAlign: 'center' }}>{ticket.user_name}</td>
+                                        <td style={{ textAlign: 'center' }}>{getStatusBadge(ticket.status)}</td>
+                                        <td style={{ textAlign: 'center' }}>{getPriorityBadge(ticket.priority)}</td>
+                                        <td dir="ltr" style={{ textAlign: 'center', color: '#94A3B8', fontSize: '0.875rem' }}>{ticket.created_at}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <Link href={`/admin/support/${ticket.id}`} style={{ textDecoration: 'none' }}>
+                                                <button className={styles.btnGhost}>
                                                     צפה בפרטים
-                                                </Link>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
+                                                </button>
+                                            </Link>
+                                        </td>
+                                    </tr>
                                 ))
                             )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 }

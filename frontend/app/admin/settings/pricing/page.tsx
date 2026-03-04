@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { DollarSign, Save } from "lucide-react";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
 export default function PricingSettingsPage() {
     const [loading, setLoading] = useState(true);
@@ -30,16 +31,10 @@ export default function PricingSettingsPage() {
     const fetchPricing = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5001/api/settings/pricing', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                // Exclude ID from state if present to avoid sending it back
-                const { id, ...settings } = data;
-                setPricing(settings);
-            }
+            const res = await api.get('/settings/pricing');
+            // Exclude ID from state if present to avoid sending it back
+            const { id, ...settings } = res.data;
+            setPricing(settings);
         } catch (error) {
             toast.error("שגיאה בטעינת מחירון");
         } finally {
@@ -50,23 +45,10 @@ export default function PricingSettingsPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5001/api/settings/pricing', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(pricing)
-            });
-
-            if (res.ok) {
-                toast.success("מחירון עודכן בהצלחה");
-            } else {
-                toast.error("שגיאה בעדכון מחירון");
-            }
+            await api.put('/settings/pricing', pricing);
+            toast.success("מחירון עודכן בהצלחה");
         } catch (error) {
-            toast.error("תקלה בתקשורת");
+            toast.error("שגיאה בעדכון מחירון");
         } finally {
             setSaving(false);
         }

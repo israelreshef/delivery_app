@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { socket } from "@/lib/socket";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,9 +52,28 @@ export default function ExpensesDashboard() {
 
     useEffect(() => {
         fetchData();
-        // Auto-refresh every 30 seconds for live data
-        const interval = setInterval(() => fetchData(), 30000);
-        return () => clearInterval(interval);
+        // Fallback auto-refresh every 60 seconds
+        const interval = setInterval(() => fetchData(), 60000);
+
+        // Connect socket if not already connected
+        if (!socket.connected && typeof localStorage !== 'undefined') {
+            const token = localStorage.getItem('token');
+            if (token) {
+                socket.auth = { token };
+                socket.connect();
+            }
+        }
+
+        const handleExpenseUpdate = () => {
+            fetchData(true);
+        };
+
+        socket.on('expenses_updated', handleExpenseUpdate);
+
+        return () => {
+            clearInterval(interval);
+            socket.off('expenses_updated', handleExpenseUpdate);
+        };
     }, []);
 
     if (loading) {
@@ -88,7 +108,7 @@ export default function ExpensesDashboard() {
     }
 
     const creditPercent = data.google_credit.percent_used;
-    const creditColor = creditPercent > 80 ? 'text-red-500' : creditPercent > 50 ? 'text-amber-500' : 'text-green-500';
+    const creditColor = creditPercent > 80 ? 'text-red-500' : creditPercent > 50 ? 'text-brand' : 'text-green-500';
 
     return (
         <Card className="border-none shadow-md col-span-full overflow-hidden">
@@ -153,7 +173,7 @@ export default function ExpensesDashboard() {
                         </div>
                         <div className="mt-2 w-full bg-slate-100 rounded-full h-1.5">
                             <div
-                                className={`h-1.5 rounded-full transition-all duration-500 ${creditPercent > 80 ? 'bg-red-500' : creditPercent > 50 ? 'bg-amber-500' : 'bg-emerald-500'
+                                className={`h-1.5 rounded-full transition-all duration-500 ${creditPercent > 80 ? 'bg-red-500' : creditPercent > 50 ? 'bg-brand' : 'bg-emerald-500'
                                     }`}
                                 style={{ width: `${Math.min(100, creditPercent)}%` }}
                             />

@@ -39,11 +39,14 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
 import com.tzir.delivery.android.R
 import com.tzir.delivery.android.ui.components.*
-import com.tzir.delivery.android.ui.courier.MapTheme
+
 import com.tzir.delivery.shared.model.Mission
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 import org.json.JSONObject
 import java.net.URL
 import java.util.Calendar
@@ -121,11 +124,13 @@ fun DashboardScreen(
     }
 
     LaunchedEffect(shiftStatus) {
-        shiftStatus?.let { status ->
-            if (status["force_stop"] == true && isOnline) {
+        shiftStatus?.let { statusJson ->
+            val forceStop = statusJson.jsonObject["force_stop"]?.jsonPrimitive?.booleanOrNull ?: false
+            val recommendRest = statusJson.jsonObject["recommend_rest"]?.jsonPrimitive?.booleanOrNull ?: false
+            if (forceStop && isOnline) {
                 isOnline = false
                 showForceStopDialog = true
-            } else if (status["recommend_rest"] == true) {
+            } else if (recommendRest) {
                 showRestWarning = true
             }
         }

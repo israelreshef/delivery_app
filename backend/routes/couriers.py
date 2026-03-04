@@ -140,18 +140,122 @@ def create_courier(current_user):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@couriers_bp.route('/<int:courier_id>', methods=['GET'])
+@couriers_bp.route('/<int:courier_id>', methods=['GET', 'PUT'])
 @token_required
 @role_required(['admin', 'courier'])
-def get_courier(current_user, courier_id):
+def handle_courier(current_user, courier_id):
+    """Get Courier details (GET) or Update Courier details (PUT)"""
+        
+    if request.method == 'GET':
+        try:
+            courier = Courier.query.get_or_404(courier_id)
+            return jsonify({
+                'id': courier.id, 'full_name': courier.full_name, 'is_available': courier.is_available,
+                'rating': float(courier.rating), 'vehicle_type': courier.vehicle_type
+            }), 200
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return jsonify({'error': str(e)}), 500
+            
+    elif request.method == 'PUT':
+        if current_user.user_type != 'admin' and getattr(current_user, 'admin_role', None) != 'super_admin':
+            return jsonify({'error': 'Unauthorized - admin only'}), 403
+            
+        try:
+            courier = Courier.query.get_or_404(courier_id)
+            data = request.get_json()
+            
+            # Admin can update courier fields
+            if 'full_name' in data:
+                courier.full_name = data['full_name']
+            if 'vehicle_type' in data:
+                courier.vehicle_type = data['vehicle_type']
+            if 'license_plate' in data:
+                courier.license_plate = data['license_plate']
+            if 'is_available' in data:
+                courier.is_available = data['is_available']
+            if 'onboarding_status' in data:
+                courier.onboarding_status = data['onboarding_status']
+                
+            # Update associated User fields if available
+            if courier.user:
+                if 'phone' in data:
+                    courier.user.phone = data['phone']
+                if 'email' in data:
+                    courier.user.email = data['email']
+                    
+            db.session.commit()
+            return jsonify({'message': 'Courier updated successfully'}), 200
+            
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
+@couriers_bp.route('/<int:courier_id>/related', methods=['GET'])
+@token_required
+@role_required('admin')
+def get_courier_related(current_user, courier_id):
+    """קבלת מידע מלא על שליח עבור כרטיס שליח"""
     try:
+        from models import Courier, Delivery, ShiftSession, CourierGamification
+        
         courier = Courier.query.get_or_404(courier_id)
+        
+        # 1. Recent Deliveries
+        deliveries = Delivery.query.filter_by(courier_id=courier_id).order_by(Delivery.created_at.desc()).limit(20).all()
+        deliveries_data = [{
+            'id': d.id,
+            'order_number': d.order_number,
+            'status': d.status,
+            'amount': float(d.delivery_fee or 0),
+            'timestamp': d.created_at.isoformat() if d.created_at else None,
+            'pickup': f"{d.pickup_point.address.street} {d.pickup_point.address.building_number}, {d.pickup_point.address.city}" if d.pickup_point and d.pickup_point.address else "לא ידוע",
+            'dropoff': f"{d.delivery_point.address.street} {d.delivery_point.address.building_number}, {d.delivery_point.address.city}" if d.delivery_point and d.delivery_point.address else "לא ידוע"
+        } for d in deliveries]
+        
+        # 2. Gamification / Stats
+        gamification = CourierGamification.query.filter_by(courier_id=courier.id).first()
+        g_data = {
+            'level': gamification.level if gamification else 1,
+            'xp': gamification.xp if gamification else 0,
+            'performance_index': courier.performance_index
+        }
+        
+        # 3. Active Shift
+        active_shift = ShiftSession.query.filter_by(courier_id=courier.id, is_active=True).first()
+        shift_data = {
+            'is_active': active_shift is not None,
+            'vibe': active_shift.vibe_selected if active_shift else None,
+            'start_time': active_shift.start_time.isoformat() if active_shift else None
+        }
+
+        # 4. Courier Details
+        courier_data = {
+            'id': courier.id,
+            'full_name': courier.full_name,
+            'vehicle_type': courier.vehicle_type,
+            'license_plate': courier.license_plate,
+            'phone': courier.user.phone if courier.user else '',
+            'email': courier.user.email if courier.user else '',
+            'rating': float(courier.rating),
+            'total_deliveries': courier.total_deliveries,
+            'is_available': courier.is_available,
+            'onboarding_status': courier.onboarding_status,
+            'created_at': courier.created_at.isoformat() if hasattr(courier, 'created_at') and courier.created_at else None
+        }
+
         return jsonify({
-            'id': courier.id, 'full_name': courier.full_name, 'is_available': courier.is_available,
-            'rating': float(courier.rating), 'vehicle_type': courier.vehicle_type
+            'courier': courier_data,
+            'deliveries': deliveries_data,
+            'gamification': g_data,
+            'active_shift': shift_data,
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @couriers_bp.route('/availability', methods=['PATCH'])
 @token_required
@@ -507,9 +611,11 @@ def update_delivery_status(current_user, order_id):
 @token_required
 @role_required('courier')
 def send_order_otp(current_user, order_id):
-    """(Re)send OTP to customer"""
+    """(Re)send OTP to customer via SMS or WhatsApp"""
     try:
         import random
+        from services.messaging import MessagingService
+        
         delivery = Delivery.query.get_or_404(order_id)
         
         # Generate 6-digit OTP
@@ -517,15 +623,26 @@ def send_order_otp(current_user, order_id):
         delivery.otp_code = otp
         db.session.commit()
         
-        # In a real app, send via SMS/WhatsApp
-        # For now, we return it in the message for easier testing
-        logging.info(f"OTP for Order {delivery.order_number}: {otp}")
+        # Send via unified messaging service
+        recipient_phone = delivery.delivery_point.recipient_phone if delivery.delivery_point else "0500000000"
         
-        return jsonify({
-            'success': True, 
-            'message': f'OTP sent to customer (Mock: {otp})',
-            'debug_otp': otp # Include for easier emulator testing
-        }), 200
+        messaging_result = MessagingService.send_otp(recipient_phone, otp)
+        
+        if messaging_result.get('success'):
+            logging.info(f"OTP {otp} for Order {delivery.order_number} sent via {messaging_result.get('provider')}")
+            return jsonify({
+                'success': True, 
+                'message': f'OTP sent successfully via {messaging_result.get("provider")}',
+                'debug_otp': otp # Include for easier emulator testing
+            }), 200
+        else:
+             logging.error(f"Failed to send OTP to {recipient_phone}: {messaging_result.get('error')}")
+             return jsonify({
+                'success': False, 
+                'error': f"Failed to send message: {messaging_result.get('error')}",
+                'debug_otp': otp # Fallback for dev even on error
+             }), 500
+             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

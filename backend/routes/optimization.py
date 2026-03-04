@@ -48,6 +48,7 @@ def optimize_courier_route(current_user):
                 destinations.append({
                     'id': f"pickup_{d.id}",
                     'delivery_id': d.id,
+                    'order_id': d.id,
                     'type': 'pickup',
                     'lat': p.latitude,
                     'lng': p.longitude,
@@ -60,6 +61,7 @@ def optimize_courier_route(current_user):
                 destinations.append({
                     'id': f"dropoff_{d.id}",
                     'delivery_id': d.id,
+                    'order_id': d.id,
                     'type': 'dropoff',
                     'lat': p.latitude,
                     'lng': p.longitude,
@@ -87,10 +89,39 @@ def optimize_courier_route(current_user):
 @role_required(['admin', 'operations_manager'])
 def optimize_fleet(current_user):
     """
-    Stub for the admin dashboard to take 50 unassigned orders and auto-assign
-    them to available couriers based on TSP clusters.
+    Takes multiple unassigned orders and auto-assigns
+    them to available couriers based on TSP clusters via VRP solver.
+    Expects JSON: { "depot_lat": num, "depot_lng": num, "num_vehicles": int, "deliveries": [...] }
     """
-    return jsonify({"message": "Auto-clustering logic to be implemented"}), 501
+    try:
+        data = request.json
+        depot_lat = data.get('depot_lat')
+        depot_lng = data.get('depot_lng')
+        num_vehicles = data.get('num_vehicles', 1)
+        deliveries = data.get('deliveries', [])
+        
+        if not depot_lat or not depot_lng:
+            return jsonify({'error': 'depot_lat and depot_lng are required (Start Point)'}), 400
+            
+        if not deliveries:
+            return jsonify({'message': 'No deliveries to optimize.', 'routes': []}), 200
+            
+        # Example delivery format expected by RouteOptimizer:
+        # { 'id': str, 'lat': num, 'lng': num, ... }
+        # Let's ensure coordinates are present
+        valid_destinations = [d for d in deliveries if d.get('lat') is not None and d.get('lng') is not None]
+        
+        if not valid_destinations:
+             return jsonify({'error': 'Missing coordinates in deliveries payload.'}), 400
+             
+        # Run Optimization Engine (VRP)
+        optimization_result = RouteOptimizer.optimize_fleet(depot_lat, depot_lng, valid_destinations, num_vehicles)
+        
+        return jsonify(optimization_result), 200
+        
+    except Exception as e:
+        logging.error(f"Fleet Optimization Error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 # ============================================================================
 # Advanced Route Builder 2.0 Management

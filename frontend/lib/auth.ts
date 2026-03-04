@@ -1,17 +1,10 @@
 import Cookies from 'js-cookie';
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { api } from './api';
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 const TOKEN_KEY = 'tzir_auth_token';
 const USER_KEY = 'tzir_user_data';
-
-export const api = axios.create({
-    baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
 
 export interface User {
     id: number;
@@ -33,12 +26,17 @@ export const auth = {
     // שמירת המידע לאחר התחברות מוצלחת
     setSession: (token: string, user: User) => {
         if (typeof window !== 'undefined') {
+            // Save to both sessionStorage (safety) and localStorage (persistence)
             sessionStorage.setItem(TOKEN_KEY, token);
-            sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+            localStorage.setItem(TOKEN_KEY, token);
+            localStorage.setItem('token', token); // Legacy key support
 
-            // Sync to Cookies for Middleware (Optional: Keep cookies for middleware but session storage is primary)
-            Cookies.set('token', token, { expires: 1 / 48 }); // Expires in 30 mins (approx)
-            Cookies.set('role', user.role || user.user_type, { expires: 1 / 48 });
+            sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+            localStorage.setItem(USER_KEY, JSON.stringify(user));
+
+            // Sync to Cookies for Middleware
+            Cookies.set('token', token, { expires: 7 }); // Keep for 7 days
+            Cookies.set('role', user.role || user.user_type, { expires: 7 });
 
             // עדכון ה-Header של Axios כדי שכל הבקשות הבאות יהיו מזוהות
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -49,7 +47,11 @@ export const auth = {
     clearSession: () => {
         if (typeof window !== 'undefined') {
             sessionStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem('token');
+
             sessionStorage.removeItem(USER_KEY);
+            localStorage.removeItem(USER_KEY);
 
             // Clear Cookies
             Cookies.remove('token');
@@ -62,7 +64,7 @@ export const auth = {
     // שליפת הטוקן הנוכחי
     getToken: (): string | null => {
         if (typeof window !== 'undefined') {
-            return sessionStorage.getItem(TOKEN_KEY);
+            return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || localStorage.getItem('token');
         }
         return null;
     },
@@ -113,7 +115,7 @@ export const auth = {
 };
 
 export function getHeaders() {
-    const token = typeof window !== 'undefined' ? sessionStorage.getItem(TOKEN_KEY) : '';
+    const token = auth.getToken();
     return {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`

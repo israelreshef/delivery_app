@@ -1,0 +1,312 @@
+.mapContainer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    position: relative;
+    background-color: #0B0E14;
+    color: #E2E8F0;
+    font-family: 'Inter', system-ui, sans-serif;
+    direction: rtl;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 400px;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.mapWrapper {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+/* Sidebar Header */
+.sidebarHeader {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.headerTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.headerSubtitle {
+    font-size: 0.875rem;
+    color: #94A3B8;
+    margin-top: 0.25rem;
+}
+
+/* Tabs */
+.tabsContainer {
+    display: flex;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 1rem;
+}
+
+.tabBtn {
+    padding: 1rem 0;
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.tabBtn:hover {
+    color: #E2E8F0;
+}
+
+.tabBtnActive {
+    color: #3B82F6;
+}
+
+.tabBtnActive::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3B82F6;
+    border-radius: 2px 2px 0 0;
+}
+
+/* Content Area */
+.sidebarContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Route Cards */
+.routeCard {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.routeCard:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(30, 41, 59, 0.8);
+    transform: translateY(-2px);
+}
+
+.routeCardActive {
+    border-color: #3B82F6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.routeHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.routeTitle {
+    font-weight: 600;
+    color: #F8FAFC;
+    font-size: 1rem;
+}
+
+.routeMeta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: #94A3B8;
+    margin-bottom: 0.75rem;
+}
+
+.routeCourier {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #E2E8F0;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.routeStats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    font-size: 0.875rem;
+}
+
+/* Floating Tools on Map */
+.mapToolsContainer {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mapToolBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #E2E8F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.mapToolBtn:hover {
+    background: #1E293B;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.layerSelectPanel {
+    position: absolute;
+    top: 0;
+    right: 50px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 150px;
+    backdrop-filter: blur(8px);
+}
+
+.layerBtn {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    padding: 0.5rem;
+    text-align: right;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.layerBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #E2E8F0;
+}
+
+.layerBtnActive {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60A5FA;
+}
+
+/* Base button */
+.btnPrimary {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.btnPrimary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.tabList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0.5rem 1rem 0;
+    padding: 0.125rem;
+    border-radius: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 2.25rem;
+}
+
+.tabTrigger {
+    border-radius: 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.tabTrigger[data-state="active"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.stopCardPickup {
+    background: rgba(15, 31, 24, 0.8);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+    overflow: hidden;
+}
+
+.stopCardPickup:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.stopCardDelivery {
+    background: rgba(16, 21, 32, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+    overflow: hidden;
+}
+
+.stopCardDelivery:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.stopBody {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+}

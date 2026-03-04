@@ -14,11 +14,11 @@ def simulate_movement():
     
     couriers = [
         {'id': 1, 'lat': lat, 'lng': lng, 'speed_lat': 0.0001, 'speed_lng': 0.0001},
-        {'id': 2, 'lat': lat + 0.01, 'lng': lng + 0.01, 'speed_lat': -0.0002, 'speed_lng': 0.0001},
+        {'id': 2, 'lat': 51.5074, 'lng': -0.1278, 'speed_lat': -0.0002, 'speed_lng': 0.0001}, # London
         {'id': 3, 'lat': lat - 0.01, 'lng': lng - 0.005, 'speed_lat': 0.0001, 'speed_lng': -0.0002}
     ]
 
-    sio.connect('http://localhost:5000')
+    sio.connect('http://localhost:5001')
 
     try:
         while True:

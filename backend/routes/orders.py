@@ -419,6 +419,20 @@ def get_orders(current_user):
     """קבלת כל ההזמנות"""
     try:
         query = Delivery.query
+        
+        # Search functionality
+        search_query = request.args.get('q')
+        if search_query:
+            # Join with Customer and User to search by name/phone
+            query = query.join(Customer).join(User)
+            search_pattern = f"%{search_query}%"
+            query = query.filter(
+                db.or_(
+                    Delivery.order_number.ilike(search_pattern),
+                    Customer.full_name.ilike(search_pattern),
+                    User.phone.ilike(search_pattern)
+                )
+            )
 
         # Filter based on user role
         if current_user.user_type == 'customer':

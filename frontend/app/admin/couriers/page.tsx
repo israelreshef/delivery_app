@@ -1,19 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Truck, Bike, Car, Plus, Search, FileSignature, CheckCircle, AlertCircle, Key, Eye, EyeOff } from "lucide-react";
+import { Truck, Bike, Car, Plus, Search, FileSignature, Key, Eye, EyeOff, UserCheck, UserPlus, Package } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { useSocket } from "@/lib/socket";
+import Link from "next/link";
+import styles from './courier-list.module.css';
 
 export default function AdminCouriersPage() {
     const { user } = useAuth();
@@ -49,7 +48,6 @@ export default function AdminCouriersPage() {
         if (!socket || user?.role !== 'admin') return;
 
         const handleUpdate = () => {
-            console.log("Real-time couriers update received");
             fetchCouriers();
         };
 
@@ -66,7 +64,6 @@ export default function AdminCouriersPage() {
         setLoading(true);
         try {
             const res = await api.get('/couriers');
-            // Backend returns { data: [], total: ..., pages: ... }
             if (res.data && Array.isArray(res.data.data)) {
                 setCouriers(res.data.data);
             } else if (Array.isArray(res.data)) {
@@ -76,6 +73,7 @@ export default function AdminCouriersPage() {
             }
         } catch (error) {
             console.error("Failed to fetch couriers", error);
+            toast.error("שגיאה בטעינת צי שליחים");
         } finally {
             setLoading(false);
         }
@@ -83,8 +81,7 @@ export default function AdminCouriersPage() {
 
     const handleAddCourier = async () => {
         try {
-            const res = await api.post('/couriers', newCourier);
-
+            await api.post('/couriers', newCourier);
             toast.success("שליח נוצר בהצלחה!");
             setIsAddOpen(false);
             fetchCouriers();
@@ -93,13 +90,12 @@ export default function AdminCouriersPage() {
                 email: "",
                 phone: "",
                 full_name: "",
-                vehicle_type: "scooter",
+                vehicle_type: "motorcycle",
                 license_plate: "",
                 national_id: "",
                 password: "TempPassword123!"
             });
         } catch (error: any) {
-            console.error(error);
             toast.error(error.response?.data?.error || "שגיאה ביצירת שליח");
         }
     };
@@ -135,9 +131,9 @@ export default function AdminCouriersPage() {
 
     const getVehicleIcon = (type: string) => {
         switch (type) {
-            case 'car': return <Car className="h-4 w-4" />;
-            case 'bike': return <Bike className="h-4 w-4" />;
-            default: return <Truck className="h-4 w-4" />; // Scooter/Truck
+            case 'car': return <Car size={16} color="#94A3B8" />;
+            case 'bike': return <Bike size={16} color="#94A3B8" />;
+            default: return <Truck size={16} color="#94A3B8" />;
         }
     };
 
@@ -146,78 +142,89 @@ export default function AdminCouriersPage() {
         c.phone?.includes(searchTerm)
     );
 
+    const totalCouriers = couriers.length;
+    const activeCouriers = couriers.filter(c => c.is_available).length;
+    const newCandidates = couriers.filter(c => c.onboarding_status === 'new').length;
+    const totalDeliveries = couriers.reduce((sum, c) => sum + (c.total_deliveries || 0), 0);
+
     return (
-        <div className="p-8 space-y-6 bg-slate-50 min-h-screen" dir="rtl">
-            <header className="flex justify-between items-center">
+        <div className={styles.listContainer}>
+            <div className={styles.headerArea}>
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">ניהול שליחים</h1>
-                    <p className="text-slate-500">גיוס, מעקב וניהול צי השליחים</p>
+                    <h1 className={styles.title}>ניהול שליחים</h1>
+                    <p className={styles.subtitle}>גיוס, חתימה, ומעקב אחרי צי השליחים.</p>
                 </div>
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 bg-brand hover:bg-brand-dark">
-                            <Plus className="w-4 h-4" />
+                        <button className={styles.btnPrimary}>
+                            <Plus size={18} />
                             גיוס שליח חדש
-                        </Button>
+                        </button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="max-w-2xl bg-slate-900 text-slate-100 border-slate-700 font-sans" dir="rtl">
                         <DialogHeader>
-                            <DialogTitle>הוספת שליח חדש</DialogTitle>
+                            <DialogTitle className="text-white">הוספת שליח חדש</DialogTitle>
                         </DialogHeader>
                         <div className="grid grid-cols-2 gap-4 py-4">
                             <div className="space-y-2">
-                                <Label>שם משתמש</Label>
+                                <Label className="text-slate-300">שם משתמש</Label>
                                 <Input
                                     value={newCourier.username}
                                     onChange={e => setNewCourier({ ...newCourier, username: e.target.value })}
+                                    className="bg-slate-800 border-slate-700 text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>שם מלא</Label>
+                                <Label className="text-slate-300">שם מלא</Label>
                                 <Input
                                     value={newCourier.full_name}
                                     onChange={e => setNewCourier({ ...newCourier, full_name: e.target.value })}
+                                    className="bg-slate-800 border-slate-700 text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>אימייל</Label>
+                                <Label className="text-slate-300">אימייל</Label>
                                 <Input
                                     type="email"
                                     value={newCourier.email}
                                     onChange={e => setNewCourier({ ...newCourier, email: e.target.value })}
+                                    className="bg-slate-800 border-slate-700 text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>טלפון</Label>
+                                <Label className="text-slate-300">טלפון</Label>
                                 <Input
                                     value={newCourier.phone}
                                     onChange={e => setNewCourier({ ...newCourier, phone: e.target.value })}
+                                    className="bg-slate-800 border-slate-700 text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>ת.ז.</Label>
+                                <Label className="text-slate-300">ת.ז.</Label>
                                 <Input
                                     value={newCourier.national_id}
                                     onChange={e => setNewCourier({ ...newCourier, national_id: e.target.value })}
+                                    className="bg-slate-800 border-slate-700 text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>מספר לוחית רישוי</Label>
+                                <Label className="text-slate-300">מספר לוחית רישוי</Label>
                                 <Input
                                     value={newCourier.license_plate}
                                     onChange={e => setNewCourier({ ...newCourier, license_plate: e.target.value })}
+                                    className="bg-slate-800 border-slate-700 text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>סוג רכב</Label>
+                                <Label className="text-slate-300">סוג רכב</Label>
                                 <Select
                                     value={newCourier.vehicle_type}
                                     onValueChange={v => setNewCourier({ ...newCourier, vehicle_type: v })}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-slate-800 border-slate-700 text-white">
                                         <SelectItem value="motorcycle">קטנוע</SelectItem>
                                         <SelectItem value="car">רכב פרטי</SelectItem>
                                         <SelectItem value="bicycle">אופניים חשמליים</SelectItem>
@@ -227,111 +234,160 @@ export default function AdminCouriersPage() {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsAddOpen(false)}>ביטול</Button>
-                            <Button onClick={handleAddCourier}>צור שליח</Button>
+                            <Button variant="ghost" onClick={() => setIsAddOpen(false)} className="text-slate-300 hover:text-white hover:bg-slate-800">ביטול</Button>
+                            <Button onClick={handleAddCourier} className="bg-brand hover:bg-brand-dark text-black">צור שליח</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-            </header>
+            </div>
 
-            <Card className="border-none shadow-md">
-                <CardHeader>
-                    <div className="flex items-center gap-4">
-                        <div className="relative flex-1 max-w-sm">
-                            <Search className="absolute right-3 top-2.5 h-4 w-4 text-slate-400" />
-                            <Input
-                                placeholder="חיפוש שליח..."
-                                className="pr-9"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+            <div className={styles.metricsGrid}>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>סה״כ שליחים</div>
+                        <div className={styles.metricValue}>{totalCouriers}</div>
+                    </div>
+                    <div className={styles.metricIcon}>
+                        <Truck size={24} />
+                    </div>
+                </div>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>שליחים זמינים</div>
+                        <div className={styles.metricValue}>{activeCouriers}</div>
+                    </div>
+                    <div className={styles.metricIcon}>
+                        <UserCheck size={24} />
+                    </div>
+                </div>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>מועמדים חדשים</div>
+                        <div className={styles.metricValue}>{newCandidates}</div>
+                    </div>
+                    <div className={`${styles.metricIcon} ${styles.iconWarning}`}>
+                        <UserPlus size={24} />
+                    </div>
+                </div>
+                <div className={styles.metricCard}>
+                    <div>
+                        <div className={styles.metricLabel}>סה״כ מסירות</div>
+                        <div className={styles.metricValue}>
+                            {totalDeliveries}
                         </div>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="text-right">שם מלא</TableHead>
-                                <TableHead className="text-right">רכב</TableHead>
-                                <TableHead className="text-right">סטטוס זמינות</TableHead>
-                                <TableHead className="text-right">דירוג</TableHead>
-                                <TableHead className="text-right">משלוחים</TableHead>
-                                <TableHead className="text-right">סטטוס גיוס</TableHead>
-                                <TableHead className="text-right">פעולות</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {loading ? (
-                                <TableRow>
-                                    <TableCell colSpan={7} className="text-center py-10">טוען נתונים...</TableCell>
-                                </TableRow>
-                            ) : filteredCouriers.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={7} className="text-center py-10 text-slate-500">לא נמצאו שליחים</TableCell>
-                                </TableRow>
-                            ) : (
-                                filteredCouriers.map((courier) => (
-                                    <TableRow key={courier.id}>
-                                        <TableCell className="font-medium">
-                                            <div>{courier.full_name}</div>
-                                            <div className="text-xs text-muted-foreground">{courier.phone}</div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                {getVehicleIcon(courier.vehicle_type)}
-                                                <span className="text-sm">{courier.license_plate}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant={courier.is_available ? "default" : "secondary"}>
-                                                {courier.is_available ? "זמין" : "לא זמין"}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>⭐ {courier.rating?.toFixed(1)}</TableCell>
-                                        <TableCell>{courier.total_deliveries}</TableCell>
-                                        <TableCell>
-                                            {courier.onboarding_status === 'new' && <Badge variant="outline" className="text-yellow-600 bg-yellow-50 border-yellow-200">מועמד חדש</Badge>}
-                                            {courier.onboarding_status === 'active' && <Badge variant="outline" className="text-green-600 bg-green-50 border-green-200">פעיל</Badge>}
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button size="icon" variant="ghost" title="שלח חוזה" onClick={() => sendContract(courier.id)}>
-                                                    <FileSignature className="w-4 h-4 text-purple-600" />
-                                                </Button>
-                                                <Button size="icon" variant="ghost" title="איפוס סיסמה" onClick={() => setResetTokenUser(courier)}>
-                                                    <Key className="w-4 h-4 text-orange-500" />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+                    <div className={`${styles.badge} ${styles.badgeOutline}`}><Package size={14} className="mr-1" /> All Time</div>
+                </div>
+            </div>
+
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeader}>
+                    <div className={styles.tableTitle}>סגל שליחים ({filteredCouriers.length})</div>
+                    <div className={styles.searchBox}>
+                        <Search className={styles.searchIcon} />
+                        <input
+                            type="text"
+                            placeholder="חיפוש משלוחן..."
+                            className={styles.searchInput}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                <table className={styles.customTable}>
+                    <thead>
+                        <tr>
+                            <th>פרטי שליח</th>
+                            <th>רכב</th>
+                            <th>סטטוס גיוס</th>
+                            <th>סטטוס זמינות</th>
+                            <th>דירוג וביצועים</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {loading ? (
+                            <tr>
+                                <td colSpan={6} className="text-center py-10 text-slate-400">טוען נתונים...</td>
+                            </tr>
+                        ) : filteredCouriers.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="text-center py-10 text-slate-500">לא נמצאו שליחים</td>
+                            </tr>
+                        ) : (
+                            filteredCouriers.map((courier: any) => (
+                                <tr key={courier.id}>
+                                    <td>
+                                        <div className={styles.courierName}>
+                                            {courier.full_name}
+                                        </div>
+                                        <div className={styles.subText}>{courier.phone}</div>
+                                    </td>
+                                    <td>
+                                        <div className="flex items-center gap-2 text-slate-300">
+                                            {getVehicleIcon(courier.vehicle_type)}
+                                            <span className="text-sm font-medium">{courier.license_plate || '-'}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {courier.onboarding_status === 'new' ? (
+                                            <span className={`${styles.badge} ${styles.badgeWarning}`}>מועמד חדש</span>
+                                        ) : courier.onboarding_status === 'active' ? (
+                                            <span className={`${styles.badge} ${styles.badgeSuccess}`}>פעיל</span>
+                                        ) : (
+                                            <span className={`${styles.badge} ${styles.badgeSecondary}`}>{courier.onboarding_status}</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <span className={`${styles.badge} ${courier.is_available ? styles.badgeSuccess : styles.badgeSecondary}`}>
+                                            {courier.is_available ? "זמין" : "לא זמין"}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div className={styles.textBright}>⭐ {courier.rating?.toFixed(1) || '0.0'}</div>
+                                        <div className={styles.subText}>{courier.total_deliveries} מסירות עבר</div>
+                                    </td>
+                                    <td>
+                                        <div className="flex gap-2 justify-end">
+                                            <button className={styles.btnAction} title="שלח חוזה" onClick={() => sendContract(courier.id)}>
+                                                <FileSignature size={16} />
+                                            </button>
+                                            <button className={styles.btnAction} title="איפוס סיסמה" onClick={() => setResetTokenUser(courier)}>
+                                                <Key size={16} />
+                                            </button>
+                                            <Link href={`/admin/couriers/${courier.id}`} className={styles.btnAction}>
+                                                כרטיס שליח
+                                            </Link>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
             <Dialog open={!!resetTokenUser} onOpenChange={(open) => !open && setResetTokenUser(null)}>
-                <DialogContent>
+                <DialogContent className="bg-slate-900 border-slate-700 text-slate-100" dir="rtl">
                     <DialogHeader>
-                        <DialogTitle>איפוס סיסמה - {resetTokenUser?.full_name}</DialogTitle>
+                        <DialogTitle className="text-white">איפוס סיסמה - {resetTokenUser?.full_name}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2 text-right">
-                            <Label>סיסמה חדשה</Label>
+                            <Label className="text-slate-300">סיסמה חדשה</Label>
                             <div className="relative">
                                 <Input
                                     type={showPassword ? "text" : "password"}
                                     value={newPassword}
                                     onChange={e => setNewPassword(e.target.value)}
                                     placeholder="הכנס סיסמה חזקה..."
-                                    className="text-right"
+                                    className="text-right bg-slate-800 border-slate-700 text-white"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute left-3 top-3 text-slate-400 hover:text-slate-600"
+                                    className="absolute left-3 top-3 text-slate-400 hover:text-slate-300"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -340,8 +396,8 @@ export default function AdminCouriersPage() {
                         </div>
                     </div>
                     <DialogFooter className="gap-2">
-                        <Button variant="outline" onClick={() => setResetTokenUser(null)}>ביטול</Button>
-                        <Button onClick={handleResetPassword} disabled={isResetLoading || !newPassword}>
+                        <Button variant="ghost" onClick={() => setResetTokenUser(null)} className="text-slate-300 hover:bg-slate-800 hover:text-white">ביטול</Button>
+                        <Button onClick={handleResetPassword} disabled={isResetLoading || !newPassword} className="bg-brand hover:bg-brand-dark text-black">
                             {isResetLoading ? "מעדכן..." : "אפס סיסמה"}
                         </Button>
                     </DialogFooter>

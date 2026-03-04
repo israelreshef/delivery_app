@@ -2,20 +2,13 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, Send, ArrowRight, Clock, CheckCircle2, AlertCircle, User as UserIcon } from "lucide-react";
+import { Loader2, Send, ArrowRight, AlertCircle, User as UserIcon } from "lucide-react";
 import { supportApi } from "@/lib/api/support";
 import { TicketDetails, TicketStatus, TicketPriority } from "@/types/support";
 import { toast } from "sonner";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import styles from './ticket.module.css';
 
 export default function TicketDetailsPage() {
     const params = useParams();
@@ -70,7 +63,8 @@ export default function TicketDetailsPage() {
         }
     };
 
-    const handleStatusChange = async (newStatus: string) => {
+    const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newStatus = e.target.value;
         try {
             await supportApi.updateTicket(ticketId, { status: newStatus as TicketStatus });
             toast.success("הסטטוס עודכן");
@@ -80,7 +74,8 @@ export default function TicketDetailsPage() {
         }
     };
 
-    const handlePriorityChange = async (newPriority: string) => {
+    const handlePriorityChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newPriority = e.target.value;
         try {
             await supportApi.updateTicket(ticketId, { priority: newPriority as TicketPriority });
             toast.success("הדחיפות עודכנה");
@@ -92,8 +87,8 @@ export default function TicketDetailsPage() {
 
     if (loading) {
         return (
-            <div className="flex h-screen items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-brand" />
+            <div className="flex h-screen items-center justify-center bg-[#0B0E14]">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
             </div>
         );
     }
@@ -101,42 +96,38 @@ export default function TicketDetailsPage() {
     if (!data) return null;
 
     return (
-        <div className="flex h-screen bg-slate-50 overflow-hidden" dir="rtl">
+        <div className={styles.ticketContainer}>
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col min-w-0">
-                <div className="flex items-center p-4 border-b bg-white shadow-sm gap-4">
-                    <Button variant="ghost" size="icon" asChild>
-                        <Link href="/admin/support">
-                            <ArrowRight className="h-5 w-5" />
-                        </Link>
-                    </Button>
+            <div className={styles.chatArea}>
+                <div className={styles.chatHeader}>
+                    <Link href="/admin/support" className={styles.btnGhost}>
+                        <ArrowRight className="h-5 w-5" />
+                    </Link>
                     <div>
-                        <h1 className="text-xl font-bold flex items-center gap-2">
+                        <div className={styles.headerTitle}>
                             {data.ticket.subject}
-                            <Badge variant="outline">#{data.ticket.id}</Badge>
-                        </h1>
-                        <p className="text-sm text-muted-foreground flex items-center gap-2">
+                            <span className={styles.badge}>#{data.ticket.id}</span>
+                        </div>
+                        <div className={styles.headerSubtitle}>
                             נוצר על ידי {data.ticket.user_name} ב-{data.ticket.created_at}
-                        </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+                <div className={styles.messagesList}>
                     {data.messages.map((msg) => (
                         <div
                             key={msg.id}
                             className={cn(
-                                "flex gap-3 max-w-[80%]",
-                                msg.is_staff && !msg.is_internal ? "mr-auto flex-row-reverse" : "",
-                                msg.is_internal ? "mx-auto max-w-[90%] w-full bg-yellow-50 border-yellow-200 border p-2 rounded-lg" : ""
+                                styles.messageWrapper,
+                                msg.is_staff && !msg.is_internal ? styles.messageStaff : "",
+                                msg.is_internal ? styles.messageInternal : ""
                             )}
                         >
                             {!msg.is_internal && (
-                                <Avatar className="h-8 w-8">
-                                    <AvatarFallback className={msg.is_staff ? "bg-brand text-primary-foreground" : "bg-slate-200"}>
-                                        {msg.sender_name[0]}
-                                    </AvatarFallback>
-                                </Avatar>
+                                <div className={cn(styles.avatar, msg.is_staff ? styles.avatarStaff : styles.avatarClient)}>
+                                    {msg.sender_name[0]}
+                                </div>
                             )}
 
                             <div className={cn(
@@ -145,113 +136,108 @@ export default function TicketDetailsPage() {
                             )}>
                                 {!msg.is_internal && (
                                     <div className={cn(
-                                        "rounded-lg p-3 text-sm shadow-sm",
-                                        msg.is_staff
-                                            ? "bg-brand text-primary-foreground rounded-tl-none"
-                                            : "bg-white border rounded-tr-none"
+                                        styles.messageBubble,
+                                        msg.is_staff ? styles.bubbleStaff : styles.bubbleClient
                                     )}>
                                         {msg.message}
                                     </div>
                                 )}
                                 {msg.is_internal && (
-                                    <div className="text-sm text-yellow-800 flex items-start gap-2">
-                                        <AlertCircle className="h-4 w-4 mt-0.5" />
-                                        <div>
-                                            <span className="font-semibold block mb-1">הערה פנימית ({msg.sender_name})</span>
-                                            {msg.message}
+                                    <div className={cn(styles.messageBubble, styles.bubbleInternal)}>
+                                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                                            <AlertCircle style={{ width: '1rem', height: '1rem', marginTop: '0.125rem' }} />
+                                            <div>
+                                                <span style={{ fontWeight: 600, display: 'block', marginBottom: '0.25rem' }}>הערה פנימית ({msg.sender_name})</span>
+                                                {msg.message}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
-                                <span className="text-xs text-muted-foreground mt-1 px-1">
+                                <div className={styles.messageTime}>
                                     {msg.created_at}
-                                </span>
+                                </div>
                             </div>
                         </div>
                     ))}
                     <div ref={messagesEndRef} />
                 </div>
 
-                <div className="p-4 bg-white border-t">
-                    <form onSubmit={handleSendMessage} className="space-y-4">
-                        <Textarea
+                <div className={styles.replyBox}>
+                    <form onSubmit={handleSendMessage}>
+                        <textarea
                             placeholder="כתוב תגובה..."
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
-                            className="min-h-[100px]"
+                            className={styles.textarea}
                         />
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        checked={isInternal}
-                                        onChange={(e) => setIsInternal(e.target.checked)}
-                                        className="rounded border-gray-300"
-                                    />
-                                    הערה פנימית (לא גלויה ללקוח)
-                                </label>
-                            </div>
-                            <Button type="submit" disabled={sending || !newMessage.trim()}>
+                        <div className={styles.replyActions}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#94A3B8' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={isInternal}
+                                    onChange={(e) => setIsInternal(e.target.checked)}
+                                />
+                                הערה פנימית (לא גלויה ללקוח)
+                            </label>
+                            <button type="submit" className={styles.btnPrimary} disabled={sending || !newMessage.trim()}>
                                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                                <span className="mr-2">שלח תגובה</span>
-                            </Button>
+                                שלח תגובה
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
 
             {/* Sidebar Details */}
-            <div className="w-80 border-r bg-white p-6 space-y-6 overflow-y-auto">
+            <div className={styles.sidebar}>
                 <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-4">סטטוס וטיפול</h3>
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">סטטוס</label>
-                            <Select value={data.ticket.status} onValueChange={handleStatusChange}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="open">פתוח</SelectItem>
-                                    <SelectItem value="in_progress">בטיפול</SelectItem>
-                                    <SelectItem value="waiting_for_customer">ממתין ללקוח</SelectItem>
-                                    <SelectItem value="resolved">נפתר</SelectItem>
-                                    <SelectItem value="closed">סגור</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">דחיפות</label>
-                            <Select value={data.ticket.priority} onValueChange={handlePriorityChange}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="low">נמוכה</SelectItem>
-                                    <SelectItem value="medium">רגילה</SelectItem>
-                                    <SelectItem value="high">גבוהה</SelectItem>
-                                    <SelectItem value="urgent">דחופה</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                    <div className={styles.sidebarSectionTitle}>סטטוס וטיפול</div>
+
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>סטטוס</label>
+                        <select
+                            className={styles.selectInput}
+                            value={data.ticket.status}
+                            onChange={handleStatusChange}
+                        >
+                            <option value="open">פתוח</option>
+                            <option value="in_progress">בטיפול</option>
+                            <option value="waiting_for_customer">ממתין ללקוח</option>
+                            <option value="resolved">נפתר</option>
+                            <option value="closed">סגור</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>דחיפות</label>
+                        <select
+                            className={styles.selectInput}
+                            value={data.ticket.priority}
+                            onChange={handlePriorityChange}
+                        >
+                            <option value="low">נמוכה</option>
+                            <option value="medium">רגילה</option>
+                            <option value="high">גבוהה</option>
+                            <option value="urgent">דחופה</option>
+                        </select>
                     </div>
                 </div>
 
-                <div className="pt-6 border-t">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-4">פרטי לקוח</h3>
-                    <div className="flex items-center gap-3 mb-4">
-                        <Avatar className="h-10 w-10">
-                            <AvatarFallback><UserIcon className="h-5 w-5" /></AvatarFallback>
-                        </Avatar>
+                <div style={{ paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div className={styles.sidebarSectionTitle}>פרטי לקוח</div>
+                    <div className={styles.customerCard}>
+                        <div className={styles.avatar} style={{ width: '40px', height: '40px', background: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA' }}>
+                            <UserIcon size={20} />
+                        </div>
                         <div>
-                            <div className="font-medium">{data.ticket.user_name}</div>
-                            <div className="text-xs text-muted-foreground">ID: {data.ticket.user_id}</div>
+                            <div style={{ fontWeight: 500, color: '#F8FAFC' }}>{data.ticket.user_name}</div>
+                            <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>ID: {data.ticket.user_id}</div>
                         </div>
                     </div>
                     {data.ticket.order_id && (
-                        <div className="bg-slate-50 p-3 rounded-lg border text-sm">
-                            <span className="text-muted-foreground block mb-1">הזמנה מקושרת</span>
-                            <Link href={`/orders`} className="font-medium text-brand hover:underline">
+                        <div className={styles.orderLink}>
+                            <span>הזמנה מקושרת</span>
+                            <Link href="/orders" style={{ textDecoration: 'none', color: '#60A5FA', fontWeight: 500 }}>
                                 #{data.ticket.order_id}
                             </Link>
                         </div>

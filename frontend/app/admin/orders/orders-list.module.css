@@ -1,0 +1,331 @@
+.listContainer {
+    background-color: #0B0E14;
+    color: #E2E8F0;
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    direction: rtl;
+}
+
+.headerArea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: #94A3B8;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.tableContainer {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 1rem;
+}
+
+.tableTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.filtersArea {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.searchBox {
+    position: relative;
+    width: 250px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.searchIcon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+    width: 18px;
+    height: 18px;
+}
+
+.selectInput {
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #E2E8F0;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 0.75rem center;
+    background-size: 16px;
+}
+
+.selectInput:focus {
+    outline: none;
+    border-color: #3B82F6;
+}
+
+.selectInput option {
+    background-color: #1E293B;
+    color: #fff;
+}
+
+
+/* Custom Table Styles */
+.customTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.customTable th {
+    text-align: right;
+    padding: 1rem 1.5rem;
+    color: #94A3B8;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.3);
+}
+
+.customTable td {
+    padding: 1.25rem 1.5rem;
+    color: #E2E8F0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    vertical-align: middle;
+}
+
+.customTable tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.customTable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.orderId {
+    font-weight: 600;
+    color: #fff;
+}
+
+.truncateCell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badgePending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.badgeAssigned {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badgePickedUp {
+    background: rgba(168, 85, 247, 0.1);
+    color: #A855F7;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.badgeDelivered {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badgeCancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Buttons */
+.btnPrimary {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btnPrimary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btnAction {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btnAction:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btnAction:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.actionsContainer {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.iconRight {
+    margin-left: 0.25rem;
+}
+
+.iconLeft {
+    margin-right: 0.25rem;
+}
+
+.dialogContent {
+    background-color: #1E293B !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.btnActionBrand {
+    color: #3B82F6;
+}
+
+.btnActionBrand:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.btnActionBlue {
+    color: #0EA5E9;
+}
+
+.btnActionBlue:hover {
+    background: rgba(14, 165, 233, 0.1);
+    border-color: rgba(14, 165, 233, 0.2);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pageText {
+    color: #94A3B8;
+    font-size: 0.875rem;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 3rem;
+    color: #94A3B8;
+}
+
+@media (max-width: 768px) {
+    .headerArea {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .tableHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filtersArea {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .searchBox,
+    .selectInput {
+        width: 100%;
+    }
+
+    .tableContainer {
+        overflow-x: auto;
+    }
+}

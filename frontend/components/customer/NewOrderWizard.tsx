@@ -197,7 +197,7 @@ export default function NewOrderWizard() {
                                 className={cn(
                                     "w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 border-2",
                                     currentStep >= step.number
-                                        ? "bg-brand border-brand text-navy-950 shadow-lg shadow-amber/30"
+                                        ? "bg-brand border-brand text-navy-950 shadow-lg shadow-brand"
                                         : "bg-white border-slate-200 text-slate-400"
                                 )}
                             >

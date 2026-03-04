@@ -182,7 +182,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
 
                                         {/* B - Delivery */}
                                         <div className="flex gap-4 relative">
-                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 ring-4 ring-white z-10">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-light text-brand ring-4 ring-white z-10">
                                                 <span className="font-bold">B</span>
                                             </div>
                                             <div className="flex-1 space-y-1">

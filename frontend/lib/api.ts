@@ -1,23 +1,36 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 // Create a configured axios instance
 export const api = axios.create({
-    baseURL: 'http://localhost:5001/api', // Flask Backend URL
+    baseURL: `${API_URL}/api`,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Add request interceptor to attach token from sessionStorage
+// Add request interceptor to attach token from various storage locations
 api.interceptors.request.use(
     (config) => {
-        // Get token from sessionStorage (same key used in auth.ts)
-        const token = typeof window !== 'undefined' ? sessionStorage.getItem('tzir_auth_token') : null;
+        if (typeof window === 'undefined') return config;
+
+        // Try to get token from multiple sources for robustness
+        const token = sessionStorage.getItem('tzir_auth_token') ||
+            localStorage.getItem('tzir_auth_token') ||
+            sessionStorage.getItem('token') ||
+            localStorage.getItem('token') ||
+            Cookies.get('token'); // Fallback to cookie for middleware compatibility
 
         if (token && token !== 'undefined' && token !== 'null') {
             config.headers.Authorization = `Bearer ${token}`;
         } else {
-            console.warn(`[API] Request to ${config.url} missing token`);
+            // Only warn on non-auth routes if needed
+            const isAuthRoute = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
+            if (!isAuthRoute) {
+                console.warn(`[API] Request to ${config.url} missing token`);
+            }
         }
 
         return config;

@@ -19,6 +19,20 @@ SERVICE_PRICING = {
         'monthly_free_credit': 200.0,  # Google's $200/month free tier
         'category': 'api'
     },
+    'whatsapp_business': {
+        'name': 'WhatsApp Business API',
+        'icon': '💬',
+        'cost_per_call': 0.0053,  # Latest Meta utility/auth rate Israel
+        'monthly_free_credit': 0.0,
+        'category': 'api'
+    },
+    'sms4free': {
+        'name': 'Sms4Free (SMS)',
+        'icon': '📱',
+        'cost_per_call': 0.045,  # ~17 ILS for 100 msgs = 0.17 ILS ~ $0.045
+        'monthly_free_credit': 0.0,
+        'category': 'api'
+    },
     'nominatim': {
         'name': 'OpenStreetMap (Nominatim)',
         'icon': '🌍',
@@ -27,10 +41,10 @@ SERVICE_PRICING = {
         'category': 'api'
     },
     'hosting_server': {
-        'name': 'שרת Backend',
+        'name': 'שרת Backend (Hetzner)',
         'icon': '🖥️',
         'cost_per_call': 0.0,
-        'monthly_fixed': 0.0,  # Set when you have actual hosting
+        'monthly_fixed': 4.5,  # Est. ~$4.50/mo for Hetzner
         'category': 'infrastructure'
     },
     'hosting_db': {
@@ -41,7 +55,7 @@ SERVICE_PRICING = {
         'category': 'infrastructure'
     },
     'hosting_frontend': {
-        'name': 'שרת Frontend (Vercel/Next.js)',
+        'name': 'שרת Frontend (Vercel)',
         'icon': '🌐',
         'cost_per_call': 0.0,
         'monthly_fixed': 0.0,
@@ -77,6 +91,16 @@ def track_api_call(service_name, count=1):
             db.session.add(usage)
         
         db.session.commit()
+        
+        try:
+            from app import socketio
+            socketio.emit('expenses_updated', {
+                'service': service_name,
+                'count': count
+            })
+        except Exception as se:
+            print(f"Socket IO expenses_updated emit failed: {se}")
+            
     except Exception as e:
         db.session.rollback()
         print(f"Error tracking API usage: {e}")

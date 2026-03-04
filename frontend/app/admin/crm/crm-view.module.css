@@ -1,0 +1,219 @@
+.pageWrapper {
+    min-height: 100vh;
+    width: 100%;
+    background: #020617;
+    position: relative;
+    padding: 1.5rem;
+    overflow-x: hidden;
+}
+
+.headerGlass {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    margin-bottom: 2rem;
+}
+
+.headerTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.headerSubtitle {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.viewToggle {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 0.25rem;
+}
+
+.toggleBtn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.toggleBtn[data-active="true"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.kanbanBoard {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.kanbanColumn {
+    flex: 1;
+    min-width: 320px;
+    background: rgba(10, 15, 25, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 12rem);
+}
+
+.columnHeader {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+}
+
+.columnTitle {
+    font-weight: 700;
+    color: #f8fafc;
+    font-size: 0.9375rem;
+}
+
+.columnBadge {
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 0.25rem 0.625rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.cardList {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.leadCard {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.leadCard:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.leadCardTitle {
+    font-weight: 700;
+    color: #f8fafc;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.leadCardSubtitle {
+    color: #94a3b8;
+    font-size: 0.8125rem;
+}
+
+.leadCardMeta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #34d399;
+    /* emerald-400 */
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.5rem;
+    width: fit-content;
+}
+
+.agendaContainer {
+    background: rgba(10, 15, 25, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.agendaDay {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.agendaDateHeader {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #f8fafc;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.agendaGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+/* Modals */
+.dialogOverlay {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.dialogContent {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border-radius: 1.25rem;
+    color: #f8fafc;
+}
+
+.dialogHeader {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.inputField {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    border-radius: 0.5rem;
+}
+
+.inputField:focus {
+    border-color: #3b82f6;
+    outline: none;
+}

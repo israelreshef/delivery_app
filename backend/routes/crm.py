@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 from models import db, Lead, LeadActivity, User, Customer, CustomerPricingOverride, lead_status_enum, lead_source_enum, activity_type_enum
 from utils.decorators import token_required, role_required
 import logging
@@ -64,7 +65,8 @@ def get_lead(current_user, lead_id):
         lead = Lead.query.get_or_404(lead_id)
         
         activities = []
-        for activity in lead.activities.order_by(desc(LeadActivity.created_at)).all():
+        lead_activities = LeadActivity.query.filter_by(lead_id=lead.id).order_by(desc(LeadActivity.created_at)).all()
+        for activity in lead_activities:
             activities.append({
                 'id': activity.id,
                 'activity_type': activity.activity_type,
@@ -104,9 +106,13 @@ def create_lead(current_user):
     try:
         data = request.get_json()
         
+        company_val = data.get('company_name')
+        if not company_val or str(company_val).strip() == '':
+            company_val = data.get('contact_name')
+        
         new_lead = Lead(
             contact_name=data.get('contact_name'),
-            company_name=data.get('company_name'),
+            company_name=company_val,
             email=data.get('email'),
             phone=data.get('phone'),
             source=data.get('source', 'other'),
@@ -145,7 +151,22 @@ def update_lead(current_user, lead_id):
         if 'notes' in data:
             lead.notes = data['notes']
         if 'next_follow_up' in data:
-            lead.next_follow_up = datetime.strptime(data['next_follow_up'], '%Y-%m-%d %H:%M') if data['next_follow_up'] else None
+            if data['next_follow_up']:
+                follow_up_dt = datetime.strptime(data['next_follow_up'], '%Y-%m-%d %H:%M')
+                lead.next_follow_up = follow_up_dt
+                
+                # Bi-directional Google Calendar Sync Push
+                try:
+                    from services.google_calendar import GoogleCalendarService
+                    cal_service = GoogleCalendarService(current_user)
+                    if cal_service.is_configured():
+                        summary = f"CRM Follow Up: {lead.contact_name}"
+                        desc = f"Lead Status: {lead.status}\nPhone: {lead.phone}\nCompany: {lead.company_name or 'N/A'}\nNotes: {lead.notes or ''}"
+                        cal_service.create_event(summary, desc, follow_up_dt)
+                except Exception as e:
+                    print(f"Google Calendar passive sync failed: {str(e)}")
+            else:
+                lead.next_follow_up = None
             
         # Update other fields as needed
         for field in ['contact_name', 'email', 'phone', 'company_name']:
@@ -191,6 +212,69 @@ def add_activity(current_user, lead_id):
         db.session.rollback()
         logging.error(str(e), exc_info=True)
         return jsonify({'error': str(e)}), 500
+
+
+@crm_bp.route('/leads/<int:lead_id>/convert', methods=['POST'])
+@token_required
+@role_required(['admin', 'sales'])
+def convert_lead_to_customer(current_user, lead_id):
+    """
+    Convert a Lead into a registered Customer.
+    """
+    try:
+        lead = Lead.query.get_or_404(lead_id)
+        
+        if lead.status == 'won' and lead.converted_to_customer_id:
+            return jsonify({'message': 'Lead already converted', 'customer_id': lead.converted_to_customer_id}), 400
+
+        import random
+        import string
+        
+        temp_username = f"lead_{lead.id}_{random.randint(1000,9999)}"
+        temp_email = lead.email if lead.email else f"{temp_username}@pending-customer.com"
+        temp_pw = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+        
+        new_user = User(
+            username=temp_username,
+            email=temp_email,
+            phone=lead.phone,
+            user_type='customer'
+        )
+        new_user.set_password(temp_pw)
+        db.session.add(new_user)
+        db.session.flush()
+
+        from models import Customer
+        new_customer = Customer(
+            user_id=new_user.id,
+            full_name=lead.contact_name,
+            company_name=lead.company_name or lead.contact_name,
+            phone=lead.phone,
+            customer_type='business' if lead.company_name else 'private',
+            lead_source='crm_conversion'
+        )
+        db.session.add(new_customer)
+        db.session.flush()
+        
+        lead.status = 'won'
+        lead.converted_to_customer_id = new_customer.id
+        lead.converted_at = datetime.utcnow()
+        
+        activity = LeadActivity(
+            lead_id=lead.id,
+            activity_type='other',
+            description='הומר ללקוח רשום בהצלחה.',
+            performed_by=current_user.id
+        )
+        db.session.add(activity)
+        
+        db.session.commit()
+        return jsonify({'message': 'Lead converted to customer successfully', 'customer_id': new_customer.id}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 
 @crm_bp.route('/pipeline', methods=['GET'])
 @token_required

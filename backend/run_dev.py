@@ -2,6 +2,7 @@
 # This script runs the Flask server without Socket.IO for faster startup
 
 from app import create_app
+from extensions import socketio
 
 if __name__ == '__main__':
     print("🚀 Starting TZIR Delivery Backend (Development Mode)")
@@ -13,10 +14,11 @@ if __name__ == '__main__':
     print("📝 Press CTRL+C to stop the server\n")
     print("=" * 60)
     
-    # Run with Flask's built-in server (simpler, no gevent)
-    app.run(
+    # Run with Socket.IO enabled
+    socketio.run(
+        app,
         host='0.0.0.0',
         port=5001,
         debug=True,
-        use_reloader=False  # Disable reloader to avoid double startup
+        use_reloader=False
     )

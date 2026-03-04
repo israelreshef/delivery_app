@@ -38,10 +38,10 @@ export function AdminSidebar() {
     const { logout } = useAuth()
 
     return (
-        <div className="flex flex-col h-full w-64 bg-slate-900 text-white shadow-xl" dir="rtl">
-            <div className="p-6 border-b border-slate-800">
+        <div className="flex flex-col h-full w-64 bg-navy-950 text-white shadow-xl" dir="rtl">
+            <div className="p-6 border-b border-navy-900">
                 <h2 className="text-2xl font-bold tracking-tight text-brand/80">TZIR ADMIN</h2>
-                <p className="text-xs text-slate-400 mt-1">מערכת ניהול מתקדמת</p>
+                <p className="text-xs text-navy-200 mt-1">מערכת ניהול מתקדמת</p>
             </div>
 
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -52,7 +52,7 @@ export function AdminSidebar() {
                                 "flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium",
                                 pathname === item.href || pathname?.startsWith(item.href + '/')
                                     ? "bg-brand text-white shadow-md"
-                                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                    : "text-navy-200 hover:bg-navy-900 hover:text-white"
                             )}
                         >
                             <item.icon className="h-4 w-4" />
@@ -62,7 +62,7 @@ export function AdminSidebar() {
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-slate-800">
+            <div className="p-4 border-t border-navy-900">
                 <Button
                     variant="ghost"
                     className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-950/30 gap-3"

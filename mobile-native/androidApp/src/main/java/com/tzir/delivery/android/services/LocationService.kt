@@ -26,8 +26,8 @@ class LocationService : Service() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var api: DeliveryApi
     
-    // Mocking Courier ID for now - in real app, get from SharedPreferences/AuthRepository
-    private var courierId: String = "4" 
+    // Courier ID from Intent
+    private var courierId: String = "" 
 
     override fun onCreate() {
         super.onCreate()
@@ -101,8 +101,9 @@ class LocationService : Service() {
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000) // 10 seconds
-            .setMinUpdateIntervalMillis(5000)
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 15000) // 15 seconds
+            .setMinUpdateIntervalMillis(10000) // 10 seconds min
+            .setMaxUpdateDelayMillis(30000)    // allow batching up to 30 secs
             .build()
 
         try {

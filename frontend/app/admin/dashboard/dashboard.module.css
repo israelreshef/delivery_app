@@ -1,0 +1,285 @@
+.dashboardContainer {
+    background-color: #0B0E14;
+    color: #E2E8F0;
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    direction: rtl;
+}
+
+.headerArea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: #94A3B8;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.headerActions {
+    display: flex;
+    gap: 1rem;
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.metricCard {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.metricCard:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.metricLabel {
+    font-size: 0.875rem;
+    color: #94A3B8;
+    margin-bottom: 0.5rem;
+}
+
+.metricValue {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.metricIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconGreen {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.iconBrand {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
+}
+
+.iconOrange {
+    background: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
+}
+
+.iconPurple {
+    background: rgba(168, 85, 247, 0.1);
+    color: #A855F7;
+}
+
+.sectionGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+    .sectionGrid7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .colSpan4 {
+        grid-column: span 4 / span 4;
+    }
+
+    .colSpan3 {
+        grid-column: span 3 / span 3;
+    }
+
+    .colSpan1 {
+        grid-column: span 1 / span 1;
+    }
+
+    .sectionGrid3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.panelCard {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+}
+
+.panelHeader {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.panelTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panelDescription {
+    color: #94A3B8;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.panelContent {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+.panelContentNoPadding {
+    padding: 0;
+    flex: 1;
+    position: relative;
+}
+
+/* Quick Links Base */
+.quickLinkCard {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.quickLinkCard:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+}
+
+.quickLinkIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quickLinkTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.quickLinkDesc {
+    font-size: 0.875rem;
+    color: #94A3B8;
+}
+
+/* Buttons */
+.btnPrimary {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btnPrimary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btnOutline {
+    background: transparent;
+    color: #E2E8F0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btnOutline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+    .headerArea {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .headerActions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .headerActions>* {
+        width: 100%;
+        display: flex;
+    }
+}
+
+.liveMapContainer {
+    min-height: 450px;
+}

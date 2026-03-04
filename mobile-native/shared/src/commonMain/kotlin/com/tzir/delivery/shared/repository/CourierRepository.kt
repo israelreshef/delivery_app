@@ -191,10 +191,37 @@ class CourierRepository(
             if (success) {
                 refreshAvailableMissions()
                 refreshActiveMissions()
+            } else {
+                handleOfflineAcceptance(missionId)
             }
             success
         } catch (e: Exception) {
+            handleOfflineAcceptance(missionId)
             false
+        }
+    }
+
+    private fun handleOfflineAcceptance(missionId: Int) {
+        val mission = _availableMissions.value.find { it.id == missionId }
+        mission?.let {
+            queueSync(missionId, "accepted", null, null)
+            _activeMissions.value = listOf(
+                Mission(
+                    id = it.id,
+                    orderNumber = it.orderNumber,
+                    status = "accepted",
+                    pickupAddress = it.pickupAddress,
+                    deliveryAddress = it.deliveryAddress,
+                    packageDescription = it.packageDescription,
+                    estimatedPrice = it.estimatedPrice,
+                    completedAt = it.completedAt,
+                    distanceKm = it.distanceKm,
+                    durationMins = it.durationMins,
+                    baseFare = it.baseFare,
+                    tip = it.tip
+                )
+            )
+            _availableMissions.value = _availableMissions.value.filter { m -> m.id != missionId }
         }
     }
 

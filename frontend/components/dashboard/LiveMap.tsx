@@ -21,12 +21,12 @@ const iconPerson = new L.Icon({
 });
 
 // Custom div icon provider
-const createCustomIcon = (type: string) => {
+const createCustomIcon = (type: string, brandColor: string) => {
     let color = "#2E5480"; // navy-400
     let iconHtml = '<div style="background-color: #3b82f6; width: 100%; height: 100%; border-radius: 50%;"></div>';
 
     if (type === 'motorcycle' || type === 'scooter') {
-        color = "#f59e0b"; // amber-500
+        color = brandColor || "#f59e0b";
         iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M15 6h2.5a2.5 2.5 0 1 1 0 5H12"/><path d="M6 17.5V11l5-5"/></svg>`;
     } else if (type === 'car') {
         color = "#22c55e"; // green-500
@@ -62,11 +62,15 @@ const RecenterBtn = ({ lat, lng }: { lat: number, lng: number }) => {
 
 export default function LiveMap() {
     const [couriers, setCouriers] = useState<any[]>([]);
+    const [brandColor, setBrandColor] = useState<string>("#f59e0b");
 
     // Default center (Tel Aviv)
     const center: [number, number] = [32.0853, 34.7818];
 
     useEffect(() => {
+        const cssBrand = getComputedStyle(document.documentElement).getPropertyValue("--amber").trim();
+        if (cssBrand) setBrandColor(cssBrand);
+
         const fetchCouriers = async () => {
             try {
                 const res = await api.get('/couriers');
@@ -101,7 +105,7 @@ export default function LiveMap() {
                         <Marker
                             key={courier.id}
                             position={[courier.current_location.lat, courier.current_location.lng]}
-                            icon={createCustomIcon(courier.vehicle_type)}
+                            icon={createCustomIcon(courier.vehicle_type, brandColor)}
                         >
                             <Popup>
                                 <div className="p-1 min-w-[150px] text-right" dir="rtl">

@@ -157,8 +157,8 @@ export default function ServiceForm() {
 
                                             <FormItem>
                                                 <FormControl><RadioGroupItem value="valuable" className="peer sr-only" /></FormControl>
-                                                <FormLabel className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-amber-500 peer-data-[state=checked]:bg-amber-50/50 cursor-pointer transition-all h-full">
-                                                    <div className="w-12 h-12 rounded-full bg-amber-100/50 text-amber-600 flex items-center justify-center mb-3">
+                                                <FormLabel className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-brand peer-data-[state=checked]:bg-brand-light/50 cursor-pointer transition-all h-full">
+                                                    <div className="w-12 h-12 rounded-full bg-brand-light/50 text-brand flex items-center justify-center mb-3">
                                                         <Gem className="w-6 h-6" />
                                                     </div>
                                                     <div className="text-center">

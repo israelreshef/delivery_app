@@ -11,6 +11,8 @@ import { Map, MapPin, Plus, Trash2, Edit2 } from "lucide-react";
 import { toast } from "sonner";
 import dynamic from 'next/dynamic';
 
+import { api } from "@/lib/api";
+
 // Define Zone Interface
 interface Zone {
     id: number;
@@ -49,14 +51,8 @@ export default function ZoneManagementPage() {
     const fetchZones = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5001/api/zones', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setZones(data);
-            }
+            const res = await api.get('/zones');
+            setZones(res.data);
         } catch (error) {
             toast.error("שגיאה בטעינת אזורים");
         } finally {
@@ -68,16 +64,9 @@ export default function ZoneManagementPage() {
         if (!confirm("האם אתה בטוח שברצונך למחוק אזור זה?")) return;
 
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:5001/api/zones/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (res.ok) {
-                toast.success("אזור נמחק בהצלחה");
-                fetchZones();
-            }
+            await api.delete(`/zones/${id}`);
+            toast.success("אזור נמחק בהצלחה");
+            fetchZones();
         } catch (error) {
             toast.error("שגיאה במחיקת אזור");
         }
@@ -86,7 +75,6 @@ export default function ZoneManagementPage() {
     const handleCreateMockZone = async () => {
         // Quick create for testing without complex map drawing UI
         try {
-            const token = localStorage.getItem('token');
             const mockZone = {
                 name: "אזור תל אביב מרכז",
                 description: "אזור חלוקה ראשי",
@@ -95,19 +83,9 @@ export default function ZoneManagementPage() {
                 polygon_coords: [[32.08, 34.78], [32.09, 34.79], [32.07, 34.79]] // Triangle
             };
 
-            const res = await fetch('http://localhost:5001/api/zones', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(mockZone)
-            });
-
-            if (res.ok) {
-                toast.success("אזור נוצר (Mock)");
-                fetchZones();
-            }
+            await api.post('/zones', mockZone);
+            toast.success("אזור נוצר (Mock)");
+            fetchZones();
         } catch (error) {
             toast.error("שגיאה ביצירה");
         }

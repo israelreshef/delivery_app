@@ -268,7 +268,7 @@ export default function OrderTrackingPage({ params }: OrderTrackingPageProps) {
 
                         {/* Courier Info */}
                         {order.courier ? (
-                            <Card className="bg-gradient-to-br from-brand to-brand-dark text-white border-0 shadow-lg shadow-amber/20">
+                            <Card className="bg-gradient-to-br from-brand to-brand-dark text-white border-0 shadow-lg shadow-brand">
                                 <CardHeader>
                                     <CardTitle className="text-white flex items-center gap-2">
                                         <Truck className="w-5 h-5" />

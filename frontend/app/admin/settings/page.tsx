@@ -1,9 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Settings, DollarSign, MapPin, Bell, Shield, Users, Palette, Database } from "lucide-react";
 import Link from "next/link";
+import styles from './settings.module.css';
 
 export default function SettingsPage() {
     const settingsCategories = [
@@ -12,119 +11,113 @@ export default function SettingsPage() {
             description: "ניהול מחירים, תעריפים והנחות",
             icon: DollarSign,
             href: "/admin/settings/pricing",
-            color: "from-green-500 to-emerald-600"
+            gradient: "linear-gradient(135deg, #10B981 0%, #047857 100%)",
+            shadow: "rgba(16, 185, 129, 0.4)"
         },
         {
             title: "אזורי חלוקה",
             description: "הגדרת אזורים גיאוגרפיים ומחירים",
             icon: MapPin,
             href: "/admin/settings/zones",
-            color: "from-brand to-cyan-600"
+            gradient: "linear-gradient(135deg, #3B82F6 0%, #0284C7 100%)",
+            shadow: "rgba(59, 130, 246, 0.4)"
         },
         {
             title: "התראות ועדכונים",
             description: "הגדרות SMS, מייל ו-Push notifications",
             icon: Bell,
             href: "/admin/settings/notifications",
-            color: "from-purple-500 to-pink-600"
+            gradient: "linear-gradient(135deg, #A855F7 0%, #DB2777 100%)",
+            shadow: "rgba(168, 85, 247, 0.4)"
         },
         {
             title: "אבטחה והרשאות",
             description: "ניהול משתמשים, תפקידים והרשאות",
             icon: Shield,
             href: "/admin/users",
-            color: "from-red-500 to-orange-600"
+            gradient: "linear-gradient(135deg, #EF4444 0%, #EA580C 100%)",
+            shadow: "rgba(239, 68, 68, 0.4)"
         },
         {
             title: "ניהול צוות",
             description: "שליחים, לקוחות ומשתמשי מערכת",
             icon: Users,
             href: "/admin/users",
-            color: "from-indigo-500 to-primary"
+            gradient: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
+            shadow: "rgba(99, 102, 241, 0.4)"
         },
         {
             title: "עיצוב ומיתוג",
             description: "לוגו, צבעים ועיצוב הממשק",
             icon: Palette,
             href: "/admin/settings/branding",
-            color: "from-pink-500 to-rose-600"
+            gradient: "linear-gradient(135deg, #EC4899 0%, #E11D48 100%)",
+            shadow: "rgba(236, 72, 153, 0.4)"
         },
         {
             title: "גיבויים ונתונים",
             description: "ייצוא, ייבוא וגיבוי מידע",
             icon: Database,
             href: "/admin/settings/data",
-            color: "from-slate-500 to-gray-600"
+            gradient: "linear-gradient(135deg, #64748B 0%, #475569 100%)",
+            shadow: "rgba(100, 116, 139, 0.4)"
         }
     ];
 
     return (
-        <div className="p-6 space-y-6">
+        <div className={styles.settingsContainer}>
             {/* Header */}
-            <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-br from-brand to-primary p-3 rounded-xl shadow-lg">
-                    <Settings className="h-6 w-6 text-white" />
+            <div className={styles.headerArea}>
+                <div className={styles.headerIconWrapper}>
+                    <Settings style={{ width: '24px', height: '24px', color: '#ffffff' }} />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">הגדרות מערכת</h1>
-                    <p className="text-slate-600">ניהול והגדרות כלליות של המערכת</p>
+                    <h1 className={styles.title}>הגדרות מערכת</h1>
+                    <p className={styles.subtitle}>ניהול והגדרות כלליות של המערכת</p>
                 </div>
             </div>
 
             {/* Settings Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={styles.cardGrid}>
                 {settingsCategories.map((category, index) => {
                     const Icon = category.icon;
                     return (
-                        <Link key={index} href={category.href}>
-                            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-brand/20 h-full">
-                                <CardHeader>
-                                    <div className="flex items-start justify-between">
-                                        <div className={`bg-gradient-to-br ${category.color} p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                            <Icon className="h-6 w-6 text-white" />
-                                        </div>
-                                    </div>
-                                    <CardTitle className="text-xl mt-4 group-hover:text-brand transition-colors">
-                                        {category.title}
-                                    </CardTitle>
-                                    <CardDescription className="text-sm">
-                                        {category.description}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button
-                                        variant="ghost"
-                                        className="w-full group-hover:bg-brand-dark/10 group-hover:text-brand transition-colors"
-                                    >
-                                        פתח הגדרות
-                                    </Button>
-                                </CardContent>
-                            </Card>
+                        <Link key={index} href={category.href} className={styles.settingsCard}>
+                            <div className={styles.cardHeader}>
+                                <div
+                                    className={styles.iconContainer}
+                                    style={{
+                                        background: category.gradient,
+                                        boxShadow: `0 4px 12px ${category.shadow}`
+                                    }}
+                                >
+                                    <Icon style={{ width: '24px', height: '24px', color: '#ffffff' }} />
+                                </div>
+                                <div className={styles.cardTitle}>
+                                    {category.title}
+                                </div>
+                                <div className={styles.cardDescription}>
+                                    {category.description}
+                                </div>
+                            </div>
+                            <div className={styles.cardAction}>
+                                פתח הגדרות
+                            </div>
                         </Link>
                     );
                 })}
             </div>
 
             {/* Quick Actions */}
-            <Card className="bg-gradient-to-br from-slate-50 to-primary/10 border-brand/20">
-                <CardHeader>
-                    <CardTitle className="text-lg">פעולות מהירות</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-wrap gap-3">
-                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
-                        ייצוא נתונים
-                    </Button>
-                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
-                        גיבוי מערכת
-                    </Button>
-                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
-                        צפייה בלוגים
-                    </Button>
-                    <Button variant="outline" className="border-brand/20 hover:bg-brand-dark/10">
-                        בדיקת מערכת
-                    </Button>
-                </CardContent>
-            </Card>
+            <div className={styles.quickActionsCard}>
+                <div className={styles.quickActionsTitle}>פעולות מהירות</div>
+                <div className={styles.quickActionsGrid}>
+                    <button className={styles.actionBtn}>ייצוא נתונים</button>
+                    <button className={styles.actionBtn}>גיבוי מערכת</button>
+                    <button className={styles.actionBtn}>צפייה בלוגים</button>
+                    <button className={styles.actionBtn}>בדיקת מערכת</button>
+                </div>
+            </div>
         </div>
     );
 }

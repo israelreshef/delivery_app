@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
-import { API_URL } from '../lib/auth';
+import { API_URL, auth } from '../lib/auth';
 
 interface SocketContextType {
     socket: Socket | null;
@@ -31,7 +31,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             return;
         }
 
-        const token = localStorage.getItem('token');
+        const token = auth.getToken();
         const newSocket = io(API_URL, {
             auth: { token },
             transports: ['websocket'],

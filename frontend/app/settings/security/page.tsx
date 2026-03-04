@@ -92,10 +92,10 @@ export default function SecuritySettingsPage() {
 
             <div className="space-y-6">
                 {/* 2FA Status Card */}
-                <Card className={is2FAEnabled ? "border-green-200 bg-green-50/30" : "border-amber-200 bg-amber-50/30"}>
+                <Card className={is2FAEnabled ? "border-green-200 bg-green-50/30" : "border-brand-dim bg-brand-light/30"}>
                     <CardHeader>
                         <div className="flex items-center gap-3">
-                            <div className={`p-2 rounded-full ${is2FAEnabled ? "bg-green-100 text-green-600" : "bg-amber-100 text-amber-600"}`}>
+                            <div className={`p-2 rounded-full ${is2FAEnabled ? "bg-green-100 text-green-600" : "bg-brand-light text-brand"}`}>
                                 {is2FAEnabled ? <ShieldCheck className="h-6 w-6" /> : <ShieldAlert className="h-6 w-6" />}
                             </div>
                             <div>
@@ -109,7 +109,7 @@ export default function SecuritySettingsPage() {
                     <CardContent>
                         {!is2FAEnabled ? (
                             <div className="space-y-4">
-                                <div className="text-sm text-amber-800">
+                                <div className="text-sm text-brand-dark">
                                     החשבון שלך כרגע מוגן בסיסמה בלבד. מומלץ להפעיל אימות דו-שלבי למניעת פריצות.
                                 </div>
                                 {!showSetup ? (

@@ -34,7 +34,7 @@ type CourierLocation = {
 
 export default function LiveMap() {
     const { user } = useAuth();
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token = typeof window !== 'undefined' ? (localStorage.getItem('tzir_auth_token') || localStorage.getItem('token') || sessionStorage.getItem('tzir_auth_token')) : null;
     const socket = useSocket(token, user?.role || null);
     const [couriers, setCouriers] = useState<Record<number, CourierLocation>>({});
 

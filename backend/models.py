@@ -51,6 +51,12 @@ class User(db.Model):
     two_factor_secret = db.Column(db.String(32), nullable=True)
     is_two_factor_enabled = db.Column(db.Boolean, default=False)
     two_factor_enforced_by_admin = db.Column(db.Boolean, default=False)
+
+    # Google Calendar Integration
+    google_access_token = db.Column(db.Text, nullable=True)
+    google_refresh_token = db.Column(db.Text, nullable=True)
+    google_token_expiry = db.Column(db.DateTime, nullable=True)
+    google_calendar_id = db.Column(db.String(255), default='primary')
     
     # Relationships
     customer = db.relationship('Customer', backref='user', uselist=False, cascade='all, delete-orphan')
@@ -93,7 +99,7 @@ class Customer(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, unique=True)
     full_name = db.Column(db.String(100), nullable=False)
     company_name = db.Column(db.String(100), nullable=True)
     
@@ -107,6 +113,7 @@ class Customer(db.Model):
     
     business_id = db.Column(db.String(20), nullable=True) # Kept for backward compatibility
     contact_person = db.Column(db.String(100), nullable=True) # Name of contact if company
+    status = db.Column(db.String(20), default='active') # active, inactive, candidate, blocked
     default_address = db.Column(db.Text, nullable=True)
     billing_address = db.Column(db.Text, nullable=True)
     credit_limit = db.Column(db.Numeric(10, 2), default=0.00)
@@ -115,13 +122,111 @@ class Customer(db.Model):
     total_orders = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    # CRM Extended Fields
+    website = db.Column(db.String(255), nullable=True)
+    lead_source = db.Column(db.String(100), nullable=True)  # e.g. referral, website, cold_call
+    tags = db.Column(db.Text, nullable=True)  # JSON array stored as text e.g. '["VIP","Urgent"]'
+    phone = db.Column(db.String(20), nullable=True)  # Direct phone for no-account customers
+    
     # Relationships
     deliveries = db.relationship('Delivery', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
     invoices = db.relationship('Invoice', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
     ratings = db.relationship('Rating', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
+    contact_logs = db.relationship('CustomerContactLog', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
+    files = db.relationship('CustomerFile', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
+    notes = db.relationship('CustomerNote', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
+    tasks = db.relationship('CustomerTask', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
     
     def __repr__(self):
         return f'<Customer {self.full_name}>'
+
+
+# ============================================================================
+# Customer Contact Log
+# ============================================================================
+
+class CustomerContactLog(db.Model):
+    __tablename__ = 'customer_contact_logs'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    contact_type = db.Column(db.String(50), default='call')  # call, email, whatsapp, meeting, other
+    summary = db.Column(db.Text, nullable=False)
+    outcome = db.Column(db.String(100), nullable=True)
+    contact_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    next_follow_up = db.Column(db.Date, nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CustomerContactLog {self.customer_id} {self.contact_type}>'
+
+
+# ============================================================================
+# Customer Files (Receipts, Legal, Contracts, etc.)
+# ============================================================================
+
+class CustomerFile(db.Model):
+    __tablename__ = 'customer_files'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    file_type = db.Column(db.String(50), default='other')  # receipt, contract, legal, other
+    category = db.Column(db.String(100), nullable=True)  # custom folder/category
+    status = db.Column(db.String(50), default='active')  # active, archived
+    archived = db.Column(db.Boolean, default=False)
+
+    file_name = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    mime_type = db.Column(db.String(100), nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)
+
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CustomerFile {self.customer_id} {self.file_type}>'
+
+# ============================================================================
+# Customer Notes and Tasks
+# ============================================================================
+
+class CustomerNote(db.Model):
+    __tablename__ = 'customer_notes'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CustomerNote {self.id} Customer:{self.customer_id}>'
+
+class CustomerTask(db.Model):
+    __tablename__ = 'customer_tasks'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True) # Optional, can be a general task
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    due_date = db.Column(db.DateTime, nullable=True)
+    priority = db.Column(db.Enum('low', 'medium', 'high', name='task_priority_types'), default='medium')
+    status = db.Column(db.Enum('open', 'in_progress', 'completed', 'cancelled', name='task_status_types'), default='open')
+    
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime, nullable=True)
+
+    def __repr__(self):
+        return f'<CustomerTask {self.id} {self.title}>'
 
 
 # ============================================================================
@@ -419,7 +524,7 @@ class Delivery(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     order_number = db.Column(db.String(50), unique=True, nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
     courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
     pickup_point_id = db.Column(db.Integer, db.ForeignKey('pickup_points.id'), nullable=False)
     delivery_point_id = db.Column(db.Integer, db.ForeignKey('delivery_points.id'), nullable=False)
@@ -467,6 +572,10 @@ class Delivery(db.Model):
     # OTP Verification
     otp_code = db.Column(db.String(6), nullable=True)
     otp_verified = db.Column(db.Boolean, default=False)
+    
+    # WMS Support
+    current_bin_id = db.Column(db.Integer, db.ForeignKey('storage_bins.id', name='fk_delivery_bin_id'), nullable=True)
+    current_bin = db.relationship('StorageBin', backref='stored_deliveries')
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -905,8 +1014,26 @@ class StorageZone(db.Model):
     zone_type = db.Column(db.String(50), default='general') # general, cold_storage, secure
     capacity_limit = db.Column(db.Integer, nullable=True) # Max items/pallets
     
+    bins = db.relationship('StorageBin', backref='zone', lazy='dynamic')
+    
     def __repr__(self):
         return f'<StorageZone {self.name} in Warehouse {self.warehouse_id}>'
+
+class StorageBin(db.Model):
+    __tablename__ = 'storage_bins'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    zone_id = db.Column(db.Integer, db.ForeignKey('storage_zones.id'), nullable=False)
+    bin_index = db.Column(db.String(50), nullable=False) # e.g., A1-B2-01
+    
+    max_volume_cm3 = db.Column(db.Integer, nullable=True) # Capacity in cubic cm
+    current_volume_cm3 = db.Column(db.Integer, default=0)
+    
+    locations = db.relationship('ItemLocation', backref='bin', lazy='dynamic')
+    
+    def __repr__(self):
+        return f'<StorageBin {self.bin_index}>'
 
 class InventoryItem(db.Model):
     __tablename__ = 'inventory_items'
@@ -923,8 +1050,13 @@ class InventoryItem(db.Model):
     quantity_allocated = db.Column(db.Integer, default=0) # Reserved for orders
     quantity_available = db.Column(db.Integer, default=0) # on_hand - allocated
     
+    # Item Dimensions
+    volume_per_unit_cm3 = db.Column(db.Integer, default=0)
+    
     unit_value = db.Column(db.Numeric(10, 2), default=0.00)
     min_stock_level = db.Column(db.Integer, default=10) # Alert threshold
+    
+    locations = db.relationship('ItemLocation', backref='item', lazy='dynamic')
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -934,6 +1066,21 @@ class InventoryItem(db.Model):
     def __repr__(self):
         return f'<InventoryItem {self.sku} - {self.name}>'
 
+class ItemLocation(db.Model):
+    __tablename__ = 'item_locations'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('inventory_items.id'), nullable=False)
+    warehouse_id = db.Column(db.Integer, db.ForeignKey('warehouses.id'), nullable=False)
+    zone_id = db.Column(db.Integer, db.ForeignKey('storage_zones.id'), nullable=True)
+    bin_id = db.Column(db.Integer, db.ForeignKey('storage_bins.id'), nullable=True)
+    
+    quantity = db.Column(db.Integer, default=0)
+    
+    def __repr__(self):
+        return f'<ItemLocation Item:{self.item_id} Bin:{self.bin_id} Qty:{self.quantity}>'
+
 class StockMovement(db.Model):
     __tablename__ = 'stock_movements'
     __table_args__ = {'extend_existing': True}
@@ -942,6 +1089,7 @@ class StockMovement(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('inventory_items.id'), nullable=False)
     warehouse_id = db.Column(db.Integer, db.ForeignKey('warehouses.id'), nullable=False)
     zone_id = db.Column(db.Integer, db.ForeignKey('storage_zones.id'), nullable=True)
+    bin_id = db.Column(db.Integer, db.ForeignKey('storage_bins.id'), nullable=True)
     
     movement_type = db.Column(db.Enum('inbound', 'outbound', 'transfer', 'adjustment', name='movement_type_enum'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
@@ -1173,6 +1321,8 @@ class Expense(db.Model):
     
     # Linked to Courier (Contributor/Supplier)
     courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
+    # Optional link to Customer (Client-related expense)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
     
     # Breakdown for PCN 874 / Israeli Tax
     base_amount = db.Column(db.Numeric(10, 2), nullable=False) # Without VAT
@@ -1190,9 +1340,42 @@ class Expense(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     courier = db.relationship('Courier', backref=db.backref('agent_expenses', lazy='dynamic'))
+    customer = db.relationship('Customer', backref=db.backref('customer_expenses', lazy='dynamic'))
 
     def __repr__(self):
         return f'<Expense {self.id}: {self.description} - {self.total_amount}>'
+
+class FinanceDocument(db.Model):
+    __tablename__ = 'finance_documents'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+
+    doc_type = db.Column(db.String(100), nullable=False)  # expense_receipt, income_receipt, tax_report, debt_notice, etc.
+    authority = db.Column(db.String(100), nullable=True)  # e.g. tax_authority, national_insurance
+    submitted_by = db.Column(db.String(50), nullable=True)  # self, accountant, lawyer, other
+    entity_type = db.Column(db.String(50), nullable=True)  # sole_prop, llc, etc.
+    status = db.Column(db.String(50), default='archived')  # draft, submitted, accepted, rejected, overdue, archived
+
+    year = db.Column(db.Integer, nullable=True)
+    period = db.Column(db.String(50), nullable=True)  # monthly/quarterly/annual label
+    due_date = db.Column(db.Date, nullable=True)
+    filed_date = db.Column(db.Date, nullable=True)
+    amount_due = db.Column(db.Numeric(12, 2), nullable=True)
+
+    file_name = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    mime_type = db.Column(db.String(100), nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)
+
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<FinanceDocument {self.id} {self.doc_type} {self.title}>'
 
 class TrafficScore(db.Model):
     __tablename__ = 'traffic_scores'

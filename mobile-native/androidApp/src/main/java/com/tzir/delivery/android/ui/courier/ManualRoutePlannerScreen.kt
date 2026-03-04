@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -44,8 +45,9 @@ fun ManualRoutePlannerScreen(
     var stops by remember { mutableStateOf(mutableStateListOf<Map<String, Any?>>()) }
     var isLoading by remember { mutableStateOf(false) }
     var isSearching by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    val toast = LocalToast.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Clear suggestions when search is cleared
     LaunchedEffect(searchAddress) {
@@ -62,6 +64,10 @@ fun ManualRoutePlannerScreen(
     }
 
     PremiumBackground {
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = Color.Transparent
+        ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -157,7 +163,7 @@ fun ManualRoutePlannerScreen(
                                                     stops.add(newStop)
                                                     searchAddress = ""
                                                 } else {
-                                                    toast.show("לא ניתן היה לאמת את הכתובת")
+                                                    scope.launch { snackbarHostState.showSnackbar("לא ניתן היה לאמת את הכתובת") }
                                                 }
                                                 isLoading = false
                                             }
@@ -262,11 +268,12 @@ fun ManualRoutePlannerScreen(
                         onClick = { onStartNavigation(stops.toList()) },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         enabled = stops.isNotEmpty() && !isLoading,
-                        color = PrimaryIndigo
+                        containerColor = PrimaryTurquoise
                     )
                 }
             }
         }
+        } // end Scaffold
     }
 }
 

@@ -70,6 +70,14 @@ function hexToHSL(hex: string): string {
     return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
+function lightenHex(hex: string, percent: number): string {
+    hex = hex.replace("#", "");
+    const r = Math.min(255, Math.round(parseInt(hex.substring(0, 2), 16) + (255 - parseInt(hex.substring(0, 2), 16)) * percent / 100));
+    const g = Math.min(255, Math.round(parseInt(hex.substring(2, 4), 16) + (255 - parseInt(hex.substring(2, 4), 16)) * percent / 100));
+    const b = Math.min(255, Math.round(parseInt(hex.substring(4, 6), 16) + (255 - parseInt(hex.substring(4, 6), 16)) * percent / 100));
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
 function ColorSwatch({ color, label, name, value, onChange }: {
     color: string; label: string; name: string; value: string;
     onChange: (name: string, value: string) => void;
@@ -129,12 +137,24 @@ export default function BrandingPage() {
         root.style.setProperty("--amber", c.primaryColor);
         root.style.setProperty("--amber-dark", c.primaryDark);
         root.style.setProperty("--amber-light", c.primaryLight);
+        root.style.setProperty("--amber-dim", c.primaryColor + "1a");
+        root.style.setProperty("--amber-glow", c.primaryColor + "33");
         root.style.setProperty("--primary", hexToHSL(c.primaryColor));
         root.style.setProperty("--accent", hexToHSL(c.accentColor));
         root.style.setProperty("--ring", hexToHSL(c.primaryColor));
-        root.style.setProperty("--navy-950", c.navyDark);
-        root.style.setProperty("--navy-900", c.navyMid);
-        root.style.setProperty("--navy-700", c.navyLight);
+        if (c.navyDark) {
+            root.style.setProperty("--navy-950", c.navyDark);
+            root.style.setProperty("--navy-900", c.navyMid || lightenHex(c.navyDark, 5));
+            root.style.setProperty("--navy-800", lightenHex(c.navyDark, 10));
+            root.style.setProperty("--navy-700", c.navyLight || lightenHex(c.navyDark, 15));
+            root.style.setProperty("--navy-600", lightenHex(c.navyDark, 25));
+            root.style.setProperty("--navy-400", lightenHex(c.navyDark, 45));
+            root.style.setProperty("--navy-200", lightenHex(c.navyDark, 65));
+            root.style.setProperty("--navy-100", lightenHex(c.navyDark, 80));
+            root.style.setProperty("--foreground", hexToHSL(c.navyDark));
+            root.style.setProperty("--primary-foreground", hexToHSL(c.navyDark));
+            root.style.setProperty("--accent-foreground", hexToHSL(c.navyDark));
+        }
         root.style.setProperty("--success", hexToHSL(c.successColor));
         root.style.setProperty("--destructive", hexToHSL(c.destructiveColor));
         root.style.setProperty("--radius", `${c.borderRadius}px`);
@@ -227,9 +247,9 @@ export default function BrandingPage() {
 
             {/* ── Live Preview Banner ── */}
             {hasChanges && (
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
-                    <Eye className="w-5 h-5 text-amber-600" />
-                    <p className="text-sm text-amber-800 font-medium">
+                <div className="bg-gradient-to-r from-brand-light to-brand-dim border border-brand-dim rounded-xl p-4 flex items-center gap-3">
+                    <Eye className="w-5 h-5 text-brand" />
+                    <p className="text-sm text-brand-dark font-medium">
                         מצב תצוגה מקדימה פעיל — השינויים מוצגים בזמן אמת.  שמור כדי להחיל לצמיתות.
                     </p>
                 </div>

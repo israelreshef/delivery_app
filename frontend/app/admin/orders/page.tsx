@@ -3,17 +3,15 @@
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Filter, ChevronLeft, ChevronRight, Eye, Truck, MapPin } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import styles from "./orders-list.module.css";
 
 export default function AdminOrders() {
     const { user } = useAuth();
@@ -107,12 +105,12 @@ export default function AdminOrders() {
     };
 
     const getStatusBadge = (status: string) => {
-        const styles: Record<string, string> = {
-            pending: "bg-yellow-100 text-yellow-800",
-            assigned: "bg-brand/20 text-foreground",
-            picked_up: "bg-purple-100 text-purple-800",
-            delivered: "bg-green-100 text-green-800",
-            cancelled: "bg-red-100 text-red-800",
+        const styleMap: Record<string, string> = {
+            pending: styles.badgePending,
+            assigned: styles.badgeAssigned,
+            picked_up: styles.badgePickedUp,
+            delivered: styles.badgeDelivered,
+            cancelled: styles.badgeCancelled,
         };
         const labels: Record<string, string> = {
             pending: "ממתין",
@@ -122,147 +120,145 @@ export default function AdminOrders() {
             cancelled: "בוטל",
         };
         return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || "bg-gray-100 text-gray-800"}`}>
+            <span className={`${styles.badge} ${styleMap[status] || styles.badgePending}`}>
                 {labels[status] || status}
             </span>
         );
     };
 
     return (
-        <div className="p-8 space-y-6 bg-slate-50 min-h-screen" dir="rtl">
-            <header className="flex justify-between items-center">
+        <div className={styles.listContainer}>
+            <header className={styles.headerArea}>
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">ניהול הזמנות</h1>
-                    <p className="text-slate-500">צפייה וניהול כל ההזמנות במערכת</p>
+                    <h1 className={styles.title}>ניהול הזמנות</h1>
+                    <p className={styles.subtitle}>צפייה וניהול כל ההזמנות במערכת</p>
                 </div>
-                <Button onClick={fetchOrders} variant="outline">רענן נתונים</Button>
+                <button onClick={fetchOrders} className={styles.btnPrimary}>
+                    רענן נתונים
+                </button>
             </header>
 
-            <Card className="border-none shadow-md">
-                <CardHeader>
-                    <div className="flex gap-4 items-center">
-                        <div className="relative flex-1 max-w-sm">
-                            <Search className="absolute right-3 top-2.5 h-4 w-4 text-slate-400" />
-                            <Input
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeader}>
+                    <h2 className={styles.tableTitle}>רשימת הזמנות</h2>
+
+                    <div className={styles.filtersArea}>
+                        <div className={styles.searchBox}>
+                            <Search className={styles.searchIcon} />
+                            <input
+                                type="text"
                                 placeholder="חיפוש לפי מספר הזמנה או שם..."
-                                className="pr-9"
+                                className={styles.searchInput}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Filter className="h-4 w-4 text-slate-500" />
-                            <select
-                                className="border rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand"
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                aria-label="סנן לפי סטטוס"
-                                title="סנן לפי סטטוס"
-                            >
-                                <option value="all">כל הסטטוסים</option>
-                                <option value="pending">ממתין</option>
-                                <option value="assigned">בטיפול</option>
-                                <option value="delivered">הושלם</option>
-                                <option value="cancelled">בוטל</option>
-                            </select>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="text-right">מס' הזמנה</TableHead>
-                                    <TableHead className="text-right">לקוח</TableHead>
-                                    <TableHead className="text-right">כתובת איסוף</TableHead>
-                                    <TableHead className="text-right">כתובת יעד</TableHead>
-                                    <TableHead className="text-right">סטטוס</TableHead>
-                                    <TableHead className="text-right">תאריך</TableHead>
-                                    <TableHead className="text-right">מחיר</TableHead>
-                                    <TableHead className="text-right">פעולות</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {loading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={8} className="text-center py-10">טוען נתונים...</TableCell>
-                                    </TableRow>
-                                ) : orders.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={8} className="text-center py-10 text-slate-500">לא נמצאו הזמנות תואמות לחיפוש</TableCell>
-                                    </TableRow>
-                                ) : (
-                                    orders.map((order) => (
-                                        <TableRow key={order.id}>
-                                            <TableCell className="font-medium">#{order.id}</TableCell>
-                                            <TableCell>{order.customer_name || "אורח"}</TableCell>
-                                            <TableCell className="max-w-[200px] truncate" title={order.pickup_address}>
-                                                {order.pickup_address}
-                                            </TableCell>
-                                            <TableCell className="max-w-[200px] truncate" title={order.delivery_address}>
-                                                {order.delivery_address}
-                                            </TableCell>
-                                            <TableCell>{getStatusBadge(order.status)}</TableCell>
-                                            <TableCell>{format(new Date(order.created_at), "dd/MM/yy HH:mm")}</TableCell>
-                                            <TableCell>₪{order.total || "—"}</TableCell>
-                                            <TableCell>
-                                                <div className="flex gap-2">
-                                                    <Link href={`/tracking/${order.id}`}>
-                                                        <Button variant="ghost" size="icon" title="צפה בפרטים">
-                                                            <Eye className="w-4 h-4" />
-                                                        </Button>
-                                                    </Link>
-                                                    {order.status === 'pending' && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="text-brand hover:text-brand hover:bg-brand-dark/10"
-                                                            title="שבץ שליח"
-                                                            onClick={() => openAssignDialog(order.id)}
-                                                        >
-                                                            <Truck className="w-4 h-4" />
-                                                        </Button>
-                                                    )}
-                                                    <a href={`https://waze.com/ul?q=${encodeURIComponent(order.delivery_address)}&navigate=yes`} target="_blank" rel="noreferrer" title="נווט ב-Waze">
-                                                        <Button variant="ghost" size="icon" title="נווט ליעד (Waze)">
-                                                            <MapPin className="w-4 h-4 text-blue-500" />
-                                                        </Button>
-                                                    </a>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
 
-                    <div className="flex justify-center gap-2 mt-4">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setPage(p => Math.max(1, p - 1))}
-                            disabled={page === 1 || loading}
+                        <select
+                            className={styles.selectInput}
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            aria-label="סנן לפי סטטוס"
+                            title="סנן לפי סטטוס"
                         >
-                            <ChevronRight className="w-4 h-4" /> הקודם
-                        </Button>
-                        <span className="flex items-center px-4 text-sm text-slate-600">עמוד {page}</span>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setPage(p => p + 1)}
-                            disabled={orders.length < 20 || loading}
-                        >
-                            הבא <ChevronLeft className="w-4 h-4" />
-                        </Button>
+                            <option value="all">כל הסטטוסים</option>
+                            <option value="pending">ממתין</option>
+                            <option value="assigned">בטיפול</option>
+                            <option value="delivered">הושלם</option>
+                            <option value="cancelled">בוטל</option>
+                        </select>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+
+                <table className={styles.customTable}>
+                    <thead>
+                        <tr>
+                            <th>מס' הזמנה</th>
+                            <th>לקוח</th>
+                            <th>כתובת איסוף</th>
+                            <th>כתובת יעד</th>
+                            <th>סטטוס</th>
+                            <th>תאריך</th>
+                            <th>מחיר</th>
+                            <th>פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {loading ? (
+                            <tr>
+                                <td colSpan={8} className={styles.emptyState}>טוען נתונים...</td>
+                            </tr>
+                        ) : orders.length === 0 ? (
+                            <tr>
+                                <td colSpan={8} className={styles.emptyState}>לא נמצאו הזמנות תואמות לחיפוש</td>
+                            </tr>
+                        ) : (
+                            orders.map((order) => (
+                                <tr key={order.id}>
+                                    <td className={styles.orderId}>#{order.id}</td>
+                                    <td>{order.customer_name || "אורח"}</td>
+                                    <td className={styles.truncateCell} title={order.pickup_address}>
+                                        {order.pickup_address}
+                                    </td>
+                                    <td className={styles.truncateCell} title={order.delivery_address}>
+                                        {order.delivery_address}
+                                    </td>
+                                    <td>{getStatusBadge(order.status)}</td>
+                                    <td className={styles.subText}>{format(new Date(order.created_at), "dd/MM/yy HH:mm")}</td>
+                                    <td className={styles.fontSemiBold}>₪{order.total || "—"}</td>
+                                    <td>
+                                        <div className={styles.actionsContainer}>
+                                            <Link href={`/tracking/${order.id}`} className={styles.btnAction} title="צפה בפרטים">
+                                                <Eye size={16} />
+                                            </Link>
+                                            {order.status === 'pending' && (
+                                                <button
+                                                    className={`${styles.btnAction} ${styles.btnActionBrand}`}
+                                                    title="שבץ שליח"
+                                                    onClick={() => openAssignDialog(order.id)}
+                                                >
+                                                    <Truck size={16} />
+                                                </button>
+                                            )}
+                                            <a
+                                                href={`https://waze.com/ul?q=${encodeURIComponent(order.delivery_address)}&navigate=yes`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className={`${styles.btnAction} ${styles.btnActionBlue}`}
+                                                title="נווט ליעד (Waze)"
+                                            >
+                                                <MapPin size={16} />
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+
+                <div className={styles.pagination}>
+                    <button
+                        className={styles.btnAction}
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1 || loading}
+                    >
+                        <ChevronRight size={16} className={styles.iconRight} /> הקודם
+                    </button>
+                    <span className={styles.pageText}>עמוד {page}</span>
+                    <button
+                        className={styles.btnAction}
+                        onClick={() => setPage(p => p + 1)}
+                        disabled={orders.length < 20 || loading}
+                    >
+                        הבא <ChevronLeft size={16} className={styles.iconLeft} />
+                    </button>
+                </div>
+            </div>
 
             {/* Courier Assignment Dialog */}
             <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
-                <DialogContent className="sm:max-w-md" dir="rtl">
+                <DialogContent className={`sm:max-w-md ${styles.dialogContent}`} dir="rtl">
                     <DialogHeader>
                         <DialogTitle>שיבוץ שליח להזמנה #{selectedOrderId}</DialogTitle>
                     </DialogHeader>

@@ -1,0 +1,180 @@
+.settingsContainer {
+    background-color: #0B0E14;
+    color: #E2E8F0;
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    direction: rtl;
+}
+
+.headerArea {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.headerIconWrapper {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    padding: 0.75rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: #94A3B8;
+    font-size: 1rem;
+    margin-top: 0.25rem;
+}
+
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .cardGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .cardGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.settingsCard {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.settingsCard:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.cardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.iconContainer {
+    padding: 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.settingsCard:hover .iconContainer {
+    transform: scale(1.1);
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #F8FAFC;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.settingsCard:hover .cardTitle {
+    color: #60A5FA;
+}
+
+.cardDescription {
+    font-size: 0.875rem;
+    color: #94A3B8;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.cardAction {
+    margin-top: auto;
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    color: #94A3B8;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.settingsCard:hover .cardAction {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60A5FA;
+}
+
+/* Quick Actions Card */
+.quickActionsCard {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.quickActionsTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #F8FAFC;
+    margin-bottom: 1.25rem;
+}
+
+.quickActionsGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.actionBtn {
+    background: transparent;
+    color: #E2E8F0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #60A5FA;
+}

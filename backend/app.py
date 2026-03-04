@@ -1,4 +1,4 @@
-from gevent import monkey
+﻿from gevent import monkey
 monkey.patch_all()
 
 from flask import Flask, render_template, request, jsonify
@@ -199,6 +199,12 @@ def create_app():
     
     from routes.archive import archive_bp
     app.register_blueprint(archive_bp, url_prefix='/api/archive')
+
+    from routes.tasks import tasks_bp
+    app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
+    
+    from routes.google_auth import google_bp
+    app.register_blueprint(google_bp, url_prefix='/api')
     
     # Missing blueprints
     try:
@@ -301,11 +307,11 @@ def create_app():
                          # Run the seeding logic directly
                          create_demo_users_logic()
                      except Exception as s_err:
-                         print(f"⚠️ Auto-seeding failed: {s_err}")
+                         print(f"ג ן¸ Auto-seeding failed: {s_err}")
                          import traceback
                          traceback.print_exc()
         except Exception as e:
-            print(f"⚠️ Database setup warning: {e}")
+            print(f"ג ן¸ Database setup warning: {e}")
             print("Continuing application startup...")
 
 
@@ -347,8 +353,8 @@ def create_app():
         db.session.commit()
         
         print(f"API Key Created for '{name}'")
-        print(f"🔑 Key: {full_key}")
-        print("⚠️  SAVE THIS KEY! It cannot be retrieved later.")
+        print(f"נ”‘ Key: {full_key}")
+        print("ג ן¸  SAVE THIS KEY! It cannot be retrieved later.")
 
     @app.cli.command("seed-perf")
     def seed_performance():
@@ -358,7 +364,7 @@ def create_app():
         
         print("Starting High-Performance Seeding (10k Couriers)...")
         if User.query.count() > 5000:
-            print("⚠️ Database already has significant data. Aborting.")
+            print("ג ן¸ Database already has significant data. Aborting.")
             return
 
         users = []
@@ -390,4 +396,6 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', '5000'))
+    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=port)
+

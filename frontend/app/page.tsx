@@ -15,7 +15,7 @@ export default function LandingPage() {
             {/* Transparent Header Overlay */}
             <header className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center max-w-7xl mx-auto w-full backdrop-blur-sm">
                 <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-amber/30">T</div>
+                    <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand">T</div>
                     <span className="text-2xl font-bold tracking-tighter text-white">TZIR</span>
                 </div>
                 <div className="space-x-4 space-x-reverse">

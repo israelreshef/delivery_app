@@ -20,8 +20,8 @@ def register_socket_events(socketio):
         
         # 2. Validate Token
         if not token:
-             print(f'❌ Connection Rejected: No token provided (SID: {request.sid})')
-             return False # Disconnects the client
+             print(f'❌ Connection Rejected: No token provided (SID: {request.sid}).')
+             return False # Drop connection immediately
              
         try:
             from flask_jwt_extended import decode_token
@@ -181,7 +181,7 @@ def register_socket_events(socketio):
         }
         
         # 1. Send to Admins (Monitoring)
-        emit('courier_location', location_data, room='admin_room')
+        emit('courier_location_update', location_data, room='admin_room')
         
         # 2. Update specific delivery tracking users
         # Clients (Customer/Admin) looking at a specific delivery should join room 'delivery_<id>'

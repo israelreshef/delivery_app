@@ -165,7 +165,7 @@ export function LoginForm({ role }: LoginFormProps) {
 
                     <Button
                         type="submit"
-                        className={`w-full h-12 text-lg font-bold shadow-lg shadow-amber/20 hover:shadow-brand/90/30 transition-all bg-gradient-to-r ${roleData.gradient}`}
+                        className={`w-full h-12 text-lg font-bold shadow-lg shadow-brand hover:shadow-brand-lg transition-all bg-gradient-to-r ${roleData.gradient}`}
                         disabled={isLoading}
                     >
                         {isLoading ? (

@@ -67,17 +67,17 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
         <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row" dir="rtl">
 
             {/* Desktop Right Sidebar */}
-            <aside className="hidden md:flex flex-col w-64 bg-white border-l h-screen sticky top-0 z-40 shadow-sm">
-                <div className="p-6 border-b flex items-center justify-center">
-                    <h1 className="text-2xl font-black text-brand tracking-tighter">TZIR<span className="text-slate-400">.</span></h1>
+            <aside className="hidden md:flex flex-col w-64 bg-navy-950 border-l border-navy-900 h-screen sticky top-0 z-40 shadow-sm text-white">
+                <div className="p-6 border-b border-navy-900 flex items-center justify-center">
+                    <h1 className="text-2xl font-black text-brand tracking-tighter">TZIR<span className="text-navy-200">.</span></h1>
                 </div>
 
                 <div className="p-4 flex flex-col gap-2 flex-1">
-                    <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-lg mb-4">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-navy-900 rounded-lg mb-4">
                         <div className={cn("w-3 h-3 rounded-full", isOnline ? "bg-green-500" : "bg-red-500 shadow-sm")} />
                         <div className="flex-1">
-                            <p className="text-sm font-bold text-slate-700">{user?.username || 'שליח'}</p>
-                            <p className="text-xs text-slate-500">{isOnline ? 'זמין לקבלת הצעות' : 'לא זמין כרגע'}</p>
+                            <p className="text-sm font-bold text-white">{user?.username || 'שליח'}</p>
+                            <p className="text-xs text-navy-200">{isOnline ? 'זמין לקבלת הצעות' : 'לא זמין כרגע'}</p>
                         </div>
                     </div>
 
@@ -91,20 +91,20 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group",
                                     isActive
-                                        ? "bg-brand text-navy-950 shadow-md shadow-amber/30"
-                                        : "text-slate-600 hover:bg-slate-50 hover:text-brand"
+                                        ? "bg-brand text-navy-950 shadow-md shadow-brand"
+                                        : "text-navy-200 hover:bg-navy-900 hover:text-white"
                                 )}
                             >
-                                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-400 group-hover:text-brand")} />
+                                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-navy-200 group-hover:text-brand")} />
                                 <span className="font-medium text-sm">{item.label}</span>
                             </Link>
                         );
                     })}
                 </div>
 
-                <div className="p-4 border-t space-y-4">
+                <div className="p-4 border-t border-navy-900 space-y-4">
                     <div className="flex items-center justify-between px-2">
-                        <Label htmlFor="status-mode" className="text-sm text-slate-600">מצב זמינות</Label>
+                        <Label htmlFor="status-mode" className="text-sm text-navy-200">מצב זמינות</Label>
                         <Switch
                             id="status-mode"
                             checked={isOnline}
@@ -115,7 +115,7 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
                     <Button
                         onClick={logout}
                         variant="ghost"
-                        className="w-full text-red-500 hover:text-red-700 hover:bg-red-50 justify-start gap-2"
+                        className="w-full text-red-400 hover:text-red-300 hover:bg-red-950/30 justify-start gap-2"
                     >
                         <LogOut className="w-4 h-4" /> התנתק
                     </Button>

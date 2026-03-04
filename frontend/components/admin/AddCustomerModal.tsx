@@ -18,7 +18,6 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -29,19 +28,57 @@ import { Plus, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
 
-const formSchema = z.object({
-    username: z.string().min(3, "שם משתמש חייב להכיל לפחות 3 תווים"),
-    password: z.string().min(6, "סיסמה חייבת להכיל לפחות 6 תווים"),
-    full_name: z.string().min(2, "שם מלא חייב להכיל לפחות 2 תווים"),
-    company_name: z.string().optional(),
-    business_id: z.string().optional(), // H.P.
-    contact_person: z.string().optional(),
-    email: z.string().email("כתובת אימייל לא תקינה"),
-    phone: z.string().regex(/^05\d{8}$/, "מספר טלפון לא תקין"),
-    billing_address: z.string().optional(),
-    credit_limit: z.any().optional(),
-    is_business: z.boolean(),
-})
+const formSchema = z
+    .object({
+        has_account: z.boolean(),
+        username: z.string().optional(),
+        password: z.string().optional(),
+        full_name: z.string().min(2, "שם מלא חייב להכיל לפחות 2 תווים"),
+        company_name: z.string().optional(),
+        business_id: z.string().optional(),
+        contact_person: z.string().optional(),
+        tax_id: z.string().optional(),
+        customer_type: z.string().optional(),
+        vat_status: z.string().optional(),
+        payment_terms: z.string().optional(),
+        email: z.string().optional(),
+        phone: z.string().optional(),
+        billing_address: z.string().optional(),
+        credit_limit: z.any().optional(),
+        is_business: z.boolean(),
+    })
+    .superRefine((data, ctx) => {
+        if (data.has_account) {
+            if (!data.username || data.username.length < 3) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ["username"],
+                    message: "שם משתמש חייב להכיל לפחות 3 תווים",
+                })
+            }
+            if (!data.password || data.password.length < 6) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ["password"],
+                    message: "סיסמה חייבת להכיל לפחות 6 תווים",
+                })
+            }
+            if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ["email"],
+                    message: "כתובת אימייל לא תקינה",
+                })
+            }
+            if (data.phone && !/^05\d{8}$/.test(data.phone)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ["phone"],
+                    message: "מספר טלפון לא תקין",
+                })
+            }
+        }
+    })
 
 interface AddCustomerModalProps {
     onSuccess: () => void
@@ -54,12 +91,17 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            has_account: true,
             username: "",
             password: "",
             full_name: "",
             company_name: "",
             business_id: "",
             contact_person: "",
+            tax_id: "",
+            customer_type: "private",
+            vat_status: "authorized_dealer",
+            payment_terms: "net_30",
             email: "",
             phone: "",
             billing_address: "",
@@ -68,25 +110,27 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
         },
     })
 
-    // Watch is_business to conditionally show fields
     const isBusiness = form.watch("is_business")
+    const hasAccount = form.watch("has_account")
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true)
         try {
-            const res = await api.post('/customers', values)
-
-            if (res.status !== 201 && res.status !== 200) {
-                // Should be redundant via axios interceptor rejections usually, but api wrapper might return response.
-                // Actually axios throws on error status by default.
+            const payload: any = { ...values }
+            payload.customer_type = values.is_business ? "business" : values.customer_type || "private"
+            if (!values.has_account) {
+                delete payload.username
+                delete payload.password
+                delete payload.email
+                // NOTE: phone is kept even without account so it can be saved on the customer
             }
-
+            await api.post("/customers", payload)
             toast.success("הלקוח נוצר בהצלחה!")
             setOpen(false)
             form.reset()
             onSuccess()
         } catch (error: any) {
-            toast.error(error.response?.data?.error || error.message || "Failed to create customer")
+            toast.error(error.response?.data?.error || error.message || "שגיאה ביצירת לקוח")
         } finally {
             setLoading(false)
         }
@@ -110,6 +154,20 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="has_account"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-x-reverse rounded-md border p-4 bg-muted/50">
+                                    <FormControl>
+                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none mr-2">
+                                        <FormLabel>צור חשבון כניסה ללקוח (אופציונלי)</FormLabel>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}
@@ -117,48 +175,45 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                             render={({ field }) => (
                                 <FormItem className="flex flex-row items-start space-x-3 space-x-reverse rounded-md border p-4 bg-muted/50">
                                     <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
+                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                                     </FormControl>
                                     <div className="space-y-1 leading-none mr-2">
-                                        <FormLabel>
-                                            לקוח עסקי / מוסדי
-                                        </FormLabel>
+                                        <FormLabel>לקוח עסקי / מוסדי</FormLabel>
                                     </div>
                                 </FormItem>
                             )}
                         />
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>שם משתמש (למערכת)</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="user123" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>סיסמה זמנית</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" placeholder="******" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                        {hasAccount && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="username"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>שם משתמש (למערכת)</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="user123" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>סיסמה זמנית</FormLabel>
+                                            <FormControl>
+                                                <Input type="password" placeholder="******" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
@@ -189,19 +244,83 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                             />
                         </div>
 
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>אימייל</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="client@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {hasAccount && (
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>אימייל</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="client@example.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="tax_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>מס' עוסק / ח.פ</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="512345678" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="customer_type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>סוג לקוח</FormLabel>
+                                        <FormControl>
+                                            <select {...field} className="w-full border rounded-md px-3 py-2 text-sm">
+                                                <option value="private">פרטי</option>
+                                                <option value="business">עסקי</option>
+                                            </select>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="vat_status"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>סטטוס מע״מ</FormLabel>
+                                        <FormControl>
+                                            <select {...field} className="w-full border rounded-md px-3 py-2 text-sm">
+                                                <option value="exempt">פטור</option>
+                                                <option value="authorized_dealer">עוסק מורשה</option>
+                                                <option value="company">חברה</option>
+                                                <option value="standard">רגיל</option>
+                                            </select>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="payment_terms"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>תנאי תשלום</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="net_30" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         {isBusiness && (
                             <div className="space-y-4 border-t pt-4 mt-4">
@@ -214,7 +333,7 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                                             <FormItem>
                                                 <FormLabel>שם חברה רשמי</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="שם החברה בע''מ" {...field} />
+                                                    <Input placeholder="שם החברה בע״מ" {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -279,7 +398,9 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                         )}
 
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>ביטול</Button>
+                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                                ביטול
+                            </Button>
                             <Button type="submit" disabled={loading}>
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 צור לקוח

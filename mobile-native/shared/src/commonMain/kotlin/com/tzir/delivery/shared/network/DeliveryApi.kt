@@ -144,8 +144,7 @@ class DeliveryApiImpl(
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("lat" to lat, "lng" to lng))
             }
-            val body: Map<String, Any>? = try { response.body() } catch (e: Exception) { null }
-            MapsResult(success = response.status.value in 200..299, data = body ?: emptyMap())
+            MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {
             e.printStackTrace()
             MapsResult(success = false)
@@ -339,8 +338,7 @@ class DeliveryApiImpl(
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("lat" to lat, "lng" to lng, "stops" to stops))
             }
-            val body: Map<String, Any>? = try { response.body() } catch (e: Exception) { null }
-            MapsResult(success = response.status.value in 200..299, data = body ?: emptyMap())
+            MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {
             e.printStackTrace()
             MapsResult(success = false)
@@ -376,8 +374,7 @@ class DeliveryApiImpl(
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("vibe" to vibe))
             }
-            val body: Map<String, Any>? = try { response.body() } catch (e: Exception) { null }
-            MapsResult(success = response.status.value in 200..299, data = body ?: emptyMap())
+            MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {
             e.printStackTrace()
             MapsResult(success = false)
@@ -389,8 +386,7 @@ class DeliveryApiImpl(
             val response = client.get("$baseUrl/api/couriers/shift/status") {
                 contentType(ContentType.Application.Json)
             }
-            val body: Map<String, Any>? = try { response.body() } catch (e: Exception) { null }
-            MapsResult(success = response.status.value in 200..299, data = body ?: emptyMap())
+            MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {
             e.printStackTrace()
             MapsResult(success = false)

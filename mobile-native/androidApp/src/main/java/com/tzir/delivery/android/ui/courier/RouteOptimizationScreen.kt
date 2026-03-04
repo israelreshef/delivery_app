@@ -114,17 +114,11 @@ fun RouteOptimizationScreen(repository: CourierRepository, onBack: () -> Unit, o
                                 val lng = LocationManager.instance?.currentLocation?.value?.second ?: 34.7818
                                 
                                 val res = repository.optimizeRoute(lat, lng)
-                                if (res != null && res["optimized_route"] != null) {
-                                    val points = res["optimized_route"] as? List<Map<String, Any>>
-                                    if (points != null && points.isNotEmpty()) {
-                                        optimizedPoints = points
-                                        step = 2
-                                    } else {
-                                        errorMessage = "לא נמצאו נקודות למסלול בשרת"
-                                        step = 0
-                                    }
+                                if (res != null) {
+                                    // Route optimized successfully - show results tab
+                                    step = 2
                                 } else {
-                                    errorMessage = res?.get("message") as? String ?: "חישוב המסלול נכשל"
+                                    errorMessage = "חישוב המסלול נכשל"
                                     step = 0
                                 }
                             }
