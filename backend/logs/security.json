@@ -233,3 +233,5 @@
 {"timestamp": "2026-03-03T20:46:25.305340", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
 {"timestamp": "2026-03-03T21:22:54.048024", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
 {"timestamp": "2026-03-04T05:01:44.006313", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-04T08:35:34.583424", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}
+{"timestamp": "2026-03-04T08:39:32.942748", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User admin logged in successfully"}

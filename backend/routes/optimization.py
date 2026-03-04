@@ -106,8 +106,22 @@ def optimize_fleet(current_user):
         if not deliveries:
             return jsonify({'message': 'No deliveries to optimize.', 'routes': []}), 200
             
-        # Example delivery format expected by RouteOptimizer:
-        # { 'id': str, 'lat': num, 'lng': num, ... }
+        # Map couriers based on input, or fetch all available if not specified
+        courier_ids = data.get('courier_ids', [])
+        couriers = []
+        if courier_ids:
+            couriers_db = Courier.query.filter(Courier.id.in_(courier_ids)).all()
+            for c in couriers_db:
+                couriers.append({
+                    'id': c.id,
+                    'vehicle_type': c.vehicle_type,
+                    'capacity': c.capacity or 30
+                })
+        else:
+            # Fallback to gen num_vehicles if no IDs provided
+            for i in range(num_vehicles):
+                couriers.append({'id': i, 'vehicle_type': 'car', 'capacity': 30})
+                
         # Let's ensure coordinates are present
         valid_destinations = [d for d in deliveries if d.get('lat') is not None and d.get('lng') is not None]
         
@@ -115,12 +129,39 @@ def optimize_fleet(current_user):
              return jsonify({'error': 'Missing coordinates in deliveries payload.'}), 400
              
         # Run Optimization Engine (VRP)
-        optimization_result = RouteOptimizer.optimize_fleet(depot_lat, depot_lng, valid_destinations, num_vehicles)
+        optimization_result = RouteOptimizer.optimize_fleet(depot_lat, depot_lng, valid_destinations, couriers=couriers)
         
         return jsonify(optimization_result), 200
         
     except Exception as e:
         logging.error(f"Fleet Optimization Error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+# ============================================================================
+# Dynamic Route Handlers
+# ============================================================================
+
+@optimization_bp.route('/recalculate/<int:courier_id>', methods=['POST'])
+@token_required
+@role_required(['admin', 'operations_manager'])
+def recalculate_courier_route(current_user, courier_id):
+    """
+    Forces a route recalculation for a specific courier by triggering a refresh event.
+    """
+    try:
+        from models import Courier
+        courier = Courier.query.get_or_404(courier_id)
+        
+        from extensions import socketio
+        if socketio:
+            socketio.emit('route_updated', {
+                'message': 'המסלול שלך חושב מחדש עקב שינויים במערכת.',
+                'action': 'refresh'
+            }, room=f"courier_{courier_id}")
+            
+        return jsonify({'success': True, 'message': 'Recalculation triggered successfully.'}), 200
+    except Exception as e:
+        logging.error(f"Error triggering recalculation: {e}")
         return jsonify({'error': str(e)}), 500
 
 # ============================================================================

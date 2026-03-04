@@ -617,10 +617,24 @@ def delete_order(current_user, order_id):
     """מחיקת הזמנה"""
     try:
         delivery = Delivery.query.get_or_404(order_id)
+        courier_id = delivery.courier_id
+        order_num = delivery.order_number
         
         # מחק את כל הרשומות הקשורות (CASCADE ידאג לזה אוטומטית)
         db.session.delete(delivery)
         db.session.commit()
+        
+        # Notify courier if order was removed from their route
+        if courier_id:
+            from extensions import socketio
+            if socketio:
+                try:
+                    socketio.emit('route_updated', {
+                        'message': f'הזמנה {order_num} הוסרה מהמסלול שלך. המסלול מחושב מחדש.',
+                        'action': 'refresh'
+                    }, room=f"courier_{courier_id}")
+                except Exception as e:
+                    logging.warning(f"Failed to send socket notification on delete: {e}")
         
         # AUDIT LOG
         from utils.audit import log_audit
@@ -629,7 +643,7 @@ def delete_order(current_user, order_id):
             user_id=current_user.id,
             resource_type='Delivery',
             resource_id=order_id,
-            details=f"Deleted order {delivery.order_number}",
+            details=f"Deleted order {order_num}",
             status='SUCCESS'
         )
 
