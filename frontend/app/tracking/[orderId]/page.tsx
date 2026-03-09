@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Copy, Phone, User, Package, MapPin, Clock, CheckCircle2, Circle } from "lucide-react";
+import { Copy, Phone, User, Package, MapPin, Clock, CheckCircle2, Circle, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -210,6 +210,22 @@ export default function TrackingPage() {
                             </div>
                         </div>
                     )}
+                </div>
+
+                {/* Trust Indicators (Psychology UX) */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap justify-between items-center text-sm text-slate-600 gap-4">
+                    <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                        <span>מעקב בזמן אמת</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-brand" />
+                        <span>משלוח מאובטח</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-blue-500" />
+                        <span>שליח מאומת ע"י TZIR</span>
+                    </div>
                 </div>
 
                 {/* Details Grid */}

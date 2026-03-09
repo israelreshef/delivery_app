@@ -35,7 +35,7 @@ def seed_database():
         # Import models from app module where they are already loaded
         from app import User, Courier, Customer, Delivery, Lead, DeliveryStatus, Address, PickupPoint, DeliveryPoint, Pricing, Invoice
         
-        print("🌱 Starting Data Seeding...")
+        print(" Starting Data Seeding...")
         
         # 1. Clear existing data (Optional: comment out if you want to keep)
         # db.drop_all()
@@ -46,7 +46,7 @@ def seed_database():
             admin = User(username='admin', email='admin@tzir.com', phone='0500000000', user_type='admin', admin_role='super_admin')
             admin.set_password('admin123')
             db.session.add(admin)
-            print("✅ Admin created")
+            print(" Admin created")
 
         # 3. Create Couriers
         couriers = []
@@ -70,7 +70,7 @@ def seed_database():
                 )
                 db.session.add(courier)
                 couriers.append(courier)
-        print(f"✅ Created {len(couriers)} couriers")
+        print(f" Created {len(couriers)} couriers")
 
         # 4. Create Customers
         customers = []
@@ -89,7 +89,7 @@ def seed_database():
                 )
                 db.session.add(customer)
                 customers.append(customer)
-        print(f"✅ Created {len(customers)} customers")
+        print(f" Created {len(customers)} customers")
 
         db.session.commit() # Commit users first
 
@@ -145,7 +145,7 @@ def seed_database():
             
             db.session.add_all([delivery, pricing, pickup, dropoff])
             
-        print("✅ Created ~35 orders (Historical + Active)")
+        print(" Created ~35 orders (Historical + Active)")
 
         # 6. Create CRM Leads
         lead_statuses = ['new', 'contacted', 'negotiation', 'won', 'lost']
@@ -162,10 +162,10 @@ def seed_database():
             )
             db.session.add(lead)
         
-        print(f"✅ Created 15 CRM Leads")
+        print(f" Created 15 CRM Leads")
         
         db.session.commit()
-        print("🚀 Data Seeding Complete!")
+        print(" Data Seeding Complete!")
 
 if __name__ == "__main__":
     seed_database()

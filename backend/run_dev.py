@@ -5,13 +5,13 @@ from app import create_app
 from extensions import socketio
 
 if __name__ == '__main__':
-    print("🚀 Starting TZIR Delivery Backend (Development Mode)")
+    print(" Starting TZIR Delivery Backend (Development Mode)")
     print("=" * 60)
     
     app = create_app()
     
-    print("\n✅ Server starting on http://localhost:5001")
-    print("📝 Press CTRL+C to stop the server\n")
+    print("\n Server starting on http://localhost:5001")
+    print(" Press CTRL+C to stop the server\n")
     print("=" * 60)
     
     # Run with Socket.IO enabled

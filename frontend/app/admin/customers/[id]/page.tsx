@@ -8,6 +8,7 @@ import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import './customer-card.css';
 
 const C = {
@@ -23,6 +24,7 @@ const C = {
 
 export default function CustomerCardPage({ params }: { params: { id: string } }) {
     const router = useRouter();
+    const { user } = useAuth();
     const [customer, setCustomer] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [activities, setActivities] = useState<any[]>([]);
@@ -138,6 +140,20 @@ export default function CustomerCardPage({ params }: { params: { id: string } })
         } catch { toast.error('שגיאה ביצירת משימה'); }
     };
 
+    const handleDeleteCustomer = async () => {
+        if (!confirm(`האם אתה בטוח שברצונך למחוק לחלוטין את הלקוח "${customer.full_name}"?\nפעולה זו תמחק גם את פרטי המשתמש שלו ולא ניתנת לביטול.`)) {
+            return;
+        }
+        try {
+            await api.delete(`/admin/customers/${params.id}`);
+            toast.success("הלקוח נמחק בהצלחה");
+            router.push('/admin/customers');
+        } catch (error: any) {
+            console.error("Failed to delete customer", error);
+            toast.error(error.response?.data?.error || "שגיאה במחיקת הלקוח");
+        }
+    };
+
     if (loading) {
         return (
             <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: C.bg }}>
@@ -189,6 +205,11 @@ export default function CustomerCardPage({ params }: { params: { id: string } })
 
                     {/* Action Buttons */}
                     <div className="topnav-right">
+                        {(user?.role === 'admin' || user?.user_type === 'admin') && (
+                            <button onClick={handleDeleteCustomer} className="btn" style={{ background: '#ef4444', color: 'white', border: 'none' }}>
+                                🗑 מחק לקוח
+                            </button>
+                        )}
                         <a href={customer.email ? `mailto:${customer.email}` : '#'} className="btn btn-ghost" style={{ textDecoration: 'none' }}>
                             ✉ שלח מייל
                         </a>

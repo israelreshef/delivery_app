@@ -20,17 +20,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import com.tzir.delivery.shared.model.User
 import com.tzir.delivery.android.R
 import com.tzir.delivery.android.ui.components.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import kotlinx.coroutines.launch
+import com.tzir.delivery.android.ui.theme.*
 
 @Composable
 fun ProfileScreen(
     repository: com.tzir.delivery.shared.repository.CourierRepository,
     onLogout: () -> Unit,
-    onWorkerRatingClick: () -> Unit
+    onWorkerRatingClick: () -> Unit,
+    onBack: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -50,12 +55,23 @@ fun ProfileScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.your_profile),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = TextOfficial
-            )
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .background(Color.White, CircleShape)
+                        .size(40.dp)
+                ) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "חזור", tint = TextOfficial)
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(R.string.your_profile),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = TextOfficial
+                )
+            }
             
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -149,7 +165,7 @@ fun ProfileScreen(
                         val dailyTarget = (dailyMission?.get("target_deliveries") as? Number)?.toInt() ?: 10
                         
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("🎯 משימה יומית: $dailyCompleted/$dailyTarget משלוחים", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text("🎯 יעד יומי: $dailyCompleted/$dailyTarget משלוחים", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             if (dailyCompleted >= dailyTarget) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("✅ הושלם (+100 XP)", color = Color(0xFF2E7D32), fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -254,7 +270,7 @@ fun ProfileScreen(
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            OfficialCard(
+            GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = 24.dp
             ) {

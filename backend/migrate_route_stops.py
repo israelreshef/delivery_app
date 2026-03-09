@@ -34,10 +34,10 @@ def migrate():
                 try:
                     db.session.execute(text(f"ALTER TABLE route_stops ADD COLUMN {col} {col_type}"))
                     db.session.commit()
-                    print(f"✅ Added '{col}' to 'route_stops'.")
+                    print(f" Added '{col}' to 'route_stops'.")
                 except Exception as e:
                     db.session.rollback()
-                    print(f"❌ Failed to add '{col}': {e}")
+                    print(f" Failed to add '{col}': {e}")
             else:
                 print(f"Column '{col}' already exists.")
 

@@ -2,7 +2,6 @@ package com.tzir.delivery.android
 
 import android.content.Intent
 import android.os.Build
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +29,8 @@ import com.tzir.delivery.android.ui.courier.RouteOptimizationScreen
 import com.tzir.delivery.android.ui.courier.ManualRoutePlannerScreen
 import com.tzir.delivery.android.ui.courier.AcademyScreen
 import com.tzir.delivery.android.ui.courier.CourseDetailScreen
+import com.tzir.delivery.android.ui.courier.VehicleScreen
+import com.tzir.delivery.android.ui.courier.MoreScreen
 import com.tzir.delivery.shared.location.LocationManager
 import com.tzir.delivery.shared.network.DeliveryApiImpl
 import com.tzir.delivery.shared.network.KtorClientFactory
@@ -38,40 +39,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
-
 import androidx.compose.ui.res.stringResource
 import com.tzir.delivery.android.R
+import com.tzir.delivery.android.ui.theme.*
+import kotlinx.coroutines.launch
+
+// ════════════════════════════════════════
+// 4-Tab Navigation — Apple-Inspired
+// ════════════════════════════════════════
 
 enum class NavItem(val labelRes: Int, val icon: ImageVector) {
     CONTROL(R.string.control, Icons.Default.Home),
     MISSIONS(R.string.missions, Icons.Default.List),
-    REGULATIONS(R.string.regulations, Icons.Default.Description),
-    PROFILE(R.string.profile, Icons.Default.Person)
+    EARNINGS(R.string.business_management, Icons.Default.AccountBalanceWallet),
+    MORE(R.string.drawer_settings, Icons.Default.GridView)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Manual DI for MVP
         val client = KtorClientFactory.createClient()
-        val api = DeliveryApiImpl(client) // Uses 10.0.2.2 for Android Emulator
+        val api = DeliveryApiImpl(client)
         val authRepository = AuthRepository(api).also { AuthRepository.instance = it }
-        
+
         val driver = com.tzir.delivery.shared.db.DatabaseDriverFactory(this).createDriver()
         val database = com.tzir.delivery.shared.db.TzirDatabase(driver)
         val courierRepository = com.tzir.delivery.shared.repository.CourierRepository(api, database)
-        
+
         val locationManager = LocationManager(api).also { LocationManager.instance = it }
-        
+
         setContent {
             MyApplicationTheme {
                 Surface(
@@ -81,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     val currentUser by authRepository.currentUser.collectAsState()
                     var isRegistering by remember { mutableStateOf(false) }
                     var showSplash by remember { mutableStateOf(true) }
-                    
+
                     if (showSplash) {
                         SplashScreen(onAnimationFinish = { showSplash = false })
                     } else if (currentUser != null) {
@@ -89,18 +97,22 @@ class MainActivity : ComponentActivity() {
                         LaunchedEffect(currentUser) {
                             currentUser?.let { user ->
                                 if (user.role == com.tzir.delivery.shared.model.UserRole.COURIER) {
-                                    val intent = Intent(this@MainActivity, com.tzir.delivery.android.services.LocationService::class.java).apply {
-                                        putExtra("courier_id", user.id)
-                                    }
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        startForegroundService(intent)
-                                    } else {
-                                        startService(intent)
+                                    val courierId = user.courierId ?: ""
+                                    if (courierId.isNotEmpty()) {
+                                        val intent = Intent(this@MainActivity, com.tzir.delivery.android.services.LocationService::class.java).apply {
+                                            putExtra("courier_id", courierId)
+                                        }
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            startForegroundService(intent)
+                                        } else {
+                                            startService(intent)
+                                        }
                                     }
                                 }
                             }
                         }
-                        
+
+                        // ── Navigation State ──
                         var currentNav by remember { mutableStateOf(NavItem.CONTROL) }
                         var selectedMissionId by remember { mutableStateOf<Int?>(null) }
                         var showHistory by remember { mutableStateOf(false) }
@@ -114,30 +126,64 @@ class MainActivity : ComponentActivity() {
                         var showRouteOptimization by remember { mutableStateOf(false) }
                         var showManualRoutePlanner by remember { mutableStateOf(false) }
                         var showAcademy by remember { mutableStateOf(false) }
+                        var showProfile by remember { mutableStateOf(false) }
+                        var showEarnings by remember { mutableStateOf(false) }
+                        var showVehicles by remember { mutableStateOf(false) }
                         var selectedCourseId by remember { mutableStateOf<Int?>(null) }
-                        
+
+                        val scope = rememberCoroutineScope()
+                        val isAnyModalOpen = selectedMissionId != null || selectedCourseId != null ||
+                                showHistory || showNotifications || showSupport || showDocuments ||
+                                showCalendar || showClients || showSettings || showWorkerRating ||
+                                showAcademy || showProfile || showEarnings || showRouteOptimization ||
+                                showVehicles
+
                         Scaffold(
+                            topBar = {
+                                if (!isAnyModalOpen && currentNav != NavItem.CONTROL) {
+                                    CenterAlignedTopAppBar(
+                                        title = {
+                                            Text(
+                                                "Tzir",
+                                                fontWeight = FontWeight.Black,
+                                                color = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        },
+                                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                            containerColor = Color.Transparent
+                                        )
+                                    )
+                                }
+                            },
                             bottomBar = {
-                                if (selectedMissionId == null && selectedCourseId == null && !showHistory && !showNotifications && !showSupport && !showDocuments && !showCalendar && !showClients && !showSettings && !showWorkerRating && !showAcademy && !showManualRoutePlanner) {
+                                if (!isAnyModalOpen) {
                                     NavigationBar(
-                                        containerColor = Color.White,
-                                        tonalElevation = 8.dp
+                                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+                                        tonalElevation = 0.dp
                                     ) {
                                         NavItem.entries.forEach { item ->
                                             NavigationBarItem(
                                                 selected = currentNav == item,
-                                                onClick = { 
-                                                    currentNav = item
-                                                    showHistory = false // Reset history view when switching tabs
+                                                onClick = { currentNav = item },
+                                                icon = {
+                                                    Icon(
+                                                        item.icon,
+                                                        contentDescription = stringResource(item.labelRes),
+                                                        modifier = Modifier.size(24.dp)
+                                                    )
                                                 },
-                                                icon = { Icon(item.icon, contentDescription = stringResource(item.labelRes)) },
-                                                label = { Text(stringResource(item.labelRes)) },
+                                                label = {
+                                                    Text(
+                                                        stringResource(item.labelRes),
+                                                        fontWeight = if (currentNav == item) FontWeight.Bold else FontWeight.Normal
+                                                    )
+                                                },
                                                 colors = NavigationBarItemDefaults.colors(
-                                                    selectedIconColor = Color(0xFF6B8F3E),
-                                                    selectedTextColor = Color(0xFF1C3D2A),
-                                                    unselectedIconColor = Color.Gray,
-                                                    unselectedTextColor = Color.Gray,
-                                                    indicatorColor = Color(0xFFF5F5F0)
+                                                    selectedIconColor = AmberGold,
+                                                    selectedTextColor = AmberGold,
+                                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    indicatorColor = AmberGoldDim
                                                 )
                                             )
                                         }
@@ -145,12 +191,33 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         ) { innerPadding ->
-                            Box(modifier = Modifier.padding(if (selectedMissionId == null && selectedCourseId == null && !showHistory && !showNotifications && !showSupport && !showDocuments && !showCalendar && !showClients && !showSettings && !showWorkerRating && !showAcademy && !showManualRoutePlanner) innerPadding else PaddingValues(0.dp))) {
+                            Box(modifier = Modifier.padding(if (!isAnyModalOpen) innerPadding else PaddingValues(0.dp))) {
+                                // ── Modal Screens (overlay navigation) ──
                                 if (selectedMissionId != null) {
                                     MissionDetailsScreen(
                                         missionId = selectedMissionId!!,
                                         repository = courierRepository,
                                         onBack = { selectedMissionId = null }
+                                    )
+                                } else if (showProfile) {
+                                    ProfileScreen(
+                                        repository = courierRepository,
+                                        onLogout = {
+                                            authRepository.logout()
+                                            showProfile = false
+                                        },
+                                        onWorkerRatingClick = { showWorkerRating = true },
+                                        onBack = { showProfile = false }
+                                    )
+                                } else if (showEarnings) {
+                                    EarningsScreen(
+                                        user = currentUser!!,
+                                        repository = courierRepository,
+                                        onShowHistory = {
+                                            showEarnings = false
+                                            showHistory = true
+                                        },
+                                        onBack = { showEarnings = false }
                                     )
                                 } else if (showHistory) {
                                     MissionHistoryScreen(
@@ -189,9 +256,14 @@ class MainActivity : ComponentActivity() {
                                     ClientsScreen(
                                         onBack = { showClients = false }
                                     )
+                                } else if (showVehicles) {
+                                    VehicleScreen(
+                                        onBack = { showVehicles = false }
+                                    )
                                 } else if (showSettings) {
                                     SettingsScreen(
-                                        onBack = { showSettings = false }
+                                        onBack = { showSettings = false },
+                                        onVehicleSettings = { showVehicles = true }
                                     )
                                 } else if (showWorkerRating) {
                                     WorkerRatingScreen(
@@ -200,32 +272,24 @@ class MainActivity : ComponentActivity() {
                                 } else if (showManualRoutePlanner) {
                                     ManualRoutePlannerScreen(
                                         repository = courierRepository,
-                                        onBack = { showManualRoutePlanner = false },
-                                        onStartNavigation = { stops ->
-                                            showManualRoutePlanner = false
-                                            // Handle start navigation logic here if needed
-                                        }
-                                    )
-                                } else if (showRouteOptimization) {
-                                    RouteOptimizationScreen(
-                                        repository = courierRepository,
-                                        onBack = { showRouteOptimization = false },
-                                        onApprove = { showRouteOptimization = false }
+                                        onBack = { showManualRoutePlanner = false }
                                     )
                                 } else {
+                                    // ── Tab Screens ──
                                     when (currentNav) {
                                         NavItem.CONTROL -> DashboardScreen(
                                             user = currentUser!!,
                                             repository = courierRepository,
                                             locationManager = locationManager,
+                                            onMenuClick = { /* no drawer anymore */ },
                                             onMissionClick = { id -> selectedMissionId = id },
                                             onNotificationClick = { showNotifications = true },
                                             onLogout = {
                                                 authRepository.logout()
                                                 isRegistering = false
                                             },
-                                            onReportsClick = { showHistory = true },
-                                            onProfileClick = { currentNav = NavItem.PROFILE },
+                                            onReportsClick = { showEarnings = true },
+                                            onProfileClick = { showProfile = true },
                                             onSettingsClick = { showSettings = true },
                                             onRouteClick = { showManualRoutePlanner = true },
                                             onSupportClick = { showSupport = true },
@@ -238,16 +302,29 @@ class MainActivity : ComponentActivity() {
                                             repository = courierRepository,
                                             onMissionClick = { id -> selectedMissionId = id }
                                         )
-                                        NavItem.REGULATIONS -> DocumentsScreen(
+                                        NavItem.EARNINGS -> EarningsScreen(
+                                            user = currentUser!!,
+                                            repository = courierRepository,
+                                            onShowHistory = { showHistory = true },
                                             onBack = { currentNav = NavItem.CONTROL }
                                         )
-                                        NavItem.PROFILE -> ProfileScreen(
-                                            repository = courierRepository,
+                                        NavItem.MORE -> MoreScreen(
+                                            userName = currentUser!!.username,
+                                            onProfileClick = { showProfile = true },
+                                            onEarningsClick = {
+                                                currentNav = NavItem.EARNINGS
+                                            },
+                                            onRouteClick = { showManualRoutePlanner = true },
+                                            onCalendarClick = { showCalendar = true },
+                                            onDocumentsClick = { showDocuments = true },
+                                            onVehiclesClick = { showVehicles = true },
+                                            onAcademyClick = { showAcademy = true },
+                                            onSupportClick = { showSupport = true },
+                                            onSettingsClick = { showSettings = true },
                                             onLogout = {
                                                 authRepository.logout()
                                                 isRegistering = false
-                                            },
-                                            onWorkerRatingClick = { showWorkerRating = true }
+                                            }
                                         )
                                     }
                                 }
@@ -256,81 +333,18 @@ class MainActivity : ComponentActivity() {
                     } else if (isRegistering) {
                         RegisterScreen(
                             repository = authRepository,
-                            onRegisterSuccess = {
-                                // currentUser will update automatically via repository
-                            },
-                            onBackToLogin = {
-                                isRegistering = false
-                            }
+                            onRegisterSuccess = { },
+                            onBackToLogin = { isRegistering = false }
                         )
                     } else {
                         LoginScreen(
                             repository = authRepository,
-                            onLoginSuccess = {
-                                // currentUser will update automatically via repository
-                            },
-                            onNavigateToRegister = {
-                                isRegistering = true
-                            }
+                            onLoginSuccess = { },
+                            onNavigateToRegister = { isRegistering = true }
                         )
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun GreetingView(text: String) {
-    Text(text = text)
-}
-
-@Composable
-fun MyApplicationTheme(content: @Composable () -> Unit) {
-    val colorScheme = lightColorScheme(
-        primary = Color(0xFF6B8F3E),    // Modern Cyan
-        onPrimary = Color.White,
-        secondary = Color(0xFF1C3D2A),  // Premium Deep Navy
-        onSecondary = Color.White,
-        tertiary = Color(0xFF1A7A8A),   // Royal Blue
-        background = Color(0xFFF5F5F0), // Airy Light Blue
-        surface = Color.White,
-        onSurface = Color(0xFF1C3D2A),
-        error = Color(0xFFE91E63)      // Modern Pinkish-Red
-    )
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography(
-            headlineLarge = TextStyle(
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 32.sp,
-                letterSpacing = (-0.5).sp,
-                color = Color(0xFF1C3D2A)
-            ),
-            headlineMedium = TextStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                letterSpacing = 0.sp,
-                color = Color(0xFF1C3D2A)
-            ),
-            titleLarge = TextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
-                color = Color(0xFF1C3D2A)
-            ),
-            bodyLarge = TextStyle(
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                letterSpacing = 0.5.sp,
-                color = Color(0xFF1C3D2A).copy(alpha = 0.8f)
-            ),
-            labelLarge = TextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                color = Color(0xFF1C3D2A).copy(alpha = 0.6f)
-            )
-        ),
-        content = content
-    )
 }

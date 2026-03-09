@@ -6,21 +6,26 @@ from models import User
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        from flask import request
+        # ✅ דלג על אימות לחלוטין בבקשות PREFLIGHT
+        if request.method == 'OPTIONS':
+            return f(None, *args, **kwargs)
+            
         try:
-            print(f"🔐 Verifying JWT for endpoint: {f.__name__}")
+            print(f"Verifying JWT for endpoint: {f.__name__}")
             verify_jwt_in_request()
             user_id = get_jwt_identity()
-            print(f"✅ JWT verified. User ID: {user_id}")
+            print(f"JWT verified. User ID: {user_id}")
             
             current_user = User.query.get(user_id)
             if not current_user:
-                print(f"❌ User {user_id} not found in database!")
+                print(f"User {user_id} not found in database!")
                 return jsonify({'message': 'User not found!', 'error': 'USER_NOT_FOUND'}), 401
             
-            print(f"✅ User found: {current_user.username} (type: {current_user.user_type})")
+            print(f"User found: {current_user.username} (type: {current_user.user_type})")
             
         except Exception as e:
-            print(f"❌ JWT verification failed: {str(e)}")
+            print(f"JWT verification failed: {str(e)}")
             return jsonify({'message': 'Invalid or missing token', 'error': str(e)}), 401
             
         return f(current_user, *args, **kwargs)
@@ -41,7 +46,7 @@ def role_required(required_roles):
     def decorator(f):
         @wraps(f)
         def decorated(current_user, *args, **kwargs):
-            print(f"🔑 Checking roles for {current_user.username}. Required: {required_roles}")
+            print(f"Checking roles for {current_user.username}. Required: {required_roles}")
             
             # Define admin role types that exist in the system
             admin_role_types = ['super_admin', 'finance_admin', 'support_admin', 'content_admin']
@@ -72,10 +77,10 @@ def role_required(required_roles):
             
             # Grant access if either condition is met
             if user_type_match or admin_role_match:
-                print(f"✅ Access granted!")
+                print(f"Access granted!")
                 return f(current_user, *args, **kwargs)
             
-            print(f"❌ Permission denied!")
+            print(f"Permission denied!")
             return jsonify({
                 'message': 'Permission denied!',
                 'error': 'INSUFFICIENT_PERMISSIONS',

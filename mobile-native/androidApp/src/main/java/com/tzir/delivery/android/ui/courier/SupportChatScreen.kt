@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 
 data class ChatMessage(
     val id: String,
@@ -50,7 +51,7 @@ fun SupportChatScreen(onBack: () -> Unit) {
                         Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextOfficial)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onBackground)
             )
         },
         bottomBar = {
@@ -91,14 +92,15 @@ fun SupportChatScreen(onBack: () -> Unit) {
                     }
                 }
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(AppleGray)
-        ) {
+        PremiumBackground {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            ) {
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -111,6 +113,7 @@ fun SupportChatScreen(onBack: () -> Unit) {
                     ChatMessageItem(message)
                 }
             }
+        }
         }
     }
 }

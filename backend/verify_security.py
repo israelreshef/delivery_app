@@ -15,9 +15,9 @@ def test_password_strength():
     u.set_password('securePassword123')
     
     if u.password_hash.startswith('pbkdf2:sha256:600000'):
-        print("✅ Password Hash is using PBKDF2-SHA256 with 600,000 iterations.")
+        print(" Password Hash is using PBKDF2-SHA256 with 600,000 iterations.")
     else:
-        print(f"❌ Weak Password Hash detected: {u.password_hash[:20]}...")
+        print(f" Weak Password Hash detected: {u.password_hash[:20]}...")
 
 def test_encryption():
     print("Testing AES-256 Encryption...")
@@ -26,9 +26,9 @@ def test_encryption():
     decrypted = decrypt_data(encrypted)
     
     if original == decrypted:
-        print("✅ Encryption/Decryption Round Trip successful.")
+        print(" Encryption/Decryption Round Trip successful.")
     else:
-        print("❌ Decryption failed to match original.")
+        print(" Decryption failed to match original.")
 
 def test_audit_logging():
     print("Testing Audit Logging (JSON)...")
@@ -44,11 +44,11 @@ def test_audit_logging():
             last_line = lines[-1]
             data = json.loads(last_line)
             if data['action'] == "TEST_ACTION":
-                print("✅ Audit Log written to JSON file correctly.")
+                print(" Audit Log written to JSON file correctly.")
             else:
-                 print(f"❌ Audit Log content mismatch: {last_line}")
+                 print(f" Audit Log content mismatch: {last_line}")
     else:
-        print("❌ Log file not found.")
+        print(" Log file not found.")
 
 if __name__ == "__main__":
     test_password_strength()

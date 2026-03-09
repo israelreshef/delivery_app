@@ -14,49 +14,49 @@ expenses_bp = Blueprint('expenses', __name__)
 SERVICE_PRICING = {
     'google_places': {
         'name': 'Google Places API',
-        'icon': '🗺️',
+        'icon': '',
         'cost_per_call': 0.00283,  # Per autocomplete request
         'monthly_free_credit': 200.0,  # Google's $200/month free tier
         'category': 'api'
     },
     'whatsapp_business': {
         'name': 'WhatsApp Business API',
-        'icon': '💬',
+        'icon': '',
         'cost_per_call': 0.0053,  # Latest Meta utility/auth rate Israel
         'monthly_free_credit': 0.0,
         'category': 'api'
     },
     'sms4free': {
         'name': 'Sms4Free (SMS)',
-        'icon': '📱',
+        'icon': '',
         'cost_per_call': 0.045,  # ~17 ILS for 100 msgs = 0.17 ILS ~ $0.045
         'monthly_free_credit': 0.0,
         'category': 'api'
     },
     'nominatim': {
         'name': 'OpenStreetMap (Nominatim)',
-        'icon': '🌍',
+        'icon': '',
         'cost_per_call': 0.0,  # Free
         'monthly_free_credit': 0,
         'category': 'api'
     },
     'hosting_server': {
         'name': 'שרת Backend (Hetzner)',
-        'icon': '🖥️',
+        'icon': '',
         'cost_per_call': 0.0,
         'monthly_fixed': 4.5,  # Est. ~$4.50/mo for Hetzner
         'category': 'infrastructure'
     },
     'hosting_db': {
         'name': 'בסיס נתונים (PostgreSQL)',
-        'icon': '🗄️',
+        'icon': '',
         'cost_per_call': 0.0,
         'monthly_fixed': 0.0,
         'category': 'infrastructure'
     },
     'hosting_frontend': {
         'name': 'שרת Frontend (Vercel)',
-        'icon': '🌐',
+        'icon': '',
         'cost_per_call': 0.0,
         'monthly_fixed': 0.0,
         'category': 'infrastructure'
@@ -128,7 +128,7 @@ def get_expenses_summary(current_user):
                 pricing = SERVICE_PRICING.get(usage.service_name, {})
                 services[usage.service_name] = {
                     'name': pricing.get('name', usage.service_name),
-                    'icon': pricing.get('icon', '📊'),
+                    'icon': pricing.get('icon', ''),
                     'category': pricing.get('category', 'other'),
                     'total_calls': 0,
                     'total_cost': 0.0,
@@ -144,7 +144,7 @@ def get_expenses_summary(current_user):
             if svc_key not in services:
                 services[svc_key] = {
                     'name': svc_info.get('name', svc_key),
-                    'icon': svc_info.get('icon', '📊'),
+                    'icon': svc_info.get('icon', ''),
                     'category': svc_info.get('category', 'other'),
                     'total_calls': 0,
                     'total_cost': 0.0,

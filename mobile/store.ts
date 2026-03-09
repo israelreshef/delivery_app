@@ -66,21 +66,41 @@ export const useCourierStore = create<CourierState>()(
             setCourierId: (id) => set({ courierId: id }),
 
             toggleShift: async () => {
-                const { isShiftActive, courierId } = get();
+                const { isShiftActive, courierId, token } = get();
                 if (!courierId) {
                     Toast.show({ type: 'error', text1: 'Profile not loaded' });
                     return;
                 }
 
                 const newState = !isShiftActive;
-                set({ isShiftActive: newState });
 
-                if (newState) {
-                    await startBackgroundLocation();
-                    Toast.show({ type: 'success', text1: 'Shift Started', text2: 'You are now visible for new orders.' });
-                } else {
-                    await stopBackgroundLocation();
-                    Toast.show({ type: 'info', text1: 'Shift Ended', text2: 'Location tracking stopped.' });
+                try {
+                    // Sync with backend first
+                    const response = await fetch(`${API_URL}/api/couriers/availability`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ is_available: newState })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update availability on server');
+                    }
+
+                    set({ isShiftActive: newState });
+
+                    if (newState) {
+                        await startBackgroundLocation();
+                        Toast.show({ type: 'success', text1: 'Shift Started', text2: 'You are now visible for new orders.' });
+                    } else {
+                        await stopBackgroundLocation();
+                        Toast.show({ type: 'info', text1: 'Shift Ended', text2: 'Location tracking stopped.' });
+                    }
+                } catch (error) {
+                    console.error('Error toggling shift:', error);
+                    Toast.show({ type: 'error', text1: 'Connection Error', text2: 'Could not sync availability.' });
                 }
             },
 

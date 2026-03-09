@@ -20,7 +20,7 @@ auth_bp = Blueprint('auth', __name__)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("60 per minute")
+@limiter.limit("20 per minute")
 def login():
     """התחברות למערכת"""
     try:
@@ -113,7 +113,7 @@ def login():
             }), 200
 
         # צור JWT token (רגיל למשתמש ללא 2FA)
-        from flask_jwt_extended import create_access_token
+        from flask_jwt_extended import create_access_token, set_access_cookies
         
         token = create_access_token(
             identity=str(user.id),
@@ -160,13 +160,15 @@ def login():
             details=f"User {user.username} logged in successfully"
         )
         
-        return jsonify({
+        response = jsonify({
             'success': True,
             'message': 'Login successful',
-            'access_token': token,  # ✅ Mobile app expects this field
+            'access_token': token,  #  Mobile app expects this field
             'token': token,  # Keep for backward compatibility
             'user': user_data
-        }), 200
+        })
+        set_access_cookies(response, token)
+        return response, 200
         
     except Exception as e:
         import logging
@@ -175,11 +177,13 @@ def login():
 
 
 @auth_bp.route('/register', methods=['POST'])
-@limiter.limit("3 per hour")
+@limiter.limit("10 per hour")
 def register():
     """רישום משתמש חדש"""
     try:
-        data = request.json
+        from utils.sanitization import sanitize_input
+        # Sanitize incoming payload
+        data = sanitize_input(request.json)
         
         # וולידציה
         required_fields = ['username', 'email', 'password', 'phone', 'user_type']
@@ -271,10 +275,16 @@ def logout():
         )
         
     session.clear()
-    return jsonify({
+    
+    # Clear JWT Cookies
+    from flask_jwt_extended import unset_jwt_cookies
+    response = jsonify({
         'success': True,
         'message': 'Logout successful'
-    }), 200
+    })
+    unset_jwt_cookies(response)
+    
+    return response, 200
 
 
 @auth_bp.route('/me', methods=['GET'])
@@ -659,7 +669,7 @@ def google_login():
             )
         
         # צור JWT טוקן
-        from flask_jwt_extended import create_access_token
+        from flask_jwt_extended import create_access_token, set_access_cookies
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={
@@ -683,12 +693,14 @@ def google_login():
             customer = Customer.query.filter_by(user_id=user.id).first()
             if customer: user_data['customer_id'] = str(customer.id)
             
-        return jsonify({
+        response = jsonify({
             'success': True,
             'access_token': access_token,
             'token': access_token,
             'user': user_data
-        }), 200
+        })
+        set_access_cookies(response, access_token)
+        return response, 200
         
     except ValueError:
         return jsonify({'error': 'Invalid token'}), 401

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import com.tzir.delivery.android.ui.theme.*
 
 @Composable
 fun RegisterScreen(

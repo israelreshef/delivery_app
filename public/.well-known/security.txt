@@ -1,0 +1,8 @@
+Contact: mailto:security@tzir-delivery.co.il
+Expires: 2027-03-08T10:00:00.000Z
+Encryption: https://tzir-delivery.co.il/.well-known/pgp-key.txt
+Acknowledgements: https://tzir-delivery.co.il/security/hall-of-fame
+Preferred-Languages: he, en
+Policy: https://tzir-delivery.co.il/docs/security_disclosure.md
+Hiring: https://tzir-delivery.co.il/careers
+Canonical: https://tzir-delivery.co.il/.well-known/security.txt

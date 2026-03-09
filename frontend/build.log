@@ -1,0 +1,113 @@
+﻿
+> frontend@0.1.0 build
+> next build
+
+   Γצ▓ Next.js 14.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ף Compiled successfully
+   Linting and checking validity of types ...
+
+./app/admin/couriers/[id]/page.tsx
+101:13  Warning: Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+./app/admin/customers/[id]/page.tsx
+171:13  Warning: Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+./app/admin/finance/page.tsx
+88:8  Warning: React Hook useEffect has a missing dependency: 'fetchFinanceData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/admin/CustomerDetailsModal.tsx
+218:8  Warning: React Hook useEffect has a missing dependency: 'fetchPricing'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/59) ...
+
+   Generating static pages (14/59) 
+
+   Generating static pages (29/59) 
+
+   Generating static pages (44/59) 
+
+ Γ£ף Generating static pages (59/59) 
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Γפל Γקכ /                                    7.9 kB          107 kB
+Γפ£ Γקכ /_not-found                          0 B                0 B
+Γפ£ Γקכ /admin/compliance                    9.25 kB         162 kB
+Γפ£ Γקכ /admin/couriers                      8.9 kB          185 kB
+Γפ£ ╬╗ /admin/couriers/[id]                 5.15 kB         129 kB
+Γפ£ Γקכ /admin/crm                           31.8 kB         184 kB
+Γפ£ Γקכ /admin/crm/leads                     6.74 kB         205 kB
+Γפ£ Γקכ /admin/customers                     9.17 kB         196 kB
+Γפ£ ╬╗ /admin/customers/[id]                6.96 kB         130 kB
+Γפ£ Γקכ /admin/dashboard                     12.7 kB         254 kB
+Γפ£ Γקכ /admin/finance                       11.8 kB         250 kB
+Γפ£ Γקכ /admin/map                           58.9 kB         233 kB
+Γפ£ Γקכ /admin/orders                        7.3 kB          176 kB
+Γפ£ Γקכ /admin/orders/new                    506 B           161 kB
+Γפ£ Γקכ /admin/payouts                       5.6 kB          143 kB
+Γפ£ Γקכ /admin/reports                       3.86 kB         133 kB
+Γפ£ Γקכ /admin/reports/courier-finance       7.49 kB         160 kB
+Γפ£ Γקכ /admin/settings                      3.01 kB          95 kB
+Γפ£ Γקכ /admin/settings/branding             7.99 kB         131 kB
+Γפ£ Γקכ /admin/settings/pricing              4.72 kB         128 kB
+Γפ£ Γקכ /admin/settings/zones                5.46 kB         129 kB
+Γפ£ Γקכ /admin/support                       6.1 kB          193 kB
+Γפ£ ╬╗ /admin/support/[id]                  5.05 kB         135 kB
+Γפ£ Γקכ /admin/tasks                         3.01 kB         126 kB
+Γפ£ Γקכ /admin/users                         7.8 kB          147 kB
+Γפ£ Γקכ /admin/wms                           11.7 kB         248 kB
+Γפ£ Γקכ /api                                 5.34 kB         107 kB
+Γפ£ Γקכ /auth/register                       5.53 kB         114 kB
+Γפ£ Γקכ /blog                                5.46 kB        97.5 kB
+Γפ£ Γקכ /contact                             5.17 kB         107 kB
+Γפ£ Γקכ /courier/dashboard                   12.7 kB         195 kB
+Γפ£ Γקכ /courier/documents                   5.68 kB         143 kB
+Γפ£ Γקכ /courier/profile                     5.95 kB         168 kB
+Γפ£ Γקכ /courier/stats                       6.5 kB          230 kB
+Γפ£ Γקכ /courier/tasks                       5.15 kB         119 kB
+Γפ£ Γקכ /couriers                            5.7 kB          139 kB
+Γפ£ Γקכ /customer/dashboard                  7.26 kB         156 kB
+Γפ£ Γקכ /customer/deliveries                 5.22 kB         126 kB
+Γפ£ ╬╗ /customer/orders/[id]                9.45 kB         217 kB
+Γפ£ Γקכ /customer/orders/new                 11.1 kB         182 kB
+Γפ£ Γקכ /customer/profile                    8.55 kB         137 kB
+Γפ£ ╬╗ /customer/tracking/[id]              6.96 kB         134 kB
+Γפ£ Γקכ /customers                           4.88 kB         129 kB
+Γפ£ Γקכ /icon.png                            0 B                0 B
+Γפ£ Γקכ /integrations                        5.41 kB        97.5 kB
+Γפ£ Γקכ /login                               4.29 kB         138 kB
+Γפ£ Γקכ /login/admin                         157 B           138 kB
+Γפ£ Γקכ /login/courier                       157 B           138 kB
+Γפ£ Γקכ /login/customer                      157 B           138 kB
+Γפ£ Γקכ /orders                              5.4 kB          130 kB
+Γפ£ ╬╗ /orders/[id]                         7.59 kB         141 kB
+Γפ£ Γקכ /orders/history                      4.37 kB         163 kB
+Γפ£ Γקכ /orders/new                          497 B           161 kB
+Γפ£ Γקכ /pricing                             5.44 kB         104 kB
+Γפ£ Γקכ /privacy                             142 B          85.3 kB
+Γפ£ Γקכ /profile                             5.51 kB         120 kB
+Γפ£ Γקכ /register                            4.27 kB         103 kB
+Γפ£ Γקכ /register/courier                    4.88 kB         135 kB
+Γפ£ Γקכ /register/customer                   5.76 kB         136 kB
+Γפ£ Γקכ /robots.txt                          0 B                0 B
+Γפ£ Γקכ /settings/security                   6.67 kB         130 kB
+Γפ£ Γקכ /sitemap.xml                         0 B                0 B
+Γפ£ Γקכ /tracking                            3.67 kB         103 kB
+Γפפ ╬╗ /tracking/[orderId]                  6.66 kB         136 kB
++ First Load JS shared by all            85.2 kB
+  Γפ£ chunks/8069-431f237ec3cee5d0.js      29 kB
+  Γפ£ chunks/fd9d1056-1eb4ad21b0832123.js  53.4 kB
+  Γפפ other shared chunks (total)          2.78 kB
+
+
+╞ע Middleware                             41.3 kB
+
+Γקכ  (Static)   prerendered as static content
+╬╗  (Dynamic)  server-rendered on demand using Node.js
+

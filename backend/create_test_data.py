@@ -14,10 +14,10 @@ def create_quick_test_data():
     app, _ = create_app()
     
     with app.app_context():
-        print("\n🚀 יוצר נתונים לבדיקה...\n")
+        print("\n יוצר נתונים לבדיקה...\n")
         
         # 1. צור 5 שליחים
-        print("👨‍🚀 יוצר 5 שליחים...")
+        print(" יוצר 5 שליחים...")
         courier_names = [
             ('אבי כהן', '0501111111', 'motorcycle'),
             ('דני לוי', '0502222222', 'motorcycle'),
@@ -32,7 +32,7 @@ def create_quick_test_data():
             # בדוק אם קיים
             existing = User.query.filter_by(username=username).first()
             if existing:
-                print(f"   ⚠️  {username} כבר קיים, מדלג...")
+                print(f"     {username} כבר קיים, מדלג...")
                 continue
             
             user = User(
@@ -56,10 +56,10 @@ def create_quick_test_data():
                 current_location_lng=34.7818 + random.uniform(-0.05, 0.05)
             )
             db.session.add(courier)
-            print(f"   ✅ {name} ({vehicle})")
+            print(f"    {name} ({vehicle})")
         
         # 2. צור 3 לקוחות
-        print("\n👥 יוצר 3 לקוחות...")
+        print("\n יוצר 3 לקוחות...")
         customer_names = [
             ('דוד ישראלי', '0506666666', 'david@gmail.com'),
             ('שרה כהן', '0507777777', 'sarah@gmail.com'),
@@ -71,7 +71,7 @@ def create_quick_test_data():
             
             existing = User.query.filter_by(username=username).first()
             if existing:
-                print(f"   ⚠️  {username} כבר קיים, מדלג...")
+                print(f"     {username} כבר קיים, מדלג...")
                 continue
             
             user = User(
@@ -89,10 +89,10 @@ def create_quick_test_data():
                 full_name=name
             )
             db.session.add(customer)
-            print(f"   ✅ {name}")
+            print(f"    {name}")
         
         # 3. צור מנהל (אם לא קיים)
-        print("\n👨‍💼 יוצר משתמש מנהל...")
+        print("\n יוצר משתמש מנהל...")
         admin = User.query.filter_by(username='admin').first()
         if not admin:
             admin = User(
@@ -103,30 +103,30 @@ def create_quick_test_data():
             )
             admin.set_password('admin123')
             db.session.add(admin)
-            print("   ✅ admin (סיסמה: admin123)")
+            print("    admin (סיסמה: admin123)")
         else:
-            print("   ⚠️  admin כבר קיים")
+            print("     admin כבר קיים")
         
         db.session.commit()
         
         # סיכום
         print("\n" + "="*50)
-        print("✅ נתונים נוצרו בהצלחה!")
+        print(" נתונים נוצרו בהצלחה!")
         print("="*50)
-        print(f"\n📊 סיכום:")
-        print(f"   👨‍🚀 שליחים: {Courier.query.count()}")
-        print(f"   👥 לקוחות: {Customer.query.count()}")
-        print(f"   👤 סה\"כ משתמשים: {User.query.count()}")
+        print(f"\n סיכום:")
+        print(f"    שליחים: {Courier.query.count()}")
+        print(f"    לקוחות: {Customer.query.count()}")
+        print(f"    סה\"כ משתמשים: {User.query.count()}")
         
-        print(f"\n🔐 פרטי התחברות:")
+        print(f"\n פרטי התחברות:")
         print(f"   מנהל: admin / admin123")
         print(f"   שליח: courier1 / 123456")
         print(f"   לקוח: customer1 / 123456")
         
-        print(f"\n🌐 גש ל:")
-        print(f"   📦 הזמנות: http://localhost:5000/orders.html")
-        print(f"   ⚙️  ניהול: http://localhost:5000/admin.html")
-        print(f"   🚴 שליח: http://localhost:5000/courier.html")
+        print(f"\n גש ל:")
+        print(f"    הזמנות: http://localhost:5000/orders.html")
+        print(f"     ניהול: http://localhost:5000/admin.html")
+        print(f"    שליח: http://localhost:5000/courier.html")
         print()
 
 if __name__ == '__main__':

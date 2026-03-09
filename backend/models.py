@@ -78,7 +78,7 @@ class WebAuthnCredential(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     credential_id = db.Column(db.LargeBinary, unique=True, nullable=False)
     public_key = db.Column(db.LargeBinary, nullable=False)
     sign_count = db.Column(db.Integer, default=0)
@@ -99,7 +99,7 @@ class Customer(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, unique=True)
     full_name = db.Column(db.String(100), nullable=False)
     company_name = db.Column(db.String(100), nullable=True)
     
@@ -150,13 +150,13 @@ class CustomerContactLog(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False)
     contact_type = db.Column(db.String(50), default='call')  # call, email, whatsapp, meeting, other
     summary = db.Column(db.Text, nullable=False)
     outcome = db.Column(db.String(100), nullable=True)
     contact_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     next_follow_up = db.Column(db.Date, nullable=True)
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -172,7 +172,7 @@ class CustomerFile(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
     file_type = db.Column(db.String(50), default='other')  # receipt, contract, legal, other
@@ -185,7 +185,7 @@ class CustomerFile(db.Model):
     mime_type = db.Column(db.String(100), nullable=True)
     file_size = db.Column(db.Integer, nullable=True)
 
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -200,9 +200,9 @@ class CustomerNote(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -213,15 +213,15 @@ class CustomerTask(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True) # Optional, can be a general task
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=True) # Optional, can be a general task
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
     due_date = db.Column(db.DateTime, nullable=True)
     priority = db.Column(db.Enum('low', 'medium', 'high', name='task_priority_types'), default='medium')
     status = db.Column(db.Enum('open', 'in_progress', 'completed', 'cancelled', name='task_status_types'), default='open')
     
-    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime, nullable=True)
 
@@ -238,7 +238,7 @@ class Courier(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, unique=True)
     full_name = db.Column(db.String(100), nullable=False)
     vehicle_type = db.Column(db.Enum('motorcycle', 'scooter', 'car', 'bicycle', 'van', name='vehicle_types'), nullable=False)
     license_plate = db.Column(db.String(20), nullable=True)
@@ -319,7 +319,7 @@ class EarnedMilestone(db.Model):
     )
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     milestone_id = db.Column(db.Integer, db.ForeignKey('milestones.id'), nullable=False)
     earned_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -333,7 +333,7 @@ class CourierGamification(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False, unique=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False, unique=True)
     level = db.Column(db.Integer, default=1, nullable=False)
     xp = db.Column(db.Integer, default=0, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -350,7 +350,7 @@ class DailyMission(db.Model):
     )
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     mission_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     
     completed_deliveries = db.Column(db.Integer, default=0)
@@ -371,7 +371,7 @@ class ShiftSession(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     start_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     end_time = db.Column(db.DateTime, nullable=True)
     
@@ -420,7 +420,7 @@ class CourierCertification(db.Model):
     )
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     # Statuses: locked, training, temporary, permanent
     status = db.Column(db.String(50), default='locked')
@@ -444,7 +444,7 @@ class Address(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True) # Optional: address can be global or user-specific
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True) # Optional: address can be global or user-specific
     street = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     postal_code = db.Column(db.String(20), nullable=True)
@@ -524,8 +524,8 @@ class Delivery(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     order_number = db.Column(db.String(50), unique=True, nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=True)
     pickup_point_id = db.Column(db.Integer, db.ForeignKey('pickup_points.id'), nullable=False)
     delivery_point_id = db.Column(db.Integer, db.ForeignKey('delivery_points.id'), nullable=False)
     
@@ -607,13 +607,13 @@ class DeliveryStatus(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=False)
     status = db.Column(delivery_status_enum, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     location_lat = db.Column(db.Float, nullable=True)
     location_lng = db.Column(db.Float, nullable=True)
     notes = db.Column(db.Text, nullable=True)
-    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     
     def __repr__(self):
         return f'<DeliveryStatus {self.status} at {self.timestamp}>'
@@ -655,8 +655,8 @@ class Invoice(db.Model):
     invoice_number = db.Column(db.String(50), unique=True, nullable=False)
     document_type = db.Column(db.Enum('tax_invoice_receipt', 'receipt', 'tax_invoice', 'transaction_invoice', 'credit_note', name='invoice_document_types'), nullable=False, server_default='tax_invoice_receipt')
     
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
-    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False, unique=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=False, unique=True)
     
     issue_date = db.Column(db.DateTime, default=datetime.utcnow)
     due_date = db.Column(db.DateTime, nullable=True)
@@ -708,8 +708,8 @@ class DeliveryTracking(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     speed = db.Column(db.Float, nullable=True)  # km/h
@@ -729,9 +729,9 @@ class Rating(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False, unique=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=False, unique=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     rated_by = db.Column(db.Enum('customer', 'courier', 'system', name='rating_source'), default='customer', nullable=False)
     rating = db.Column(db.Integer, nullable=False)  # 1-5
     comment = db.Column(db.Text, nullable=True)
@@ -750,8 +750,8 @@ class Notification(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=True)
     type = db.Column(db.Enum('sms', 'email', 'push', name='notification_types'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
@@ -773,7 +773,7 @@ class AuditLog(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     action = db.Column(db.String(50), nullable=False) # e.g., 'LOGIN', 'VIEW_SENSITIVE', 'DECRYPT'
     resource_type = db.Column(db.String(50), nullable=True) # e.g., 'Delivery', 'User'
     resource_id = db.Column(db.String(50), nullable=True) # Use String to support non-integer IDs if needed
@@ -798,14 +798,14 @@ class CourierDocument(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     document_type = db.Column(db.String(50), nullable=False) # e.g., 'id_card', 'license', 'insurance', 'vehicle_license'
     file_path = db.Column(db.String(255), nullable=False)
     status = db.Column(document_status_enum, default='pending')
     expiry_date = db.Column(db.Date, nullable=True)  # For documents that expire (license, insurance)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
     reviewed_at = db.Column(db.DateTime, nullable=True)
-    reviewed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    reviewed_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     
     def __repr__(self):
         return f'<CourierDocument {self.document_type} for {self.courier_id}>'
@@ -822,7 +822,7 @@ class Payout(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     
     period_start = db.Column(db.Date, nullable=False)
     period_end = db.Column(db.Date, nullable=False)
@@ -854,10 +854,10 @@ class InvitationCode(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20), unique=True, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     target_role = db.Column(db.String(20), nullable=False) # 'courier', 'customer', 'admin'
     is_used = db.Column(db.Boolean, default=False)
-    used_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    used_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime, nullable=True)
     
@@ -874,8 +874,8 @@ class ChatSession(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # The customer/courier
-    assigned_admin_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True) # Support agent
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False) # The customer/courier
+    assigned_admin_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True) # Support agent
     status = db.Column(chat_status_enum, default='active')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     closed_at = db.Column(db.DateTime, nullable=True)
@@ -893,7 +893,7 @@ class ChatMessage(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     session_id = db.Column(db.Integer, db.ForeignKey('chat_sessions.id'), nullable=False)
-    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
@@ -944,9 +944,9 @@ class SupportTicket(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=True)
-    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=True)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
 
     subject = db.Column(db.String(200), nullable=False)
     status = db.Column(support_ticket_status_enum, default='open', nullable=False)
@@ -969,7 +969,7 @@ class TicketMessage(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('support_tickets.id'), nullable=False)
-    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     message = db.Column(db.Text, nullable=False)
     is_internal = db.Column(db.Boolean, default=False)
@@ -993,7 +993,7 @@ class Warehouse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=True)
-    manager_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    manager_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -1093,8 +1093,8 @@ class StockMovement(db.Model):
     
     movement_type = db.Column(db.Enum('inbound', 'outbound', 'transfer', 'adjustment', name='movement_type_enum'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    reference_order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=True)
-    performed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    reference_order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=True)
+    performed_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     
     notes = db.Column(db.Text, nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
@@ -1127,7 +1127,7 @@ class Lead(db.Model):
     
     # Follow-up
     next_follow_up = db.Column(db.DateTime, nullable=True)
-    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Sales rep
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)  # Sales rep
     
     # Notes
     notes = db.Column(db.Text, nullable=True)
@@ -1136,7 +1136,7 @@ class Lead(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     converted_at = db.Column(db.DateTime, nullable=True)  # When converted to customer
-    converted_to_customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
+    converted_to_customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=True)
     
     # Relationships
     assigned_user = db.relationship('User', foreign_keys=[assigned_to], backref='assigned_leads')
@@ -1153,7 +1153,7 @@ class LeadActivity(db.Model):
     lead_id = db.Column(db.Integer, db.ForeignKey('leads.id'), nullable=False)
     activity_type = db.Column(activity_type_enum, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    performed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    performed_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     lead = db.relationship('Lead', backref='activities')
@@ -1218,7 +1218,7 @@ class LegalDeliveryEvidence(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=False, unique=True)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=False, unique=True)
     
     # Mandatory Geolocation + Timestamp at time of signature
     signed_lat = db.Column(db.Float, nullable=False)
@@ -1239,7 +1239,7 @@ class InsurancePolicy(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     policy_type = db.Column(db.Enum('vehicle', 'professional_liability', name='insurance_policy_types'), nullable=False)
     provider_name = db.Column(db.String(100), nullable=False)
     policy_number = db.Column(db.String(100), nullable=False)
@@ -1254,7 +1254,7 @@ class InsurancePolicy(db.Model):
     withholding_expiry = db.Column(db.Date, nullable=True)
     
     is_available = db.Column(db.Boolean, default=False)
-    verified_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    verified_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -1268,7 +1268,7 @@ class EmploymentContract(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     contract_type = db.Column(db.Enum('freelance', 'employee', name='contract_types'), nullable=False)
     
     document_url = db.Column(db.String(255), nullable=False)
@@ -1291,7 +1291,7 @@ class CustomerPricingOverride(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False, unique=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False, unique=True)
     
     # Specific Overrides (Leave null to fallback to global Pricing)
     base_price = db.Column(db.Numeric(10, 2), nullable=True)
@@ -1320,9 +1320,9 @@ class Expense(db.Model):
     description = db.Column(db.String(255), nullable=False)
     
     # Linked to Courier (Contributor/Supplier)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=True)
     # Optional link to Customer (Client-related expense)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=True)
     
     # Breakdown for PCN 874 / Israeli Tax
     base_amount = db.Column(db.Numeric(10, 2), nullable=False) # Without VAT
@@ -1370,7 +1370,7 @@ class FinanceDocument(db.Model):
     mime_type = db.Column(db.String(100), nullable=True)
     file_size = db.Column(db.Integer, nullable=True)
 
-    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -1382,7 +1382,7 @@ class TrafficScore(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     points = db.Column(db.Integer, default=0)
     violation_type = db.Column(db.String(100), nullable=False) # e.g. "Speeding", "Red Light"
     violation_date = db.Column(db.DateTime, nullable=False)
@@ -1400,7 +1400,7 @@ class LegalCase(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
     case_number = db.Column(db.String(100), unique=True, nullable=False)
     status = db.Column(db.Enum('open', 'in_progress', 'closed', name='legal_case_status'), default='open')
     description = db.Column(db.Text, nullable=False)
@@ -1429,7 +1429,7 @@ class SavedRoute(db.Model):
     date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     status = db.Column(db.Enum('draft', 'published', 'assigned', 'completed', name='route_status'), default='draft')
     
-    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=True)
     scheduled_at = db.Column(db.DateTime, nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -1468,7 +1468,7 @@ class RouteStop(db.Model):
     time_window_end = db.Column(db.DateTime, nullable=True)
     
     # Optional link to an existing order
-    order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'), nullable=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('deliveries.id', ondelete='CASCADE'), nullable=True)
     
     stop_type = db.Column(db.Enum('pickup', 'delivery', 'waypoint', name='stop_type'), default='delivery')
     is_completed = db.Column(db.Boolean, default=False)

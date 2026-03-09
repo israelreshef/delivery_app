@@ -171,22 +171,27 @@ export default function RouteBuilder() {
                 api.get('/optimization/managed-routes').catch(() => ({ data: [] }))
             ]);
 
-            // Real coordinates from backend (no more Math.random)
-            const fetchedOrders = (ordersRes.data.orders || ordersRes.data || []).map((o: any) => ({
-                ...o,
-                lat: o.delivery_lat || o.pickup_lat,
-                lng: o.delivery_lng || o.pickup_lng,
-            })).filter((o: any) => o.lat && o.lng);
+            // Real coordinates from backend
+            const ordersData = ordersRes.data.orders || ordersRes.data || [];
+            const fetchedOrders = Array.isArray(ordersData)
+                ? ordersData.map((o: any) => ({
+                    ...o,
+                    lat: o.delivery_lat || o.pickup_lat,
+                    lng: o.delivery_lng || o.pickup_lng,
+                })).filter((o: any) => o.lat && o.lng)
+                : [];
             setOrders(fetchedOrders);
 
             setSavedRoutes(routesRes.data || []);
 
-            const fetchedCouriers = (couriersRes.data.data || couriersRes.data || []).filter((c: any) => c.is_available).map((c: any) => ({
-                ...c,
-                // Location object might be nested based on courier API structure
-                lat: c.current_location?.lat || c.lat,
-                lng: c.current_location?.lng || c.lng,
-            })).filter((c: any) => c.lat && c.lng);
+            const couriersData = couriersRes.data.data || couriersRes.data || [];
+            const fetchedCouriers = Array.isArray(couriersData)
+                ? couriersData.filter((c: any) => c.is_available).map((c: any) => ({
+                    ...c,
+                    lat: c.current_location?.lat || c.lat,
+                    lng: c.current_location?.lng || c.lng,
+                })).filter((c: any) => c.lat && c.lng)
+                : [];
             setCouriers(fetchedCouriers);
         } catch (error) {
             console.error(error);

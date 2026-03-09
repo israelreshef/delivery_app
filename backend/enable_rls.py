@@ -5,7 +5,7 @@ def enable_rls():
     app, _ = create_app()
 
     with app.app_context():
-        print("🛡️ Enabling Row-Level Security (RLS) on 'deliveries' table...")
+        print(" Enabling Row-Level Security (RLS) on 'deliveries' table...")
         
         sql = """
         -- Enable RLS on the table
@@ -35,11 +35,11 @@ def enable_rls():
         try:
             db.session.execute(text(sql))
             db.session.commit()
-            print("✅ Row-Level Security (RLS) enabled successfully!")
+            print(" Row-Level Security (RLS) enabled successfully!")
             print("   - Non-admin users can now ONLY see their own deliveries.")
             print("   - AppOwner (delivery_user) is now subject to RLS.")
         except Exception as e:
-            print(f"❌ Failed to enable RLS: {e}")
+            print(f" Failed to enable RLS: {e}")
             db.session.rollback()
 
 if __name__ == '__main__':

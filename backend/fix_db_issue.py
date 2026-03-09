@@ -19,12 +19,12 @@ def fix_schema():
                 try:
                     conn.execute(text(f"ALTER TABLE couriers ADD COLUMN {col_name} {col_type}"))
                     conn.commit()
-                    print(f"✅ Added column '{col_name}' to 'couriers' table")
+                    print(f" Added column '{col_name}' to 'couriers' table")
                 except Exception as e:
                     if "duplicate column name" in str(e).lower() or "already exists" in str(e).lower():
-                        print(f"ℹ️ Column '{col_name}' already exists.")
+                        print(f"ℹ Column '{col_name}' already exists.")
                     else:
-                        print(f"❌ Error adding '{col_name}': {e}")
+                        print(f" Error adding '{col_name}': {e}")
             
             # Check for other potential missing columns mentioned in the error log
             # integer columns often default to 0
@@ -39,12 +39,12 @@ def fix_schema():
                 try:
                     conn.execute(text(f"ALTER TABLE couriers ADD COLUMN {col_name} {col_type}"))
                     conn.commit()
-                    print(f"✅ Added column '{col_name}' to 'couriers' table")
+                    print(f" Added column '{col_name}' to 'couriers' table")
                 except Exception as e:
                     if "duplicate column name" in str(e).lower() or "already exists" in str(e).lower():
                         pass
                     else:
-                        print(f"❌ Error adding '{col_name}': {e}")
+                        print(f" Error adding '{col_name}': {e}")
 
 if __name__ == '__main__':
     print("Starting database schema fix...")

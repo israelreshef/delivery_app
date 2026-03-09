@@ -9,6 +9,8 @@ import L from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { Button } from '@/components/ui/button';
 import { Maximize2, Navigation } from 'lucide-react';
+import { auth } from '@/lib/auth';
+import { api } from '@/lib/api';
 
 // Fix Leaflet Default Icon in Next.js
 const iconPerson = new L.Icon({
@@ -33,10 +35,16 @@ function MapUpdater({ couriers, autoFocus }: { couriers: CourierLocation[], auto
     const map = useMap();
 
     useEffect(() => {
-        if (!autoFocus || couriers.length === 0) return;
+        if (!couriers || couriers.length === 0) return;
 
-        const bounds = L.latLngBounds(couriers.map(c => [c.lat, c.lng]));
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+        if (couriers.length === 1) {
+            // If only one courier (e.g. emulator in Europe), center and zoom on them
+            map.setView([couriers[0].lat, couriers[0].lng], 13);
+        } else if (autoFocus) {
+            // If multiple couriers, fit bounds to see all
+            const bounds = L.latLngBounds(couriers.map(c => [c.lat, c.lng]));
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+        }
     }, [couriers, autoFocus, map]);
 
     return null;
@@ -44,12 +52,54 @@ function MapUpdater({ couriers, autoFocus }: { couriers: CourierLocation[], auto
 
 export default function LiveMap() {
     const { user } = useAuth();
-    // Correct token retrieval from sessionStorage using the key from auth.ts
-    const token = typeof window !== 'undefined' ? sessionStorage.getItem('tzir_auth_token') : null;
-    const socket = useSocket(token, user?.role || null);
+    // Use the robust getToken helper from auth.ts instead of direct storage access
+    const token = typeof window !== 'undefined' ? auth.getToken() : null;
+    const [role, setRole] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (user) {
+            setRole(user.role || user.user_type || null);
+        }
+    }, [user]);
+
+    const socket = useSocket(token, role);
 
     const [couriers, setCouriers] = useState<Record<number, CourierLocation>>({});
     const [autoFocus, setAutoFocus] = useState(true);
+
+    // Initial Fetch
+    useEffect(() => {
+        if (!token) return;
+
+        const fetchInitialCouriers = async () => {
+            try {
+                // Use the configured api instance for automatic interceptors and robustness
+                const res = await api.get('/couriers?limit=100');
+                const data = res.data;
+
+                if (data.data) {
+                    const initialCouriers: Record<number, CourierLocation> = {};
+                    data.data.forEach((c: any) => {
+                        if (c.current_location) {
+                            initialCouriers[c.id] = {
+                                id: c.id,
+                                name: c.full_name,
+                                lat: c.current_location.lat,
+                                lng: c.current_location.lng,
+                                status: c.is_available ? 'idle' : 'offline', // Default, real-time will refine
+                                lastUpdate: new Date()
+                            };
+                        }
+                    });
+                    setCouriers(initialCouriers);
+                }
+            } catch (err) {
+                console.error("Failed to fetch initial couriers:", err);
+            }
+        };
+
+        fetchInitialCouriers();
+    }, [token]);
 
     useEffect(() => {
         if (!socket) return;

@@ -72,7 +72,7 @@ export const auth = {
     // שליפת המשתמש הנוכחי
     getUser: (): User | null => {
         if (typeof window !== 'undefined') {
-            const userStr = sessionStorage.getItem(USER_KEY);
+            const userStr = sessionStorage.getItem(USER_KEY) || localStorage.getItem(USER_KEY);
             if (userStr) {
                 try {
                     return JSON.parse(userStr);
@@ -83,6 +83,7 @@ export const auth = {
         }
         return null;
     },
+
 
     // בדיקה האם המשתמש מחובר והטוקן בתוקף
     isAuthenticated: (): boolean => {

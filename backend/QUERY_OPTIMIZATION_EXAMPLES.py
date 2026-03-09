@@ -10,7 +10,7 @@ from utils.decorators import token_required, role_required
 # BEFORE vs AFTER Examples
 # ============================================================================
 
-# ❌ SLOW - N+1 Problem
+#  SLOW - N+1 Problem
 def get_customers_slow():
     customers = Customer.query.all()  # Query 1
     result = []
@@ -23,7 +23,7 @@ def get_customers_slow():
         })
     return result
 
-# ✅ FAST - Eager Loading
+#  FAST - Eager Loading
 def get_customers_fast():
     customers = Customer.query.options(
         joinedload(Customer.user)  # Single JOIN query!
@@ -41,12 +41,12 @@ def get_customers_fast():
 
 # ============================================================================
 
-# ❌ SLOW - Loading all deliveries
+#  SLOW - Loading all deliveries
 def get_orders_slow():
     orders = Delivery.query.order_by(Delivery.created_at.desc()).all()
     return orders
 
-# ✅ FAST - Pagination + Eager Loading
+#  FAST - Pagination + Eager Loading
 def get_orders_fast(page=1, per_page=20):
     orders = Delivery.query.options(
         joinedload(Delivery.customer).joinedload(Customer.user),
@@ -70,14 +70,14 @@ def get_orders_fast(page=1, per_page=20):
 
 # ============================================================================
 
-# ❌ SLOW - Multiple queries
+#  SLOW - Multiple queries
 def get_dashboard_stats_slow():
     total_orders = Delivery.query.count()  # Query 1
     pending = Delivery.query.filter_by(status='pending').count()  # Query 2
     delivered = Delivery.query.filter_by(status='delivered').count()  # Query 3
     # ... more queries
     
-# ✅ FAST - Single query with aggregation
+#  FAST - Single query with aggregation
 def get_dashboard_stats_fast():
     from sqlalchemy import func, case
     
@@ -99,13 +99,13 @@ def get_dashboard_stats_fast():
 
 # ============================================================================
 
-# ❌ SLOW - Loading all for search
+#  SLOW - Loading all for search
 def search_orders_slow(query_text):
     all_orders = Delivery.query.all()
     results = [o for o in all_orders if query_text in o.tracking_number]
     return results
 
-# ✅ FAST - Database-level filtering
+#  FAST - Database-level filtering
 def search_orders_fast(query_text, page=1):
     orders = Delivery.query.filter(
         Delivery.tracking_number.ilike(f'%{query_text}%')
@@ -151,14 +151,14 @@ def get_active_couriers():
 # BATCH OPERATIONS
 # ============================================================================
 
-# ❌ SLOW - Individual inserts
+#  SLOW - Individual inserts
 def create_orders_slow(orders_data):
     for data in orders_data:
         order = Delivery(**data)
         db.session.add(order)
         db.session.commit()  # Commit each one!
 
-# ✅ FAST - Bulk insert
+#  FAST - Bulk insert
 def create_orders_fast(orders_data):
     orders = [Delivery(**data) for data in orders_data]
     db.session.bulk_save_objects(orders)
@@ -168,12 +168,12 @@ def create_orders_fast(orders_data):
 # SELECT ONLY NEEDED COLUMNS
 # ============================================================================
 
-# ❌ SLOW - Loading entire objects
+#  SLOW - Loading entire objects
 def get_order_ids_slow():
     orders = Delivery.query.all()
     return [o.id for o in orders]
 
-# ✅ FAST - Select specific columns
+#  FAST - Select specific columns
 def get_order_ids_fast():
     result = db.session.query(Delivery.id).all()
     return [r[0] for r in result]

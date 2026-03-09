@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { socket } from "@/lib/socket";
+import { auth } from "@/lib/auth";
+import { useSocket } from "@/lib/socket";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-    BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-    PieChart, Pie, Cell
+    BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { DollarSign, TrendingDown, Activity, Server, Zap, RefreshCw } from "lucide-react";
 
@@ -30,12 +30,14 @@ interface ServiceData {
     monthly_fixed: number;
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
-
 export default function ExpensesDashboard() {
     const [data, setData] = useState<ExpensesSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+
+    // Get token and role for authenticated socket
+    const userToken = auth.getToken();
+    const socket = useSocket(userToken, 'admin');
 
     const fetchData = async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true);
@@ -55,26 +57,22 @@ export default function ExpensesDashboard() {
         // Fallback auto-refresh every 60 seconds
         const interval = setInterval(() => fetchData(), 60000);
 
-        // Connect socket if not already connected
-        if (!socket.connected && typeof localStorage !== 'undefined') {
-            const token = localStorage.getItem('token');
-            if (token) {
-                socket.auth = { token };
-                socket.connect();
-            }
+        if (socket) {
+            const handleExpenseUpdate = () => {
+                console.log("💰 Real-time expense update received via socket");
+                fetchData(true);
+            };
+
+            socket.on('expenses_updated', handleExpenseUpdate);
+
+            return () => {
+                clearInterval(interval);
+                socket.off('expenses_updated', handleExpenseUpdate);
+            };
         }
 
-        const handleExpenseUpdate = () => {
-            fetchData(true);
-        };
-
-        socket.on('expenses_updated', handleExpenseUpdate);
-
-        return () => {
-            clearInterval(interval);
-            socket.off('expenses_updated', handleExpenseUpdate);
-        };
-    }, []);
+        return () => clearInterval(interval);
+    }, [socket]);
 
     if (loading) {
         return (
@@ -93,19 +91,6 @@ export default function ExpensesDashboard() {
 
     const apiServices = data.services.filter(s => s.category === 'api');
     const infraServices = data.services.filter(s => s.category === 'infrastructure');
-
-    // Pie chart data - only services with actual costs
-    const pieData = data.services
-        .filter(s => s.total_cost > 0 || s.monthly_fixed > 0)
-        .map(s => ({
-            name: s.name,
-            value: s.total_cost + (s.monthly_fixed || 0)
-        }));
-
-    // If no expenses yet, show a minimal empty state pie
-    if (pieData.length === 0) {
-        pieData.push({ name: 'חינמי', value: 1 });
-    }
 
     const creditPercent = data.google_credit.percent_used;
     const creditColor = creditPercent > 80 ? 'text-red-500' : creditPercent > 50 ? 'text-brand' : 'text-green-500';
@@ -141,7 +126,6 @@ export default function ExpensesDashboard() {
             </CardHeader>
 
             <CardContent className="p-0">
-                {/* Top Stats Row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100 rtl:divide-x-reverse border-b border-slate-100">
                     <div className="p-4 md:p-5 text-center">
                         <div className="text-xs text-slate-500 mb-1">עלות היום</div>
@@ -184,9 +168,7 @@ export default function ExpensesDashboard() {
                     </div>
                 </div>
 
-                {/* Main Content: Chart + Services */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 divide-x divide-slate-100 rtl:divide-x-reverse">
-                    {/* Daily Cost Chart */}
                     <div className="col-span-3 p-5">
                         <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                             <Activity className="w-4 h-4 text-brand" />
@@ -227,14 +209,12 @@ export default function ExpensesDashboard() {
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Services Breakdown */}
                     <div className="col-span-2 p-5 bg-slate-50/50">
                         <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                             <Server className="w-4 h-4 text-brand" />
                             פירוט שירותים
                         </h3>
 
-                        {/* API Services */}
                         <div className="space-y-2 mb-4">
                             <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">שירותי API</div>
                             {apiServices.map((svc, idx) => (
@@ -261,7 +241,6 @@ export default function ExpensesDashboard() {
                             ))}
                         </div>
 
-                        {/* Infrastructure Services */}
                         <div className="space-y-2">
                             <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">תשתיות</div>
                             {infraServices.map((svc, idx) => (
@@ -280,7 +259,6 @@ export default function ExpensesDashboard() {
                             ))}
                         </div>
 
-                        {/* Bottom Note */}
                         <div className="mt-4 p-2.5 bg-blue-50 border border-blue-100 rounded-lg">
                             <div className="flex items-start gap-2">
                                 <Zap className="w-3.5 h-3.5 text-blue-500 mt-0.5 flex-shrink-0" />

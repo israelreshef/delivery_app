@@ -33,18 +33,22 @@ class LocationService : Service() {
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         
-        // Initialize API (simplified for service)
-        val client = HttpClient {
-            install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
-            }
-        }
+        // Initialize API using the common factory to ensure authentication headers
+        val client = com.tzir.delivery.shared.network.KtorClientFactory.createClient()
         api = DeliveryApiImpl(client)
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let { location ->
                     updateLocationOnServer(location.latitude, location.longitude)
+                    
+                    // Direct WebSocket push for low-latency dashboard updates
+                    SocketManager.updateLocation(
+                        lat = location.latitude,
+                        lng = location.longitude,
+                        courierId = courierId
+                    )
+                    
                     LocationManager.instance?.updateRealLocation(location.latitude, location.longitude)
                 }
             }
@@ -54,7 +58,13 @@ class LocationService : Service() {
     private fun updateLocationOnServer(lat: Double, lng: Double) {
         serviceScope.launch {
             try {
-                api.sendLocation(courierId, lat, lng)
+                api.sendLocation(
+                    com.tzir.delivery.shared.model.LocationRequest(
+                        courierId = courierId,
+                        lat = lat,
+                        lng = lng
+                    )
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -65,6 +75,8 @@ class LocationService : Service() {
         val idFromIntent = intent?.getStringExtra("courier_id")
         if (idFromIntent != null) {
             courierId = idFromIntent
+            // Initiate Real-Time socket connection to backend
+            SocketManager.connect(courierId)
         }
         
         startForegroundService()
@@ -123,5 +135,6 @@ class LocationService : Service() {
         super.onDestroy()
         fusedLocationClient.removeLocationUpdates(locationCallback)
         serviceScope.cancel()
+        SocketManager.disconnect()
     }
 }

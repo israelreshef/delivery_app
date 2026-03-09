@@ -282,7 +282,6 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                                 <AddressAutocomplete
                                     value={formData.pickup_street ? `${formData.pickup_street}${formData.pickup_number ? ' ' + formData.pickup_number : ''}, ${formData.pickup_city}` : ''}
                                     onChange={() => { }}
-                                    valueKey="full_address"
                                     placeholder="הקלד כתובת... (למשל: דיזנגוף 100 תל אביב)"
                                     onSelectAddress={(addr) => {
                                         updateField('pickup_city', addr.city || '');
@@ -365,7 +364,6 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                                 <AddressAutocomplete
                                     value={formData.delivery_street ? `${formData.delivery_street}${formData.delivery_number ? ' ' + formData.delivery_number : ''}, ${formData.delivery_city}` : ''}
                                     onChange={() => { }}
-                                    valueKey="full_address"
                                     placeholder="הקלד כתובת... (למשל: יפו 50 ירושלים)"
                                     onSelectAddress={(addr) => {
                                         updateField('delivery_city', addr.city || '');

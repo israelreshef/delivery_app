@@ -1,6 +1,7 @@
 import logging
 from math import radians, cos, sin, asin, sqrt
 from models import Courier, Delivery, db
+from utils.google_maps import GoogleMapsService
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -60,21 +61,50 @@ class AllocationEngine:
 
         scored_candidates = []
 
+        # 3. Initial filter & Sort by Haversine (Fast & Free)
+        candidates_with_haversine = []
         for courier in candidates:
-            # 2. Hard Constraints Filter
             if not cls._check_constraints(courier, delivery):
                 continue
             
-            # 3. Calculate Distance
-            dist = cls.haversine_distance(
+            h_dist = cls.haversine_distance(
                 pickup_lat, pickup_lng, 
                 courier.current_location_lat, courier.current_location_lng
             )
+            
+            if h_dist <= cls.MAX_RADIUS_KM:
+                candidates_with_haversine.append({
+                    'courier': courier,
+                    'h_dist': h_dist
+                })
 
-            if dist > cls.MAX_RADIUS_KM:
-                continue
+        # 4. Refine with Real Road Distance (Up to top 10 candidates)
+        candidates_with_haversine.sort(key=lambda x: x['h_dist'])
+        top_candidates = candidates_with_haversine[:10]
+        
+        if not top_candidates:
+            logger.info(f"Allocation: No suitable courier found for {delivery.order_number}")
+            return None
 
-            # 4. Calculate Score
+        # Prepare origins for Google Matrix
+        origins = [(c['courier'].current_location_lat, c['courier'].current_location_lng) for c in top_candidates]
+        destination = (pickup_lat, pickup_lng)
+        
+        road_data = GoogleMapsService.get_distance_matrix(origins, [destination])
+        
+        scored_candidates = []
+        for i, item in enumerate(top_candidates):
+            courier = item['courier']
+            dist = item['h_dist']
+            
+            # Use Road Distance if available
+            if road_data and road_data['rows'][i]['elements'][0]['status'] == 'OK':
+                element = road_data['rows'][i]['elements'][0]
+                dist = element['distance']['value'] / 1000.0
+                logger.debug(f"Smart Allocation: Used road distance {dist:.1f}km for {courier.full_name}")
+            else:
+                logger.debug(f"Smart Allocation: Falling back to Haversine {dist:.1f}km for {courier.full_name}")
+
             score = cls._calculate_score(courier, dist, delivery)
             scored_candidates.append({
                 'courier': courier,
@@ -82,15 +112,11 @@ class AllocationEngine:
                 'distance': dist
             })
 
-        # 5. Sort by Score (Desc)
+        # 5. Final Sort by Score (Desc)
         scored_candidates.sort(key=lambda x: x['score'], reverse=True)
-
-        if not scored_candidates:
-            logger.info(f"Allocation: No suitable courier found for {delivery.order_number}")
-            return None
-
         best_match = scored_candidates[0]
-        logger.info(f"Allocation: Assigned {best_match['courier'].full_name} (Score: {best_match['score']:.1f}, Dist: {best_match['distance']:.1f}km)")
+        
+        logger.info(f"Allocation: Assigned {best_match['courier'].full_name} (Score: {best_match['score']:.1f}, Road Dist: {best_match['distance']:.1f}km)")
         
         return best_match['courier']
 

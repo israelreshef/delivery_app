@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,6 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tzir.delivery.android.ui.components.GlassCard
+import com.tzir.delivery.android.ui.components.PremiumBackground
+import com.tzir.delivery.android.ui.theme.*
 import com.tzir.delivery.shared.repository.CourierRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,81 +30,112 @@ fun AcademyScreen(
     onCourseClick: (Int) -> Unit
 ) {
     val courses by repository.academyCourses.collectAsState()
-    val gamificationProfile by repository.gamificationProfile.collectAsState()
+    val gamificationProfile = repository.gamificationProfile.collectAsState().value as? Map<String, Any?>
     val courierLevel = (gamificationProfile?.get("level") as? Number)?.toInt() ?: 1
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
+        isLoading = true
         repository.refreshAcademyCourses()
         repository.refreshGamificationProfile()
+        isLoading = false
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("TZIR Academy", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.secondary) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowForward, contentDescription = "חזור", tint = MaterialTheme.colorScheme.secondary)
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            
-            // Header Banner
-            Surface(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+    PremiumBackground {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text("TZIR Academy", fontWeight = FontWeight.Black, color = AmberGold) },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "חזור", tint = AmberGold)
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
+                )
+            },
+            containerColor = Color.Transparent
+        ) { padding ->
+            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+                
+                // Header Banner
+                GlassCard(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    cornerRadius = 20.dp
                 ) {
-                    Icon(Icons.Default.School, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text("האקדמיה של ציר", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = MaterialTheme.colorScheme.secondary)
-                        Text("השלם קורסים כדי לפתוח סוגי משלוחים יוקרתיים ולהרוויח יותר.", fontSize = 14.sp, color = Color.Gray)
+                    Row(
+                        modifier = Modifier.padding(20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(modifier = Modifier.size(56.dp), shape = CircleShape, color = AmberGold.copy(alpha = 0.15f)) {
+                            Box(contentAlignment = Alignment.Center) { Icon(Icons.Default.School, contentDescription = null, tint = AmberGold, modifier = Modifier.size(32.dp)) }
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text("האקדמיה של ציר", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = AmberGold)
+                            Text("השלם קורסים כדי לפתוח סוגי משלוחים יוקרתיים ולהרוויח יותר.", fontSize = 13.sp, color = Color.White.copy(alpha = 0.6f))
+                        }
                     }
                 }
-            }
 
-            Text(
-                "הקורסים שלי", 
-                fontWeight = FontWeight.Bold, 
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-                color = MaterialTheme.colorScheme.secondary
-            )
+                // Tier Progression Banner
+                val tiers = listOf("🚴 שליח רגיל", "⚖️ שליח משפטי", "📜 מסירה משפטית", "⚖️ זימון לבית משפט", "📦 מסירות קמעונאיות")
+                val currentTierIdx = (courierLevel - 1).coerceIn(0, tiers.size - 1)
+                val tierProgress = (gamificationProfile?.get("xp_progress") as? Number)?.toFloat() ?: 0.42f
 
-            if (courses.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("${tiers[currentTierIdx]}", fontWeight = FontWeight.Black, fontSize = 18.sp, color = Color.White)
+                        Spacer(Modifier.weight(1f))
+                        Surface(color = AmberGold, shape = RoundedCornerShape(8.dp)) {
+                            Text("רמה $courierLevel", modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), fontSize = 12.sp, fontWeight = FontWeight.Black, color = Graphite950)
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    LinearProgressIndicator(
+                        progress = { tierProgress },
+                        modifier = Modifier.fillMaxWidth().height(8.dp),
+                        color = AmberGold,
+                        trackColor = Color.White.copy(alpha = 0.1f),
+                        strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                    )
                 }
-            } else {
-                LazyColumn(contentPadding = PaddingValues(16.dp)) {
-                    items(courses) { course ->
-                        val id = (course["id"] as? Number)?.toInt() ?: 0
-                        val title = course["title"] as? String ?: ""
-                        val desc = course["description"] as? String ?: ""
-                        val status = course["status"] as? String ?: "locked"
-                        val reqLevel = (course["required_level"] as? Number)?.toInt() ?: 1
-                        val progress = (course["progress"] as? Number)?.toFloat() ?: 0f
 
-                        CourseCard(
-                            title = title,
-                            description = desc,
-                            status = status,
-                            progress = progress,
-                            requiredLevel = reqLevel,
-                            currentLevel = courierLevel,
-                            onClick = { 
-                                if (status != "locked") onCourseClick(id) 
-                            }
-                        )
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    "הקורסים שלי", 
+                    fontWeight = FontWeight.Black, 
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                    color = Color.White
+                )
+
+                if (isLoading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = AmberGold) }
+                } else if (courses.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("אין קורסים זמינים כרגע.", color = Color.Gray, fontSize = 16.sp) }
+                } else {
+                    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        items(courses) { courseItem ->
+                            val course = courseItem as? Map<String, Any?> ?: return@items
+                            val id = (course["id"] as? Number)?.toInt() ?: 0
+                            val title = course["title"] as? String ?: ""
+                            val desc = course["description"] as? String ?: ""
+                            val status = course["status"] as? String ?: "locked"
+                            val reqLevel = (course["required_level"] as? Number)?.toInt() ?: 1
+                            val progress = (course["progress"] as? Number)?.toFloat() ?: 0f
+
+                            CoursePremiumCard(
+                                title = title,
+                                description = desc,
+                                status = status,
+                                progress = progress,
+                                requiredLevel = reqLevel,
+                                currentLevel = courierLevel,
+                                onClick = { if (status != "locked") onCourseClick(id) }
+                            )
+                        }
                     }
                 }
             }
@@ -109,7 +144,7 @@ fun AcademyScreen(
 }
 
 @Composable
-fun CourseCard(
+fun CoursePremiumCard(
     title: String,
     description: String,
     status: String,
@@ -119,74 +154,55 @@ fun CourseCard(
     onClick: () -> Unit
 ) {
     val isLocked = status == "locked"
-    val containerColor = if (isLocked) Color(0xFFF0F0F0) else Color.White
-    val contentColor = if (isLocked) Color.Gray else MaterialTheme.colorScheme.secondary
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .clickable(enabled = !isLocked, onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isLocked) 0.dp else 4.dp),
-        shape = RoundedCornerShape(16.dp)
+    
+    GlassCard(
+        modifier = Modifier.fillMaxWidth().clickable(enabled = !isLocked, onClick = onClick),
+        cornerRadius = 24.dp
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = contentColor)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(description, fontSize = 14.sp, color = if(isLocked) Color.LightGray else Color.Gray, maxLines = 2)
+                    Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = if (isLocked) Color.Gray else Color.White)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(description, fontSize = 14.sp, color = Color.Gray, maxLines = 2)
                 }
                 
                 if (isLocked) {
-                    Icon(Icons.Default.Lock, contentDescription = "Locked", tint = Color.LightGray)
-                } else if (status == "permanent") {
-                    Icon(Icons.Default.CheckCircle, contentDescription = "Completed", tint = Color(0xFF4CAF50))
-                } else if (status == "temporary") {
-                    Icon(Icons.Default.Timer, contentDescription = "Temporary", tint = Color(0xFFFF9800))
+                    Icon(Icons.Default.Lock, null, tint = Color.Gray)
                 } else {
-                    Icon(Icons.Default.PlayCircle, contentDescription = "Start", tint = MaterialTheme.colorScheme.primary)
+                    val icon = when(status) {
+                        "permanent" -> Icons.Default.CheckCircle
+                        "temporary" -> Icons.Default.Timer
+                        else -> Icons.Default.PlayCircle
+                    }
+                    val color = if(status == "permanent") SuccessDark else AmberGold
+                    Icon(icon, null, tint = color)
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             if (isLocked) {
-                Text(
-                    "דרושה רמה $requiredLevel (נוכחי: $currentLevel)", 
-                    fontSize = 12.sp, 
-                    color = MaterialTheme.colorScheme.error,
-                    fontWeight = FontWeight.Medium
-                )
-            } else if (status != "locked") {
-                val statusText = when (status) {
-                    "training" -> "בשלבי למידה"
-                    "temporary" -> "הסמכה זמנית (בצע משלוחים מעשיים)"
-                    "permanent" -> "הסמכה קבועה"
-                    else -> "זמין"
+                Surface(color = Color.Red.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp)) {
+                    Text("דרושה רמה $requiredLevel (נוכחי: $currentLevel)", modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), fontSize = 11.sp, color = Color.Red, fontWeight = FontWeight.Bold)
                 }
-                val statusColor = when (status) {
-                    "permanent" -> Color(0xFF4CAF50)
-                    "temporary" -> Color(0xFFFF9800)
-                    else -> MaterialTheme.colorScheme.primary
-                }
+            } else {
+                val statusText = when (status) { "training" -> "בשלבי למידה"; "temporary" -> "הסמכה זמנית"; "permanent" -> "הסמכה קבועה"; else -> "זמין" }
+                val statusColor = if (status == "permanent") SuccessDark else AmberGold
 
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text(statusText, fontSize = 12.sp, color = statusColor, fontWeight = FontWeight.Bold)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(statusText, fontSize = 12.sp, color = statusColor, fontWeight = FontWeight.Black)
                     Spacer(modifier = Modifier.weight(1f))
-                    if (progress > 0) {
-                        Text("${progress.toInt()}%", fontSize = 12.sp, color = statusColor, fontWeight = FontWeight.Bold)
-                    }
+                    if (progress > 0) Text("${progress.toInt()}%", fontSize = 12.sp, color = statusColor, fontWeight = FontWeight.Black)
                 }
                 
                 if (progress > 0) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     LinearProgressIndicator(
                         progress = { progress / 100f },
                         modifier = Modifier.fillMaxWidth().height(6.dp),
                         color = statusColor,
-                        trackColor = statusColor.copy(alpha = 0.2f),
+                        trackColor = Color.White.copy(alpha = 0.05f),
                         strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
                     )
                 }

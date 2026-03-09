@@ -1,25 +1,105 @@
 package com.tzir.delivery.android.ui.theme
 
 import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import java.util.Calendar
+import com.tzir.delivery.android.ui.theme.*
+
+// ════════════════════════════════════════
+// Extended Colors — beyond Material3 scheme
+// ════════════════════════════════════════
+
+data class TZIRExtendedColors(
+    // Glass
+    val glass: Color,
+    val glassBorder: Color,
+    // Brand
+    val amberGold: Color,
+    val amberGoldDark: Color,
+    val amberGoldGlow: Color,
+    val amberGoldDim: Color,
+    // Semantic
+    val success: Color,
+    val successBg: Color,
+    val warning: Color,
+    val warningBg: Color,
+    val info: Color,
+    val infoBg: Color,
+    // Online
+    val online: Color,
+    val offline: Color,
+    // Text
+    val textMuted: Color,
+    // Surface
+    val surfaceElevated: Color,
+    val borderColor: Color,
+)
+
+val LightExtendedColors = TZIRExtendedColors(
+    glass = GlassWhite,
+    glassBorder = Color(0x1A000000), // 10% black border for light
+    amberGold = AmberGold,
+    amberGoldDark = AmberGoldDark,
+    amberGoldGlow = AmberGoldGlow,
+    amberGoldDim = AmberGoldDim,
+    success = SuccessLight,
+    successBg = SuccessBgLight,
+    warning = WarningLight,
+    warningBg = WarningBgLight,
+    info = InfoLight,
+    infoBg = InfoBgLight,
+    online = OnlineGreen,
+    offline = OfflineGray,
+    textMuted = TextMutedLight,
+    surfaceElevated = Surface2Light,
+    borderColor = BorderLight,
+)
+
+val DarkExtendedColors = TZIRExtendedColors(
+    glass = GlassDark,
+    glassBorder = GlassBorderDark,
+    amberGold = AmberGold,
+    amberGoldDark = AmberGoldDark,
+    amberGoldGlow = AmberGoldGlow,
+    amberGoldDim = AmberGoldDim,
+    success = SuccessDark,
+    successBg = SuccessBgDark,
+    warning = WarningDark,
+    warningBg = WarningBgDark,
+    info = InfoDark,
+    infoBg = InfoBgDark,
+    online = OnlineGreen,
+    offline = OfflineGray,
+    textMuted = TextMutedDark,
+    surfaceElevated = Surface2Dark,
+    borderColor = BorderDark,
+)
+
+val LocalTZIRColors = staticCompositionLocalOf { LightExtendedColors }
+
+// ════════════════════════════════════════
+// Material3 Color Schemes
+// ════════════════════════════════════════
 
 private val TZIRLightColorScheme = lightColorScheme(
-    primary          = Amber,
-    onPrimary        = Navy950,
-    primaryContainer = AmberLight,
-    onPrimaryContainer = Navy700,
+    primary          = AmberGold,
+    onPrimary        = Graphite950,
+    primaryContainer = AmberGoldLight,
+    onPrimaryContainer = Graphite700,
 
-    secondary        = Navy600,
+    secondary        = Graphite600,
     onSecondary      = Color.White,
-    secondaryContainer = Navy100,
-    onSecondaryContainer = Navy900,
+    secondaryContainer = Graphite50,
+    onSecondaryContainer = Graphite900,
 
     background       = BackgroundLight,
     onBackground     = TextPrimaryLight,
@@ -30,24 +110,24 @@ private val TZIRLightColorScheme = lightColorScheme(
     onSurfaceVariant = TextSecondaryLight,
 
     outline          = BorderLight,
-    outlineVariant   = Color(0xFFC5D5E4),
+    outlineVariant   = Graphite50,
 
-    error            = ErrorRed,
+    error            = ErrorLight,
     onError          = Color.White,
-    errorContainer   = ErrorBg,
-    onErrorContainer = ErrorRed,
+    errorContainer   = ErrorBgLight,
+    onErrorContainer = ErrorLight,
 )
 
 private val TZIRDarkColorScheme = darkColorScheme(
-    primary          = Amber,
-    onPrimary        = Navy950,
+    primary          = AmberGold,
+    onPrimary        = Graphite950,
     primaryContainer = Color(0xFF3D2800),
-    onPrimaryContainer = AmberLight,
+    onPrimaryContainer = AmberGoldLight,
 
-    secondary        = Navy200,
-    onSecondary      = Navy950,
-    secondaryContainer = Navy700,
-    onSecondaryContainer = Navy100,
+    secondary        = Graphite300,
+    onSecondary      = Graphite950,
+    secondaryContainer = Graphite700,
+    onSecondaryContainer = Graphite100,
 
     background       = BackgroundDark,
     onBackground     = TextPrimaryDark,
@@ -58,37 +138,62 @@ private val TZIRDarkColorScheme = darkColorScheme(
     onSurfaceVariant = TextSecondaryDark,
 
     outline          = BorderDark,
-    outlineVariant   = Color(0x0F5C8AB0),
+    outlineVariant   = Graphite700,
 
-    error            = ErrorRed,
+    error            = ErrorDark,
     onError          = Color.White,
-    errorContainer   = ErrorBg,
-    onErrorContainer = ErrorRed,
+    errorContainer   = ErrorBgDark,
+    onErrorContainer = ErrorDark,
 )
 
+// ════════════════════════════════════════
+// Time-based theme detection
+// ════════════════════════════════════════
+
 fun getDefaultTheme(): Boolean {
-    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-    return hour >= 20 || hour < 7  // true = dark
+    // Always return true for Premium Dark aesthetic requested in mockups
+    return true 
 }
+
+// ════════════════════════════════════════
+// Theme Composable
+// ════════════════════════════════════════
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = getDefaultTheme(), // Use TZIR Time-based fallback
+    darkTheme: Boolean = getDefaultTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) TZIRDarkColorScheme else TZIRLightColorScheme
+    val extendedColors = if (darkTheme) DarkExtendedColors else LightExtendedColors
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            window.navigationBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = !darkTheme
+                isAppearanceLightNavigationBars = !darkTheme
+            }
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        // typography  = TZIRTypography, // Not applied yet since Type.kt is next
-        content     = content
-    )
+    CompositionLocalProvider(LocalTZIRColors provides extendedColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography  = TZIRTypography,
+            content     = content
+        )
+    }
+}
+
+// ════════════════════════════════════════
+// Helper: Access extended colors anywhere
+// ════════════════════════════════════════
+
+object TZIRTheme {
+    val colors: TZIRExtendedColors
+        @Composable get() = LocalTZIRColors.current
 }

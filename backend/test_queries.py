@@ -1,40 +1,31 @@
+
+import sys
+import os
+from pathlib import Path
+from datetime import datetime
+
+sys.path.append(str(Path(__file__).parent.parent))
+
 from app import create_app
-from extensions import db
-from models import Delivery, Invoice, Payment, Expense, CustomerFile, CustomerNote, CustomerTask, AuditLog, User
+from models import db, Courier, User, Delivery, Invoice
 
 app = create_app()
 with app.app_context():
-    customer_id = 3
-    print("Testing Delivery...")
-    try: Delivery.query.filter_by(customer_id=customer_id).order_by(Delivery.created_at.desc()).limit(50).all()
-    except Exception as e: print("Fail Delivery:", e)
+    active_couriers = Courier.query.filter_by(is_available=True).count()
+    active_orders = Delivery.query.filter(Delivery.status.in_(['pending', 'assigned', 'picked_up', 'in_transit'])).count()
     
-    print("Testing Invoice...")
-    try: Invoice.query.filter_by(customer_id=customer_id).order_by(Invoice.issue_date.desc()).limit(50).all()
-    except Exception as e: print("Fail Invoice:", e)
-    
-    print("Testing Payment...")
-    try: db.session.query(Payment, Invoice).join(Invoice, Payment.invoice_id == Invoice.id).filter(Invoice.customer_id == customer_id).order_by(Payment.payment_date.desc()).limit(50).all()
-    except Exception as e: print("Fail Payment:", e)
-    
-    print("Testing Expense...")
-    try: Expense.query.filter_by(customer_id=customer_id).order_by(Expense.expense_date.desc()).limit(50).all()
-    except Exception as e: print("Fail Expense:", e)
-    
-    print("Testing CustomerFile...")
-    try: CustomerFile.query.filter_by(customer_id=customer_id).order_by(CustomerFile.created_at.desc()).limit(100).all()
-    except Exception as e: print("Fail CustomerFile:", e)
-    
-    print("Testing CustomerNote...")
-    try: CustomerNote.query.filter_by(customer_id=customer_id).order_by(CustomerNote.created_at.desc()).limit(50).all()
-    except Exception as e: print("Fail CustomerNote:", e)
-    
-    print("Testing CustomerTask...")
-    try: CustomerTask.query.filter_by(customer_id=customer_id).order_by(CustomerTask.status.asc(), CustomerTask.due_date.asc()).limit(50).all()
-    except Exception as e: print("Fail CustomerTask:", e)
-    
-    print("Testing AuditLog...")
-    try: AuditLog.query.filter_by(resource_type='Customer', resource_id=str(customer_id)).order_by(AuditLog.timestamp.desc()).all()
-    except Exception as e: print("Fail AuditLog:", e)
-    
-    print("Done")
+    today = datetime.utcnow().date()
+    # Handle SQLite date issues if any
+    try:
+        from sqlalchemy import func
+        orders_today = Delivery.query.filter(func.date(Delivery.created_at) == today).count()
+        revenue_today = db.session.query(func.sum(Invoice.total_amount)).filter(func.date(Invoice.issue_date) == today, Invoice.status == 'paid').scalar() or 0
+    except Exception as e:
+        print(f"Query Error: {e}")
+        orders_today = "error"
+        revenue_today = "error"
+
+    print(f"Active Couriers Count: {active_couriers}")
+    print(f"Active Orders Count: {active_orders}")
+    print(f"Orders Today Count: {orders_today}")
+    print(f"Revenue Today: {revenue_today}")

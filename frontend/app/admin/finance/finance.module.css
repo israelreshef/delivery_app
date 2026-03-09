@@ -304,3 +304,60 @@
     color: #F59E0B;
     border: 1px solid rgba(245, 158, 11, 0.2);
 }
+
+.panelContentChart {
+    height: 300px;
+}
+
+.panelContentPie {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+}
+
+.panelContentColList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.panelContentColListSm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.borderTopBlue {
+    border-top: 4px solid #3B82F6;
+}
+
+.bgBlueAccent {
+    background-color: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+}
+
+.borderNone {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.textBlue {
+    color: #60A5FA;
+}
+
+.flexSpaceBetween {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.wFull {
+    width: 100%;
+}
+
+.colorFaint {
+    color: #94A3B8;
+    font-size: 0.875rem;
+}

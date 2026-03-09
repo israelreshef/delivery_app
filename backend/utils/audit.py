@@ -53,7 +53,7 @@ def log_audit(action, user_id=None, resource_type=None, resource_id=None, status
         json_logger.info(json.dumps(log_data))
 
     except Exception as e:
-        print(f"⚠️ Failed to write audit log: {e}")
+        print(f" Failed to write audit log: {e}")
         traceback.print_exc()
 
 def scan_file_virus(file_stream) -> bool:

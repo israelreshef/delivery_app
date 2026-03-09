@@ -2,11 +2,9 @@
 package com.tzir.delivery.shared.repository
 
 import com.tzir.delivery.shared.db.TzirDatabase
-import com.tzir.delivery.shared.model.Mission
-import com.tzir.delivery.shared.model.CourierStats
+import com.tzir.delivery.shared.model.*
 import com.tzir.delivery.shared.network.DeliveryApi
-import com.tzir.delivery.shared.model.AutocompleteSuggestion
-import com.tzir.delivery.shared.model.GeocodeResult
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -237,7 +235,15 @@ class CourierRepository(
 
     suspend fun optimizeManualRoute(lat: Double, lng: Double, stops: List<Map<String, Any?>>): JsonElement? {
         return try {
-            val result = api.optimizeManualRoute(lat, lng, stops)
+            val stopModels = stops.map { s ->
+                Stop(
+                    address = s["address"] as? String,
+                    lat = s["lat"] as? Double,
+                    lng = s["lng"] as? Double,
+                    type = s["stop_type"] as? String
+                )
+            }
+            val result = api.optimizeManualRoute(ManualRouteRequest(lat, lng, stopModels))
             if (result.success) result.data else null
         } catch (e: Exception) {
             e.printStackTrace()
@@ -246,6 +252,7 @@ class CourierRepository(
     }
 
     suspend fun autocompleteAddress(query: String): List<AutocompleteSuggestion> {
+        println("DEBUG: CourierRepository - Querying autocomplete for: '$query'")
         return api.autocompleteAddress(query)
     }
 
@@ -262,7 +269,8 @@ class CourierRepository(
         podImage: String? = null
     ): Boolean {
         return try {
-            val success = api.updateStatus(missionId, status, lat, lng, podSignature, podImage)
+            val request = StatusUpdateRequest(status, lat, lng, podSignature, podImage)
+            val success = api.updateStatus(missionId, request)
             if (success) {
                 refreshActiveMissions()
             } else {
@@ -291,12 +299,12 @@ class CourierRepository(
         
         pending.forEach { item ->
             try {
-                val success = api.updateStatus(
-                    orderId = item.missionId.toInt(), 
-                    status = item.newStatus, 
+                val request = StatusUpdateRequest(
+                    status = item.newStatus,
                     podSignature = item.podSignature,
                     podImage = item.podImage
                 )
+                val success = api.updateStatus(item.missionId.toInt(), request)
                 if (success) {
                     queries.deleteSyncItem(item.id)
                 }
@@ -317,7 +325,7 @@ class CourierRepository(
 
     suspend fun submitRating(orderId: Int, rating: Int, comment: String): Boolean {
         return try {
-            api.submitRating(orderId, rating, comment)
+            api.submitRating(orderId, RatingRequest(rating, comment))
         } catch (e: Exception) {
             false
         }
@@ -336,7 +344,7 @@ class CourierRepository(
     }
 
     suspend fun verifyOTP(orderId: Int, code: String): Boolean {
-        return api.verifyOTP(orderId, code)
+        return api.verifyOTP(orderId, OtpVerifyRequest(code))
     }
 
     suspend fun getDocuments(): List<Map<String, Any>> {
@@ -345,9 +353,7 @@ class CourierRepository(
 
     suspend fun updateAvailability(isAvailable: Boolean): Boolean {
         return try {
-            val success = api.updateAvailability(isAvailable)
-            // If we're offline, we might want to cache this or retry later
-            // For now, we just return success/failure
+            val success = api.updateAvailability(AvailabilityRequest(isAvailable))
             success
         } catch (e: Exception) {
             false
@@ -356,7 +362,7 @@ class CourierRepository(
 
     suspend fun startShift(vibe: String): Boolean {
         return try {
-            val result = api.startShift(vibe)
+            val result = api.startShift(ShiftStartRequest(vibe))
             if (result.success) {
                 refreshShiftStatus()
             }

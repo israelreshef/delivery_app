@@ -15,6 +15,8 @@ import LiveFeed from "@/components/admin/LiveFeed";
 import ExpensesDashboard from "@/components/admin/ExpensesDashboard";
 import { Badge } from "@/components/ui/badge";
 import LoadingSpinner from "@/components/ui/loading-spinner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DashboardStats, RevenueData } from "@/types/api";
 import { useSocket } from "@/lib/socket";
 
@@ -40,14 +42,16 @@ import { auth } from "@/lib/auth";
 export default function AdminDashboard() {
     const { user, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
-    const [stats, setStats] = useState<DashboardStats>({
+    const [stats, setStats] = useState<DashboardStats & { active_courier_list?: any[] }>({
         active_orders: 0,
         active_couriers: 0,
         orders_today: 0,
         revenue_today: 0,
         new_customers: 0,
-        available_couriers: 0
+        available_couriers: 0,
+        active_courier_list: []
     });
+    const [isCouriersModalOpen, setIsCouriersModalOpen] = useState(false);
     const [revenueData, setRevenueData] = useState<RevenueData[]>([]); // Initialize empty
 
     // Fetch stats initially without getting blocked by missing sockets
@@ -86,7 +90,11 @@ export default function AdminDashboard() {
 
         socket.on('courier_availability_update', (data: any) => {
             console.log("Real-time courier availability update:", data);
-            // Re-fetch entire stats cleanly to ensure consistency
+            fetchStats();
+        });
+
+        socket.on('courier_count_update', (data: any) => {
+            console.log("Real-time courier connection count update:", data);
             fetchStats();
         });
 
@@ -96,6 +104,7 @@ export default function AdminDashboard() {
 
         return () => {
             socket.off('courier_availability_update');
+            socket.off('courier_count_update');
             socket.off('order_update');
             socket.off('new_order');
         };
@@ -150,11 +159,14 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className={styles.metricCard}>
+                <div
+                    className={`${styles.metricCard} cursor-pointer hover:bg-slate-50 transition-colors`}
+                    onClick={() => setIsCouriersModalOpen(true)}
+                >
                     <div>
                         <div className={styles.metricLabel}>שליחים פעילים</div>
                         <div className={styles.metricValue}>{stats.active_couriers || 0}</div>
-                        <p className="text-xs text-slate-400 mt-1">מחוברים כעת</p>
+                        <p className="text-xs text-slate-400 mt-1">מחוברים כעת (לחץ לפירוט)</p>
                     </div>
                     <div className={`${styles.metricIcon} ${styles.iconOrange}`}>
                         <Truck size={24} />
@@ -279,6 +291,52 @@ export default function AdminDashboard() {
                     </div>
                 </Link>
             </div>
+
+            {/* Active Couriers Modal */}
+            <Dialog open={isCouriersModalOpen} onOpenChange={setIsCouriersModalOpen}>
+                <DialogContent className="max-w-md bg-white">
+                    <DialogHeader>
+                        <DialogTitle className="text-right">שליחים מחוברים כעת</DialogTitle>
+                        <DialogDescription className="text-right">
+                            רשימת השליחים שזמינים כרגע ומחוברים מהאפליקציה
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="mt-4 space-y-3">
+                        {stats.active_courier_list && stats.active_courier_list.length > 0 ? (
+                            stats.active_courier_list.map((courier: any) => (
+                                <div key={courier.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="h-10 w-10 border-2 border-brand/20">
+                                            <AvatarFallback className="bg-brand/10 text-brand">
+                                                {courier.name.charAt(0)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="text-right">
+                                            <div className="font-bold text-slate-900">{courier.name}</div>
+                                            <div className="text-xs text-slate-500">ID: {courier.id}</div>
+                                        </div>
+                                    </div>
+                                    <div className="text-left">
+                                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">זמין</Badge>
+                                        <div className="text-[10px] text-slate-400 mt-1">
+                                            {courier.lat.toFixed(4)}, {courier.lng.toFixed(4)}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-10 text-slate-400 border-2 border-dashed rounded-lg">
+                                אין שליחים מחוברים כרגע
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <Button variant="secondary" onClick={() => setIsCouriersModalOpen(false)}>סגור</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

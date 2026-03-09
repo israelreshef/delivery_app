@@ -1,7 +1,6 @@
-﻿> Task :androidApp:preBuild UP-TO-DATE
+﻿> Task :androidApp:checkKotlinGradlePluginConfigurationErrors
+> Task :androidApp:preBuild UP-TO-DATE
 > Task :androidApp:preDebugBuild UP-TO-DATE
-> Task :androidApp:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :androidApp:checkKotlinGradlePluginConfigurationErrors
 > Task :shared:preBuild UP-TO-DATE
 > Task :shared:preDebugBuild UP-TO-DATE
 > Task :shared:writeDebugAarMetadata UP-TO-DATE
@@ -58,34 +57,89 @@
 > Task :androidApp:writeDebugAppMetadata UP-TO-DATE
 > Task :androidApp:writeDebugSigningConfigVersions UP-TO-DATE
 
-> Task :androidApp:compileDebugKotlin
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/MainActivity.kt:48:47 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:74:5 Parameter 'locationManager' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:84:5 Parameter 'onClientsClick' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:91:9 Variable 'context' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:98:9 Variable 'isNightTime' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:182:57 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:217:57 'ExitToApp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ExitToApp
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:226:13 Name shadowed: context
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DashboardScreen.kt:468:21 'CircularProgressIndicator(Float, Modifier = ..., Color = ..., Dp = ..., Color = ..., StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/DocumentsScreen.kt:139:32 'KeyboardArrowLeft: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.KeyboardArrowLeft
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionDetailsScreen.kt:43:9 Variable 'isOffline' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionHistoryScreen.kt:37:9 Variable 'isOffline' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionHistoryScreen.kt:38:9 Variable 'scope' is never used
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionHistoryScreen.kt:53:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionsScreen.kt:89:32 'Indicator(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Use SecondaryIndicator instead.
-w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/src/main/java/com/tzir/delivery/android/ui/courier/MissionsScreen.kt:270:18 Parameter 'missions' is never used
-
-> Task :androidApp:compileDebugJavaWithJavac NO-SOURCE
-> Task :androidApp:processDebugJavaRes UP-TO-DATE
-> Task :androidApp:mergeDebugJavaResource UP-TO-DATE
-> Task :androidApp:dexBuilderDebug
-> Task :androidApp:mergeProjectDexDebug
-> Task :androidApp:packageDebug
-> Task :androidApp:createDebugApkListingFileRedirect UP-TO-DATE
-> Task :androidApp:assembleDebug
+> Task :androidApp:compileDebugKotlin FAILED
+.\gradlew : e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/a
+ndroidApp/src/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePla
+nnerScreen.kt:92:26 Unresolved reference: Icons
+At line:1 char:38
++ ... ulator-5554"; .\gradlew :androidApp:installDebug > build_log.txt 2>&1
++                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...eference: 
+Icons    :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:123:42 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:132:46 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:224:38 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:324:29 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:348:22 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:357:56 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:358:58 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:359:51 Unresolved reference: Icons
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:371:13 Overload resolution ambiguity: 
+public fun Icon(bitmap: ImageBitmap, contentDescription: String?, 
+modifier: Modifier = ..., tint: Color = ...): Unit defined in 
+androidx.compose.material3
+public fun Icon(painter: Painter, contentDescription: String?, modifier: 
+Modifier = ..., tint: Color = ...): Unit defined in 
+androidx.compose.material3
+public fun Icon(imageVector: ImageVector, contentDescription: String?, 
+modifier: Modifier = ..., tint: Color = ...): Unit defined in 
+androidx.compose.material3
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/androidApp/sr
+c/main/java/com/tzir/delivery/android/ui/courier/ManualRoutePlannerScreen.k
+t:373:13 Overload resolution ambiguity: 
+public fun Text(text: AnnotatedString, modifier: Modifier = ..., color: 
+Color = ..., fontSize: TextUnit = ..., fontStyle: FontStyle? = ..., 
+fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., 
+letterSpacing: TextUnit = ..., textDecoration: TextDecoration? = ..., 
+textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: 
+TextOverflow = ..., softWrap: Boolean = ..., maxLines: Int = ..., 
+minLines: Int = ..., inlineContent: Map<String, InlineTextContent> = ..., 
+onTextLayout: (TextLayoutResult) -> Unit = ..., style: TextStyle = ...): 
+Unit defined in androidx.compose.material3
+public fun Text(text: String, modifier: Modifier = ..., color: Color = 
+..., fontSize: TextUnit = ..., fontStyle: FontStyle? = ..., fontWeight: 
+FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit 
+= ..., textDecoration: TextDecoration? = ..., textAlign: TextAlign? = ..., 
+lineHeight: TextUnit = ..., overflow: TextOverflow = ..., softWrap: 
+Boolean = ..., maxLines: Int = ..., minLines: Int = ..., onTextLayout: 
+((TextLayoutResult) -> Unit)? = ..., style: TextStyle = ...): Unit defined 
+in androidx.compose.material3
 
 [Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':androidApp:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.Gr
+adleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -93,5 +147,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 15s
-51 actionable tasks: 6 executed, 45 up-to-date
+BUILD FAILED in 11s
+45 actionable tasks: 3 executed, 42 up-to-date

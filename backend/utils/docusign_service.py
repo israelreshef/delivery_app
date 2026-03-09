@@ -21,11 +21,11 @@ class DocuSignService:
         Note: Integration Key (Client ID) must be granted consent by the user once manually.
         """
         if not self.integration_key:
-            print("❌ DocuSign Integration Key is missing.")
+            print(" DocuSign Integration Key is missing.")
             return None
 
         if not os.path.exists(self.private_key_path):
-            print(f"❌ DocuSign Private Key not found at {self.private_key_path}")
+            print(f" DocuSign Private Key not found at {self.private_key_path}")
             return None
 
         try:
@@ -58,10 +58,10 @@ class DocuSignService:
             return self.access_token
 
         except ApiException as e:
-            print(f"❌ DocuSign Auth Failed: {e}")
+            print(f" DocuSign Auth Failed: {e}")
             return None
         except Exception as e:
-            print(f"❌ Generic DocuSign Error: {e}")
+            print(f" Generic DocuSign Error: {e}")
             return None
 
     def send_employment_contract(self, courier_email, courier_name, contract_html):
@@ -129,7 +129,7 @@ class DocuSignService:
             }
             
         except ApiException as e:
-            print(f"❌ DocuSign Send Error: {e}")
+            print(f" DocuSign Send Error: {e}")
             return {"success": False, "error": str(e)}
 
 # Singleton Instance

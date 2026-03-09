@@ -20,7 +20,7 @@ with app.app_context():
         admin.set_password('admin123')
         admin.user_type = 'admin' # Ensure it is admin
         db.session.commit()
-        print("✅ Password reset to: admin123")
+        print(" Password reset to: admin123")
     else:
         print("User 'admin' not found. Creating new...")
         admin = User(
@@ -32,11 +32,11 @@ with app.app_context():
         admin.set_password('admin123')
         db.session.add(admin)
         db.session.commit()
-        print("✅ Created new admin user: admin / admin123")
+        print(" Created new admin user: admin / admin123")
     
     # Verify
     u = User.query.filter_by(username='admin').first()
     if u.check_password('admin123'):
         print("Verification: Login with 'admin' and 'admin123' should work now.")
     else:
-        print("❌ Verification failed.")
+        print(" Verification failed.")

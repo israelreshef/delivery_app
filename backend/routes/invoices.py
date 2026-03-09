@@ -40,12 +40,14 @@ def create_invoice(current_user):
         if not customer:
             return jsonify({'error': 'Cannot issue invoice without a linked customer'}), 400
             
-        # 1. Determine VAT Rate (0% for Eilat/Exempt, 17% otherwise)
-        vat_rate_applicable = 0.0 if customer.vat_status == 'exempt' else 0.17
+        from decimal import Decimal, ROUND_HALF_UP
         
-        subtotal = float(data.get('subtotal', delivery.delivery_fee))
-        vat_amount = round(subtotal * vat_rate_applicable, 2)
-        total_amount = round(subtotal + vat_amount, 2)
+        # 1. Determine VAT Rate (0% for Eilat/Exempt, 17% otherwise)
+        vat_rate_applicable = Decimal('0.0') if customer.vat_status == 'exempt' else Decimal('0.17')
+        
+        subtotal = Decimal(str(data.get('subtotal', delivery.delivery_fee)))
+        vat_amount = (subtotal * vat_rate_applicable).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        total_amount = (subtotal + vat_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         
         # 2. Sequential Numbering Logic (Row-level Locking)
         # Assuming the prefix indicates the type, e.g., INV-001 or RCP-001
@@ -94,7 +96,7 @@ def create_invoice(current_user):
         return jsonify({
             'message': 'Invoice created successfully',
             'invoice_number': new_invoice_number,
-            'total_amount': total_amount,
+            'total_amount': float(total_amount),
             'download_url': f"/api/invoices/{new_invoice.id}/download"
         }), 201
 

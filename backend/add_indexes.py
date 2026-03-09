@@ -8,7 +8,7 @@ from sqlalchemy import text
 def add_performance_indexes():
     app = create_app()
     with app.app_context():
-        print("🚀 Adding Performance Indexes...")
+        print(" Adding Performance Indexes...")
         
         indexes = [
             # User indexes (critical for auth!)
@@ -57,17 +57,17 @@ def add_performance_indexes():
                     conn.execute(text(idx_sql))
                     conn.commit()
                     idx_name = idx_sql.split('idx_')[1].split(' ')[0]
-                    print(f"✅ Added: {idx_name}")
+                    print(f" Added: {idx_name}")
                     success_count += 1
                 except Exception as e:
                     error_msg = str(e)
                     if 'already exists' in error_msg.lower():
                         skip_count += 1
                     else:
-                        print(f"⚠️ Error: {error_msg[:80]}")
+                        print(f" Error: {error_msg[:80]}")
         
-        print(f"\n✨ Done! Added {success_count} indexes, skipped {skip_count} existing.")
-        print("🚀 Database queries should be significantly faster now!")
+        print(f"\n Done! Added {success_count} indexes, skipped {skip_count} existing.")
+        print(" Database queries should be significantly faster now!")
 
 if __name__ == "__main__":
     add_performance_indexes()

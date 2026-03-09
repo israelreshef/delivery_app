@@ -1,6 +1,7 @@
 
 package com.tzir.delivery.shared.location
 
+import com.tzir.delivery.shared.model.LocationRequest
 import com.tzir.delivery.shared.network.DeliveryApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +42,7 @@ class LocationManager(private val api: DeliveryApi) {
                 lng += (Random.nextDouble() - 0.5) * 0.001
 
                 _currentLocation.value = lat to lng
-                val success = api.sendLocation(courierId, lat, lng)
+                val success = api.sendLocation(LocationRequest(courierId, lat, lng))
                 println("Location update sent: $lat, $lng (Success: $success)")
 
                 delay(3000) // Send every 3 seconds

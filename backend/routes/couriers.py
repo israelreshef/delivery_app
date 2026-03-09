@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from models import db, Courier, User, Delivery, ShiftSession, CourierGamification, DailyMission
 from werkzeug.security import generate_password_hash
 from utils.decorators import token_required, role_required
+from sqlalchemy.orm import joinedload
 import logging
 
 couriers_bp = Blueprint('couriers', __name__)
@@ -88,17 +89,24 @@ def get_couriers(current_user):
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('limit', 50, type=int)
         
-        paginated_data = Courier.query.paginate(page=page, per_page=per_page, error_out=False)
+        query = Courier.query.options(joinedload(Courier.user))
+        paginated_data = query.paginate(page=page, per_page=per_page, error_out=False)
         couriers = paginated_data.items
         
         result = []
         for c in couriers:
+            # Safely handle enum and objects
+            vehicle_type_str = str(c.vehicle_type) if c.vehicle_type else 'scooter'
+            if '.' in vehicle_type_str:
+                vehicle_type_str = vehicle_type_str.split('.')[-1]
+
             result.append({
                 'id': c.id,
                 'full_name': c.full_name,
                 'phone': c.user.phone if c.user else '',
-                'vehicle_type': c.vehicle_type,
+                'vehicle_type': vehicle_type_str,
                 'is_available': c.is_available,
+                'onboarding_status': str(c.onboarding_status.value) if hasattr(c.onboarding_status, 'value') else str(c.onboarding_status),
                 'rating': float(c.rating) if c.rating else 5.0,
                 'total_deliveries': c.total_deliveries,
                 'current_location': {'lat': c.current_location_lat, 'lng': c.current_location_lng} if c.current_location_lat else None 
@@ -264,6 +272,11 @@ def update_availability(current_user):
     """עדכון זמינות השליח"""
     try:
         data = request.json
+        is_available = data.get('is_available', False)
+        
+        with open('courier_debug.log', 'a', encoding='utf-8') as f:
+            f.write(f"[{datetime.utcnow().isoformat()}] PATCH /availability - User: {current_user.id}, Available: {is_available}\n")
+
         if 'is_available' not in data:
             return jsonify({'error': 'is_available field is required'}), 400
             
@@ -282,6 +295,62 @@ def update_availability(current_user):
         }, namespace='/')
         
         return jsonify({'success': True, 'is_available': courier.is_available}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@couriers_bp.route('/location', methods=['POST'])
+@token_required
+@role_required('courier')
+def update_location(current_user):
+    """עדכון מיקום השליח בזמן אמת"""
+    try:
+        data = request.json
+        lat = data.get('lat') or data.get('latitude')
+        lng = data.get('lng') or data.get('longitude')
+        
+        if lat is None or lng is None:
+            return jsonify({'error': 'lat and lng are required'}), 400
+            
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        if not courier:
+            return jsonify({'error': 'Courier profile not found'}), 404
+            
+        courier.current_location_lat = lat
+        courier.current_location_lng = lng
+        db.session.commit()
+        
+        # Check for active delivery to broadcast to specific tracking rooms
+        active_order = Delivery.query.filter(
+            Delivery.courier_id == courier.id,
+            Delivery.status.in_(['assigned', 'picked_up', 'in_transit'])
+        ).first()
+
+        # Determine status for frontend display
+        status = 'busy' if active_order else ('idle' if courier.is_available else 'offline')
+        
+        # Emit Socket.IO event for real-time dashboard updates
+        from extensions import socketio
+        location_data = {
+            'courier_id': courier.id,
+            'name': courier.full_name,
+            'lat': lat,
+            'lng': lng,
+            'status': status,
+            'timestamp': datetime.utcnow().isoformat()
+        }
+        
+        # Broadcast to admin room
+        print(f" 📡 Sending location fix to admin_room: Courier {courier.id} at {lat}, {lng}")
+        socketio.emit('courier_location_update', location_data, room='admin_room')
+        
+        if active_order:
+             socketio.emit('delivery_location_update', {
+                 **location_data,
+                 'delivery_id': active_order.id
+             }, room=f'delivery_{active_order.id}')
+             
+        return jsonify({'success': True}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
@@ -330,7 +399,7 @@ def get_active_order(current_user):
         # Look for orders in progress
         order = Delivery.query.filter(
             Delivery.courier_id == courier.id,
-            Delivery.status.in_(['accepted', 'assigned', 'picked_up', 'in_transit', 'arrived'])
+            Delivery.status.in_(['assigned', 'picked_up', 'in_transit'])
         ).first()
 
         if not order:
@@ -468,7 +537,7 @@ def accept_order(current_user, order_id):
              return jsonify({'error': 'Order not available'}), 400
         
         delivery.courier_id = courier.id
-        delivery.status = 'accepted'
+        delivery.status = 'assigned' # Enum matching
         delivery.updated_at = datetime.utcnow()
         db.session.commit()
         

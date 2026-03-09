@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 
 // Preference keys
 const val PREF_NAV_APP = "pref_nav_app"
@@ -44,19 +45,19 @@ enum class MapTheme(val label: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(onBack: () -> Unit) {
+fun SettingsScreen(onBack: () -> Unit, onVehicleSettings: () -> Unit = {}) {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("tzir_prefs", Context.MODE_PRIVATE)
 
     var selectedNavApp by remember {
         mutableStateOf(
-            NavApp.values().find { it.name == prefs.getString(PREF_NAV_APP, NavApp.WAZE.name) }
+            NavApp.entries.find { it.name == prefs.getString(PREF_NAV_APP, NavApp.WAZE.name) }
                 ?: NavApp.WAZE
         )
     }
     var selectedMapTheme by remember {
         mutableStateOf(
-            MapTheme.values().find { it.name == prefs.getString(PREF_MAP_THEME, MapTheme.AUTO.name) }
+            MapTheme.entries.find { it.name == prefs.getString(PREF_MAP_THEME, MapTheme.AUTO.name) }
                 ?: MapTheme.AUTO
         )
     }
@@ -66,88 +67,108 @@ fun SettingsScreen(onBack: () -> Unit) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("הגדרות", fontWeight = FontWeight.Bold) },
+            CenterAlignedTopAppBar(
+                title = { Text("הגדרות", fontWeight = FontWeight.Bold, color = Amber) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Amber)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(AppleGray)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            // Navigation App Section
-            SettingsSection(title = "🗺️ אפליקציית ניווט") {
-                NavApp.values().forEach { app ->
-                    SettingsRadioRow(
-                        label = app.label,
-                        selected = selectedNavApp == app,
-                        onClick = {
-                            selectedNavApp = app
-                            prefs.edit().putString(PREF_NAV_APP, app.name).apply()
-                        }
-                    )
-                }
-            }
-
-            // Map Theme Section
-            SettingsSection(title = "🌙 ערכת נושא מפה") {
-                MapTheme.values().forEach { theme ->
-                    SettingsRadioRow(
-                        label = theme.label,
-                        selected = selectedMapTheme == theme,
-                        onClick = {
-                            selectedMapTheme = theme
-                            prefs.edit().putString(PREF_MAP_THEME, theme.name).apply()
-                        }
-                    )
-                }
-            }
-
-            // Notifications Section
-            SettingsSection(title = "🔔 התראות") {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "התראות משימות חדשות",
-                        fontSize = 15.sp,
-                        color = TextOfficial,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Switch(
-                        checked = notificationsEnabled,
-                        onCheckedChange = {
-                            notificationsEnabled = it
-                            prefs.edit().putBoolean(PREF_NOTIFICATIONS, it).apply()
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedTrackColor = PrimaryTurquoise,
-                            checkedThumbColor = AppleWhite
+        PremiumBackground {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                // Navigation App Section
+                SettingsSection(title = "🗺️ אפליקציית ניווט") {
+                    NavApp.entries.forEach { app ->
+                        SettingsRadioRow(
+                            label = app.label,
+                            selected = selectedNavApp == app,
+                            onClick = {
+                                selectedNavApp = app
+                                prefs.edit().putString(PREF_NAV_APP, app.name).apply()
+                            }
                         )
-                    )
+                    }
                 }
-            }
 
-            // App Info Section
-            SettingsSection(title = "ℹ️ אודות") {
-                InfoRow("גרסת אפליקציה", "1.0.4")
-                InfoRow("שרת Backend", "מחובר ✅")
-                InfoRow("מנוע Real-time", "פעיל ✅")
+                // Map Theme Section
+                SettingsSection(title = "🌙 ערכת נושא מפה") {
+                    MapTheme.entries.forEach { theme ->
+                        SettingsRadioRow(
+                            label = theme.label,
+                            selected = selectedMapTheme == theme,
+                            onClick = {
+                                selectedMapTheme = theme
+                                prefs.edit().putString(PREF_MAP_THEME, theme.name).apply()
+                            }
+                        )
+                    }
+                }
+
+                // Notifications Section
+                SettingsSection(title = "🔔 התראות") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "התראות הצעות חדשות",
+                            fontSize = 15.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Switch(
+                            checked = notificationsEnabled,
+                            onCheckedChange = {
+                                notificationsEnabled = it
+                                prefs.edit().putBoolean(PREF_NOTIFICATIONS, it).apply()
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = Amber,
+                                checkedThumbColor = Color.White
+                            )
+                        )
+                    }
+                }
+
+                // Vehicle Settings Section
+                SettingsSection(title = "🚗 הגדרות רכב") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onVehicleSettings() }
+                            .padding(vertical = 12.dp, horizontal = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text("ניהול כלי רכב, ביטוח וטסט", fontSize = 15.sp, color = Color.White, fontWeight = FontWeight.Medium)
+                            Text("לחץ לניהול הרכבים", fontSize = 12.sp, color = Color.Gray)
+                        }
+                        Text("‹", fontSize = 24.sp, color = Amber, fontWeight = FontWeight.Light)
+                    }
+                }
+
+                // App Info Section
+                SettingsSection(title = "ℹ️ אודות") {
+                    InfoRow("גרסת אפליקציה", "1.0.4")
+                    InfoRow("שרת Backend", "מחובר ✅")
+                    InfoRow("מנוע Real-time", "פעיל ✅")
+                }
             }
         }
     }
@@ -160,10 +181,10 @@ fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) 
             title,
             fontWeight = FontWeight.Black,
             fontSize = 16.sp,
-            color = TextOfficial,
+            color = Amber,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        GlassCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 20.dp) {
+        GlassCard(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp), content = content)
         }
     }
@@ -172,7 +193,7 @@ fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) 
 @Composable
 fun SettingsRadioRow(label: String, selected: Boolean, onClick: () -> Unit) {
     val bgColor by animateColorAsState(
-        targetValue = if (selected) PrimaryTurquoise.copy(alpha = 0.1f) else Color.Transparent,
+        targetValue = if (selected) Amber.copy(alpha = 0.1f) else Color.Transparent,
         label = "bg"
     )
     Row(
@@ -184,10 +205,10 @@ fun SettingsRadioRow(label: String, selected: Boolean, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 15.sp, color = Color(0xFF1C3D2A), fontWeight = FontWeight.Medium)
+        Text(label, fontSize = 15.sp, color = if (selected) Amber else Color.White, fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium)
         if (selected) {
             Surface(
-                color = PrimaryTurquoise,
+                color = Amber,
                 shape = CircleShape,
                 modifier = Modifier.size(24.dp)
             ) {
@@ -195,7 +216,7 @@ fun SettingsRadioRow(label: String, selected: Boolean, onClick: () -> Unit) {
                     Icon(
                         Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = Navy950,
                         modifier = Modifier.size(14.dp)
                     )
                 }
@@ -213,6 +234,6 @@ fun InfoRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(label, fontSize = 14.sp, color = Color.Gray)
-        Text(value, fontSize = 14.sp, color = TextOfficial, fontWeight = FontWeight.Bold)
+        Text(value, fontSize = 14.sp, color = Amber, fontWeight = FontWeight.Bold)
     }
 }

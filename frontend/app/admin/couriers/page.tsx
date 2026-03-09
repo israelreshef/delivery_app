@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Truck, Bike, Car, Plus, Search, FileSignature, Key, Eye, EyeOff, UserCheck, UserPlus, Package } from "lucide-react";
+import { Truck, Bike, Car, Plus, Search, FileSignature, Key, Eye, EyeOff, UserCheck, UserPlus, Package, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
@@ -126,6 +126,22 @@ export default function AdminCouriersPage() {
             toast.error(error.response?.data?.error || "שגיאה באיפוס סיסמה");
         } finally {
             setIsResetLoading(false);
+        }
+    };
+
+    const handleDeleteCourier = async (id: number, name: string) => {
+        if (!confirm(`האם אתה בטוח שברצונך למחוק לחלוטין את השליח "${name}"?
+פעולה זו תמחק גם את פרטי המשתמש שלו ולא ניתנת לביטול.`)) {
+            return;
+        }
+
+        try {
+            await api.delete(`/admin/couriers/${id}`);
+            toast.success("השליח נמחק בהצלחה");
+            fetchCouriers();
+        } catch (error: any) {
+            console.error("Failed to delete courier", error);
+            toast.error(error.response?.data?.error || "שגיאה במחיקת השליח");
         }
     };
 
@@ -350,6 +366,15 @@ export default function AdminCouriersPage() {
                                     </td>
                                     <td>
                                         <div className="flex gap-2 justify-end">
+                                            {(user?.role === 'admin' || user?.user_type === 'admin') && (
+                                                <button
+                                                    className={`${styles.btnAction} text-red-500 hover:text-red-700 hover:bg-red-500/10`}
+                                                    title="מחק שליח"
+                                                    onClick={() => handleDeleteCourier(courier.id, courier.full_name)}
+                                                >
+                                                    <Trash size={16} />
+                                                </button>
+                                            )}
                                             <button className={styles.btnAction} title="שלח חוזה" onClick={() => sendContract(courier.id)}>
                                                 <FileSignature size={16} />
                                             </button>

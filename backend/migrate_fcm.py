@@ -8,11 +8,11 @@ cursor = conn.cursor()
 try:
     cursor.execute("ALTER TABLE users ADD COLUMN fcm_token TEXT;")
     conn.commit()
-    print("✅ Successfully added fcm_token column to users table.")
+    print(" Successfully added fcm_token column to users table.")
 except sqlite3.OperationalError as e:
     if "duplicate column name" in str(e).lower():
-        print("ℹ️ fcm_token column already exists.")
+        print("ℹ fcm_token column already exists.")
     else:
-        print(f"❌ Error adding column: {e}")
+        print(f" Error adding column: {e}")
 
 conn.close()

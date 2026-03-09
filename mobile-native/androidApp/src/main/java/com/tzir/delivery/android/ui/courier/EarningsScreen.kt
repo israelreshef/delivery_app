@@ -32,7 +32,11 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import com.tzir.delivery.android.R
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.Amber
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import kotlinx.coroutines.launch
+import com.tzir.delivery.android.ui.theme.*
 
 /**
  * Saves a CSV ByteArray to the device Downloads folder.
@@ -63,7 +67,12 @@ fun saveEarningsCsv(context: Context, bytes: ByteArray, filename: String): Uri? 
 }
 
 @Composable
-fun EarningsScreen(user: com.tzir.delivery.shared.model.User, repository: com.tzir.delivery.shared.repository.CourierRepository, onShowHistory: () -> Unit) {
+fun EarningsScreen(
+    user: com.tzir.delivery.shared.model.User,
+    repository: com.tzir.delivery.shared.repository.CourierRepository,
+    onShowHistory: () -> Unit,
+    onBack: () -> Unit = {}
+) {
     val stats by repository.stats.collectAsState()
     val isOffline by repository.isOffline.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
@@ -85,190 +94,129 @@ fun EarningsScreen(user: com.tzir.delivery.shared.model.User, repository: com.tz
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Color.Transparent
     ) { scaffoldPadding ->
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(scaffoldPadding)
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Text(
-            text = stringResource(R.string.your_earnings),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = TextOfficial
-        )
-        
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (isLoading) {
-            ShimmerItem(height = 200.dp, shape = MaterialTheme.shapes.large)
-            Spacer(modifier = Modifier.height(24.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ShimmerItem(height = 100.dp, width = Modifier.weight(1f))
-                ShimmerItem(height = 100.dp, width = Modifier.weight(1f))
-            }
-        } else {
-            if (isOffline) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                    color = Color(0xFFFFEBEE),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(
-                        "Showing cached earnings. Reconnect to see latest balance.",
-                        modifier = Modifier.padding(12.dp),
-                        color = Color(0xFFD32F2F),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-            
-            // Premium Stats Card
-            OfficialCard(
+        PremiumBackground {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp),
-                cornerRadius = 28.dp
+                    .fillMaxSize()
+                    .padding(scaffoldPadding)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp)
-                ) {
-                    Column {
-                        Text(
-                            stringResource(R.string.total_balance), 
-                            color = Color.White.copy(alpha = 0.6f), 
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
-                        )
-                        Text(
-                            "₪${stats?.balance ?: "0.0"}", 
-                            color = Color.White, 
-                            fontSize = 48.sp, 
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = (-1).sp
-                        )
-                        
-                        Spacer(modifier = Modifier.weight(1f))
-                        
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            StatMiniItem(stringResource(R.string.total_deliveries), "${stats?.totalDeliveries ?: 0}")
-                            StatMiniItem(stringResource(R.string.avg_rating), "⭐ ${stats?.rating ?: 5.0}")
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                EarningsSectionCard(stringResource(R.string.today), "₪${stats?.todayEarnings ?: 0.0}", PrimaryTurquoise.copy(alpha = 0.1f), Modifier.weight(1f))
-                EarningsSectionCard(stringResource(R.string.this_week), "₪${stats?.weeklyEarnings ?: 0.0}", TextOfficial.copy(alpha = 0.1f), Modifier.weight(1f))
-            }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            Text(
-                text = stringResource(R.string.earnings_trend),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.ExtraBold,
-                color = TextOfficial
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            EarningsGraph(data = listOf(150f, 320f, 210f, 450f, 380f, 520f, 480f))
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = stringResource(R.string.business_management),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.ExtraBold,
-            color = TextOfficial
-        )
-        
-        Spacer(modifier = Modifier.height(20.dp))
-
-        GlassCard(
-            modifier = Modifier.fillMaxWidth(),
-            cornerRadius = 24.dp
-        ) {
-            var selectedMonth by remember { mutableStateOf(java.util.Calendar.getInstance().get(java.util.Calendar.MONTH) + 1) }
-            val year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
-
-            Column(modifier = Modifier.padding(24.dp)) {
-                Text(stringResource(R.string.select_month), color = TextOfficial.copy(alpha = 0.6f), fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
+                // Header with Back Button
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { if (selectedMonth > 1) selectedMonth-- },
-                        modifier = Modifier.background(TextOfficial.copy(alpha = 0.05f), CircleShape).size(40.dp)
-                    ) { Text("‹", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextOfficial) }
-                    
+                        onClick = onBack,
+                        modifier = Modifier.background(Color.White, CircleShape).size(40.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "חזור",
+                            tint = TextOfficial
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        selectedMonth.toString(), 
-                        fontWeight = FontWeight.Black, 
-                        fontSize = 22.sp,
+                        text = stringResource(com.tzir.delivery.android.R.string.your_earnings),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Black,
                         color = TextOfficial
                     )
-                    
-                    IconButton(
-                        onClick = { if (selectedMonth < 12) selectedMonth++ },
-                        modifier = Modifier.background(TextOfficial.copy(alpha = 0.05f), CircleShape).size(40.dp)
-                    ) { Text("›", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextOfficial) }
-                    
-                    Spacer(modifier = Modifier.weight(1f))
+                }
 
-                    TzirButton(
-                        text = stringResource(R.string.download_report),
-                        onClick = {
-                            scope.launch {
-                                isLoading = true
-                                val bytes = repository.exportEarnings(year, selectedMonth)
-                                isLoading = false
-                                if (bytes != null && bytes.isNotEmpty()) {
-                                    val filename = "earnings_${year}_${selectedMonth}.csv"
-                                    val uri = saveEarningsCsv(context, bytes, filename)
-                                    if (uri != null) {
-                                        snackbarHostState.showSnackbar("✅ הדוח נשמר ב-Downloads")
-                                        val shareIntent = Intent(Intent.ACTION_VIEW).apply {
-                                            setDataAndType(uri, "text/csv")
-                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                        }
-                                        context.startActivity(Intent.createChooser(shareIntent, "פתח דוח"))
-                                    } else {
-                                        snackbarHostState.showSnackbar("❌ שגיאה בשמירת הקובץ")
-                                    }
-                                } else {
-                                    snackbarHostState.showSnackbar("❌ לא ניתן להוריד את הדוח. בדוק חיבור לשרת.")
+                if (isLoading) {
+                    ShimmerItem(height = 200.dp, shape = MaterialTheme.shapes.large)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        ShimmerItem(height = 100.dp, width = Modifier.weight(1f))
+                        ShimmerItem(height = 100.dp, width = Modifier.weight(1f))
+                    }
+                } else {
+                    if (isOffline) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                            color = Color(0xFFFFEBEE),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                "Showing cached earnings. Reconnect to see latest balance.",
+                                modifier = Modifier.padding(12.dp),
+                                color = Color(0xFFD32F2F),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    
+                    // Premium Stats Card
+                    GlassCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp),
+                        cornerRadius = 28.dp
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp)
+                        ) {
+                            Column {
+                                Text(
+                                    stringResource(com.tzir.delivery.android.R.string.total_balance), 
+                                    color = Color.White.copy(alpha = 0.6f), 
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Text(
+                                    "₪${stats?.balance ?: "0.0"}", 
+                                    color = Color.White, 
+                                    fontSize = 48.sp, 
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = (-1).sp
+                                )
+                                
+                                Spacer(modifier = Modifier.weight(1f))
+                                
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                    StatMiniItem(stringResource(com.tzir.delivery.android.R.string.total_deliveries), "${stats?.totalDeliveries ?: 0}")
+                                    StatMiniItem(stringResource(com.tzir.delivery.android.R.string.avg_rating), "⭐ ${stats?.rating ?: 5.0}")
                                 }
                             }
-                        },
-                        modifier = Modifier.width(150.dp).height(48.dp)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        EarningsSectionCard(stringResource(com.tzir.delivery.android.R.string.today), "₪${stats?.todayEarnings ?: 0.0}", PrimaryTurquoise.copy(alpha = 0.1f), Modifier.weight(1f))
+                        EarningsSectionCard(stringResource(com.tzir.delivery.android.R.string.this_week), "₪${stats?.weeklyEarnings ?: 0.0}", TextOfficial.copy(alpha = 0.1f), Modifier.weight(1f))
+                    }
+                    
+                    // Add other components...
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text("📊 מדדי ביצוע", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold, color = TextOfficial)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        KpiCard("שיעור השלמה", "${stats?.completionRate ?: 96}פ", Color(0xFF10B981), Modifier.weight(1f))
+                        KpiCard("זמן ממוצע", "${stats?.avgDeliveryMins ?: 22}דק'", Color(0xFF3B82F6), Modifier.weight(1f))
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    EarningsGraph(data = listOf(150f, 320f, 210f, 450f, 380f, 520f, 480f))
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                    TzirButton(
+                        text = stringResource(com.tzir.delivery.android.R.string.delivery_history),
+                        onClick = onShowHistory,
+                        modifier = Modifier.fillMaxWidth().height(64.dp)
                     )
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        TzirButton(
-            text = stringResource(R.string.delivery_history),
-            onClick = onShowHistory,
-            modifier = Modifier.fillMaxWidth().height(64.dp)
-        )
     }
-    } // end Scaffold
 }
 
 @Composable
@@ -348,6 +296,94 @@ fun EarningsGraph(data: List<Float>) {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun KpiCard(label: String, value: String, color: Color, modifier: Modifier = Modifier) {
+    Card(modifier = modifier.height(84.dp), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.08f)), elevation = CardDefaults.cardElevation(0.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.SpaceBetween) {
+            Text(label, fontSize = 11.sp, color = TextGray, fontWeight = FontWeight.Bold)
+            Text(value, fontSize = 22.sp, fontWeight = FontWeight.Black, color = color)
+        }
+    }
+}
+
+@Composable
+fun WeekCompareItem(label: String, value: String, color: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(label, fontSize = 11.sp, color = TextGray)
+        Spacer(Modifier.height(4.dp))
+        Text(value, fontWeight = FontWeight.Black, fontSize = 16.sp, color = color)
+    }
+}
+
+@Composable
+fun ForecastCard(forecast: Double, progress: Float, daysLeft: Int) {
+    GlassCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 20.dp) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text("תחזית לסוף החודש", fontSize = 12.sp, color = TextGray, fontWeight = FontWeight.Bold)
+                    Text("₪${String.format("%.0f", forecast)}", fontSize = 28.sp, fontWeight = FontWeight.Black, color = TextOfficial)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("נותרו ימים", fontSize = 12.sp, color = TextGray)
+                    Text("$daysLeft", fontSize = 28.sp, fontWeight = FontWeight.Black, color = com.tzir.delivery.android.ui.theme.Amber)
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(8.dp), progress = { progress }, color = com.tzir.delivery.android.ui.theme.Amber, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
+            Spacer(Modifier.height(6.dp))
+            Text("${(progress * 100).toInt()}פ מהחודש עבר", fontSize = 11.sp, color = TextGray)
+        }
+    }
+}
+
+@Composable
+fun PeakHoursPanel() {
+    val hours = listOf(
+        Triple("07:00–09:00", 85, Color(0xFF10B981)),
+        Triple("12:00–14:00", 92, Color(0xFF10B981)),
+        Triple("17:00–20:00", 98, Color(0xFFF59E0B)),
+        Triple("20:00–22:00", 70, Color(0xFF3B82F6))
+    )
+    GlassCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 20.dp) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("בשעות אלו סטטיסטית יש יותר בקשות באזור שלך:", fontSize = 12.sp, color = TextGray)
+            hours.forEach { (time, pct, color) ->
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(time, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.width(110.dp), color = TextOfficial)
+                    LinearProgressIndicator(modifier = Modifier.weight(1f).height(8.dp), progress = { pct / 100f }, color = color, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
+                    Spacer(Modifier.width(8.dp))
+                    Text("$pct%", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = color)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PersonalGoalCard(currentEarnings: Double) {
+    var goalTarget by remember { mutableStateOf(8000) }
+    val progress = (currentEarnings / goalTarget).coerceAtMost(1.0).toFloat()
+    GlassCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 20.dp) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Column {
+                    Text("יעד חודשי", fontSize = 12.sp, color = TextGray, fontWeight = FontWeight.Bold)
+                    Text("₪${String.format("%.0f", currentEarnings)} / ₪$goalTarget", fontSize = 20.sp, fontWeight = FontWeight.Black, color = TextOfficial)
+                }
+                Row {
+                    IconButton(onClick = { if (goalTarget > 1000) goalTarget -= 500 }, modifier = Modifier.size(32.dp)) { Text("-", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextGray) }
+                    IconButton(onClick = { goalTarget += 500 }, modifier = Modifier.size(32.dp)) { Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = PrimaryTurquoise) }
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(10.dp), progress = { progress }, color = if (progress >= 1f) Color(0xFF10B981) else PrimaryTurquoise, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
+            Spacer(Modifier.height(6.dp))
+            Text(if (progress >= 1f) "🎉 הגעת ליעד!" else "${(progress * 100).toInt()}פ מהיעד", fontSize = 12.sp, color = if (progress >= 1f) Color(0xFF10B981) else TextGray)
         }
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.tzir.delivery.android.R
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 
 data class CourierDocument(
     val id: String,
@@ -60,17 +61,18 @@ fun DocumentsScreen(onBack: () -> Unit) {
                         Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onBackground)
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(AppleGray)
-                .padding(16.dp)
-        ) {
+        PremiumBackground {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
             Text(
                 "המסמכים שלך",
                 style = MaterialTheme.typography.titleLarge,
@@ -115,10 +117,12 @@ fun DocumentsScreen(onBack: () -> Unit) {
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun RegulationItem(title: String, description: String) {

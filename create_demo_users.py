@@ -9,7 +9,7 @@ from app import create_app
 from extensions import db
 from models import User, Courier, Customer
 
-app, _ = create_app()
+app = create_app()
 
 def create_or_update_user(username, email, password, role, phone):
     try:

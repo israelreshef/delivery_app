@@ -22,17 +22,18 @@ def create_manual_income(current_user):
     try:
         data = request.json
         description = data.get('description')
-        subtotal = float(data.get('subtotal', 0))
-        vat_rate = float(data.get('vat_rate', 0.17))
+        from decimal import Decimal, ROUND_HALF_UP
+        subtotal = Decimal(str(data.get('subtotal', 0)))
+        vat_rate = Decimal(str(data.get('vat_rate', 0.17)))
         issue_date_str = data.get('issue_date') # Format: YYYY-MM-DD
         customer_id = data.get('customer_id')
         
-        if not description or subtotal <= 0:
+        if not description or subtotal <= Decimal('0'):
             return jsonify({'error': 'Description and subtotal are required'}), 400
             
         issue_date = datetime.strptime(issue_date_str, '%Y-%m-%d') if issue_date_str else datetime.utcnow()
-        vat_amount = round(subtotal * vat_rate, 2)
-        total_amount = round(subtotal + vat_amount, 2)
+        vat_amount = (subtotal * vat_rate).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        total_amount = (subtotal + vat_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         
         # Generate a manual invoice number prefix
         month_year = issue_date.strftime('%y%m')
@@ -62,6 +63,17 @@ def create_manual_income(current_user):
         db.session.add(new_income)
         db.session.commit()
         
+        # Audit Log
+        from utils.audit import log_audit
+        log_audit(
+            action='MANUAL_INCOME_CREATED',
+            user_id=current_user.id,
+            resource_type='Invoice',
+            resource_id=new_income.id,
+            details=f"Manual income override. Amount: {total_amount}. Reason: {description}",
+            status='SUCCESS'
+        )
+        
         return jsonify({
             'success': True,
             'message': 'Manual income recorded',
@@ -80,20 +92,21 @@ def create_manual_expense(current_user):
     try:
         data = request.json
         description = data.get('description')
-        base_amount = float(data.get('base_amount', 0))
-        vat_amount = float(data.get('vat_amount', 0))
-        withholding_tax = float(data.get('withholding_tax', 0))
+        from decimal import Decimal, ROUND_HALF_UP
+        base_amount = Decimal(str(data.get('base_amount', 0)))
+        vat_amount = Decimal(str(data.get('vat_amount', 0)))
+        withholding_tax = Decimal(str(data.get('withholding_tax', 0)))
         expense_date_str = data.get('expense_date')
         vendor_name = data.get('vendor_name')
         courier_id = data.get('courier_id')
         payment_method = data.get('payment_method', 'Bank Transfer')
         is_contractor = data.get('is_contractor', False)
         
-        if not description or base_amount <= 0:
+        if not description or base_amount <= Decimal('0'):
             return jsonify({'error': 'Description and base amount are required'}), 400
             
         expense_date = datetime.strptime(expense_date_str, '%Y-%m-%d').date() if expense_date_str else datetime.utcnow().date()
-        total_amount = round(base_amount + vat_amount - withholding_tax, 2)
+        total_amount = (base_amount + vat_amount - withholding_tax).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         
         new_expense = Expense(
             description=description,
@@ -111,6 +124,17 @@ def create_manual_expense(current_user):
         
         db.session.add(new_expense)
         db.session.commit()
+        
+        # Audit Log
+        from utils.audit import log_audit
+        log_audit(
+            action='MANUAL_EXPENSE_CREATED',
+            user_id=current_user.id,
+            resource_type='Expense',
+            resource_id=new_expense.id,
+            details=f"Manual expense override. Amount: {total_amount}. Reason: {description}",
+            status='SUCCESS'
+        )
         
         return jsonify({
             'success': True,

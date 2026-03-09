@@ -29,12 +29,12 @@ with app.app_context():
         try:
             response = export_regulatory_excel()
             if response.status_code == 200:
-                print("✅ Excel Regulatory Report generated successfully.")
+                print(" Excel Regulatory Report generated successfully.")
                 print("Content-Type:", response.headers.get('Content-Type'))
             else:
-                print("❌ Failed:", response.get_json())
+                print(" Failed:", response.get_json())
         except Exception as e:
-            print("❌ Exception during excel:", str(e))
+            print(" Exception during excel:", str(e))
     
     # 2. Test Traffic Endpoint
     print("Testing /api/legal/traffic...")
@@ -42,9 +42,9 @@ with app.app_context():
     with app.test_request_context('/api/legal/traffic', method='GET', headers=headers):
         try:
             res = manage_traffic_scores()
-            print("✅ Traffic Records:", res[0].get_json() if isinstance(res, tuple) else res.get_json())
+            print(" Traffic Records:", res[0].get_json() if isinstance(res, tuple) else res.get_json())
         except Exception as e:
-            print("❌ Exception during traffic:", str(e))
+            print(" Exception during traffic:", str(e))
 
     # 3. Test Cases Endpoint
     print("Testing /api/legal/cases...")
@@ -52,8 +52,8 @@ with app.app_context():
     with app.test_request_context('/api/legal/cases', method='GET', headers=headers):
         try:
             res = manage_legal_cases()
-            print("✅ Legal Cases:", res[0].get_json() if isinstance(res, tuple) else res.get_json())
+            print(" Legal Cases:", res[0].get_json() if isinstance(res, tuple) else res.get_json())
         except Exception as e:
-            print("❌ Exception during cases:", str(e))
+            print(" Exception during cases:", str(e))
 
 print("E2E Test Complete.")

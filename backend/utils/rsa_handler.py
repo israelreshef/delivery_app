@@ -21,7 +21,7 @@ class RSAKeyManager:
 
     def _generate_keys(self):
         """יצירת זוג מפתחות חדש"""
-        print("🔐 Generating new RSA Key Pair for E2EE...")
+        print(" Generating new RSA Key Pair for E2EE...")
         self.private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048,

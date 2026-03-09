@@ -20,9 +20,9 @@ def check_couriers():
             pwds = ['RiderFast99!', 'TzirRiderSpeed!77']
             for p in pwds:
                 if c.check_password(p):
-                    print(f"  ✅ Password WORKED: {p}")
+                    print(f"   Password WORKED: {p}")
                 else:
-                    print(f"  ❌ Password FAILED: {p}")
+                    print(f"   Password FAILED: {p}")
 
 if __name__ == "__main__":
     check_couriers()

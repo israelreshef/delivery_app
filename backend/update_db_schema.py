@@ -11,9 +11,9 @@ def update_schema():
                 conn.execute(text("ALTER TABLE customers ADD COLUMN rating FLOAT DEFAULT 5.0"))
                 conn.execute(text("ALTER TABLE customers ADD COLUMN total_orders INTEGER DEFAULT 0"))
                 conn.commit()
-                print("✅ Added columns to 'customers' table")
+                print(" Added columns to 'customers' table")
         except Exception as e:
-            print(f"⚠️ 'customers' columns might already exist: {e}")
+            print(f" 'customers' columns might already exist: {e}")
 
         # 2. Add columns to 'ratings' table
         try:
@@ -26,9 +26,9 @@ def update_schema():
                 # Check if we can alter
                 conn.execute(text("ALTER TABLE ratings ADD COLUMN rated_by VARCHAR(20) DEFAULT 'customer'"))
                 conn.commit()
-                print("✅ Added columns to 'ratings' table")
+                print(" Added columns to 'ratings' table")
         except Exception as e:
-             print(f"⚠️ 'ratings' columns might already exist: {e}")
+             print(f" 'ratings' columns might already exist: {e}")
 
 if __name__ == '__main__':
     update_schema()

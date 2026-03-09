@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tzir.delivery.android.R
+import com.tzir.delivery.android.ui.theme.*
 
 @Composable
 fun ErrorState(
@@ -40,7 +41,7 @@ fun ErrorState(
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B8F3E))
+            colors = ButtonDefaults.buttonColors(containerColor = com.tzir.delivery.android.ui.theme.Amber)
         ) {
             Text(stringResource(R.string.try_again), color = Color.White, fontWeight = FontWeight.Bold)
         }

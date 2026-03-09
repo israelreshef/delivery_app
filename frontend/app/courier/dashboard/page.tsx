@@ -213,6 +213,28 @@ export default function CourierDashboard() {
 
     return (
         <div className="space-y-4">
+            {/* Gamification Header (Psychology UX) */}
+            <div className="bg-gradient-to-r from-brand to-indigo-600 text-white rounded-xl p-4 shadow-lg flex justify-between items-center mb-2 mx-2 mt-2">
+                <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center font-bold text-xl border-2 border-white/40 shadow-inner">
+                        ⭐{Math.floor(stats.today_deliveries / 5) + 1}
+                    </div>
+                    <div>
+                        <h2 className="font-bold text-lg">שליח רמה {Math.floor(stats.today_deliveries / 5) + 1}</h2>
+                        <p className="text-white/80 text-sm">
+                            {stats.today_deliveries > 0 ? `אלופה! השלמת ${stats.today_deliveries} משלוחים היום!` : 'מוכן למשלוח הראשון שלך היום?'}
+                        </p>
+                    </div>
+                </div>
+                <div className="text-left w-24">
+                    <div className="text-xs text-white/80 mb-1 font-medium">התקדמות ברמה</div>
+                    <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden shadow-inner">
+                        <div className="h-full bg-yellow-400 rounded-full transition-all duration-1000" style={{ width: `${(stats.today_deliveries % 5) * 20}%` }}></div>
+                    </div>
+                    <div className="text-[10px] text-white/70 mt-1 text-center">{stats.today_deliveries % 5}/5 למעבר רמה</div>
+                </div>
+            </div>
+
             <Tabs defaultValue={activeOrder ? "active" : "map"} className="space-y-4">
                 <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="map">מפה</TabsTrigger>

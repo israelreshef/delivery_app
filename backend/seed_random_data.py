@@ -19,10 +19,10 @@ def get_random_coords():
 
 def create_random_data():
     app, _ = create_app()
-    print(f"🔌 Connecting to database: {app.config['SQLALCHEMY_DATABASE_URI']}")
+    print(f" Connecting to database: {app.config['SQLALCHEMY_DATABASE_URI']}")
     with app.app_context():
         # Clear existing data
-        print("🗑️ Clearing existing data...")
+        print(" Clearing existing data...")
         # Force clean PostgreSQL schema
         try:
             from sqlalchemy import text
@@ -34,16 +34,16 @@ def create_random_data():
             db.session.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
             db.session.commit()
             
-            print("✅ Schema wiped clean & PostGIS enabled.")
+            print(" Schema wiped clean & PostGIS enabled.")
         except Exception as e:
             db.session.rollback()
-            print(f"⚠️ Could not wipe schema (might be SQLite?): {e}")
+            print(f" Could not wipe schema (might be SQLite?): {e}")
             db.drop_all()
             
         db.create_all()
         
         # 1. Create Data
-        print("🌱 Seeding data with users and orders...")
+        print(" Seeding data with users and orders...")
         
         # Create Couriers
         couriers = []
@@ -181,7 +181,7 @@ def create_random_data():
         db.session.add(admin_user)
 
         db.session.commit()
-        print("✅ Database seeded successfully with PostGIS geometries!")
+        print(" Database seeded successfully with PostGIS geometries!")
 
 if __name__ == '__main__':
     create_random_data()

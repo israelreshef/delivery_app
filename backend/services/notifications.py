@@ -12,7 +12,7 @@ def send_push_notification(tokens, title, body, data=None):
     FCM_SERVER_KEY = os.environ.get('FCM_SERVER_KEY')
     
     if not FCM_SERVER_KEY:
-        print(f"📣 [MOCK PUSH] To: {tokens}, Title: {title}, Body: {body}")
+        print(f" [MOCK PUSH] To: {tokens}, Title: {title}, Body: {body}")
         return True
 
     url = 'https://fcm.googleapis.com/fcm/send'
@@ -35,7 +35,7 @@ def send_push_notification(tokens, title, body, data=None):
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         return response.status_code == 200
     except Exception as e:
-        print(f"❌ Error sending FCM: {e}")
+        print(f" Error sending FCM: {e}")
         return False
 
 def notify_new_mission(order):
@@ -50,11 +50,11 @@ def notify_new_mission(order):
     
     available_couriers = Courier.query.filter_by(is_available=True).all()
     # Mock behavior: just log it since we don't have real tokens yet
-    print(f"🔔 Notifying {len(available_couriers)} couriers about Order #{order.order_number}")
+    print(f" Notifying {len(available_couriers)} couriers about Order #{order.order_number}")
     
     send_push_notification(
         tokens=["MOCK_TOKEN"], # Replace with actual tokens from DB
-        title="משימה חדשה זמינה! 📦",
+        title="משימה חדשה זמינה! ",
         body=f"מאיסוף: {order.pickup_point.address.street if order.pickup_point and order.pickup_point.address else 'לא ידוע'} | שווי: ₪{order.delivery_fee}",
         data={"order_id": order.id, "type": "new_mission"}
     )

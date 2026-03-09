@@ -404,7 +404,7 @@ export default function AdminFinancePage() {
                                 <div className={styles.panelDescription}>השוואה בין הכנסות להוצאות ותזרימי המזומנים</div>
                             </div>
                         </div>
-                        <div className={styles.panelContent} style={{ height: '300px' }}>
+                        <div className={`${styles.panelContent} ${styles.panelContentChart}`}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={[
                                     { name: 'הכנסות', amount: financeData?.revenue.net, fill: '#10b981' },
@@ -425,7 +425,7 @@ export default function AdminFinancePage() {
                         <div className={styles.panelHeader}>
                             <div className={styles.panelTitle}>הוצאות לפי קבוצות (קבלנים vs ספקים)</div>
                         </div>
-                        <div className={styles.panelContent} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '250px' }}>
+                        <div className={`${styles.panelContent} ${styles.panelContentPie}`}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
@@ -460,21 +460,21 @@ export default function AdminFinancePage() {
 
                 {/* Report Generation Column */}
                 <div className="space-y-6">
-                    <div className={styles.panelCard} style={{ borderTop: '4px solid #3B82F6' }}>
+                    <div className={`${styles.panelCard} ${styles.borderTopBlue}`}>
                         <div className={styles.panelHeader}>
                             <div>
                                 <div className={styles.panelTitle}>דיווחים רגולטוריים</div>
                                 <div className={styles.panelDescription}>הפקת קבצים לרשות המסים וביטוח לאומי</div>
                             </div>
                         </div>
-                        <div className={styles.panelContent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className={`${styles.panelContent} ${styles.panelContentColList}`}>
                             <div className={styles.reportItem}>
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2 text-slate-200">
                                         <FileText className="w-4 h-4 text-brand" />
                                         <span className="font-semibold text-sm">דיווח מע"מ PCN 874</span>
                                     </div>
-                                    <button className={styles.btnOutline} onClick={() => handleDownload('vat-pcn874', `PCN874_${year}_${month}.csv`)}>
+                                    <button className={styles.btnOutline} title="הורד דיווח מע״מ" aria-label="הורד דיווח מע״מ" onClick={() => handleDownload('vat-pcn874', `PCN874_${year}_${month}.csv`)}>
                                         <Download className="w-4 h-4 text-brand" />
                                     </button>
                                 </div>
@@ -487,7 +487,7 @@ export default function AdminFinancePage() {
                                         <Users className="w-4 h-4 text-purple-400" />
                                         <span className="font-semibold text-sm">דו"ח 856 (קבלני משנה)</span>
                                     </div>
-                                    <button className={styles.btnOutline} onClick={() => handleDownload('contractors-856', `Report856_${year}.csv`)}>
+                                    <button className={styles.btnOutline} title="הורד דו״ח 856" aria-label="הורד דו״ח 856" onClick={() => handleDownload('contractors-856', `Report856_${year}.csv`)}>
                                         <Download className="w-4 h-4 text-purple-400" />
                                     </button>
                                 </div>
@@ -500,7 +500,7 @@ export default function AdminFinancePage() {
                                         <Briefcase className="w-4 h-4 text-green-400" />
                                         <span className="font-semibold text-sm">מאזן בוחן (Trial Balance)</span>
                                     </div>
-                                    <button className={styles.btnOutline} onClick={() => handleDownload('regulatory', `TrialBalance_${year}_${month}.xlsx`)}>
+                                    <button className={styles.btnOutline} title="הורד מאזן בוחן" aria-label="הורד מאזן בוחן" onClick={() => handleDownload('regulatory', `TrialBalance_${year}_${month}.xlsx`)}>
                                         <Download className="w-4 h-4 text-green-400" />
                                     </button>
                                 </div>
@@ -513,7 +513,7 @@ export default function AdminFinancePage() {
                                         <Receipt className="w-4 h-4 text-slate-500" />
                                         <span className="font-semibold text-sm text-slate-400">סיכום 102 (שכירים)</span>
                                     </div>
-                                    <button className={styles.btnOutline} disabled style={{ opacity: 0.5 }}>
+                                    <button className={`${styles.btnOutline} opacity-50`} title="הורד סיכום 102" aria-label="הורד סיכום 102" disabled>
                                         <Download className="w-4 h-4 text-slate-500" />
                                     </button>
                                 </div>
@@ -522,9 +522,9 @@ export default function AdminFinancePage() {
                         </div>
                     </div>
 
-                    <div className={styles.panelCard} style={{ backgroundColor: 'rgba(37, 99, 235, 0.2)', border: '1px solid rgba(59, 130, 246, 0.5)' }}>
-                        <div className={styles.panelHeader} style={{ borderBottom: 'none', paddingBottom: 0 }}>
-                            <div className={styles.panelTitle} style={{ color: '#60A5FA' }}>ניכוי מס במקור</div>
+                    <div className={`${styles.panelCard} ${styles.bgBlueAccent}`}>
+                        <div className={`${styles.panelHeader} ${styles.borderNone}`}>
+                            <div className={`${styles.panelTitle} ${styles.textBlue}`}>ניכוי מס במקור</div>
                         </div>
                         <div className={styles.panelContent}>
                             <div className="space-y-2">
@@ -533,7 +533,7 @@ export default function AdminFinancePage() {
                                     <span className="font-bold">₪{financeData?.expenses.withholding.toLocaleString()}</span>
                                 </div>
                                 <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                    <div className="bg-blue-400 h-full" style={{ width: '45%' }}></div>
+                                    <div className="bg-blue-400 h-full w-[45%]"></div>
                                 </div>
                                 <p className="text-[10px] text-blue-200/80 mt-2">הסכום שנצבר להעברה למס הכנסה ב-15 לחודש.</p>
                             </div>
@@ -557,19 +557,19 @@ export default function AdminFinancePage() {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles.panelContent} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div className={`${styles.panelContent} ${styles.panelContentColListSm}`}>
                             <div className="flex items-center gap-3 text-sm mb-2">
                                 <div className="flex items-center gap-2 bg-red-500/10 text-red-500 px-3 py-1 rounded-full border border-red-500/20">
-                                    <span className="font-semibold">{overdueCount}</span>
+                                    <span className="font-semibold">{docFilterDue === 'overdue' ? alerts?.overdue_count : alerts?.overdue_count}</span>
                                     <span>באיחור</span>
                                 </div>
                                 <div className="flex items-center gap-2 bg-amber-500/10 text-amber-500 px-3 py-1 rounded-full border border-amber-500/20">
-                                    <span className="font-semibold">{dueSoonCount}</span>
+                                    <span className="font-semibold">{alerts?.due_soon_count}</span>
                                     <span>ב־30 ימים הקרובים</span>
                                 </div>
                             </div>
                             {complianceItems.map((item) => (
-                                <div key={item.id} className={styles.reportItem} style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem' }}>
+                                <div key={item.id} className={`${styles.reportItem} ${styles.flexSpaceBetween}`}>
                                     <div className="min-w-0">
                                         <div className="font-medium text-sm text-slate-200">{item.title}</div>
                                         <div className="text-xs text-slate-400 mt-1">
@@ -578,6 +578,7 @@ export default function AdminFinancePage() {
                                     </div>
                                     <button
                                         className={styles.btnOutline}
+                                        title={`העלאת ${item.title}`}
                                         onClick={() => {
                                             setDocForm((prev) => ({
                                                 ...prev,
@@ -609,12 +610,13 @@ export default function AdminFinancePage() {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles.panelContent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className={`${styles.panelContent} ${styles.panelContentColList}`}>
                             <div className="space-y-2">
                                 <span className={styles.formLabel}>כותרת</span>
                                 <input
-                                    className={styles.searchInput}
-                                    style={{ width: '100%' }}
+                                    className={`${styles.searchInput} ${styles.wFull}`}
+                                    title="כותרת"
+                                    aria-label="כותרת"
                                     value={docForm.title}
                                     onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
                                     placeholder="לדוגמה: דו״ח מע״מ 2024 Q4"
@@ -623,10 +625,11 @@ export default function AdminFinancePage() {
                             <div className="space-y-2">
                                 <span className={styles.formLabel}>סוג מסמך</span>
                                 <select
+                                    title="סוג מסמך"
+                                    aria-label="סוג מסמך"
                                     value={docForm.doc_type}
                                     onChange={(e) => setDocForm({ ...docForm, doc_type: e.target.value })}
-                                    className={styles.selectInput}
-                                    style={{ width: '100%' }}
+                                    className={`${styles.selectInput} ${styles.wFull}`}
                                 >
                                     <option value="expense_receipt">קבלה/הוצאה</option>
                                     <option value="income_receipt">קבלה/הכנסה</option>
@@ -643,10 +646,11 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>ישות</span>
                                     <select
+                                        title="ישות"
+                                        aria-label="ישות"
                                         value={docForm.entity_type}
                                         onChange={(e) => setDocForm({ ...docForm, entity_type: e.target.value })}
-                                        className={styles.selectInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.selectInput} ${styles.wFull}`}
                                     >
                                         <option value="sole_prop">עוסק מורשה/פטור</option>
                                         <option value="llc">חברה בע״מ</option>
@@ -657,10 +661,11 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>הוגש ע״י</span>
                                     <select
+                                        title="הוגש ע״י"
+                                        aria-label="הוגש ע״י"
                                         value={docForm.submitted_by}
                                         onChange={(e) => setDocForm({ ...docForm, submitted_by: e.target.value })}
-                                        className={styles.selectInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.selectInput} ${styles.wFull}`}
                                     >
                                         <option value="self">עצמי</option>
                                         <option value="accountant">רואה חשבון</option>
@@ -673,10 +678,11 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>רשות</span>
                                     <select
+                                        title="רשות"
+                                        aria-label="רשות"
                                         value={docForm.authority}
                                         onChange={(e) => setDocForm({ ...docForm, authority: e.target.value })}
-                                        className={styles.selectInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.selectInput} ${styles.wFull}`}
                                     >
                                         <option value="tax_authority">רשות המסים</option>
                                         <option value="national_insurance">ביטוח לאומי</option>
@@ -688,8 +694,9 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>שנה</span>
                                     <input
-                                        className={styles.searchInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.searchInput} ${styles.wFull}`}
+                                        title="שנה"
+                                        aria-label="שנה"
                                         value={docForm.year}
                                         onChange={(e) => setDocForm({ ...docForm, year: e.target.value })}
                                         placeholder="2026"
@@ -700,8 +707,9 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>תקופה (אופציונלי)</span>
                                     <input
-                                        className={styles.searchInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.searchInput} ${styles.wFull}`}
+                                        title="תקופה"
+                                        aria-label="תקופה"
                                         value={docForm.period}
                                         onChange={(e) => setDocForm({ ...docForm, period: e.target.value })}
                                         placeholder="Q1 / חודשי"
@@ -710,10 +718,11 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>סטטוס</span>
                                     <select
+                                        title="סטטוס"
+                                        aria-label="סטטוס"
                                         value={docForm.status}
                                         onChange={(e) => setDocForm({ ...docForm, status: e.target.value })}
-                                        className={styles.selectInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.selectInput} ${styles.wFull}`}
                                     >
                                         <option value="archived">בארכיון</option>
                                         <option value="draft">טיוטה</option>
@@ -729,8 +738,9 @@ export default function AdminFinancePage() {
                                     <span className={styles.formLabel}>תאריך יעד</span>
                                     <input
                                         type="date"
-                                        className={styles.searchInput}
-                                        style={{ width: '100%' }}
+                                        title="תאריך יעד"
+                                        aria-label="תאריך יעד"
+                                        className={`${styles.searchInput} ${styles.wFull}`}
                                         value={docForm.due_date}
                                         onChange={(e) => setDocForm({ ...docForm, due_date: e.target.value })}
                                     />
@@ -739,8 +749,9 @@ export default function AdminFinancePage() {
                                     <span className={styles.formLabel}>תאריך הגשה</span>
                                     <input
                                         type="date"
-                                        className={styles.searchInput}
-                                        style={{ width: '100%' }}
+                                        title="תאריך הגשה"
+                                        aria-label="תאריך הגשה"
+                                        className={`${styles.searchInput} ${styles.wFull}`}
                                         value={docForm.filed_date}
                                         onChange={(e) => setDocForm({ ...docForm, filed_date: e.target.value })}
                                     />
@@ -750,8 +761,9 @@ export default function AdminFinancePage() {
                                 <div className="space-y-2">
                                     <span className={styles.formLabel}>סכום חוב (אופציונלי)</span>
                                     <input
-                                        className={styles.searchInput}
-                                        style={{ width: '100%' }}
+                                        className={`${styles.searchInput} ${styles.wFull}`}
+                                        title="סכום חוב"
+                                        aria-label="סכום חוב"
                                         value={docForm.amount_due}
                                         onChange={(e) => setDocForm({ ...docForm, amount_due: e.target.value })}
                                         placeholder="₪0.00"
@@ -761,22 +773,25 @@ export default function AdminFinancePage() {
                                     <span className={styles.formLabel}>קובץ</span>
                                     <input
                                         type="file"
+                                        title="העלאת קובץ"
+                                        aria-label="העלאת קובץ"
                                         onChange={(e) => setDocFile(e.target.files?.[0] || null)}
-                                        style={{ color: '#94A3B8', fontSize: '0.875rem' }}
+                                        className={styles.colorFaint}
                                     />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <span className={styles.formLabel}>תיאור / הערות</span>
                                 <input
-                                    className={styles.searchInput}
-                                    style={{ width: '100%' }}
+                                    className={`${styles.searchInput} ${styles.wFull}`}
+                                    title="הערות"
+                                    aria-label="הערות"
                                     value={docForm.description}
                                     onChange={(e) => setDocForm({ ...docForm, description: e.target.value })}
                                     placeholder="הערות קצרות למסמך"
                                 />
                             </div>
-                            <button className={styles.btnPrimary} style={{ width: '100%' }} onClick={handleDocUpload} disabled={docUploading}>
+                            <button className={`${styles.btnPrimary} ${styles.wFull}`} onClick={handleDocUpload} disabled={docUploading}>
                                 <Upload className="w-4 h-4" />
                                 {docUploading ? "מעלה..." : "העלה ושמור בארכיון"}
                             </button>
@@ -802,7 +817,7 @@ export default function AdminFinancePage() {
                             <div className="mb-4 border border-slate-700/50 rounded-lg p-3 bg-slate-800/40">
                                 <div className="flex items-center justify-between">
                                     <div className="font-semibold text-sm text-slate-200">התראות מסמכים</div>
-                                    <button className={styles.btnOutline} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={fetchAlerts}>רענן התראות</button>
+                                    <button className={`${styles.btnOutline} px-2 py-1 text-xs`} onClick={fetchAlerts}>רענן התראות</button>
                                 </div>
                                 {alerts.overdue.length > 0 && (
                                     <div className="mt-2">
@@ -834,10 +849,14 @@ export default function AdminFinancePage() {
                             <input
                                 className={styles.searchInput}
                                 placeholder="חיפוש..."
+                                title="חיפוש מסמכים"
+                                aria-label="חיפוש מסמכים"
                                 value={docSearch}
                                 onChange={(e) => setDocSearch(e.target.value)}
                             />
                             <select
+                                title="סוג מסמך"
+                                aria-label="סוג מסמך"
                                 value={docFilterType}
                                 onChange={(e) => setDocFilterType(e.target.value)}
                                 className={styles.selectInput}
@@ -854,6 +873,8 @@ export default function AdminFinancePage() {
                                 <option value="other">אחר</option>
                             </select>
                             <select
+                                title="סטטוס מסמך"
+                                aria-label="סטטוס מסמך"
                                 value={docFilterStatus}
                                 onChange={(e) => setDocFilterStatus(e.target.value)}
                                 className={styles.selectInput}
@@ -867,6 +888,8 @@ export default function AdminFinancePage() {
                                 <option value="overdue">באיחור</option>
                             </select>
                             <select
+                                title="שנת מסמך"
+                                aria-label="שנת מסמך"
                                 value={docFilterYear}
                                 onChange={(e) => setDocFilterYear(e.target.value)}
                                 className={styles.selectInput}
@@ -877,6 +900,8 @@ export default function AdminFinancePage() {
                                 ))}
                             </select>
                             <select
+                                title="מועד פרעון"
+                                aria-label="מועד פרעון"
                                 value={docFilterDue}
                                 onChange={(e) => setDocFilterDue(e.target.value)}
                                 className={styles.selectInput}
@@ -886,7 +911,7 @@ export default function AdminFinancePage() {
                                 <option value="due_30">ב־30 ימים הקרובים</option>
                             </select>
                         </div>
-                        <div style={{ overflowX: 'auto' }}>
+                        <div className="overflow-x-auto">
                             <table className={styles.customTable}>
                                 <thead>
                                     <tr>
@@ -903,23 +928,24 @@ export default function AdminFinancePage() {
                                 <tbody>
                                     {filteredDocs.length === 0 ? (
                                         <tr>
-                                            <td colSpan={8} style={{ textAlign: 'center', color: '#94A3B8', padding: '2rem' }}>
+                                            <td colSpan={8} className="text-center text-slate-400 p-8">
                                                 אין מסמכים בארכיון עדיין
                                             </td>
                                         </tr>
                                     ) : (
                                         filteredDocs.map((doc) => (
                                             <tr key={doc.id}>
-                                                <td style={{ fontWeight: 600 }}>{doc.title}</td>
+                                                <td className="font-semibold">{doc.title}</td>
                                                 <td>{doc.doc_type}</td>
-                                                <td style={{ color: '#94A3B8' }}>{doc.authority || "-"}</td>
-                                                <td style={{ color: '#94A3B8' }}>{doc.year || "-"}</td>
+                                                <td className="text-slate-400">{doc.authority || "-"}</td>
+                                                <td className="text-slate-400">{doc.year || "-"}</td>
                                                 <td>
                                                     <select
+                                                        title="עריכת סטטוס"
+                                                        aria-label="עריכת סטטוס"
                                                         value={doc.status || "archived"}
                                                         onChange={(e) => updateDocStatus(doc.id, e.target.value)}
-                                                        className={styles.selectInput}
-                                                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', minWidth: '100px' }}
+                                                        className={`${styles.selectInput} px-2 py-1 text-xs min-w-[100px]`}
                                                     >
                                                         <option value="archived">בארכיון</option>
                                                         <option value="draft">טיוטה</option>
@@ -937,16 +963,18 @@ export default function AdminFinancePage() {
                                                 <td>
                                                     <input
                                                         type="date"
+                                                        title="תאריך הגשה בפועל"
+                                                        aria-label="תאריך הגשה בפועל"
                                                         value={doc.filed_date || ""}
                                                         onChange={(e) => updateDocFiledDate(doc.id, e.target.value)}
-                                                        className={styles.searchInput}
-                                                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+                                                        className={`${styles.searchInput} px-2 py-1 text-xs`}
                                                     />
                                                 </td>
                                                 <td>
                                                     <button
-                                                        className={styles.btnOutline}
-                                                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+                                                        className={`${styles.btnOutline} px-2 py-1 text-xs`}
+                                                        title="הורדת קובץ מצורף"
+                                                        aria-label="הורדת קובץ מצורף"
                                                         onClick={() => handleDownloadDoc(doc.id, doc.file_name)}
                                                     >
                                                         הורדה

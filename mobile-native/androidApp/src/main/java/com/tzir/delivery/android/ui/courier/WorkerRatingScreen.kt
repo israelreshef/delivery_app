@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.tzir.delivery.android.R
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 
 @Composable
 fun WorkerRatingScreen(onBack: () -> Unit) {
@@ -53,7 +54,7 @@ fun WorkerRatingScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
             
             // Overall Rating Card
-            OfficialCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 24.dp) {
+            GlassCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 24.dp) {
                 Column(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally

@@ -9,7 +9,7 @@ def move_couriers():
     Updates lat/lon and PostGIS geometry every 2 seconds.
     """
     with app.app_context():
-        print("🚀 Starting courier movement simulation (Press Ctrl+C to stop)...")
+        print(" Starting courier movement simulation (Press Ctrl+C to stop)...")
         # Bounds for Tel Aviv area to keep them roughly on screen
         # Not strictly enforced, just random walk
         
@@ -18,7 +18,7 @@ def move_couriers():
                 couriers = Courier.query.filter_by(is_available=True).all()
                 
                 if not couriers:
-                    print("⚠️ No available couriers found to move.")
+                    print(" No available couriers found to move.")
                 
                 for courier in couriers:
                     # Initialize location if missing (Center TLV)
@@ -39,13 +39,13 @@ def move_couriers():
                     courier.location_geom = f'POINT({courier.current_location_lng} {courier.current_location_lat})'
                 
                 db.session.commit()
-                print(f"📡 Updated locations for {len(couriers)} couriers...")
+                print(f" Updated locations for {len(couriers)} couriers...")
                 
                 # Wait 2 seconds before next update
                 time.sleep(2)
                 
             except Exception as e:
-                print(f"❌ Error in simulation loop: {e}")
+                print(f" Error in simulation loop: {e}")
                 db.session.rollback()
                 time.sleep(5)
 

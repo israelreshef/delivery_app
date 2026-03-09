@@ -4,7 +4,7 @@ import sys
 BASE_URL = "http://127.0.0.1:5000/api"
 
 def test_api():
-    print(f"🚀 Testing Flask API at {BASE_URL}...")
+    print(f" Testing Flask API at {BASE_URL}...")
     
     # 1. Health Check
     try:
@@ -12,7 +12,7 @@ def test_api():
         print(f"Health Check: {r.status_code} {r.json()}")
         assert r.status_code == 200
     except Exception as e:
-        print(f"❌ Health Check Failed: {e}")
+        print(f" Health Check Failed: {e}")
         return
 
     # 2. Try to login with demo credentials
@@ -24,7 +24,7 @@ def test_api():
     try:
         r = requests.post(f"{BASE_URL}/auth/login", json=login_data)
         if r.status_code == 200:
-            print("✅ Login Successful!")
+            print(" Login Successful!")
             token = r.json().get("access_token")
             print(f"Token: {token[:20]}...")
             
@@ -35,9 +35,9 @@ def test_api():
             assert rp.status_code == 200
             
         else:
-            print(f"❌ Login Failed: {r.status_code} {r.text}")
+            print(f" Login Failed: {r.status_code} {r.text}")
     except Exception as e:
-        print(f"❌ Login Request Failed: {e}")
+        print(f" Login Request Failed: {e}")
 
 if __name__ == "__main__":
     test_api()

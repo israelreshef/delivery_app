@@ -9,9 +9,11 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import db, Delivery, Address, PickupPoint, DeliveryPoint, Customer, User, Pricing, Invoice
+from models import db, Delivery, Address, PickupPoint, DeliveryPoint, Customer, User, Pricing, Invoice, Courier
 from utils.decorators import token_required, role_required
 import logging
+from extensions import limiter
+from sqlalchemy.orm import joinedload
 from services.notifications import notify_new_mission
 
 orders_bp = Blueprint('orders', __name__)
@@ -24,6 +26,7 @@ from utils.pricing import PricingEngine
 
 @orders_bp.route('/create', methods=['POST'])
 @orders_bp.route('', methods=['POST'])
+@limiter.limit("30 per minute")  # DDoS Protection
 @token_required
 # @role_required(['admin', 'customer']) # Temporarily disabled for dev flow if needed, but best to keep
 def create_order(current_user=None):
@@ -35,8 +38,10 @@ def create_order(current_user=None):
 
     logging.info("Received create_order request (Wizard Flow)") 
     try:
-        data = request.json
-        # print(f"📦 Payload: {data}") # Debugging
+        from utils.sanitization import sanitize_input
+        # Sanitize incoming payload
+        data = sanitize_input(request.json)
+        # print(f" Payload: {data}") # Debugging
         
         # --- חילוץ אובייקטים מקוננים (Wizard Structure) ---
         sender_data = data.get('sender', {})
@@ -240,7 +245,9 @@ def create_order(current_user=None):
             delivery_type=delivery_type,
             insurance_value=insurance_value,
             weight_kg=package_weight,
-            customer_id=customer.id
+            customer_id=customer.id,
+            pickup_coords=(pickup_lat, pickup_lng),
+            delivery_coords=(delivery_address_obj.latitude, delivery_address_obj.longitude)
         )
         
         price = calculation['final_price']
@@ -381,8 +388,8 @@ def create_order(current_user=None):
         db.session.rollback()
         logging.error(f"Error creating order: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
-
 @orders_bp.route('/calculate', methods=['POST'])
+@limiter.limit("60 per minute")  # DDoS Protection for pricing engine
 @token_required
 def calculate_quote(current_user):
     """Endpoint to get price quote before creating order"""
@@ -391,13 +398,19 @@ def calculate_quote(current_user):
         
         distance_km = data.get('distance_km', 10.0) # In future, calculate from addresses here
         
+        # Try to get coordinates if not provided but address is
+        pickup_coords = data.get('pickup_coords')
+        delivery_coords = data.get('delivery_coords')
+        
         quote = PricingEngine.calculate_price(
             distance_km=distance_km,
             package_size=data.get('package_size', 'small'),
             urgency=data.get('urgency', 'standard'),
             delivery_type=data.get('delivery_type', 'standard'),
             insurance_value=float(data.get('insurance_value', 0)),
-            weight_kg=float(data.get('weight', 0))
+            weight_kg=float(data.get('weight', 0)),
+            pickup_coords=pickup_coords,
+            delivery_coords=delivery_coords
         )
         
         return jsonify({
@@ -449,7 +462,21 @@ def get_orders(current_user):
         
         # Admin sees all (no filter added)
         
-        deliveries = query.order_by(Delivery.created_at.desc()).all()
+        # Pagination
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 50, type=int)
+        
+        # Eager Loading to avoid N+1
+        query = query.options(
+            joinedload(Delivery.customer).joinedload(Customer.user),
+            joinedload(Delivery.courier),
+            joinedload(Delivery.invoice),
+            joinedload(Delivery.pickup_point).joinedload(PickupPoint.address),
+            joinedload(Delivery.delivery_point).joinedload(DeliveryPoint.address)
+        )
+        
+        paginated_data = query.order_by(Delivery.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+        deliveries = paginated_data.items
         
         result = []
         for d in deliveries:
@@ -484,7 +511,13 @@ def get_orders(current_user):
                 'delivery_lng': d.delivery_point.address.longitude if d.delivery_point and d.delivery_point.address else None
             })
         
-        return jsonify(result), 200
+        return jsonify({
+            'data': result,
+            'total': paginated_data.total,
+            'pages': paginated_data.pages,
+            'current_page': page,
+            'per_page': per_page
+        }), 200
         
     except Exception as e:
         logging.error(f"Error fetching orders: {str(e)}", exc_info=True)
@@ -666,7 +699,8 @@ def update_order(current_user, order_id):
     """עדכון פרטי הזמנה (למנהלים)"""
     try:
         delivery = Delivery.query.get_or_404(order_id)
-        data = request.json
+        from utils.sanitization import sanitize_input
+        data = sanitize_input(request.json)
         
         # עדכון שדות בסיסיים
         if 'notes' in data:
@@ -681,8 +715,6 @@ def update_order(current_user, order_id):
         # עדכון שדות מתקדמים (כתובות) - אופציונלי להמשך
         # כאן רק עדכנו את השדות הפשוטים שקל לערוך
             
-        db.session.commit()
-        
         db.session.commit()
         
         # AUDIT LOG

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, Phone, Mail, MapPin, Shield, LogOut, ChevronLeft, Plus } from "lucide-react";
+import { User, Phone, Mail, MapPin, Shield, LogOut, ChevronLeft, Plus, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,9 +11,9 @@ import { auth } from "@/lib/auth";
 
 export default function ProfilePage() {
     const router = useRouter();
-    // const { logout } = useAuth(); // Removed missing hook
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         // Fetch User Profile
@@ -29,6 +29,33 @@ export default function ProfilePage() {
     const handleLogout = () => {
         auth.clearSession();
         router.push('/login/customer');
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!confirm("האם אתה בטוח שברצונך למחוק את החשבון לצמיתות? פעולה זו תמחק את כל המידע האישי שלך מהמערכת (הזכות להישכח) ולא ניתנת לביטול.")) return;
+
+        setIsDeleting(true);
+        try {
+            const token = auth.getToken();
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/privacy/account`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (res.ok) {
+                toast.success("החשבון והמידע האישי נמחקו בהצלחה.");
+                auth.clearSession();
+                window.location.href = '/';
+            } else {
+                const data = await res.json();
+                toast.error(data.error || "שגיאה במחיקת החשבון");
+            }
+        } catch (error) {
+            toast.error("שגיאת תקשורת");
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     if (loading) return null;
@@ -122,7 +149,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Actions */}
-                <div className="space-y-3">
+                <div className="space-y-3 pt-4">
                     <Button variant="outline" className="w-full justify-start h-12 text-slate-700 hover:text-brand hover:border-brand/20">
                         <Shield className="w-5 h-5 ml-3" />
                         שינוי סיסמה
@@ -135,6 +162,25 @@ export default function ProfilePage() {
                         <LogOut className="w-5 h-5 ml-3" />
                         התנתקות
                     </Button>
+
+                    <div className="pt-8 border-t border-slate-200 mt-8 mb-4">
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-start h-12 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={handleDeleteAccount}
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? (
+                                <Loader2 className="w-5 h-5 ml-3 animate-spin" />
+                            ) : (
+                                <Trash2 className="w-5 h-5 ml-3" />
+                            )}
+                            מחיקת חשבון (הזכות להישכח)
+                        </Button>
+                        <p className="text-xs text-slate-400 mt-2 px-3 text-center">
+                            מחיקת החשבון מסירה את קשירת המידע המזהה ותאנונימז את היסטוריית ההזמנות, על פי תקנות הגנת הפרטיות. המידע יימחק לצמיתות מאתר ציר ומאגריו.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -19,6 +19,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tzir.delivery.android.ui.components.*
@@ -32,13 +42,13 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.tzir.delivery.android.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManualRoutePlannerScreen(
     repository: CourierRepository,
-    onBack: () -> Unit,
-    onStartNavigation: (List<Map<String, Any?>>) -> Unit
+    onBack: () -> Unit
 ) {
     var searchAddress by remember { mutableStateOf("") }
     var suggestions by remember { mutableStateOf<List<AutocompleteSuggestion>>(emptyList()) }
@@ -48,26 +58,39 @@ fun ManualRoutePlannerScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
 
-    // Clear suggestions when search is cleared
-    LaunchedEffect(searchAddress) {
-        if (searchAddress.length < 3) {
-            suggestions = emptyList()
-            return@LaunchedEffect
-        }
-        
-        isSearching = true
-        // Debounce search
-        delay(500)
-        suggestions = repository.autocompleteAddress(searchAddress)
-        isSearching = false
-    }
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        PremiumBackground {
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                containerColor = Color.Transparent,
+            ) { padding ->
+                // Clear suggestions when search is cleared
+                LaunchedEffect(searchAddress) {
+                    if (searchAddress.length < 2) {
+                        suggestions = emptyList()
+                        isSearching = false // MUST reset here too
+                        return@LaunchedEffect
+                    }
+                    
+                    try {
+                        isSearching = true
+                        println("DEBUG: ManualRoutePlanner - Requesting autocomplete for: '$searchAddress'")
+                        // Debounce search
+                        delay(500)
+                        suggestions = repository.autocompleteAddress(searchAddress)
+                        println("DEBUG: ManualRoutePlanner - Received ${suggestions.size} suggestions")
+                    } catch (e: Exception) {
+                        if (e !is kotlinx.coroutines.CancellationException) {
+                            println("DEBUG: ManualRoutePlanner - Error: ${e.message}")
+                            e.printStackTrace()
+                        }
+                    } finally {
+                        isSearching = false
+                    }
+                }
 
-    PremiumBackground {
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            containerColor = Color.Transparent
-        ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,67 +105,102 @@ fun ManualRoutePlannerScreen(
             ) {
                 IconButton(
                     onClick = onBack,
-                    modifier = Modifier.background(Color.White, CircleShape)
+                    modifier = Modifier.size(48.dp).background(Color.White, CircleShape)
                 ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextOfficial)
                 }
-                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "תכנון מסלול ידני",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Black,
-                    color = TextOfficial
+                    color = TextOfficial,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
                 )
+                Spacer(modifier = Modifier.size(48.dp)) // To completely center the text against the back button
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Address Search Input with Autocomplete
             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                OfficialCard(cornerRadius = 24.dp) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        OutlinedTextField(
-                            value = searchAddress,
-                            onValueChange = { searchAddress = it },
-                            placeholder = { Text("חפש כתובת אמיתית...") },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            singleLine = true,
-                            leadingIcon = {
-                                if (isSearching) {
-                                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = PrimaryTurquoise)
-                                } else {
-                                    Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
-                                }
-                            },
-                            trailingIcon = {
-                                if (searchAddress.isNotEmpty()) {
-                                    IconButton(onClick = { searchAddress = "" }) {
-                                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                Surface(
+                    shape = CircleShape, // Fully rounded capsule
+                    color = Color.White,
+                    border = androidx.compose.foundation.BorderStroke(5.dp, TextOfficial), // Thick Navy Border
+                    shadowElevation = 8.dp,
+                    modifier = Modifier.fillMaxWidth().height(56.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // RTL places the first item on the RIGHT (Search Icon)
+                        if (isSearching) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = PrimaryTurquoise)
+                        } else {
+                            Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
+                        }
+                        
+                        Spacer(modifier = Modifier.width(12.dp))
+                        
+                        // Text Field taking up the center space
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                            if (searchAddress.isEmpty()) {
+                                Text("חפש כתובת...", color = Color.Gray)
+                            }
+                            androidx.compose.foundation.text.BasicTextField(
+                                value = searchAddress,
+                                onValueChange = { searchAddress = it },
+                                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start, color = TextOfficial, fontSize = 16.sp),
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onKeyEvent { event ->
+                                        if (event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
+                                            focusManager.clearFocus()
+                                            true
+                                        } else false
                                     }
-                                }
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = Color.White,
-                                unfocusedContainerColor = Color.White
                             )
-                        )
+                        }
+
+                        // RTL places the last item on the LEFT (Close Icon)
+                        if (searchAddress.isNotEmpty()) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            IconButton(
+                                onClick = { 
+                                    searchAddress = ""
+                                    focusManager.clearFocus()
+                                },
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = "Clear", tint = Color.Gray)
+                            }
+                        }
                     }
                 }
+            }
 
-                // Suggestions List
-                if (isSearching) {
-                    Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = PrimaryTurquoise, strokeWidth = 2.dp)
-                    }
-                } else if (suggestions.isNotEmpty()) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth().shadow(12.dp, RoundedCornerShape(16.dp)),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        shape = RoundedCornerShape(16.dp)
+            // Suggestions List
+            if (isSearching) {
+                Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = PrimaryTurquoise, strokeWidth = 2.dp)
+                }
+            } else if (suggestions.isNotEmpty()) {
+                Box(modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp)) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 300.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        color = Color.White,
+                        shadowElevation = 8.dp
                     ) {
-                        Column {
-                            suggestions.forEach { suggestion ->
+                        LazyColumn {
+                            itemsIndexed(suggestions) { index, suggestion ->
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -151,7 +209,10 @@ fun ManualRoutePlannerScreen(
                                             suggestions = emptyList()
                                             scope.launch {
                                                 isLoading = true
-                                                val geo = repository.geocodeAddress(placeId = suggestion.place_id)
+                                                val geo = repository.geocodeAddress(
+                                                    query = suggestion.full_address, 
+                                                    placeId = suggestion.place_id
+                                                )
                                                 if (geo != null) {
                                                     val newStop = mutableMapOf<String, Any?>(
                                                         "address" to geo.formatted_address,
@@ -170,12 +231,23 @@ fun ManualRoutePlannerScreen(
                                         }
                                         .padding(16.dp)
                                 ) {
-                                    Text(suggestion.full_address, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                    Text(suggestion.full_address, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = TextOfficial)
                                     Text(suggestion.source.uppercase(), fontSize = 10.sp, color = Color.Gray)
                                 }
                                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray.copy(alpha = 0.5f))
                             }
                         }
+                    }
+                }
+            } else if (searchAddress.length >= 2 && !isSearching) {
+                Box(modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp)) {
+                    Surface(shape = RoundedCornerShape(24.dp), color = Color.White, shadowElevation = 4.dp) {
+                        Text(
+                            "לא נמצאו תוצאות",
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            textAlign = TextAlign.Center,
+                            color = Color.Gray
+                        )
                     }
                 }
             }
@@ -228,8 +300,7 @@ fun ManualRoutePlannerScreen(
             ) {
                 Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (stops.size >= 2) {
-                        AppleButton(
-                            text = if (isLoading) "מחשב מסלול..." else "בצע אופטימיזציה (TSP)",
+                        Button(
                             onClick = {
                                 scope.launch {
                                     isLoading = true
@@ -259,23 +330,40 @@ fun ManualRoutePlannerScreen(
                                     isLoading = false
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth().height(56.dp)
-                        )
+                            modifier = Modifier.fillMaxWidth().height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryTurquoise, contentColor = TextOfficial)
+                        ) {
+                            Text(if (isLoading) "מחשב מסלול..." else "בצע אופטימיזציה (TSP)", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
 
-                    AppleButton(
-                        text = "התחל ניווט למסלול הנבחר",
-                        onClick = { onStartNavigation(stops.toList()) },
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("🚀 מסלול עם ${stops.size} תחנות מוכן! ניווט מתחיל...")
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         enabled = stops.isNotEmpty() && !isLoading,
-                        containerColor = PrimaryTurquoise
-                    )
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryTurquoise, 
+                            contentColor = TextOfficial,
+                            disabledContainerColor = PrimaryTurquoise.copy(alpha = 0.5f),
+                            disabledContentColor = TextOfficial.copy(alpha = 0.5f)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp)
+                    ) {
+                         Text("התחל ניווט למסלול הנבחר", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
         } // end Scaffold
-    }
-}
+        } // end PremiumBackground
+    } // end CompositionLocalProvider
+} // end ManualRoutePlannerScreen
 
 @Composable
 fun ManualStopItem(
@@ -287,9 +375,14 @@ fun ManualStopItem(
     val address = stop["address"] as? String ?: ""
     val type = stop["stop_type"] as? String ?: "delivery"
 
-    OfficialCard(cornerRadius = 16.dp) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        shadowElevation = 4.dp,
+        modifier = Modifier.fillMaxWidth().animateContentSize()
+    ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
@@ -306,7 +399,7 @@ fun ManualStopItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(address, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.weight(1f, fill = false))
+                    Text(address, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextOfficial, modifier = Modifier.weight(1f, fill = false))
                     if (stop["is_verified"] == true) {
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(

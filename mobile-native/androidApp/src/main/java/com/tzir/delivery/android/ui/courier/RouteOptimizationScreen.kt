@@ -27,6 +27,7 @@ import com.tzir.delivery.shared.repository.CourierRepository
 import com.tzir.delivery.shared.location.LocationManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.tzir.delivery.android.ui.theme.*
 
 @Composable
 fun RouteOptimizationScreen(repository: CourierRepository, onBack: () -> Unit, onApprove: () -> Unit) {
@@ -68,7 +69,7 @@ fun RouteOptimizationScreen(repository: CourierRepository, onBack: () -> Unit, o
             
             AnimatedVisibility(visible = step == 0) {
                 Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                    OfficialCard(cornerRadius = 24.dp) {
+                    GlassCard(cornerRadius = 24.dp) {
                         Column(modifier = Modifier.padding(24.dp)) {
                             Text("לאן נוסעים?", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextOfficial)
                             Spacer(modifier = Modifier.height(16.dp))
@@ -151,7 +152,7 @@ fun RouteOptimizationScreen(repository: CourierRepository, onBack: () -> Unit, o
                     Text("ההצעה שלנו עבורך:", fontSize = 20.sp, fontWeight = FontWeight.Black, color = TextOfficial)
                     
                     // Main Route Card
-                    OfficialCard(cornerRadius = 24.dp) {
+                    GlassCard(cornerRadius = 24.dp) {
                         Column(modifier = Modifier.padding(24.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Place, null, tint = PrimaryTurquoise)

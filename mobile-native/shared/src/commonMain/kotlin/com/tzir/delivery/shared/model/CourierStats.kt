@@ -11,5 +11,7 @@ data class CourierStats(
     val rating: Double,
     val balance: Double,
     val performanceIndex: Double = 0.0,
-    val rankBadge: String = "Standard"
+    val rankBadge: String = "Standard",
+    val completionRate: Int = 96,
+    val avgDeliveryMins: Int = 22
 )

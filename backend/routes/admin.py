@@ -202,7 +202,7 @@ def get_recent_orders(current_user):
         return jsonify(result), 200
         
     except Exception as e:
-        print(f"❌ Error fetching recent orders: {str(e)}")
+        print(f" Error fetching recent orders: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -256,7 +256,7 @@ def update_order_status(current_user, order_id):
         
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Error updating status: {str(e)}")
+        print(f" Error updating status: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -280,8 +280,64 @@ def get_customers(current_user):
             }
         } for c in customers]), 200
     except Exception as e:
-        print(f"❌ Error fetching customers: {str(e)}")
+        print(f" Error fetching customers: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/customers/<int:customer_id>', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_customer(current_user, customer_id):
+    """מחיקת לקוח לחלוטין - רק למנהלים"""
+    try:
+        from models import Customer
+        customer = Customer.query.get_or_404(customer_id)
+        user_id = customer.user_id
+        
+        # Delete User first so DB-level CASCADE cleans up the Customer row automatically
+        if user_id:
+            user = User.query.get(user_id)
+            if user and user.user_type == 'customer':
+                User.query.filter_by(id=user_id).delete(synchronize_session=False)
+                db.session.flush()  # Let cascade delete customer + children via FK ondelete
+        else:
+            # No linked user: manually delete customer and its children
+            Customer.query.filter_by(id=customer_id).delete(synchronize_session=False)
+
+        db.session.commit()
+        return jsonify({'success': True, 'message': f'Customer {customer_id} deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error deleting customer {customer_id}: {str(e)}", exc_info=True)
+        return jsonify({'error': 'שגיאה במחיקת הלקוח, ייתכן שקיימות הזמנות מקושרות.'}), 500
+
+
+@admin_bp.route('/couriers/<int:courier_id>', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_courier(current_user, courier_id):
+    """מחיקת שליח לחלוטין - רק למנהלים"""
+    try:
+        from models import Courier, User
+        courier = Courier.query.get_or_404(courier_id)
+        user_id = courier.user_id
+        
+        # Delete User first — DB CASCADE will clean up Courier row + all children via ondelete='CASCADE'
+        if user_id:
+            user = User.query.get(user_id)
+            if user and user.user_type == 'courier':
+                User.query.filter_by(id=user_id).delete(synchronize_session=False)
+                db.session.flush()
+        else:
+            # No linked user: manually drop courier and its children
+            Courier.query.filter_by(id=courier_id).delete(synchronize_session=False)
+                    
+        db.session.commit()
+        return jsonify({'success': True, 'message': f'Courier {courier_id} deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error deleting courier {courier_id}: {str(e)}", exc_info=True)
+        return jsonify({'error': 'שגיאה במחיקת השליח, ייתכן שקיים מידע פיננסי או משלוחים פעילים.'}), 500
 
 
 @admin_bp.route('/couriers/<int:courier_id>/approve', methods=['POST'])

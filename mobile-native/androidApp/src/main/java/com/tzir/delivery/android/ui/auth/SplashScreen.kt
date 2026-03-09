@@ -16,98 +16,133 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tzir.delivery.android.R
-import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(onAnimationFinish: () -> Unit) {
     var visible by remember { mutableStateOf(false) }
+
+    // Logo spring scale
     val scale by animateFloatAsState(
-        targetValue = if (visible) 1.1f else 0.8f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+        targetValue = if (visible) 1f else 0.7f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
         label = "logoScale"
+    )
+
+    // Logo alpha
+    val logoAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(800),
+        label = "logoAlpha"
     )
 
     LaunchedEffect(Unit) {
         visible = true
-        delay(2500) // Slightly longer for premium feel
+        delay(2200)
         onAnimationFinish()
     }
 
-    PremiumBackground {
+    val isDark = true // Splash always dark for dramatic effect
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Graphite900),
+        contentAlignment = Alignment.Center
+    ) {
+        // Subtle amber radial glow
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(160.dp)
-                        .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                        .shadow(24.dp, CircleShape, ambientColor = PrimaryTurquoise.copy(alpha = 0.2f))
-                        .background(AppleWhite, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "TZIR",
-                        style = androidx.compose.ui.text.TextStyle(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                PrimaryTurquoise,
-                                TextOfficial
-                            )
-                            ),
-                            fontWeight = FontWeight.Black,
-                            fontSize = 42.sp,
-                            letterSpacing = 2.sp
+            modifier = Modifier
+                .size(400.dp)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            AmberGold.copy(alpha = 0.06f),
+                            Color.Transparent
                         )
                     )
-                }
-                
-                Spacer(modifier = Modifier.height(48.dp))
-                
-                AnimatedVisibility(
-                    visible = visible,
-                    enter = fadeIn(animationSpec = tween(1000, delayMillis = 500)) + 
-                            slideInVertically(animationSpec = tween(1000, delayMillis = 500)) { it / 2 }
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            stringResource(R.string.app_name),
-                            color = TextOfficial,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            stringResource(R.string.splash_subtitle),
-                            color = TextGray,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-            }
-            
-            // Minimal Loading Indicator at bottom
+                )
+        )
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Logo Circle
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 64.dp)
+                    .size(140.dp)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        alpha = logoAlpha
+                    }
+                    .shadow(
+                        elevation = 24.dp,
+                        shape = CircleShape,
+                        ambientColor = AmberGold.copy(alpha = 0.15f),
+                        spotColor = AmberGold.copy(alpha = 0.2f)
+                    )
+                    .background(Graphite800, CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = PrimaryTurquoise,
-                    strokeWidth = 2.dp
+                Text(
+                    "TZIR",
+                    style = androidx.compose.ui.text.TextStyle(
+                        brush = Brush.linearGradient(
+                            colors = listOf(AmberGold, AmberGoldDark)
+                        ),
+                        fontWeight = FontWeight.Black,
+                        fontSize = 38.sp,
+                        letterSpacing = 2.sp
+                    )
                 )
             }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // App name + subtitle
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(1000, delayMillis = 400)) +
+                        slideInVertically(tween(1000, delayMillis = 400)) { it / 3 }
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        stringResource(R.string.app_name),
+                        color = TextPrimaryDark,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.splash_subtitle),
+                        color = Graphite300,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        // Loading indicator
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(600, delayMillis = 800)),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 64.dp)
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(22.dp),
+                color = AmberGold,
+                strokeWidth = 2.dp
+            )
         }
     }
 }

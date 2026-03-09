@@ -31,6 +31,7 @@ import com.tzir.delivery.shared.model.Mission
 import com.tzir.delivery.shared.network.DeliveryApi
 import com.tzir.delivery.android.R
 import kotlinx.coroutines.launch
+import com.tzir.delivery.android.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,22 +92,40 @@ fun MissionDetailsScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 5-step progress stepper
+                val stepIdx = listOf("accepted","picked_up","in_transit","arrived","delivered").indexOfFirst { it == mission.status }.coerceAtLeast(0)
+                MissionStepper(currentStep = stepIdx, steps = listOf("התקבל","נאסף","בדרך","הגיע","נמסר"))
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 GlassCard(
                     modifier = Modifier.fillMaxWidth(),
                     cornerRadius = 32.dp
                 ) {
                     Column(modifier = Modifier.padding(24.dp)) {
+                        if (mission.isUrgent == true) {
+                            Surface(color = Color(0xFFD32F2F), shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp), modifier = Modifier.padding(bottom=12.dp)) {
+                                Text("⚡ משלוח דחוף — יש לבצע בהקדם", modifier = Modifier.padding(horizontal=12.dp, vertical=6.dp), color=Color.White, fontWeight=FontWeight.Bold, fontSize=13.sp)
+                            }
+                        }
                         AddressSection(stringResource(R.string.pickup), mission.pickupAddress, "🔵")
                         Spacer(modifier = Modifier.height(24.dp))
                         AddressSection(stringResource(R.string.deliver), mission.deliveryAddress, "🏁")
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    NavigationButton("Waze", "waze://?q=${Uri.encode(mission.deliveryAddress)}", Modifier.weight(1f))
-                    NavigationButton("Google Maps", "google.navigation:q=${Uri.encode(mission.deliveryAddress)}", Modifier.weight(1f))
+                // Navigation launcher row
+                val context = LocalContext.current
+                Text("נווט לכתובת:", fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = TextGray)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    NavigationButton("Waze", "waze://?q=${android.net.Uri.encode(mission.deliveryAddress)}&navigate=yes", Modifier.weight(1f))
+                    NavigationButton("Google Maps", "google.navigation:q=${android.net.Uri.encode(mission.deliveryAddress)}", Modifier.weight(1f))
+                    NavigationButton("מפות", "maps://?q=${android.net.Uri.encode(mission.deliveryAddress)}", Modifier.weight(1f))
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))
@@ -356,7 +375,7 @@ fun FeedbackToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 14.sp, color = Color(0xFF1C3D2A), fontWeight = FontWeight.Medium)
+        Text(label, fontSize = 14.sp, color = com.tzir.delivery.android.ui.theme.Navy950, fontWeight = FontWeight.Medium)
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,

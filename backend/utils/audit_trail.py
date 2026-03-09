@@ -193,7 +193,7 @@ def register_audit_listeners(app_db):
     # Listen on the Session level for all mappers
     event.listen(db.session.__class__, 'after_flush', _after_flush_handler)
     
-    logger.info("✅ Global Audit Trail registered on all database models.")
+    logger.info(" Global Audit Trail registered on all database models.")
 
 
 def _after_flush_handler(session, flush_context):

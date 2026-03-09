@@ -2,6 +2,7 @@
 package com.tzir.delivery.shared.repository
 
 import com.tzir.delivery.shared.model.AuthResponse
+import com.tzir.delivery.shared.model.FcmTokenRequest
 import com.tzir.delivery.shared.model.LoginRequest
 import com.tzir.delivery.shared.model.RegisterRequest
 import com.tzir.delivery.shared.model.User
@@ -46,6 +47,6 @@ class AuthRepository(private val api: DeliveryApi) {
     }
 
     suspend fun updateFcmToken(token: String): Boolean {
-        return api.updateFcmToken(token)
+        return api.updateFcmToken(FcmTokenRequest(token))
     }
 }

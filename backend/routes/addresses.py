@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from extensions import limiter
 from models import Address, db
 from utils.decorators import token_required
 import requests as http_requests
@@ -14,12 +15,15 @@ except ImportError:
 
 addresses_bp = Blueprint('addresses', __name__)
 
-GOOGLE_PLACES_API_KEY = os.environ.get('GOOGLE_PLACES_API_KEY', 'AIzaSyCCmP-545jtS4rtdOPFZKe0tQa05Pz9f8g')
+GOOGLE_PLACES_API_KEY = os.environ.get('GOOGLE_PLACES_API_KEY')
 
 @addresses_bp.route('/autocomplete', methods=['GET'])
+@limiter.limit("30 per minute")
 def autocomplete_address():
     """Public endpoint - geocoding autocomplete doesn't require auth."""
     query = request.args.get('q', '').strip()
+    # Log the raw query bytes to diagnose encoding issues
+    print(f"DEBUG: Autocomplete request for query: '{query}' (len={len(query)})")
     if not query or len(query) < 2:
         return jsonify([]), 200
 
@@ -37,11 +41,14 @@ def _google_places_autocomplete(query):
     """Use Google Places Autocomplete API. Returns None if API fails."""
     try:
         url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+        # Detect if query has Hebrew characters
+        is_hebrew = any("\u0590" <= c <= "\u05FF" for c in query)
+        lang = 'iw' if is_hebrew else 'en'
         params = {
             'input': query,
             'key': GOOGLE_PLACES_API_KEY,
             'components': 'country:il',
-            'language': 'he',
+            'language': lang,
             'types': 'address',
         }
         resp = http_requests.get(url, params=params, timeout=5)
@@ -146,6 +153,7 @@ def _nominatim_autocomplete(query):
         return jsonify(_local_db_search(query, 10)), 200
 
 @addresses_bp.route('/geocode', methods=['GET'])
+@limiter.limit("30 per minute")
 def geocode_address():
     """Convert address or place_id to coordinates."""
     query = request.args.get('q', '').strip()
@@ -161,7 +169,8 @@ def geocode_address():
             'key': GOOGLE_PLACES_API_KEY,
             'language': 'he'
         }
-        if place_id:
+        # Only use place_id for Google if it appears to be a real Google Place ID (not our 'nom_' mock prefix)
+        if place_id and not place_id.startswith('nom_') and not place_id.startswith('local_'):
             params['place_id'] = place_id
         else:
             params['address'] = query

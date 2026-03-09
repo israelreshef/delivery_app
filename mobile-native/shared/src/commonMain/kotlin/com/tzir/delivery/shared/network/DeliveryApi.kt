@@ -1,9 +1,7 @@
 
 package com.tzir.delivery.shared.network
 
-import com.tzir.delivery.shared.model.AuthResponse
-import com.tzir.delivery.shared.model.LoginRequest
-import com.tzir.delivery.shared.model.RegisterRequest
+import com.tzir.delivery.shared.model.*
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.*
@@ -20,30 +18,30 @@ interface DeliveryApi {
     suspend fun register(request: RegisterRequest): AuthResponse
 
     // Location
-    suspend fun sendLocation(courierId: String, lat: Double, lng: Double): Boolean
+    suspend fun sendLocation(request: LocationRequest): Boolean
 
     // Orders
     suspend fun getAvailableOrders(): List<com.tzir.delivery.shared.model.Mission>
     suspend fun acceptOrder(orderId: Int): Boolean
     suspend fun optimizeRoute(lat: Double, lng: Double): MapsResult
     suspend fun getCourierStats(courierId: Int): com.tzir.delivery.shared.model.CourierStats
-    suspend fun updateStatus(orderId: Int, status: String, lat: Double? = null, lng: Double? = null, podSignature: String? = null, podImage: String? = null, recipientId: String? = null): Boolean
+    suspend fun updateStatus(orderId: Int, request: StatusUpdateRequest): Boolean
     suspend fun getActiveOrder(): com.tzir.delivery.shared.model.Mission?
     suspend fun getMissionHistory(): List<com.tzir.delivery.shared.model.Mission>
     suspend fun uploadImage(imageBytes: ByteArray): String?
-    suspend fun submitRating(orderId: Int, rating: Int, comment: String): Boolean
+    suspend fun submitRating(orderId: Int, request: RatingRequest): Boolean
     suspend fun sendOTP(orderId: Int): Boolean
-    suspend fun verifyOTP(orderId: Int, code: String): Boolean
+    suspend fun verifyOTP(orderId: Int, request: OtpVerifyRequest): Boolean
     suspend fun exportEarnings(year: Int, month: Int): ByteArray?
     suspend fun getDocuments(): List<Map<String, Any>>
-    suspend fun updateFcmToken(token: String): Boolean
-    suspend fun updateAvailability(isAvailable: Boolean): Boolean
-    suspend fun optimizeManualRoute(lat: Double, lng: Double, stops: List<Map<String, Any?>>): MapsResult
+    suspend fun updateFcmToken(request: FcmTokenRequest): Boolean
+    suspend fun updateAvailability(request: AvailabilityRequest): Boolean
+    suspend fun optimizeManualRoute(request: ManualRouteRequest): MapsResult
     suspend fun autocompleteAddress(query: String): List<com.tzir.delivery.shared.model.AutocompleteSuggestion>
     suspend fun geocodeAddress(query: String? = null, placeId: String? = null): com.tzir.delivery.shared.model.GeocodeResult?
 
     // Gamification & Shift Management (TZIR Academy)
-    suspend fun startShift(vibe: String): MapsResult
+    suspend fun startShift(request: ShiftStartRequest): MapsResult
     suspend fun getShiftStatus(): MapsResult
     suspend fun getGamificationProfile(): Map<String, Any>
 
@@ -59,7 +57,7 @@ data class MapsResult(val success: Boolean, val data: JsonElement? = null)
 
 class DeliveryApiImpl(
     private val client: HttpClient,
-    private val baseUrl: String = "http://10.0.2.2:5001" // Default to Android Emulator loopback
+    private val baseUrl: String = "http://10.0.2.2:5000" // Default to Android Emulator loopback
 ) : DeliveryApi {
 
     // NOTE: Auth token injection is handled globally by KtorClientFactory.defaultRequest
@@ -97,16 +95,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun sendLocation(courierId: String, lat: Double, lng: Double): Boolean {
-        val goServiceUrl = "http://10.0.2.2:8080"
+    override suspend fun sendLocation(request: LocationRequest): Boolean {
         return try {
-            val response = client.post("$goServiceUrl/location") {
+            val response = client.post("$baseUrl/api/couriers/location") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "courier_id" to courierId,
-                    "latitude" to lat,
-                    "longitude" to lng
-                ))
+                setBody(request)
             }
             response.status.value in 200..299
         } catch (e: Exception) {
@@ -140,9 +133,9 @@ class DeliveryApiImpl(
 
     override suspend fun optimizeRoute(lat: Double, lng: Double): MapsResult {
         return try {
-            val response = client.post("$baseUrl/api/optimize/optimize-my-route") {
+            val response = client.post("$baseUrl/api/optimization/optimize-my-route") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("lat" to lat, "lng" to lng))
+                setBody(LocationRequest("", lat, lng)) // Reusing LocationRequest for simple lat/lng
             }
             MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {
@@ -170,26 +163,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun updateStatus(
-        orderId: Int,
-        status: String,
-        lat: Double?,
-        lng: Double?,
-        podSignature: String?,
-        podImage: String?,
-        recipientId: String?
-    ): Boolean {
+    override suspend fun updateStatus(orderId: Int, request: StatusUpdateRequest): Boolean {
         return try {
             val response = client.post("$baseUrl/api/couriers/orders/$orderId/status") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "status" to status,
-                    "lat" to lat,
-                    "lng" to lng,
-                    "pod_signature" to podSignature,
-                    "pod_image" to podImage,
-                    "pod_recipient_id" to recipientId
-                ))
+                setBody(request)
             }
             response.status.value in 200..299
         } catch (e: Exception) {
@@ -241,14 +219,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun submitRating(orderId: Int, rating: Int, comment: String): Boolean {
+    override suspend fun submitRating(orderId: Int, request: RatingRequest): Boolean {
         return try {
             val response = client.post("$baseUrl/api/couriers/orders/$orderId/rating") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "rating" to rating,
-                    "comment" to comment
-                ))
+                setBody(request)
             }
             response.status.value in 200..299
         } catch (e: Exception) {
@@ -267,11 +242,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun verifyOTP(orderId: Int, code: String): Boolean {
+    override suspend fun verifyOTP(orderId: Int, request: OtpVerifyRequest): Boolean {
         return try {
             val response = client.post("$baseUrl/api/couriers/orders/$orderId/verify-otp") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("otp_code" to code))
+                setBody(request)
             }
             response.status.value in 200..299
         } catch (e: Exception) {
@@ -306,11 +281,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun updateFcmToken(token: String): Boolean {
+    override suspend fun updateFcmToken(request: FcmTokenRequest): Boolean {
         return try {
             val response = client.post("$baseUrl/api/auth/fcm-token") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("fcm_token" to token))
+                setBody(request)
             }
             response.status.value in 200..299
         } catch (e: Exception) {
@@ -319,11 +294,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun updateAvailability(isAvailable: Boolean): Boolean {
+    override suspend fun updateAvailability(request: AvailabilityRequest): Boolean {
         return try {
             val response = client.patch("$baseUrl/api/couriers/availability") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("is_available" to isAvailable))
+                setBody(request)
             }
             response.status.value in 200..299
         } catch (e: Exception) {
@@ -332,11 +307,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun optimizeManualRoute(lat: Double, lng: Double, stops: List<Map<String, Any?>>): MapsResult {
+    override suspend fun optimizeManualRoute(request: ManualRouteRequest): MapsResult {
         return try {
-            val response = client.post("$baseUrl/api/optimize/manual-run") {
+            val response = client.post("$baseUrl/api/optimization/manual-run") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("lat" to lat, "lng" to lng, "stops" to stops))
+                setBody(request)
             }
             MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {
@@ -368,11 +343,11 @@ class DeliveryApiImpl(
         }
     }
 
-    override suspend fun startShift(vibe: String): MapsResult {
+    override suspend fun startShift(request: ShiftStartRequest): MapsResult {
         return try {
             val response = client.post("$baseUrl/api/couriers/shift/start") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("vibe" to vibe))
+                setBody(request)
             }
             MapsResult(success = response.status.value in 200..299)
         } catch (e: Exception) {

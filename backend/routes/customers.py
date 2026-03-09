@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import db, Customer, User, Delivery, Invoice, Payment, CustomerContactLog, CustomerFile, Expense, CustomerNote, CustomerTask
 import logging
 from utils.decorators import token_required, role_required
+from sqlalchemy.orm import joinedload
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
@@ -17,7 +18,13 @@ os.makedirs(CUSTOMER_FILES_DIR, exist_ok=True)
 def get_customers(current_user):
     """קבלת כל הלקוחות"""
     try:
-        customers = Customer.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 50, type=int)
+        
+        query = Customer.query.options(joinedload(Customer.user))
+        
+        paginated_data = query.paginate(page=page, per_page=per_page, error_out=False)
+        customers = paginated_data.items
         
         result = []
         for c in customers:
@@ -50,7 +57,13 @@ def get_customers(current_user):
                 'last_payment_at': last_payment.payment_date.isoformat() if last_payment and last_payment.payment_date else None
             })
         
-        return jsonify(result), 200
+        return jsonify({
+            'data': result,
+            'total': paginated_data.total,
+            'pages': paginated_data.pages,
+            'current_page': page,
+            'per_page': per_page
+        }), 200
         
     except Exception as e:
         logging.error(f"Error fetching customers: {str(e)}", exc_info=True)

@@ -6,7 +6,7 @@ import random
 sio = socketio.Client()
 
 def simulate_movement():
-    print("🚀 Starting GPS Simulation for 3 couriers...")
+    print(" Starting GPS Simulation for 3 couriers...")
     
     # Base location (Tel Aviv)
     lat = 32.0853
@@ -35,12 +35,12 @@ def simulate_movement():
                     'timestamp': time.time()
                 }
                 sio.emit('courier_location_update', data)
-                # print(f"📡 Sent update for Courier {c['id']}")
+                # print(f" Sent update for Courier {c['id']}")
             
             time.sleep(1) # Every second
             
     except KeyboardInterrupt:
-        print("🛑 Simulation stopped")
+        print(" Simulation stopped")
         sio.disconnect()
 
 if __name__ == '__main__':

@@ -39,7 +39,7 @@ def create_or_update_user(username, email, password, role, phone):
         print(f"Error processing {username}: {e}")
 
 with app.app_context():
-    print("🔐 Creating Secure Demo Accounts...")
+    print(" Creating Secure Demo Accounts...")
     
     # 1. Admin
     create_or_update_user('demo_admin', 'admin@tzir.com', 'AdminPower2026!', 'admin', '0501111111')
@@ -51,4 +51,4 @@ with app.app_context():
     create_or_update_user('demo_client', 'client@tzir.com', 'ClientShop88!', 'customer', '0503333333')
     
     db.session.commit()
-    print("✅ Demo Accounts Ready!")
+    print(" Demo Accounts Ready!")

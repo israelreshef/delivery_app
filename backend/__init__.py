@@ -19,7 +19,7 @@ def create_app():
     
     # רישום routes
     from .routes import orders_bp, auth_bp, payments_bp, chat_bp, stats_bp, couriers_bp, zones_bp, settings_bp, reports_bp
-    app.register_blueprint(auth_bp, url_prefix='/auth')  # ✅ Fixed: Added /auth prefix
+    app.register_blueprint(auth_bp, url_prefix='/auth')  #  Fixed: Added /auth prefix
     app.register_blueprint(orders_bp, url_prefix='/api/orders')
     app.register_blueprint(payments_bp, url_prefix='/api/payments')
     app.register_blueprint(chat_bp, url_prefix='/api/chat')

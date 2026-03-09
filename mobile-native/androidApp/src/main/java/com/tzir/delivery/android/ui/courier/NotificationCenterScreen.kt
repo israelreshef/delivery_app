@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.tzir.delivery.android.R
 import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 
 data class AppNotification(
     val id: String,
@@ -47,11 +48,13 @@ fun NotificationCenterScreen(onBack: () -> Unit) {
                         Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextOfficial)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onBackground)
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+        PremiumBackground {
+            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             if (notifications.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(stringResource(R.string.no_notifications), color = Color.Gray)
@@ -63,6 +66,7 @@ fun NotificationCenterScreen(onBack: () -> Unit) {
                         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = AppleGray)
                     }
                 }
+            }
             }
         }
     }

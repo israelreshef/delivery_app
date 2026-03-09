@@ -1,11 +1,16 @@
-
 package com.tzir.delivery.android.ui.courier
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -13,29 +18,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.shape.CircleShape
+import androidx.core.content.ContextCompat
 import com.tzir.delivery.android.R
+import com.tzir.delivery.android.ui.components.*
+import com.tzir.delivery.android.ui.theme.*
 import com.tzir.delivery.android.util.CalendarSyncManager
 import com.tzir.delivery.shared.model.Mission
-import com.tzir.delivery.shared.network.DeliveryApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.tzir.delivery.android.ui.components.*
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MissionsScreen(repository: com.tzir.delivery.shared.repository.CourierRepository, onMissionClick: (Int) -> Unit) {
+fun MissionsScreen(
+    repository: com.tzir.delivery.shared.repository.CourierRepository, 
+    onMissionClick: (Int) -> Unit
+) {
     val availableMissions by repository.availableMissions.collectAsState()
     val activeMissions by repository.activeMissions.collectAsState()
     val isOffline by repository.isOffline.collectAsState()
@@ -49,8 +51,6 @@ fun MissionsScreen(repository: com.tzir.delivery.shared.repository.CourierReposi
     val calendarLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p ->
         if (p.values.all { it }) {
             Toast.makeText(context, "הרשאות יומן אושרו. נסה לסנכרן שוב.", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, "נדרשות הרשאות יומן לסנכרון.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -65,110 +65,117 @@ fun MissionsScreen(repository: com.tzir.delivery.shared.repository.CourierReposi
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(30000) // Refresh every 30s instead of 15s to save battery/bandwidth with caching
+            delay(30000)
             repository.refreshAvailableMissions()
             repository.refreshActiveMissions()
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
+    PremiumBackground {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Spacer(Modifier.height(16.dp))
+            
             Text(
                 text = stringResource(R.string.missions),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = TextOfficial
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Black,
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 20.dp)
             )
-        }
 
-        TabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = Color.White,
-            contentColor = PrimaryTurquoise,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                    color = PrimaryTurquoise
-                )
-            }
-        ) {
-            for (index in tabs.indices) {
-                val titleRes = tabs[index]
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = { 
-                        Text(
-                            text = stringResource(titleRes),
-                            color = if (selectedTab == index) TextOfficial else TextGray,
-                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                        )
-                    }
-                )
-            }
-        }
+            Spacer(Modifier.height(16.dp))
 
-        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            if (isLoading) {
-                ShimmerMissionList()
-            } else {
-                Column {
-                    if (isOffline) {
-                        Surface(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                            color = Color(0xFFFFEBEE),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Color.Transparent,
+                contentColor = AmberGold,
+                divider = {},
+                indicator = { tabPositions ->
+                    Box(
+                        Modifier
+                            .tabIndicatorOffset(tabPositions[selectedTab])
+                            .height(3.dp)
+                            .padding(horizontal = 24.dp)
+                            .background(AmberGold, RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
+                    )
+                }
+            ) {
+                tabs.forEachIndexed { index, titleRes ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { 
                             Text(
-                                "Offline Mode - Showing cached data",
-                                modifier = Modifier.padding(8.dp),
-                                color = Color(0xFFD32F2F),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                text = stringResource(titleRes),
+                                color = if (selectedTab == index) Color.White else Color.Gray,
+                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Medium,
+                                fontSize = 15.sp
                             )
                         }
-                    }
+                    )
+                }
+            }
 
-                    if (selectedTab == 2) {
-                        CalendarView(
-                            missions = activeMissions, 
-                            onSyncClick = {
-                                val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED
-                                if (hasPermission) {
-                                    var count = 0
-                                    activeMissions.forEach { if (syncManager.addMissionToCalendar(it)) count++ }
-                                    Toast.makeText(context, "סונכרנו $count משימות ליומן", Toast.LENGTH_LONG).show()
-                                } else {
-                                    calendarLauncher.launch(arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR))
-                                }
-                            }
-                        )
-                    } else {
-                        val currentList = if (selectedTab == 0) availableMissions else activeMissions
-                        
-                        if (currentList.isEmpty()) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                if (isLoading) {
+                    ShimmerMissionList()
+                } else {
+                    Column {
+                        if (isOffline) {
+                            Surface(
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                color = Color.Red.copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
                                 Text(
-                                    text = if (selectedTab == 0) stringResource(R.string.no_available_missions) else stringResource(R.string.no_active_missions),
-                                    color = Color.Gray
+                                    "Offline Mode - Showing cached data",
+                                    modifier = Modifier.padding(12.dp),
+                                    color = Color.Red,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
+                        }
+
+                        if (selectedTab == 2) {
+                            CalendarView(
+                                missions = activeMissions, 
+                                onSyncClick = {
+                                    val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED
+                                    if (hasPermission) {
+                                        var count = 0
+                                        activeMissions.forEach { if (syncManager.addMissionToCalendar(it)) count++ }
+                                        Toast.makeText(context, "סונכרנו $count משלוחים ליומן", Toast.LENGTH_LONG).show()
+                                    } else {
+                                        calendarLauncher.launch(arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR))
+                                    }
+                                }
+                            )
                         } else {
-                            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                items(currentList) { mission ->
-                                    MissionCard(
-                                        mission = mission,
-                                        showAcceptButton = selectedTab == 0,
-                                        onAccept = {
-                                            scope.launch {
-                                                val success = repository.acceptMission(mission.id)
-                                                if (success) {
-                                                    selectedTab = 1 // Switch to active tab
-                                                }
-                                            }
-                                        },
-                                        onClick = { onMissionClick(mission.id) }
+                            val currentList = if (selectedTab == 0) availableMissions else activeMissions
+                            
+                            if (currentList.isEmpty()) {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = if (selectedTab == 0) stringResource(R.string.no_available_missions) else stringResource(R.string.no_active_missions),
+                                        color = Color.Gray
                                     )
+                                }
+                            } else {
+                                LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    items(currentList) { mission ->
+                                        MissionCard(
+                                            mission = mission,
+                                            showAcceptButton = selectedTab == 0,
+                                            onAccept = {
+                                                scope.launch {
+                                                    val success = repository.acceptMission(mission.id)
+                                                    if (success) selectedTab = 1
+                                                }
+                                            },
+                                            onClick = { onMissionClick(mission.id) }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -181,166 +188,150 @@ fun MissionsScreen(repository: com.tzir.delivery.shared.repository.CourierReposi
 
 @Composable
 fun MissionCard(
-    mission: Mission, 
+    mission: Mission,
     showAcceptButton: Boolean,
-    onAccept: () -> Unit, 
+    onAccept: () -> Unit,
     onClick: () -> Unit
 ) {
+    val isUrgent = mission.isUrgent == true
+    val deliverySteps = listOf("התקבל", "נאסף", "בדרך", "הגיע", "נמסר")
+    val deliveryStatuses = listOf("accepted", "picked_up", "in_transit", "arrived", "delivered")
+    val currentStepIndex = deliveryStatuses.indexOfFirst { it == mission.status }.coerceAtLeast(0)
+
     GlassCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().clickable { onClick() },
         cornerRadius = 24.dp
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            // --- Header ---
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Column {
-                    Text(
-                        text = "${stringResource(R.string.order_prefix)}${mission.orderNumber}",
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 18.sp,
-                        color = TextOfficial
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    if (!showAcceptButton) {
-                        Surface(
-                            color = Color(0xFF6B8F3E).copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = mission.status.uppercase(),
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Black,
-                                color = PrimaryTurquoise
-                            )
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "${stringResource(R.string.order_prefix)}${mission.orderNumber}",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                        if (isUrgent) {
+                            Surface(color = Color.Red.copy(alpha = 0.2f), shape = RoundedCornerShape(6.dp)) {
+                                Text("דחוף!", modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), fontSize = 10.sp, fontWeight = FontWeight.Black, color = Color.Red)
+                            }
                         }
+                    }
+                    if (!showAcceptButton) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        StatusChip(mission.status)
                     }
                 }
                 Text(
                     text = "₪${mission.estimatedPrice}",
                     fontWeight = FontWeight.Black,
-                    color = PrimaryTurquoise,
-                    fontSize = 24.sp
+                    color = AmberGold,
+                    fontSize = 22.sp
                 )
             }
+
             Spacer(modifier = Modifier.height(20.dp))
-            
-            AddressLine(label = stringResource(R.string.pickup), address = mission.pickupAddress, icon = "📍", iconColor = PrimaryTurquoise)
-            Spacer(modifier = Modifier.height(16.dp))
-            AddressLine(label = stringResource(R.string.deliver), address = mission.deliveryAddress, icon = "🏁", iconColor = TextOfficial)
+            AddressItem(label = stringResource(R.string.pickup), address = mission.pickupAddress, icon = "📍", iconColor = AmberGold)
+            Spacer(modifier = Modifier.height(12.dp))
+            AddressItem(label = stringResource(R.string.deliver), address = mission.deliveryAddress, icon = "🏁", iconColor = Color.White)
+
+            if (!showAcceptButton) {
+                Spacer(modifier = Modifier.height(20.dp))
+                MissionStepper(currentStep = currentStepIndex, steps = deliverySteps)
+            }
 
             if (showAcceptButton) {
                 Spacer(modifier = Modifier.height(24.dp))
-                TzirButton(
-                    text = stringResource(R.string.accept_mission),
-                    onClick = onAccept,
-                    modifier = Modifier.height(56.dp)
-                )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(
+                        onClick = { /* Dismiss */ },
+                        modifier = Modifier.weight(1f).height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.05f))
+                    ) {
+                        Text("דחה", color = Color.Gray, fontWeight = FontWeight.Bold)
+                    }
+                    TzirButton(text = stringResource(R.string.accept_mission), onClick = onAccept, modifier = Modifier.weight(1f).height(52.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun AddressLine(label: String, address: String, icon: String, iconColor: Color) {
+fun AddressItem(label: String, address: String, icon: String, iconColor: Color) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Surface(
-            modifier = Modifier.size(32.dp),
-            shape = CircleShape,
-            color = iconColor.copy(alpha = 0.1f)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(icon, fontSize = 14.sp)
-            }
+        Surface(modifier = Modifier.size(32.dp), shape = CircleShape, color = iconColor.copy(alpha = 0.1f)) {
+            Box(contentAlignment = Alignment.Center) { Text(icon, fontSize = 14.sp) }
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(label, fontSize = 10.sp, color = TextGray, fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp)
-            Text(address, fontSize = 15.sp, color = TextOfficial, fontWeight = FontWeight.SemiBold)
+            Text(label, fontSize = 10.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
+            Text(address, fontSize = 15.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+fun StatusChip(status: String) {
+    val (label, color) = when (status) {
+        "accepted" -> "🟠 אושר" to AmberGold
+        "picked_up" -> "🔵 נאסף" to Color(0xFF3B82F6)
+        "in_transit" -> "🟣 בדרך" to Color(0xFF8B5CF6)
+        "arrived" -> "🟢 הגיע" to SuccessDark
+        "delivered" -> "✅ נמסר" to SuccessDark
+        else -> status to Color.Gray
+    }
+    Surface(color = color.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
+        Text(label, modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), fontSize = 11.sp, fontWeight = FontWeight.Black, color = color)
+    }
+}
+
+@Composable
+fun MissionStepper(currentStep: Int, steps: List<String>) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        steps.forEachIndexed { index, label ->
+            val isCompleted = index <= currentStep
+            val isCurrent = index == currentStep
+            if (index > 0) {
+                Box(modifier = Modifier.weight(1f).height(2.dp).background(if (isCompleted) AmberGold else Color.Gray.copy(alpha = 0.3f)))
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier.size(if (isCurrent) 14.dp else 10.dp)
+                        .background(if (isCompleted) AmberGold else Color.Gray.copy(alpha = 0.3f), CircleShape)
+                )
+                Text(label, fontSize = 9.sp, color = if (isCompleted) Color.White else Color.Gray, fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal, modifier = Modifier.padding(top = 4.dp))
+            }
         }
     }
 }
 
 @Composable
 fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
-    var viewMode by remember { mutableStateOf(0) } // 0: Day, 1: Week, 2: Month
-    val viewModes = listOf(R.string.day_view, R.string.week_view, R.string.month_view)
-
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            viewModes.forEachIndexed { index, modeRes ->
-                FilterChip(
-                    selected = viewMode == index,
-                    onClick = { viewMode = index },
-                    label = { Text(stringResource(modeRes)) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = PrimaryTurquoise.copy(alpha = 0.2f),
-                        selectedLabelColor = TextOfficial
-                    )
-                )
+        Row(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("פברואר 2026", color = Color.White, fontWeight = FontWeight.Black, fontSize = 20.sp)
+            Spacer(Modifier.weight(1f))
+            Button(onClick = onSyncClick, colors = ButtonDefaults.buttonColors(containerColor = AmberGold.copy(alpha = 0.15f), contentColor = AmberGold), shape = RoundedCornerShape(12.dp)) {
+                Text("סנכרן ליומן", fontWeight = FontWeight.Bold, fontSize = 13.sp)
             }
-            
-            Spacer(modifier = Modifier.weight(1f))
-            
-            TzirButton(
-                text = "סנכרן ליומן",
-                onClick = onSyncClick,
-                modifier = Modifier.width(130.dp).height(40.dp)
-            )
         }
 
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.White,
-            shape = RoundedCornerShape(24.dp),
-            shadowElevation = 1.dp
-        ) {
+        GlassCard(modifier = Modifier.fillMaxSize(), cornerRadius = 24.dp) {
             LazyColumn(modifier = Modifier.padding(16.dp)) {
-                item {
-                    Text(
-                        text = "February 2026",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color(0xFF1C3D2A),
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                }
-
-                if (viewMode == 0) { // Day View
-                    items(listOf("08:00", "10:00", "12:00", "14:00", "16:00", "18:00")) { time ->
-                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
-                            Text(time, color = Color.Gray, fontSize = 12.sp, modifier = Modifier.width(50.dp))
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(60.dp)
-                                    .background(
-                                        if (time == "10:00" || time == "14:00") Color(0xFFF5F5F0) else Color(0xFFF5F5F5),
-                                        RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(8.dp)
-                            ) {
-                                if (time == "10:00") {
-                                    Text("Order #1284 - Pick up", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                                } else if (time == "14:00") {
-                                    Text("Order #1290 - Delivery", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    item {
-                        Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
-                            Text("Calendar grid view coming soon...", color = Color.Gray)
+                items(listOf("08:00", "10:00", "12:00", "14:00", "16:00", "18:00")) { time ->
+                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp)) {
+                        Text(time, color = Color.Gray, fontSize = 12.sp, modifier = Modifier.width(50.dp))
+                        Box(
+                            modifier = Modifier.weight(1f).height(60.dp)
+                                .background(Color.White.copy(alpha = 0.03f), RoundedCornerShape(12.dp))
+                                .padding(12.dp)
+                        ) {
+                            if (time == "10:00") Text("נאסף משלוח #1284", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            else if (time == "14:00") Text("מסירה #1290", color = Color.White, fontWeight = FontWeight.Medium, fontSize = 13.sp)
                         }
                     }
                 }

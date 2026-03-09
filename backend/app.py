@@ -10,6 +10,9 @@ import click
 import os
 # Ensure models are imported for SQLAlchemy migrations
 from models import * 
+from dotenv import load_dotenv
+load_dotenv()
+from sockets import init_sockets
 
 def create_demo_users_logic():
     from werkzeug.security import generate_password_hash
@@ -75,6 +78,13 @@ def create_app():
     # Security Configuration
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
     
+    force_https = os.environ.get('FLASK_ENV') == 'production'
+    app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
+    app.config['JWT_COOKIE_SECURE'] = force_https
+    app.config['JWT_COOKIE_SAMESITE'] = 'None' if force_https else 'Lax'
+    app.config['JWT_SESSION_COOKIE'] = False
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = False # Doing basic API protection without CSRF double submit for mobile compat
+    
     # Logging Configuration
     import logging
     logging.basicConfig(level=logging.INFO)
@@ -82,38 +92,52 @@ def create_app():
     jwt.init_app(app)
     limiter.init_app(app)
     
+    flask_env = os.environ.get('FLASK_ENV', 'production')
+
     # CORS Configuration - Allow frontend to communicate with backend
-    cors_origins = os.environ.get('CORS_ORIGINS', 'http://localhost:3000,http://localhost:3001,http://127.0.0.1:3001').split(',')
-    CORS(app, 
-         resources={r"/*": {  # Changed from /api/* to /* to cover all routes
-             "origins": cors_origins,
-             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-             "allow_headers": ["Content-Type", "Authorization", "X-API-Key"],
-             "expose_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": True,
-             "max_age": 3600
-         }},
-         supports_credentials=True)
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000"
+            ],
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+            "supports_credentials": True,
+            "max_age": 600
+        },
+        r"/socket.io/*": {
+            "origins": [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000"
+            ],
+            "supports_credentials": True
+        }
+    })
     
-    # Security Headers with Talisman (Enforce HTTPS)
+    # Security Headers with Talisman
     csp = {
-        'default-src': [
-            '\'self\'',
-            '\'unsafe-inline\'', # Next.js/React inline styles
-            '*.google.com',
-            '*.googleapis.com',
-            '*.gstatic.com'
-        ]
+        'default-src': ["'self'"],
+        'script-src': ["'self'", "'strict-dynamic'", "https://accounts.google.com"],
+        'style-src': ["'self'", "'unsafe-inline'", "https://accounts.google.com"],
+        'img-src': ["'self'", "data:", "blob:", "https://*.googleusercontent.com"],
+        'connect-src': ["'self'", "ws://localhost:3000", "http://localhost:3000", "https://accounts.google.com"],
+        'font-src': ["'self'", "https://fonts.gstatic.com"],
+        'frame-src': ["'self'", "https://accounts.google.com"],
+        'object-src': ["'none'"],
+        'report-uri': ["/api/security/csp-report"]
     }
-    
-    # Disable HTTPS enforcement strictly if running in local dev mode
-    force_https = os.environ.get('FLASK_ENV') == 'production'
+
+    if flask_env == 'development':
+        csp['script-src'].append("'unsafe-eval'")
     
     Talisman(app, 
              content_security_policy=csp, 
-             force_https=force_https,
+             content_security_policy_nonce_in=['script-src'],
+             force_https=False,
              strict_transport_security=True,
              session_cookie_secure=force_https,
+             session_cookie_samesite='None' if force_https else 'Lax',
              session_cookie_http_only=True)
 
     @app.after_request
@@ -137,6 +161,9 @@ def create_app():
                        cors_allowed_origins="*", 
                        message_queue=os.environ.get('REDIS_URL'),
                        async_mode='gevent')
+    
+    # Initialize all socket event handlers
+    init_sockets(socketio)
     
     # Register blueprints
     from routes.orders import orders_bp
@@ -170,7 +197,7 @@ def create_app():
     from routes.legal import legal_bp
     app.register_blueprint(legal_bp, url_prefix='/api/legal')
     from routes.optimization import optimization_bp
-    app.register_blueprint(optimization_bp, url_prefix='/api/optimize')
+    app.register_blueprint(optimization_bp, url_prefix='/api/optimization')
     from routes.crm import crm_bp
     app.register_blueprint(crm_bp, url_prefix='/api/crm')
     from routes.reports import reports_bp
@@ -247,6 +274,11 @@ def create_app():
     @app.route('/api/health')
     def health_check():
         return {'status': 'healthy', 'service': 'tzir-backend'}, 200
+
+    @app.route('/api/security/csp-report', methods=['POST'])
+    def csp_report():
+        # ORB (Opaque Response Blocking) requires a valid content-type for non-opaque responses
+        return jsonify({'status': 'received'}), 204
     
     # Row-Level Security: Inject User ID into DB Session
     from flask import request
@@ -316,12 +348,8 @@ def create_app():
 
 
     
-    # Socket.IO events
-    from sockets.delivery_events import register_socket_events
-    register_socket_events(socketio)
-    
-    from sockets.chat_events import register_chat_events
-    register_chat_events(socketio)
+    # Note: socket events are initialized via init_sockets(socketio) earlier in have 
+    # create_app to ensures all blueprints can use it.
     
     @app.cli.command("create-demo-users")
     def create_demo_users():
@@ -377,7 +405,7 @@ def create_app():
             users.append(u)
             
             is_active = i < 1000 # 10% active
-            c = Courier(user=u, full_name=f"Courier {i}", vehicle_type=random.choice(['scooter', 'car', 'bike']), is_available=is_active, current_location_lat=base_lat + random.uniform(-0.1, 0.1) if is_active else None, current_location_lng=base_lng + random.uniform(-0.1, 0.1) if is_active else None, rating=round(random.uniform(3.5, 5.0), 2), total_deliveries=random.randint(0, 1000))
+            c = Courier(user=u, full_name=f"Courier {i}", vehicle_type=random.choice(['scooter', 'car', 'bicycle']), is_available=is_active, current_location_lat=base_lat + random.uniform(-0.1, 0.1) if is_active else None, current_location_lng=base_lng + random.uniform(-0.1, 0.1) if is_active else None, rating=round(random.uniform(3.5, 5.0), 2), total_deliveries=random.randint(0, 1000))
             couriers.append(c)
             
             if len(users) >= 1000:
@@ -397,5 +425,5 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     port = int(os.environ.get('PORT', '5000'))
-    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=port)
+    socketio.run(app, debug=True, use_reloader=True, host='0.0.0.0', port=port)
 

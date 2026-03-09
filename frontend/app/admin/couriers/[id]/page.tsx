@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 // Reusing the exact same dark-mode layout CSS from the customer card for absolute consistency!
 import '../../customers/[id]/customer-card.css';
 
@@ -21,6 +22,7 @@ const C = {
 
 export default function CourierCardPage({ params }: { params: { id: string } }) {
     const router = useRouter();
+    const { user } = useAuth();
     const [courier, setCourier] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [deliveries, setDeliveries] = useState<any[]>([]);
@@ -66,6 +68,20 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
         } catch (err: any) {
             toast.error(err.response?.data?.error || 'שגיאה בעדכון השליח');
             console.error(err);
+        }
+    };
+
+    const handleDeleteCourier = async () => {
+        if (!confirm(`האם אתה בטוח שברצונך למחוק לחלוטין את השליח "${courier.full_name}"?\nפעולה זו תמחק גם את פרטי המשתמש שלו ולא ניתנת לביטול.`)) {
+            return;
+        }
+        try {
+            await api.delete(`/admin/couriers/${params.id}`);
+            toast.success("השליח נמחק בהצלחה");
+            router.push('/admin/couriers');
+        } catch (error: any) {
+            console.error("Failed to delete courier", error);
+            toast.error(error.response?.data?.error || "שגיאה במחיקת השליח");
         }
     };
 
@@ -115,6 +131,11 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
                     </div>
 
                     <div className="topnav-right">
+                        {(user?.role === 'admin' || user?.user_type === 'admin') && (
+                            <button onClick={handleDeleteCourier} className="btn" style={{ background: '#ef4444', color: 'white', border: 'none' }}>
+                                🗑 מחק שליח
+                            </button>
+                        )}
                         <a href={courier.email ? `mailto:${courier.email}` : '#'} className="btn btn-ghost" style={{ textDecoration: 'none' }}>
                             ✉ שלח מייל
                         </a>
@@ -261,8 +282,48 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
                             </div>
                         </div>
 
-                        <div className="tab-content" style={{ display: activeTab === 'stats' ? 'block' : 'none', padding: 24, textAlign: 'center', color: C.muted }}>
-                            <p>נתוני גיימיפיקציה ורווחים מפורטים בבניה.</p>
+                        <div className="tab-content" style={{ display: activeTab === 'stats' ? 'block' : 'none', padding: 24 }}>
+                            <div className="action-bar">
+                                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>סיכום פיננסי ורווחים</div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16, marginBottom: 24 }}>
+                                <div style={{ background: 'var(--surface2)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                    <div style={{ fontSize: 13, color: 'var(--muted)', fontWeight: 600 }}>סה״כ הכנסות ממשלוחים</div>
+                                    <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--green)', margin: '8px 0' }}>
+                                        ₪{deliveries.filter(d => d.status === 'delivered').reduce((sum, d) => sum + (d.amount || 0), 0).toFixed(2)}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: 'var(--soft)' }}>מבוסס על משלוחים שהושלמו בהצלחה</div>
+                                </div>
+                                <div style={{ background: 'var(--surface2)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                    <div style={{ fontSize: 13, color: 'var(--muted)', fontWeight: 600 }}>ממוצע למשלוח</div>
+                                    <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--accent)', margin: '8px 0' }}>
+                                        ₪{deliveries.filter(d => d.status === 'delivered').length > 0 ? (deliveries.filter(d => d.status === 'delivered').reduce((sum, d) => sum + (d.amount || 0), 0) / deliveries.filter(d => d.status === 'delivered').length).toFixed(2) : '0.00'}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: 'var(--soft)' }}>רווח ממוצע לכל משלוח מוצלח</div>
+                                </div>
+                            </div>
+
+                            <div className="action-bar">
+                                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>מדדי יעילות</div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16 }}>
+                                <div style={{ background: 'var(--surface2)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                    <div style={{ fontSize: 13, color: 'var(--muted)', fontWeight: 600 }}>אחוז הצלחה (השלמת משלוחים)</div>
+                                    <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', margin: '8px 0' }}>
+                                        {deliveries.length > 0 ? Math.round((deliveries.filter(d => d.status === 'delivered').length / deliveries.length) * 100) : 0}%
+                                    </div>
+                                    <div style={{ width: '100%', height: 4, background: 'var(--surface)', borderRadius: 2 }}>
+                                        <div style={{ width: `${deliveries.length > 0 ? Math.round((deliveries.filter(d => d.status === 'delivered').length / deliveries.length) * 100) : 0}%`, height: '100%', background: 'var(--accent)', borderRadius: 2 }} />
+                                    </div>
+                                </div>
+                                <div style={{ background: 'var(--surface2)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                    <div style={{ fontSize: 13, color: 'var(--muted)', fontWeight: 600 }}>כמות משלוחים שבוטלו/נדחו</div>
+                                    <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--amber)', margin: '8px 0' }}>
+                                        {deliveries.filter(d => d.status === 'cancelled' || d.status === 'failed').length}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: 'var(--soft)' }}>משלוחים שלא הושלמו</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

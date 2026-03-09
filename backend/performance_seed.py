@@ -11,11 +11,11 @@ def performance_seed():
         # Import models strictly from backend.models to ensure single source of truth
         from backend.models import User, Courier, Customer, Delivery, Pricing, PickupPoint, DeliveryPoint
         
-        print("🚀 Starting High-Performance Seeding (10k Couriers)...")
+        print(" Starting High-Performance Seeding (10k Couriers)...")
         
         # Check if we already have too many to avoid duplication if run multiple times
         if User.query.count() > 5000:
-            print("⚠️ Database already has significant data. Skipping bulk insert to avoid duplicates.")
+            print(" Database already has significant data. Skipping bulk insert to avoid duplicates.")
             return
 
         # 1. Bulk Create Couriers
@@ -59,8 +59,8 @@ def performance_seed():
             db.session.add_all(couriers)
             db.session.commit()
             
-        print("✅ Couriers Done.")
-        print("🏁 Simulation Ready!")
+        print(" Couriers Done.")
+        print(" Simulation Ready!")
 
 if __name__ == "__main__":
     performance_seed()

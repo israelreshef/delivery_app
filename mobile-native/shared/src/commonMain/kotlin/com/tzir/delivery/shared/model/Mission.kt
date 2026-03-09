@@ -42,5 +42,9 @@ data class Mission(
     @SerialName("biometric_verification_required")
     val biometricVerificationRequired: Boolean = false,
     @SerialName("delivery_type")
-    val deliveryType: String = "standard"
+    val deliveryType: String = "standard",
+    @SerialName("is_urgent")
+    val isUrgent: Boolean? = false,
+    @SerialName("scheduled_at")
+    val scheduledAt: String? = null
 )

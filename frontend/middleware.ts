@@ -2,56 +2,54 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-    const token = request.cookies.get('token')?.value;
-    const role = request.cookies.get('role')?.value;
-    const path = request.nextUrl.pathname;
+    const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
-    // 1. Check if trying to access protected routes
-    const isProtected =
-        path.startsWith('/admin') ||
-        path.startsWith('/courier') ||
-        path.startsWith('/customer');
+    const isDev = process.env.NODE_ENV === 'development';
 
-    if (isProtected) {
-        // A. Not Authenticated -> Redirect to Login
-        if (!token || !role) {
-            return NextResponse.redirect(new URL('/', request.url));
-        }
+    // Strict CSP Policy - Relaxed for development
+    const scriptSrc = isDev
+        ? "'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com"
+        : `'self' 'nonce-${nonce}' 'strict-dynamic' https://accounts.google.com`;
 
-        // B. Role Authorization Check
-        // If trying to access admin pages but role is not admin
-        if (path.startsWith('/admin') && role !== 'admin') {
-            return redirectToDashboard(role, request.url);
-        }
+    const connectSrc = isDev
+        ? "'self' http://localhost:5000 ws://localhost:5000 http://localhost:3000 ws://localhost:3000 https://accounts.google.com"
+        : "'self' https://api.tzir-delivery.co.il https://accounts.google.com";
 
-        // If trying to access courier pages but role is not courier
-        if (path.startsWith('/courier') && role !== 'courier') {
-            return redirectToDashboard(role, request.url);
-        }
+    const reportUri = isDev
+        ? "http://localhost:5000/api/security/csp-report"
+        : "/api/security/csp-report";
 
-        // If trying to access customer pages but role is not customer
-        if (path.startsWith('/customer') && role !== 'customer') {
-            return redirectToDashboard(role, request.url);
-        }
-    }
+    const cspHeader = `
+    default-src 'self';
+    script-src ${scriptSrc};
+    style-src 'self' 'unsafe-inline' https://accounts.google.com;
+    img-src 'self' blob: data: https: https://*.googleusercontent.com;
+    connect-src ${connectSrc};
+    font-src 'self' data: https://fonts.gstatic.com;
+    frame-src 'self' https://accounts.google.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    block-all-mixed-content;
+    upgrade-insecure-requests;
+    report-uri ${reportUri};
+  `.replace(/\s{2,}/g, ' ').trim();
 
-    // 2. Redirect logged-in users away from login page if they try to access it
-    if (path === '/' || path === '/login') {
-        if (token && role) {
-            return redirectToDashboard(role, request.url);
-        }
-    }
+    const response = NextResponse.next();
 
-    return NextResponse.next();
-}
+    // Security Headers
+    response.headers.set('Content-Security-Policy', cspHeader);
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
 
-function redirectToDashboard(role: string, baseUrl: string) {
-    let dashboard = '/';
-    if (role === 'admin') dashboard = '/admin/dashboard';
-    else if (role === 'courier') dashboard = '/courier/dashboard';
-    else if (role === 'customer') dashboard = '/customer/dashboard';
+    // Set nonce in header for client-side hydration if needed
+    response.headers.set('x-nonce', nonce);
 
-    return NextResponse.redirect(new URL(dashboard, baseUrl));
+    return response;
 }
 
 export const config = {

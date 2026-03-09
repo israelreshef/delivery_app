@@ -70,7 +70,7 @@ class GamificationService:
             courier.performance_index = round(pi, 1)
             
             db.session.commit()
-            logging.info(f"🏆 Updated Performance Index for {courier.full_name}: {courier.performance_index}")
+            logging.info(f" Updated Performance Index for {courier.full_name}: {courier.performance_index}")
             
         except Exception as e:
             db.session.rollback()
@@ -94,13 +94,13 @@ class GamificationService:
                 db.session.add(gamification)
 
             gamification.xp += amount
-            logging.info(f"🏆 Courier {courier_id} awarded {amount} XP for: {reason}. Total XP: {gamification.xp}")
+            logging.info(f" Courier {courier_id} awarded {amount} XP for: {reason}. Total XP: {gamification.xp}")
 
             # Check Level Up
             next_level_xp = gamification.level * 1000
             if gamification.xp >= next_level_xp:
                 gamification.level += 1
-                logging.info(f"🎉 Courier {courier_id} LEVELED UP to Level {gamification.level}!")
+                logging.info(f" Courier {courier_id} LEVELED UP to Level {gamification.level}!")
                 # TODO: Trigger real-time push notification for level up
                 
             db.session.commit()
@@ -195,7 +195,7 @@ class GamificationService:
                     if milestone.reward_xp > 0:
                         GamificationService.award_xp(courier_id, milestone.reward_xp, f"Milestone: {milestone.title}")
                     
-                    logging.info(f"💎 Courier {courier.full_name} ACHIEVED MILESTONE: {milestone.title} (+{milestone.reward_xp}XP)")
+                    logging.info(f" Courier {courier.full_name} ACHIEVED MILESTONE: {milestone.title} (+{milestone.reward_xp}XP)")
                     
                     # Send Socket.IO event to trigger Lottie Celebration Animation on mobile Device
                     try:

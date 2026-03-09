@@ -24,10 +24,10 @@ def fix_schema():
                 try:
                     db.session.execute(text("ALTER TABLE invoices ADD COLUMN vat_rate FLOAT DEFAULT 0.17 NOT NULL"))
                     db.session.commit()
-                    print("✅ Added 'vat_rate' to 'invoices'.")
+                    print(" Added 'vat_rate' to 'invoices'.")
                 except Exception as e:
                     db.session.rollback()
-                    print(f"❌ Failed to add 'vat_rate': {e}")
+                    print(f" Failed to add 'vat_rate': {e}")
             else:
                 print("Column 'vat_rate' already exists in 'invoices'.")
                 
@@ -37,10 +37,10 @@ def fix_schema():
                 try:
                     db.session.execute(text("ALTER TABLE invoices ADD COLUMN document_type VARCHAR(50) DEFAULT 'tax_invoice_receipt'"))
                     db.session.commit()
-                    print("✅ Added 'document_type' to 'invoices'.")
+                    print(" Added 'document_type' to 'invoices'.")
                 except Exception as e:
                     db.session.rollback()
-                    print(f"❌ Failed to add 'document_type': {e}")
+                    print(f" Failed to add 'document_type': {e}")
         else:
             print("Table 'invoices' does not exist.")
 

@@ -36,7 +36,7 @@ def simulate_shopify_order():
         "notes": "Leave at door code 1234"
     }
 
-    print(f"🔌 Simulate sending order from Shopify...")
+    print(f" Simulate sending order from Shopify...")
     
     # We construct the header as expected: prefix.secret
     headers = {
@@ -51,19 +51,19 @@ def simulate_shopify_order():
         print(f"Response: {response.text}")
         
         if response.status_code == 201:
-            print("✅ Order created successfully!")
+            print(" Order created successfully!")
             data = response.json()
             print(f"   Internal ID: {data.get('order_id')}")
             print(f"   Order Num: {data.get('order_number')}")
             print(f"   Tracking: {data.get('tracking_url')}")
         elif response.status_code == 401:
-            print("❌ Authentication Failed: API Key invalid or not present in DB.")
-            print("👉 Action: Run 'flask create-api-key' (if implemented) or manually insert key.")
+            print(" Authentication Failed: API Key invalid or not present in DB.")
+            print(" Action: Run 'flask create-api-key' (if implemented) or manually insert key.")
         else:
-            print("❌ Request failed.")
+            print(" Request failed.")
             
     except Exception as e:
-        print(f"⚠️ Connection Error: {e}")
+        print(f" Connection Error: {e}")
 
 if __name__ == "__main__":
     simulate_shopify_order()

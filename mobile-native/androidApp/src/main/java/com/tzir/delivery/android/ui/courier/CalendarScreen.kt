@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tzir.delivery.android.ui.components.*
 import kotlinx.coroutines.launch
+import com.tzir.delivery.android.ui.theme.*
 
 data class ShiftEntry(
     val id: String,
@@ -62,15 +63,16 @@ fun CalendarScreen(onBack: () -> Unit) {
                         Text("אופטימיזציה", color = PrimaryTurquoise, fontWeight = FontWeight.Bold)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onBackground)
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(AppleGray)
+        PremiumBackground {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
         ) {
             // Summary Header
             GlassCard(
@@ -109,6 +111,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                     )
                 }
             }
+        }
         }
 
         // Quick Input Dialog

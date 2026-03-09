@@ -10,12 +10,20 @@ from dotenv import load_dotenv
 env_path = Path(__file__).parent.parent / ".env.test"
 load_dotenv(env_path)
 
-from app.main import app
-from app.core.db import get_db, Base
-from app.core.config import settings
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from app import create_app
 
-# Test database URL (sync, matching production db.py)
-TEST_DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}:{settings.POSTGRES_PORT}/test_{settings.POSTGRES_DB}"
+app = create_app()
+# Mock db for tests if necessary, although the db is global in extensions
+from extensions import db
+
+# Test database URL
+TEST_DATABASE_URL = app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
+if 'test_' not in TEST_DATABASE_URL and 'sqlite' not in TEST_DATABASE_URL:
+    # Ensure we use a test database if postgres
+    TEST_DATABASE_URL = TEST_DATABASE_URL.replace(TEST_DATABASE_URL.split('/')[-1], 'test_' + TEST_DATABASE_URL.split('/')[-1])
 
 engine = create_engine(TEST_DATABASE_URL, echo=False)
 TestingSessionLocal = sessionmaker(
