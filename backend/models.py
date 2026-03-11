@@ -99,7 +99,7 @@ class Customer(db.Model):
     __table_args__ = {'extend_existing': True}
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     full_name = db.Column(db.String(100), nullable=False)
     company_name = db.Column(db.String(100), nullable=True)
     
@@ -126,7 +126,9 @@ class Customer(db.Model):
     website = db.Column(db.String(255), nullable=True)
     lead_source = db.Column(db.String(100), nullable=True)  # e.g. referral, website, cold_call
     tags = db.Column(db.Text, nullable=True)  # JSON array stored as text e.g. '["VIP","Urgent"]'
-    phone = db.Column(db.String(20), nullable=True)  # Direct phone for no-account customers
+    phone = db.Column(db.String(20), nullable=True)  # Primary phone
+    additional_phones = db.Column(db.Text, nullable=True)  # JSON array of other phones e.g. '["0501111111", "0502222222"]'
+    email = db.Column(db.String(120), nullable=True)  # Direct email for customer
     
     # Relationships
     deliveries = db.relationship('Delivery', backref='customer', lazy='dynamic', cascade='all, delete-orphan')

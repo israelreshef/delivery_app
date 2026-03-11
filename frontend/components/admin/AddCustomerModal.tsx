@@ -43,6 +43,7 @@ const formSchema = z
         payment_terms: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
+        additional_phones: z.string().optional(),
         billing_address: z.string().optional(),
         credit_limit: z.any().optional(),
         is_business: z.boolean(),
@@ -104,6 +105,7 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
             payment_terms: "net_30",
             email: "",
             phone: "",
+            additional_phones: "",
             billing_address: "",
             credit_limit: 0,
             is_business: false,
@@ -121,8 +123,15 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
             if (!values.has_account) {
                 delete payload.username
                 delete payload.password
-                delete payload.email
-                // NOTE: phone is kept even without account so it can be saved on the customer
+                // NOTE: email and phone are kept even without account so they can be saved on the customer
+            }
+            if (payload.additional_phones) {
+                // Split by comma and clean up whitespace
+                payload.additional_phones = JSON.stringify(
+                    payload.additional_phones.split(",").map((p: string) => p.trim()).filter(Boolean)
+                )
+            } else {
+                payload.additional_phones = "[]"
             }
             await api.post("/customers", payload)
             toast.success("הלקוח נוצר בהצלחה!")
@@ -244,21 +253,34 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                             />
                         </div>
 
-                        {hasAccount && (
+                        <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>אימייל</FormLabel>
+                                        <FormLabel>אימייל{hasAccount ? " (חובה לחשבון)" : " (אופציונלי)"}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="client@example.com" {...field} />
+                                            <Input type="email" placeholder="client@example.com" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
+                            <FormField
+                                control={form.control}
+                                name="additional_phones"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>טלפונים נוספים (מופרדים בפסיקים)</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="0501111111, 0502222222" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <FormField

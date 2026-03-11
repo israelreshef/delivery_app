@@ -34,8 +34,9 @@ def get_customers(current_user):
                 'id': c.id,
                 'user_id': c.user_id,
                 'full_name': c.full_name,
-                'email': c.user.email if c.user else '',
-                'phone': (c.user.phone if c.user else None) or c.phone or '',
+                'email': c.email or (c.user.email if c.user else ''),
+                'phone': c.phone or (c.user.phone if c.user else None) or '',
+                'additional_phones': c.additional_phones or "[]",
                 'company_name': c.company_name,
                 'business_id': c.business_id, # H.P.
                 'tax_id': c.tax_id,
@@ -89,10 +90,14 @@ def create_customer(current_user):
                 return jsonify({'error': 'Username already exists'}), 400
 
             # Create User
+            email = data.get('email')
+            if not email:
+                email = f"{username}@customer.com"
+                
             user = User(
                 username=username,
-                email=data.get('email', f"{username}@customer.com"),
-                phone=data.get('phone', ''),
+                email=email,
+                phone=data.get('phone') or '',
                 user_type='customer'
             )
             user.set_password(password)
@@ -101,21 +106,29 @@ def create_customer(current_user):
         elif not data.get('full_name'):
             return jsonify({'error': 'Full name is required when no account is created'}), 400
         
+        # Parse credit limit safely
+        try:
+            credit_limit = float(data.get('credit_limit') or 0.0)
+        except (ValueError, TypeError):
+            credit_limit = 0.0
+
         # Create Customer Profile
         customer = Customer(
             user_id=user.id if user else None,
-            full_name=data.get('full_name', username or ''),
+            full_name=data.get('full_name') or username or '',
             company_name=data.get('company_name'),
             business_id=data.get('business_id'),
             tax_id=data.get('tax_id'),
-            customer_type=data.get('customer_type', 'private'),
-            vat_status=data.get('vat_status', 'authorized_dealer'),
-            payment_terms=data.get('payment_terms', 'net_30'),
+            customer_type=data.get('customer_type') or 'private',
+            vat_status=data.get('vat_status') or 'authorized_dealer',
+            payment_terms=data.get('payment_terms') or 'net_30',
             contact_person=data.get('contact_person'),
             billing_address=data.get('billing_address'),
             default_address=data.get('default_address'),
-            credit_limit=data.get('credit_limit', 0.0),
+            credit_limit=credit_limit,
+            email=data.get('email'),
             phone=data.get('phone') if not user else None,  # store phone directly when no account
+            additional_phones=data.get('additional_phones') or "[]",
             balance=0.0
         )
         db.session.add(customer)
@@ -157,8 +170,9 @@ def get_customer(current_user, customer_id):
             'id': customer.id,
             'user_id': customer.user_id,
             'full_name': customer.full_name,
-            'email': customer.user.email if customer.user else '',
-            'phone': (customer.user.phone if customer.user else None) or customer.phone or '',
+            'email': customer.email or (customer.user.email if customer.user else ''),
+            'phone': customer.phone or (customer.user.phone if customer.user else None) or '',
+            'additional_phones': customer.additional_phones or "[]",
             'company_name': customer.company_name,
             'business_id': customer.business_id,
             'tax_id': customer.tax_id,
@@ -213,7 +227,11 @@ def update_customer(current_user, customer_id):
         if 'payment_terms' in data:
             customer.payment_terms = data['payment_terms']
         if 'credit_limit' in data:
-            customer.credit_limit = data['credit_limit']
+            try:
+                customer.credit_limit = float(data['credit_limit'] or 0.0)
+            except (ValueError, TypeError):
+                pass
+
         if 'billing_address' in data:
             customer.billing_address = data['billing_address']
         if 'default_address' in data:
@@ -225,13 +243,24 @@ def update_customer(current_user, customer_id):
         if 'tags' in data:
             import json as _json
             customer.tags = _json.dumps(data['tags']) if isinstance(data['tags'], list) else data['tags']
+            
+        if 'email' in data:
+            customer.email = data['email']
+            
+        if 'phone' in data:
+            customer.phone = data['phone']
+            
+        if 'additional_phones' in data:
+            customer.additional_phones = data['additional_phones']
 
         # Update User fields if needed
         if customer.user:
             if 'phone' in data:
-                customer.user.phone = data['phone']
+                customer.user.phone = data['phone'] or ''
             if 'email' in data:
-                customer.user.email = data['email']
+                new_email = data['email']
+                if new_email:  # don't allow empty string
+                    customer.user.email = new_email
                 
         db.session.commit()
         
