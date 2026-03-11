@@ -75,6 +75,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
         full_name: customer?.full_name || '',
         email: customer?.email || '',
         phone: customer?.phone || '',
+        additional_phones: customer?.additional_phones || '',
         company_name: customer?.company_name || '',
         business_id: customer?.business_id || '',
         contact_person: customer?.contact_person || '',
@@ -102,14 +103,15 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                 payment_terms: formData.payment_terms,
                 billing_address: formData.billing_address,
                 default_address: formData.default_address,
-                credit_limit: formData.credit_limit
+                credit_limit: formData.credit_limit,
+                email: formData.email,
+                phone: formData.phone,
+                additional_phones: formData.additional_phones
             }
             await api.put(`/customers/${customer.id}`, customerPayload)
 
             if (customer.user_id) {
                 await api.put(`/admin/users/${customer.user_id}`, {
-                    email: formData.email,
-                    phone: formData.phone,
                     two_factor_enforced: formData.two_factor_enforced
                 })
             }
@@ -359,6 +361,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
             full_name: customer?.full_name || '',
             email: customer?.email || '',
             phone: customer?.phone || '',
+            additional_phones: customer?.additional_phones || '',
             company_name: customer?.company_name || '',
             business_id: customer?.business_id || '',
             contact_person: customer?.contact_person || '',
@@ -485,17 +488,39 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                             <div className="space-y-2">
                                 <Label>דוא״ל</Label>
                                 <Input
+                                    type="email"
                                     value={formData.email}
                                     disabled={!editMode}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>טלפון</Label>
+                                <Label>טלפון עיקרי</Label>
                                 <Input
                                     value={formData.phone}
                                     disabled={!editMode}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>טלפונים נוספים (מופרדים בפסיקים)</Label>
+                                <Input
+                                    value={
+                                        (typeof formData.additional_phones === 'string' && formData.additional_phones.startsWith('['))
+                                            ? (() => {
+                                                try { return JSON.parse(formData.additional_phones).join(', ') }
+                                                catch { return formData.additional_phones }
+                                            })()
+                                            : formData.additional_phones
+                                    }
+                                    disabled={!editMode}
+                                    onChange={(e) => setFormData({ ...formData, additional_phones: e.target.value })}
+                                    onBlur={(e) => {
+                                        if (!editMode) return;
+                                        const val = e.target.value;
+                                        const jsonStr = JSON.stringify(val.split(',').map(s => s.trim()).filter(Boolean));
+                                        setFormData({ ...formData, additional_phones: jsonStr });
+                                    }}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -607,52 +632,52 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                             </Card>
                         )}
                         {hasAccount && (
-                        <Card>
-                            <CardContent className="pt-6 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <ShieldCheck className="h-5 w-5 text-green-600" />
-                                        <div>
-                                            <div className="font-medium">אימות דו־שלבי (2FA)</div>
-                                            <div className="text-sm text-muted-foreground">הפעלת אימות דו־שלבי</div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Label htmlFor="enforce-2fa">חייב 2FA</Label>
-                                        <input
-                                            type="checkbox"
-                                            title="Enforce 2FA checkbox"
-                                            id="enforce-2fa"
-                                            checked={formData.two_factor_enforced}
-                                            onChange={(e) => {
-                                                const val = e.target.checked
-                                                setFormData({ ...formData, two_factor_enforced: val })
-                                                // Update immediately
-                                                api.put(`/admin/users/${customer.user_id}`, { two_factor_enforced: val })
-                                                    .then(() => toast.success("הגדרת 2FA עודכנה"))
-                                            }}
-                                            className="h-5 w-5 rounded border-gray-300"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="border-t pt-4">
+                            <Card>
+                                <CardContent className="pt-6 space-y-4">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <KeyRound className="h-5 w-5 text-brand" />
+                                            <ShieldCheck className="h-5 w-5 text-green-600" />
                                             <div>
-                                                <div className="font-medium">איפוס סיסמה</div>
-                                                <div className="text-sm text-muted-foreground">הגדרת סיסמה חדשה באופן מיידי</div>
+                                                <div className="font-medium">אימות דו־שלבי (2FA)</div>
+                                                <div className="text-sm text-muted-foreground">הפעלת אימות דו־שלבי</div>
                                             </div>
                                         </div>
-                                        <Button variant="outline" size="sm" onClick={handleResetPassword} disabled={resetLoading}>
-                                            {resetLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                                            אפס סיסמה
-                                        </Button>
+                                        <div className="flex items-center gap-2">
+                                            <Label htmlFor="enforce-2fa">חייב 2FA</Label>
+                                            <input
+                                                type="checkbox"
+                                                title="Enforce 2FA checkbox"
+                                                id="enforce-2fa"
+                                                checked={formData.two_factor_enforced}
+                                                onChange={(e) => {
+                                                    const val = e.target.checked
+                                                    setFormData({ ...formData, two_factor_enforced: val })
+                                                    // Update immediately
+                                                    api.put(`/admin/users/${customer.user_id}`, { two_factor_enforced: val })
+                                                        .then(() => toast.success("הגדרת 2FA עודכנה"))
+                                                }}
+                                                className="h-5 w-5 rounded border-gray-300"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+
+                                    <div className="border-t pt-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <KeyRound className="h-5 w-5 text-brand" />
+                                                <div>
+                                                    <div className="font-medium">איפוס סיסמה</div>
+                                                    <div className="text-sm text-muted-foreground">הגדרת סיסמה חדשה באופן מיידי</div>
+                                                </div>
+                                            </div>
+                                            <Button variant="outline" size="sm" onClick={handleResetPassword} disabled={resetLoading}>
+                                                {resetLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                                                אפס סיסמה
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         )}
                     </TabsContent>
 
@@ -744,7 +769,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                <Label>סיכום</Label>
+                                    <Label>סיכום</Label>
                                     <Input
                                         value={contactForm.summary}
                                         onChange={(e) => setContactForm({ ...contactForm, summary: e.target.value })}
@@ -752,7 +777,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                <Label>תוצאה / סטטוס</Label>
+                                    <Label>תוצאה / סטטוס</Label>
                                     <Input
                                         value={contactForm.outcome}
                                         onChange={(e) => setContactForm({ ...contactForm, outcome: e.target.value })}
@@ -760,7 +785,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                <Label>תזכורת הבאה</Label>
+                                    <Label>תזכורת הבאה</Label>
                                     <Input
                                         type="date"
                                         value={contactForm.next_follow_up}
