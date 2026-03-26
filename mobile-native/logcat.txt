@@ -1,0 +1,33 @@
+03-23 10:13:52.365   699   728 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+03-23 10:13:53.073 23645 23645 D AndroidRuntime: Shutting down VM
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: FATAL EXCEPTION: main
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: Process: com.tzir.delivery.courier, PID: 23645
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: java.lang.RuntimeException: Unable to instantiate application com.tzir.delivery.courier.TzirCourierApp package com.tzir.delivery.courier: java.lang.RuntimeException: Failed to parse XML configuration from network_security_config
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.LoadedApk.makeApplicationInner(LoadedApk.java:1486)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.LoadedApk.makeApplicationInner(LoadedApk.java:1411)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:7790)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(Unknown Source:0)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2546)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:248)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:338)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: Caused by: java.lang.RuntimeException: Failed to parse XML configuration from network_security_config
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.XmlConfigSource.ensureInitialized(XmlConfigSource.java:89)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.XmlConfigSource.getPerDomainConfigs(XmlConfigSource.java:55)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.ManifestConfigSource.getPerDomainConfigs(ManifestConfigSource.java:45)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.ApplicationConfig.ensureInitialized(ApplicationConfig.java:196)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.ApplicationConfig.isCleartextTrafficPermitted(ApplicationConfig.java:135)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.NetworkSecurityConfigProvider.handleNewApplication(NetworkSecurityConfigProvider.java:60)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.app.LoadedApk.makeApplicationInner(LoadedApk.java:1478)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	... 11 more
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: Caused by: android.security.net.config.XmlConfigSource$ParserException: Nested domain-config not allowed in debug-overrides at: Binary XML file line #18
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.XmlConfigSource.parseConfigEntry(XmlConfigSource.java:286)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.XmlConfigSource.parseNetworkSecurityConfig(XmlConfigSource.java:350)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	at android.security.net.config.XmlConfigSource.ensureInitialized(XmlConfigSource.java:83)
+03-23 10:13:53.075 23645 23645 E AndroidRuntime: 	... 17 more
+03-23 10:13:53.197   699   728 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+03-23 10:13:53.568   699  7916 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS

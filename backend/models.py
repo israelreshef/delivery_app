@@ -1,7 +1,19 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.types import TypeDecorator, String
+from utils.encryption import encrypt_data, decrypt_data
 from extensions import db
-from geoalchemy2 import Geometry
+
+class EncryptedString(TypeDecorator):
+    """Transparent AES-256 encryption for database columns."""
+    impl = String
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        return encrypt_data(value)
+
+    def process_result_value(self, value, dialect):
+        return decrypt_data(value)
 
 # ============================================================================
 # Shared Enums
@@ -43,6 +55,11 @@ class User(db.Model):
     failed_login_attempts = db.Column(db.Integer, default=0)
     locked_until = db.Column(db.DateTime, nullable=True)
     
+    # 2FA / MFA Fields
+    totp_secret = db.Column(db.String(32), nullable=True)
+    mfa_enabled = db.Column(db.Boolean, default=False)
+    mfa_recovery_code = db.Column(db.String(64), nullable=True)
+    
     # GDPR / Privacy Consent
     terms_accepted_at = db.Column(db.DateTime, nullable=True)
     privacy_policy_accepted_at = db.Column(db.DateTime, nullable=True)
@@ -62,6 +79,13 @@ class User(db.Model):
     customer = db.relationship('Customer', backref='user', uselist=False, cascade='all, delete-orphan')
     courier = db.relationship('Courier', backref='user', uselist=False, cascade='all, delete-orphan')
     notifications = db.relationship('Notification', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    user_groups = db.relationship(
+        'UserGroup',
+        foreign_keys='UserGroup.user_id',
+        backref='user',
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
     
     def set_password(self, password):
         # Using specific method for stronger security (pbkdf2:sha256 with 600,000 iterations)
@@ -72,6 +96,74 @@ class User(db.Model):
     
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+class Group(db.Model):
+    __tablename__ = 'groups'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    user_groups = db.relationship('UserGroup', backref='group', lazy='dynamic', cascade='all, delete-orphan')
+    group_permissions = db.relationship('GroupPermission', backref='group', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Group {self.name}>'
+
+
+class Permission(db.Model):
+    __tablename__ = 'permissions'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    permission_key = db.Column(db.String(120), unique=True, nullable=False)  # e.g. support:view
+    resource = db.Column(db.String(50), nullable=False)  # support/tasks/admin...
+    action = db.Column(db.String(50), nullable=False)    # view/edit/manage...
+    description = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    group_permissions = db.relationship('GroupPermission', backref='permission', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Permission {self.permission_key}>'
+
+
+class UserGroup(db.Model):
+    __tablename__ = 'user_groups'
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'group_id', name='uq_user_group'),
+        {'extend_existing': True}
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id', ondelete='CASCADE'), nullable=False, index=True)
+    assigned_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
+    assigned_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return f'<UserGroup user={self.user_id} group={self.group_id}>'
+
+
+class GroupPermission(db.Model):
+    __tablename__ = 'group_permissions'
+    __table_args__ = (
+        db.UniqueConstraint('group_id', 'permission_id', name='uq_group_permission'),
+        {'extend_existing': True}
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id', ondelete='CASCADE'), nullable=False, index=True)
+    permission_id = db.Column(db.Integer, db.ForeignKey('permissions.id', ondelete='CASCADE'), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return f'<GroupPermission group={self.group_id} permission={self.permission_id}>'
 
 class WebAuthnCredential(db.Model):
     __tablename__ = 'webauthn_credentials'
@@ -226,9 +318,11 @@ class CustomerTask(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime, nullable=True)
+    source = db.Column(db.String(255), nullable=True)  # e.g. 'requirements'
+    source_id = db.Column(db.String(255), nullable=True)  # e.g. 'REQ-0001'
 
     def __repr__(self):
-        return f'<CustomerTask {self.id} {self.title}>'
+        return f'<CustomerTask {self.id} {self.title} source={self.source} source_id={self.source_id}>'
 
 
 # ============================================================================
@@ -253,9 +347,9 @@ class Courier(db.Model):
     is_available = db.Column(db.Boolean, default=True)
     
     # Compliance & Onboarding
-    national_id = db.Column(db.String(20), nullable=True) # Teudat Zehut
-    drivers_license_number = db.Column(db.String(20), nullable=True)
-    insurance_policy_number = db.Column(db.String(50), nullable=True)
+    national_id = db.Column(EncryptedString(255), nullable=True) # Teudat Zehut (Encrypted)
+    drivers_license_number = db.Column(EncryptedString(255), nullable=True) # (Encrypted)
+    insurance_policy_number = db.Column(EncryptedString(255), nullable=True) # (Encrypted)
     is_freelance_declared = db.Column(db.Boolean, default=False)
     employment_type = db.Column(db.Enum('freelance', 'employee', name='employment_types'), default='freelance')
     onboarding_status = db.Column(onboarding_status_enum, default='new')
@@ -567,7 +661,7 @@ class Delivery(db.Model):
     # Proof of Delivery (POD)
     pod_signature_path = db.Column(db.String(255), nullable=True)
     pod_image_path = db.Column(db.String(255), nullable=True)
-    pod_recipient_id = db.Column(db.String(20), nullable=True) # Required for legal documents
+    pod_recipient_id = db.Column(EncryptedString(255), nullable=True) # Required for legal documents (Encrypted)
     pod_location_lat = db.Column(db.Float, nullable=True) # GPS at moment of signature
     pod_location_lng = db.Column(db.Float, nullable=True)
     
@@ -578,6 +672,11 @@ class Delivery(db.Model):
     # WMS Support
     current_bin_id = db.Column(db.Integer, db.ForeignKey('storage_bins.id', name='fk_delivery_bin_id'), nullable=True)
     current_bin = db.relationship('StorageBin', backref='stored_deliveries')
+    
+    # Multi-Stop Routing 
+    waypoints = db.Column(db.Text, nullable=True) # JSON array of {address, lat, lng}
+    
+    protocol_slug = db.Column(db.String(100), db.ForeignKey('delivery_protocol_configs.slug'), nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -789,6 +888,32 @@ class AuditLog(db.Model):
 
     def __repr__(self):
         return f'<AuditLog {self.action} by {self.user_id} at {self.timestamp}>'
+
+
+# ============================================================================
+# Token Blacklist Model — used for JWT revocation on logout + token rotation
+# ============================================================================
+
+class TokenBlacklist(db.Model):
+    __tablename__ = 'token_blacklist'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), unique=True, nullable=False, index=True)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<TokenBlacklist jti={self.jti}>'
+
+    @classmethod
+    def cleanup_expired(cls):
+        """Delete blacklist entries whose tokens have already expired. Call daily."""
+        cls.query.filter(cls.expires_at < datetime.utcnow()).delete()
+        from extensions import db as _db
+        _db.session.commit()
+
+
 
 
 # ============================================================================
@@ -1498,3 +1623,143 @@ class CompanySettings(db.Model):
 
     def __repr__(self):
         return f'<CompanySettings {self.legal_name}>'
+
+# ============================================================================
+# Protocol & Academy Models
+# ============================================================================
+
+class DeliveryProtocolTemplate(db.Model):
+    __tablename__ = 'delivery_protocol_templates'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(1), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    steps = db.Column(db.JSON, nullable=False) # JSON list of steps
+
+class DeliveryProtocolConfig(db.Model):
+    __tablename__ = 'delivery_protocol_configs'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    slug = db.Column(db.String(100), unique=True, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    base_protocol = db.Column(db.String(1), db.ForeignKey('delivery_protocol_templates.code'))
+    
+    requires_id_verification = db.Column(db.Boolean, default=False)
+    requires_photo = db.Column(db.Boolean, default=True)
+    requires_signature = db.Column(db.Boolean, default=True)
+    requires_otp = db.Column(db.Boolean, default=False)
+    otp_alternatives = db.Column(db.JSON, nullable=True) # JSON list of alternatives
+    
+    max_attempts = db.Column(db.Integer, default=1)
+    return_document_required = db.Column(db.Boolean, default=False)
+    multi_stop_allowed = db.Column(db.Boolean, default=False)
+    chain_of_custody = db.Column(db.Boolean, default=False)
+    
+    pricing_tier = db.Column(db.Integer, default=1)
+    pricing_multiplier = db.Column(db.Numeric(4, 2), default=1.0)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class AcademyProtocolCourse(db.Model):
+    __tablename__ = 'academy_protocol_courses'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    protocol_slug = db.Column(db.String(100), db.ForeignKey('delivery_protocol_configs.slug'))
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    estimated_minutes = db.Column(db.Integer, default=15)
+    passing_score = db.Column(db.Integer, default=80)
+    required_level = db.Column(db.Integer, default=1)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class AcademyProtocolLesson(db.Model):
+    __tablename__ = 'academy_protocol_lessons'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('academy_protocol_courses.id'))
+    order_index = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False) # Markdown
+    lesson_type = db.Column(db.String(50)) # theory, legal, practical, quiz
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class AcademyProtocolProgress(db.Model):
+    __tablename__ = 'academy_protocol_progress'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('academy_protocol_courses.id'))
+    status = db.Column(db.String(20), default='not_started') # not_started, in_progress, passed, failed
+    score = db.Column(db.Integer, nullable=True)
+    attempts = db.Column(db.Integer, default=0)
+    completed_at = db.Column(db.DateTime, nullable=True)
+    
+    __table_args__ = (
+        db.UniqueConstraint('courier_id', 'course_id', name='unique_courier_course_progress'),
+        {'extend_existing': True}
+    )
+
+class AcademyProtocolQuizQuestion(db.Model):
+    __tablename__ = 'academy_protocol_quiz_questions'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('academy_protocol_courses.id', ondelete='CASCADE'))
+    order_index = db.Column(db.Integer, nullable=False)
+    question_text = db.Column(db.Text, nullable=False)
+    option_1 = db.Column(db.Text, nullable=False)
+    option_2 = db.Column(db.Text, nullable=False)
+    option_3 = db.Column(db.Text, nullable=False)
+    option_4 = db.Column(db.Text, nullable=False)
+    correct_option = db.Column(db.Integer, nullable=False) # 1, 2, 3, or 4
+    explanation = db.Column(db.Text) # shown after answer
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# ============================================================================
+# Customer Wallet & Wallet Transaction Models
+# ============================================================================
+
+class CustomerWallet(db.Model):
+    __tablename__ = 'customer_wallets'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id', ondelete='CASCADE'), nullable=False, unique=True)
+    balance = db.Column(db.Numeric(10, 2), default=0.00)
+    currency = db.Column(db.String(3), default='ILS')
+    last_topup_at = db.Column(db.DateTime, nullable=True)
+    is_frozen = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationship
+    transactions = db.relationship('WalletTransaction', backref='wallet', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<CustomerWallet customer={self.customer_id} balance={self.balance}>'
+
+class WalletTransaction(db.Model):
+    __tablename__ = 'wallet_transactions'
+    __table_args__ = {'extend_existing': True}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    wallet_id = db.Column(db.Integer, db.ForeignKey('customer_wallets.id', ondelete='CASCADE'), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    transaction_type = db.Column(db.Enum('topup', 'payment', 'refund', 'adjustment', name='wallet_transaction_types'), nullable=False)
+    payment_method = db.Column(db.String(50), nullable=True) # smartbee, manual, system
+    reference_id = db.Column(db.String(100), nullable=True) # Order ID or SmartBee Transaction ID
+    status = db.Column(db.String(20), default='completed') # pending, completed, failed
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<WalletTransaction wallet={self.wallet_id} amount={self.amount} type={self.transaction_type}>'

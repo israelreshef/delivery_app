@@ -1,63 +1,96 @@
-import pytest
 import os
 from pathlib import Path
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import create_engine
 
-# Load test environment variables
-from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent / ".env.test"
-load_dotenv(env_path)
-
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from app import create_app
-
-app = create_app()
-# Mock db for tests if necessary, although the db is global in extensions
-from extensions import db
-
-# Test database URL
-TEST_DATABASE_URL = app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
-if 'test_' not in TEST_DATABASE_URL and 'sqlite' not in TEST_DATABASE_URL:
-    # Ensure we use a test database if postgres
-    TEST_DATABASE_URL = TEST_DATABASE_URL.replace(TEST_DATABASE_URL.split('/')[-1], 'test_' + TEST_DATABASE_URL.split('/')[-1])
-
-engine = create_engine(TEST_DATABASE_URL, echo=False)
-TestingSessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=engine
-)
+import pytest
 
 
 @pytest.fixture(scope="session")
-def setup_database():
-    """Create test database tables"""
-    Base.metadata.create_all(bind=engine)
-    yield
-    Base.metadata.drop_all(bind=engine)
+def app():
+    # Dedicated test environment to avoid touching development/production data.
+    test_db_path = Path(__file__).parent / "test_suite.db"
+    if test_db_path.exists():
+        test_db_path.unlink()
 
+    os.environ["FLASK_ENV"] = "testing"
+    os.environ["SECRET_KEY"] = "test-secret-key"
+    os.environ["JWT_SECRET_KEY"] = "test-jwt-secret-key"
+    os.environ["DATABASE_URL"] = f"sqlite:///{test_db_path.as_posix()}"
+    os.environ["DISABLE_SCHEDULER"] = "1"
 
-@pytest.fixture
-def db_session(setup_database):
-    """Get test database session"""
-    session = TestingSessionLocal()
+    from app import create_app
+
+    flask_app = create_app()
+    flask_app.config.update(TESTING=True)
+    yield flask_app
+
     try:
-        yield session
-    finally:
-        session.close()
+        from extensions import db
+        with flask_app.app_context():
+            db.session.remove()
+            db.engine.dispose()
+    except Exception:
+        pass
+
+    if test_db_path.exists():
+        test_db_path.unlink(missing_ok=True)
 
 
 @pytest.fixture
-def client(db_session):
-    """Get test HTTP client"""
-    def override_get_db():
-        yield db_session
+def client(app):
+    return app.test_client()
 
-    app.dependency_overrides[get_db] = override_get_db
-    
-    transport = ASGITransport(app=app)
-    yield AsyncClient(transport=transport, base_url="http://test")
-    
-    app.dependency_overrides.clear()
+
+@pytest.fixture(scope="session")
+def courier_credentials():
+    return {
+        "username": "demo_courier",
+        "password": "TzirRiderSpeed!77",
+    }
+
+
+@pytest.fixture(scope="session")
+def admin_credentials():
+    return {
+        "username": "super_admin",
+        "password": "TzirSuper2026!$!",
+    }
+
+
+@pytest.fixture(scope="session")
+def courier_login_payload(app, courier_credentials):
+    with app.test_client() as client:
+        response = client.post("/api/auth/login", json=courier_credentials)
+        assert response.status_code == 200, response.get_json()
+        payload = response.get_json()
+        assert payload.get("access_token"), payload
+        return payload
+
+
+@pytest.fixture(scope="session")
+def admin_login_payload(app, admin_credentials):
+    with app.test_client() as client:
+        response = client.post("/api/auth/login", json=admin_credentials)
+        assert response.status_code == 200, response.get_json()
+        payload = response.get_json()
+        assert payload.get("access_token"), payload
+        return payload
+
+
+@pytest.fixture(scope="session")
+def courier_token(courier_login_payload):
+    return courier_login_payload["access_token"]
+
+
+@pytest.fixture(scope="session")
+def admin_token(admin_login_payload):
+    return admin_login_payload["access_token"]
+
+
+@pytest.fixture
+def courier_auth_headers(courier_token):
+    return {"Authorization": f"Bearer {courier_token}"}
+
+
+@pytest.fixture
+def admin_auth_headers(admin_token):
+    return {"Authorization": f"Bearer {admin_token}"}

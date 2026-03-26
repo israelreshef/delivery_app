@@ -2,8 +2,9 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
+import { useSocket } from "@/lib/socket";
 import { useEffect, useState } from "react";
-import { Search, Filter, ChevronLeft, ChevronRight, Eye, Truck, MapPin } from "lucide-react";
+import { Search, Filter, ChevronLeft, ChevronRight, Eye, Truck, MapPin, FileText, Bell } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -20,10 +21,53 @@ export default function AdminOrders() {
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
     const [couriers, setCouriers] = useState<any[]>([]);
     const [selectedCourierId, setSelectedCourierId] = useState<string>("");
+    const [unreadNotifications, setUnreadNotifications] = useState(0);
+    const [notificationLog, setNotificationLog] = useState<string[]>([]);
+    const [showNotifPanel, setShowNotifPanel] = useState(false);
+
+    // Real-time updates
+    const socket = useSocket(null, "admin"); // Context handles token, but here we pass role
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('new_order', (data: any) => {
+                console.log("New order received via socket:", data);
+                const msg = `הזמנה חדשה! #${data.id}`;
+                toast.success(msg);
+                setUnreadNotifications(n => n + 1);
+                setNotificationLog(log => [msg, ...log.slice(0, 19)]);
+                fetchOrders();
+            });
+            
+            socket.on('order_update', (data: any) => {
+                if (data.status === 'delivered') {
+                    const msg = `הזמנה #${data.order_id} נמסרה`;
+                    setUnreadNotifications(n => n + 1);
+                    setNotificationLog(log => [msg, ...log.slice(0, 19)]);
+                }
+                fetchOrders();
+            });
+
+            socket.on('courier_offline', (data: any) => {
+                const msg = `שליח ${data.courier_name || data.courier_id} עבר לאופליין`;
+                setUnreadNotifications(n => n + 1);
+                setNotificationLog(log => [msg, ...log.slice(0, 19)]);
+            });
+        }
+        return () => {
+             if (socket) {
+                 socket.off('new_order');
+                 socket.off('order_update');
+                 socket.off('courier_offline');
+             }
+        };
+    }, [socket]);
 
     useEffect(() => {
         fetchOrders();
@@ -43,12 +87,13 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            // Construct query params
             const params = new URLSearchParams();
             params.append('page', page.toString());
             params.append('limit', '20');
             if (searchTerm) params.append('q', searchTerm);
             if (statusFilter !== 'all') params.append('status', statusFilter);
+            if (dateFrom) params.append('date_from', dateFrom);
+            if (dateTo) params.append('date_to', dateTo);
 
             const res = await api.get(`/orders?${params.toString()}`);
             const data = res.data;
@@ -98,6 +143,24 @@ export default function AdminOrders() {
         }
     };
 
+    const handleGenerateInvoice = async (orderId: number) => {
+        try {
+            const res = await api.post('/invoices/', {
+                delivery_id: orderId,
+                document_type: 'tax_invoice_receipt'
+            });
+            toast.success("חשבונית הופקה בהצלחה!");
+            if (res.data.download_url) {
+                // Determine base URL, fallback to default local if env is missing
+                const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+                window.open(`${baseUrl}${res.data.download_url}`, '_blank');
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.response?.data?.error || "שגיאה בהפקת חשבונית");
+        }
+    };
+
     const openAssignDialog = (orderId: number) => {
         setSelectedOrderId(orderId);
         setAssignDialogOpen(true);
@@ -133,9 +196,43 @@ export default function AdminOrders() {
                     <h1 className={styles.title}>ניהול הזמנות</h1>
                     <p className={styles.subtitle}>צפייה וניהול כל ההזמנות במערכת</p>
                 </div>
-                <button onClick={fetchOrders} className={styles.btnPrimary}>
-                    רענן נתונים
-                </button>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    {/* ─── Notification Bell ─── */}
+                    <div style={{ position: 'relative' }}>
+                        <button
+                            onClick={() => { setShowNotifPanel(v => !v); setUnreadNotifications(0); }}
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', position: 'relative' }}
+                            title="התראות"
+                        >
+                            <Bell size={22} color={unreadNotifications > 0 ? '#f59e0b' : '#9ca3af'} />
+                            {unreadNotifications > 0 && (
+                                <span style={{
+                                    position: 'absolute', top: -4, right: -4,
+                                    background: '#ef4444', color: '#fff',
+                                    borderRadius: '50%', width: 16, height: 16,
+                                    fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontWeight: 700
+                                }}>{unreadNotifications}</span>
+                            )}
+                        </button>
+                        {showNotifPanel && (
+                            <div style={{
+                                position: 'absolute', right: 0, top: 32,
+                                background: '#1a1a2e', border: '1px solid #2d2d44',
+                                borderRadius: 12, padding: 12, width: 260,
+                                zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
+                            }}>
+                                <p style={{ color: '#9ca3af', fontSize: 12, marginBottom: 8 }}>אירועים אחרונים:</p>
+                                {notificationLog.length === 0 ? (
+                                    <p style={{ color: '#6b7280', fontSize: 13 }}>אין אירועים חדשים</p>
+                                ) : notificationLog.map((msg, i) => (
+                                    <p key={i} style={{ color: '#e5e7eb', fontSize: 13, paddingBottom: 6, borderBottom: '1px solid #2d2d44' }}>{msg}</p>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <button onClick={fetchOrders} className={styles.btnPrimary}>רענן נתונים</button>
+                </div>
             </header>
 
             <div className={styles.tableContainer}>
@@ -167,6 +264,23 @@ export default function AdminOrders() {
                             <option value="delivered">הושלם</option>
                             <option value="cancelled">בוטל</option>
                         </select>
+
+                        {/* ─── Date range ─── */}
+                        <input
+                            type="date"
+                            className={styles.selectInput}
+                            value={dateFrom}
+                            onChange={e => { setDateFrom(e.target.value); setPage(1); }}
+                            title="מתאריך"
+                        />
+                        <span style={{ color: '#9ca3af', fontSize: 13 }}>עד</span>
+                        <input
+                            type="date"
+                            className={styles.selectInput}
+                            value={dateTo}
+                            onChange={e => { setDateTo(e.target.value); setPage(1); }}
+                            title="עד תאריך"
+                        />
                     </div>
                 </div>
 
@@ -229,6 +343,15 @@ export default function AdminOrders() {
                                             >
                                                 <MapPin size={16} />
                                             </a>
+                                            {order.status !== 'pending' && order.status !== 'cancelled' && (
+                                                <button
+                                                    onClick={() => handleGenerateInvoice(order.id)}
+                                                    className={`${styles.btnAction} text-amber-500 hover:text-amber-600`}
+                                                    title="הפק חשבונית"
+                                                >
+                                                    <FileText size={16} />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

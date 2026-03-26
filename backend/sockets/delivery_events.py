@@ -268,6 +268,20 @@ def register_socket_events(socketio):
         if customer_id:
              emit('courier_location', location_data, room=f'customer_{customer_id}')
     
+    @socketio.on('courier_availability_changed')
+    def handle_availability_changed(data):
+        """עדכון זמינות מהיר ישירות מהסוקט (Layer 1 Sync)"""
+        courier_id = data.get('courier_id')
+        is_available = data.get('is_available')
+        
+        if courier_id is not None and is_available is not None:
+            print(f" Fast Sync: Courier {courier_id} availability -> {is_available}")
+            emit('courier_availability_update', {
+                'courier_id': courier_id,
+                'is_available': is_available,
+                'timestamp': data.get('timestamp', datetime.utcnow().isoformat())
+            }, room='admin_room')
+
     @socketio.on('message')
     def handle_message(data):
         """הודעות כלליות"""

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronRight, ChevronLeft, Package, MapPin, CheckCircle, AlertCircle } from "lucide-react";
+import { ChevronRight, ChevronLeft, Package, MapPin, CheckCircle, AlertCircle, Loader2, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -45,6 +45,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
         pickup_contact_name: "",
         pickup_contact_phone: "",
         pickup_notes: "",
+        pickup_lat: null as number | null,
+        pickup_lng: null as number | null,
 
         // Delivery Details
         delivery_city: "",
@@ -55,6 +57,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
         delivery_contact_name: "",
         delivery_contact_phone: "",
         delivery_notes: "",
+        delivery_lat: null as number | null,
+        delivery_lng: null as number | null,
 
         // Package Details
         package_description: "",
@@ -65,6 +69,14 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
         insurance_required: false,
         insurance_value: "",
     });
+
+    // Price quote state
+    const [priceQuote, setPriceQuote] = useState<{
+        price: number;
+        distance_km: number;
+        duration_mins: number;
+    } | null>(null);
+    const [quoteFetching, setQuoteFetching] = useState(false);
 
     // Validation errors state
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -177,7 +189,24 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
             return;
         }
 
-        setCurrentStep(prev => Math.min(prev + 1, 4));
+        const nextStep = Math.min(currentStep + 1, 4);
+        setCurrentStep(nextStep);
+
+        // Fetch price quote when reaching confirmation step
+        if (nextStep === 4 && formData.pickup_lat && formData.pickup_lng && formData.delivery_lat && formData.delivery_lng) {
+            setQuoteFetching(true);
+            setPriceQuote(null);
+            api.post('/orders/quote', {
+                p_lat: formData.pickup_lat,
+                p_lng: formData.pickup_lng,
+                d_lat: formData.delivery_lat,
+                d_lng: formData.delivery_lng,
+            }).then(res => {
+                if (res.data?.success) setPriceQuote(res.data);
+            }).catch(() => {
+                // silently ignore — price shown as TBD
+            }).finally(() => setQuoteFetching(false));
+        }
     };
 
     const handleBack = () => {
@@ -287,6 +316,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                                         updateField('pickup_city', addr.city || '');
                                         updateField('pickup_street', addr.street || '');
                                         updateField('pickup_number', addr.number || '');
+                                        if (addr.lat != null) updateField('pickup_lat', addr.lat);
+                                        if (addr.lng != null) updateField('pickup_lng', addr.lng);
                                     }}
                                     error={errors.pickup_city || errors.pickup_street}
                                 />
@@ -369,6 +400,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                                         updateField('delivery_city', addr.city || '');
                                         updateField('delivery_street', addr.street || '');
                                         updateField('delivery_number', addr.number || '');
+                                        if (addr.lat != null) updateField('delivery_lat', addr.lat);
+                                        if (addr.lng != null) updateField('delivery_lng', addr.lng);
                                     }}
                                     error={errors.delivery_city || errors.delivery_street}
                                 />
@@ -532,21 +565,57 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                     {currentStep === 4 && (
                         <div className="space-y-6">
                             <div className="bg-brand/10 p-4 rounded-lg">
-                                <h3 className="font-bold mb-2">פרטי איסוף</h3>
+                                <h3 className="font-bold mb-2">📍 פרטי איסוף</h3>
                                 <p>{formData.pickup_city}, {formData.pickup_street} {formData.pickup_number}</p>
-                                <p className="text-sm text-gray-600">{formData.pickup_contact_phone}</p>
+                                <p className="text-sm text-gray-600">{formData.pickup_contact_name} • {formData.pickup_contact_phone}</p>
                             </div>
                             <div className="bg-green-50 p-4 rounded-lg">
-                                <h3 className="font-bold mb-2">פרטי מסירה</h3>
+                                <h3 className="font-bold mb-2">🏠 פרטי מסירה</h3>
                                 <p>{formData.delivery_city}, {formData.delivery_street} {formData.delivery_number}</p>
-                                <p className="text-sm text-gray-600">{formData.delivery_contact_name} - {formData.delivery_contact_phone}</p>
+                                <p className="text-sm text-gray-600">{formData.delivery_contact_name} • {formData.delivery_contact_phone}</p>
                             </div>
                             <div className="bg-purple-50 p-4 rounded-lg">
-                                <h3 className="font-bold mb-2">פרטי חבילה</h3>
+                                <h3 className="font-bold mb-2">📦 פרטי חבילה</h3>
                                 <p>{formData.package_description}</p>
                                 <p className="text-sm text-gray-600">
                                     {formData.package_weight && `${formData.package_weight} ק"ג`} • {formData.package_size} • {formData.delivery_type}
                                 </p>
+                            </div>
+
+                            {/* Price Quote */}
+                            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5">
+                                <h3 className="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                    <ShoppingCart className="w-5 h-5" />
+                                    הצעת מחיר
+                                </h3>
+                                {quoteFetching ? (
+                                    <div className="flex items-center gap-2 text-amber-700">
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        מחשב מחיר...
+                                    </div>
+                                ) : priceQuote ? (
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm text-amber-700">
+                                            <span>מרחק משוער</span>
+                                            <span className="font-medium">{priceQuote.distance_km.toFixed(1)} ק"מ</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-amber-700">
+                                            <span>זמן נסיעה משוער</span>
+                                            <span className="font-medium">{Math.round(priceQuote.duration_mins)} דקות</span>
+                                        </div>
+                                        <div className="border-t border-amber-200 pt-2 mt-2 flex justify-between items-baseline">
+                                            <span className="font-bold text-amber-900 text-lg">סה"כ לתשלום (כולל מע"מ)</span>
+                                            <span className="font-black text-2xl text-amber-600">₪{priceQuote.price.toFixed(2)}</span>
+                                        </div>
+                                        <p className="text-xs text-amber-600 mt-1">* המחיר הסופי עשוי להשתנות בהתאם לתנאי הדרך</p>
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-amber-700">
+                                        {formData.pickup_lat && formData.delivery_lat
+                                            ? "לא ניתן לחשב מחיר כרגע. המחיר יוצג לאחר שיוקצה שליח."
+                                            : "לחישוב מחיר, בחר כתובות מרשימת ההצעות של גוגל. המחיר יוצג לאחר שיוקצה שליח."}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     )}

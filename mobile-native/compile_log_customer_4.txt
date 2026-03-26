@@ -1,0 +1,37 @@
+﻿> Task :customerApp:checkKotlinGradlePluginConfigurationErrors
+> Task :customerApp:preBuild UP-TO-DATE
+> Task :customerApp:preDebugBuild UP-TO-DATE
+> Task :customerApp:checkDebugAarMetadata UP-TO-DATE
+> Task :customerApp:generateDebugResValues UP-TO-DATE
+> Task :customerApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :customerApp:generateDebugResources UP-TO-DATE
+> Task :customerApp:mergeDebugResources UP-TO-DATE
+> Task :customerApp:packageDebugResources UP-TO-DATE
+> Task :customerApp:parseDebugLocalResources UP-TO-DATE
+> Task :customerApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :customerApp:extractDeepLinksDebug UP-TO-DATE
+> Task :customerApp:processDebugMainManifest UP-TO-DATE
+> Task :customerApp:processDebugManifest UP-TO-DATE
+> Task :customerApp:processDebugManifestForPackage UP-TO-DATE
+> Task :customerApp:processDebugResources UP-TO-DATE
+
+> Task :customerApp:compileDebugKotlin
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/SplashScreen.kt:49:9 Variable 'isDark' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/AddressSelectionScreen.kt:34:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/CustomerProfileScreen.kt:71:50 'Help: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Help
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/OrderSummaryScreen.kt:40:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/PaymentMethodsScreen.kt:40:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/ProtocolSelectionScreen.kt:41:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/TrackingMapScreen.kt:37:5 Parameter 'repository' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/TrackingMapScreen.kt:111:36 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 7s
+14 actionable tasks: 2 executed, 12 up-to-date

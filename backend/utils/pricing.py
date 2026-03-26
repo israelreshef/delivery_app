@@ -135,3 +135,95 @@ class PricingEngine:
                 'insurance_cost': float(insurance_cost.quantize(curr_quant, rounding=ROUND_HALF_UP))
             }
         }
+
+def calculate_order_price(distance_km: float, protocol_slug: str, package_size: str = 'medium', urgency: str = 'standard') -> dict:
+    """
+    Standalone pricing utility for customer app.
+    Formula: (20 + distance * 5) * protocol_multiplier
+    """
+    from models import DeliveryProtocolConfig
+    from decimal import Decimal, ROUND_HALF_UP
+
+    base_const = Decimal('20.00')
+    price_per_km = Decimal('5.00')
+    dist = Decimal(str(distance_km))
+
+    # Calculate base on distance
+    base_price = base_const + (dist * price_per_km)
+
+    # Apply protocol multiplier
+    config = DeliveryProtocolConfig.query.filter_by(slug=protocol_slug).first()
+    multiplier = Decimal(str(config.pricing_multiplier)) if config else Decimal('1.00')
+    
+    final_price = base_price * multiplier
+    
+    # Round to 2 decimals
+    curr_quant = Decimal('0.01')
+    return {
+        "final_price": float(final_price.quantize(curr_quant, rounding=ROUND_HALF_UP)),
+        "breakdown": {
+            "base": float(base_price.quantize(curr_quant, rounding=ROUND_HALF_UP)),
+            "multiplier": float(multiplier),
+            "distance": float(dist)
+        }
+    }
+
+
+# ============================================================================
+# Israeli Delivery Pricing Model (from Excel — 2025)
+# ₪ prices include VAT (17%)
+# ============================================================================
+
+_PRICING_TIERS = [
+    {'max_km': 6,  'total': 56.10},
+    {'max_km': 12, 'total': 87.60},
+    {'max_km': 22, 'total': 135.70},
+    {'max_km': 25, 'total': 150.85},
+    {'max_km': 36, 'total': 192.00},
+    {'max_km': 44, 'total': 202.80},
+    {'max_km': 59, 'total': 251.75},
+    {'max_km': 79, 'total': 320.85},
+]
+_BASE_80_PLUS = 320.85      # Base total for 79 km
+_EXTRA_KM_RATE = 3.70       # Per km above 79
+_MIN_PRICE = 56.10
+_COURIER_SHARE = 0.70       # Freelance courier gets 70%
+
+
+def calculate_delivery_price(distance_km: float) -> dict:
+    """
+    Calculate delivery price using the Israeli tiered pricing model.
+    
+    Args:
+        distance_km: Road distance in kilometres (float).
+    
+    Returns:
+        dict with total_price, courier_payment, platform_margin, distance_km.
+    """
+    dist = float(distance_km)
+
+    if dist <= 6:
+        total = _MIN_PRICE
+    elif dist >= 80:
+        total = _BASE_80_PLUS + (dist - 79) * _EXTRA_KM_RATE
+    else:
+        # Find the matching tier
+        total = None
+        for tier in _PRICING_TIERS:
+            if dist <= tier['max_km']:
+                total = tier['total']
+                break
+        if total is None:
+            # Shouldn't happen but safeguard
+            total = _BASE_80_PLUS + (dist - 79) * _EXTRA_KM_RATE
+
+    total = round(total, 2)
+    courier_payment = round(total * _COURIER_SHARE, 2)
+    platform_margin = round(total * (1 - _COURIER_SHARE), 2)
+
+    return {
+        'total_price': total,
+        'courier_payment': courier_payment,
+        'platform_margin': platform_margin,
+        'distance_km': dist
+    }

@@ -1,0 +1,131 @@
+> Task :courierApp:clean
+> Task :customerApp:clean
+> Task :courierApp:checkKotlinGradlePluginConfigurationErrors
+> Task :courierApp:preBuild UP-TO-DATE
+> Task :courierApp:preDebugBuild UP-TO-DATE
+> Task :courierApp:generateDebugResValues
+> Task :courierApp:mapDebugSourceSetPaths
+> Task :courierApp:generateDebugResources
+> Task :courierApp:checkDebugAarMetadata
+> Task :courierApp:packageDebugResources
+> Task :courierApp:createDebugCompatibleScreenManifests
+> Task :courierApp:extractDeepLinksDebug
+> Task :courierApp:parseDebugLocalResources
+> Task :courierApp:mergeDebugResources
+> Task :courierApp:processDebugMainManifest
+> Task :courierApp:processDebugManifest
+> Task :courierApp:javaPreCompileDebug
+> Task :courierApp:mergeDebugShaders
+> Task :courierApp:compileDebugShaders NO-SOURCE
+> Task :courierApp:generateDebugAssets UP-TO-DATE
+> Task :courierApp:mergeDebugAssets
+> Task :courierApp:compressDebugAssets
+> Task :courierApp:desugarDebugFileDependencies
+> Task :courierApp:mergeDebugJniLibFolders
+> Task :courierApp:mergeDebugNativeLibs NO-SOURCE
+> Task :courierApp:stripDebugDebugSymbols NO-SOURCE
+> Task :courierApp:validateSigningDebug
+> Task :courierApp:writeDebugAppMetadata
+> Task :courierApp:writeDebugSigningConfigVersions
+> Task :courierApp:processDebugManifestForPackage
+> Task :courierApp:checkDebugDuplicateClasses
+> Task :courierApp:mergeLibDexDebug
+> Task :courierApp:processDebugResources
+> Task :courierApp:mergeExtDexDebug
+> Task :courierApp:compileDebugKotlin
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/MainActivity.kt:38:47 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:82:49 Parameter 'id' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:83:34 Parameter 'id' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:84:49 Parameter 'courseId' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:85:43 Parameter 'courseId' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:85:58 Parameter 'answers' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:86:44 Parameter 'period' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:87:34 Parameter 'missionId' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:88:38 Parameter 'missionId' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:88:54 Parameter 'stepId' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:88:67 Parameter 'result' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:94:30 Parameter 'filter' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt:94:54 Parameter 'timeRange' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/auth/SplashScreen.kt:49:9 Variable 'isDark' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/AcademyScreen.kt:55:48 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ClientsScreen.kt:218:44 'Message: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Message
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourierNavGraph.kt:34:5 Parameter 'navController' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourierNavGraph.kt:209:29 Condition 'id != null' is always 'true'
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseDetailScreen.kt:33:9 Variable 'isCompleting' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseDetailScreen.kt:35:9 Variable 'scope' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseDetailScreen.kt:54:55 Unchecked cast: Any? to Map<String, Any>
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseDetailScreen.kt:59:44 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseDetailScreen.kt:80:63 Unchecked cast: Any? to Map<String, Any>
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseDetailScreen.kt:81:65 Unchecked cast: Any? to List<Map<String, Any>>
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:61:5 Parameter 'locationManager' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:62:5 Parameter 'onMenuClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:65:5 Parameter 'onLogout' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:66:5 Parameter 'onReportsClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:67:5 Parameter 'onProfileClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:68:5 Parameter 'onSettingsClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:70:5 Parameter 'onSupportClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:71:5 Parameter 'onCalendarClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:72:5 Parameter 'onDocumentsClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:73:5 Parameter 'onClientsClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:74:5 Parameter 'onAcademyClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:76:9 Variable 'missions' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:84:9 Variable 'shiftStatus' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DashboardScreen.kt:87:9 Variable 'prefs' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/DocumentsScreen.kt:143:32 'KeyboardArrowLeft: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.KeyboardArrowLeft
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/EarningsScreen.kt:81:9 Variable 'scope' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/EarningsScreen.kt:82:9 Variable 'context' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/EarningsScreen.kt:117:43 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ExpenseScreen.kt:58:44 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/LeaderboardScreen.kt:55:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualRoutePlannerScreen.kt:49:54 'TypeFilter' is deprecated. Deprecated in Java
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualRoutePlannerScreen.kt:78:17 Parameter 'padding' is never used, could be renamed to _
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualRoutePlannerScreen.kt:139:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualRoutePlannerScreen.kt:232:57 Parameter 'index' is never used, could be renamed to _
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualRoutePlannerScreen.kt:340:41 Condition 'result != null' is always 'true'
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionDetailsScreen.kt:49:9 Variable 'isOffline' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionDetailsScreen.kt:182:21 Variable 'context' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionHistoryScreen.kt:38:9 Variable 'isOffline' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionHistoryScreen.kt:39:9 Variable 'scope' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionHistoryScreen.kt:54:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionProtocolScreen.kt:49:9 Variable 'actionResult' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionProtocolScreen.kt:151:60 'AssignmentReturn: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.AssignmentReturn
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionProtocolScreen.kt:234:9 'AlertDialog(() -> Unit, Modifier = ..., DialogProperties = ..., () -> Unit): Unit' is deprecated. Use BasicAlertDialog instead
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MissionsScreen.kt:322:18 Parameter 'missions' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MoreScreen.kt:29:5 Parameter 'onEarningsClick' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/MoreScreen.kt:113:55 'Chat: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Chat
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ProfileScreen.kt:68:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/QuizScreen.kt:56:44 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/QuizScreen.kt:91:29 'LinearProgressIndicator(Float, Modifier = ..., Color = ..., Color = ..., StrokeCap = ...): Unit' is deprecated. Use the overload that takes `progress` as a lambda
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/QuizScreen.kt:209:39 Unchecked cast: Any? to List<Map<String, Any>>
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/RouteOptimizationScreen.kt:62:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/RouteOptimizationScreen.kt:124:37 Condition 'res != null' is always 'true'
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/VehicleScreen.kt:65:48 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/VehicleScreen.kt:162:9 Variable 'hasAlert' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/WorkerRatingScreen.kt:43:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/utils/SecureStorage.kt:38:14 'setUserAuthenticationValidityDurationSeconds(Int): KeyGenParameterSpec.Builder' is deprecated. Deprecated in Java
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/utils/SecureStorage.kt:49:13 Variable 'factory' is never used
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/utils/TamperDetection.kt:35:21 Variable 'token' is never used
+
+> Task :courierApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :courierApp:processDebugJavaRes
+> Task :courierApp:dexBuilderDebug
+> Task :courierApp:mergeDebugJavaResource
+> Task :courierApp:mergeProjectDexDebug
+> Task :courierApp:packageDebug
+> Task :courierApp:createDebugApkListingFileRedirect
+
+> Task :courierApp:installDebug
+Skipping device 'emulator-5562' (emulator-5562): Device is OFFLINE.
+Installing APK 'courierApp-debug.apk' on 'Pixel_6a(AVD) - 16' for :courierApp:debug
+Installed on 1 device.
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 22s
+35 actionable tasks: 35 executed

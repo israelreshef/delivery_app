@@ -89,7 +89,9 @@ export default function GlobalTasksPage() {
             </div>
 
             {loading ? (
-                <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-accent animate-spin" /></div>
+                <div className="py-20 flex justify-center">
+                    <Loader2 className="w-8 h-8 text-accent animate-spin" />
+                </div>
             ) : filteredTasks.length === 0 ? (
                 <div className="py-20 flex flex-col items-center gap-3 bg-surface border border-dashed border-border rounded-xl">
                     <CheckCircle2 className="w-12 h-12 text-emerald-500 opacity-50" />
@@ -98,14 +100,26 @@ export default function GlobalTasksPage() {
                 </div>
             ) : (
                 <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
-                    <table className="w-full text-right">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-right text-sm">
                         <thead>
                             <tr className="bg-surface2 border-b border-border">
                                 <th className="w-10 p-4"></th>
-                                <th className="p-4 text-[12px] font-semibold text-muted uppercase">משימה</th>
-                                <th className="p-4 text-[12px] font-semibold text-muted uppercase">לקוח</th>
-                                <th className="p-4 text-[12px] font-semibold text-muted uppercase">עדיפות</th>
-                                <th className="p-4 text-[12px] font-semibold text-muted uppercase">תאריך יעד</th>
+                                <th className="p-4 text-[11px] font-semibold text-muted uppercase whitespace-nowrap">
+                                    משימה
+                                </th>
+                                <th className="p-4 text-[11px] font-semibold text-muted uppercase whitespace-nowrap">
+                                    לקוח
+                                </th>
+                                <th className="p-4 text-[11px] font-semibold text-muted uppercase whitespace-nowrap">
+                                    עדיפות
+                                </th>
+                                <th className="p-4 text-[11px] font-semibold text-muted uppercase whitespace-nowrap">
+                                    מקור
+                                </th>
+                                <th className="p-4 text-[11px] font-semibold text-muted uppercase whitespace-nowrap">
+                                    תאריך יעד
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -122,11 +136,21 @@ export default function GlobalTasksPage() {
                                                 {isDone && <CheckCircle2 className="w-5 h-5 text-white" />}
                                             </button>
                                         </td>
-                                        <td className="p-4">
-                                            <div className={`text-[14px] font-medium text-text ${isDone ? 'line-through text-muted' : ''}`}>{task.title}</div>
-                                            {task.description && <div className="text-[13px] text-muted mt-0.5 line-clamp-1">{task.description}</div>}
+                                        <td className="p-4 max-w-[260px]">
+                                            <div
+                                                className={`text-[14px] font-medium text-text ${
+                                                    isDone ? 'line-through text-muted' : ''
+                                                }`}
+                                            >
+                                                {task.title}
+                                            </div>
+                                            {task.description && (
+                                                <div className="text-[13px] text-muted mt-0.5 line-clamp-1">
+                                                    {task.description}
+                                                </div>
+                                            )}
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 whitespace-nowrap">
                                             {task.customer_id ? (
                                                 <Link href={`/admin/customers/${task.customer_id}`}
                                                     className="text-[13px] font-medium text-accent hover:underline bg-accent/10 px-2.5 py-1 rounded-md">
@@ -134,12 +158,17 @@ export default function GlobalTasksPage() {
                                                 </Link>
                                             ) : <span className="text-[13px] text-muted">כללי</span>}
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 whitespace-nowrap">
                                             <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${getPriorityColor(task.priority)}`}>
                                                 {task.priority === 'high' ? 'גבוהה' : task.priority === 'medium' ? 'בינונית' : 'נמוכה'}
                                             </span>
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 whitespace-nowrap">
+                                            {task.source_id ? (
+                                                <span className="text-[12px] font-medium text-accent">{task.source_id}</span>
+                                            ) : <span className="text-[12px] text-muted">-</span>}
+                                        </td>
+                                        <td className="p-4 whitespace-nowrap">
                                             {task.due_date ? (
                                                 <div className={`inline-flex items-center gap-1.5 text-[13px] font-medium ${isOverdue ? 'text-red-500' : 'text-muted'}`}>
                                                     {isOverdue ? <AlertCircle className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
@@ -151,7 +180,8 @@ export default function GlobalTasksPage() {
                                 );
                             })}
                         </tbody>
-                    </table>
+                        </table>
+                    </div>
                 </div>
             )}
         </div>

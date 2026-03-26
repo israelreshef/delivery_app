@@ -1,4 +1,4 @@
-﻿from gevent import monkey
+from gevent import monkey
 monkey.patch_all()
 
 from flask import Flask, render_template, request, jsonify
@@ -56,6 +56,12 @@ def create_demo_users_logic():
     db.session.commit()
     print("Service Accounts Secured.")
 
+from routes.zones import zones_bp
+from routes.protocols import protocols_bp
+from routes.customer_orders import customer_orders_bp
+from routes.wallet import wallet_bp
+from routes.academy_protocols import academy_protocols_bp
+
 def create_app():
     app = Flask(__name__)
     
@@ -76,7 +82,12 @@ def create_app():
     migrate.init_app(app, db)
     
     # Security Configuration
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=60)
+    
+    # JWT Algorithm Confusion Protection:
+    # Strictly enforce HS256. Reject alg=none and any RS256/ES256 etc.
+    app.config['JWT_ALGORITHM'] = 'HS256'
+    app.config['JWT_DECODE_ALGORITHMS'] = ['HS256']
     
     force_https = os.environ.get('FLASK_ENV') == 'production'
     app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
@@ -91,6 +102,55 @@ def create_app():
     
     jwt.init_app(app)
     limiter.init_app(app)
+
+    # ─── JWT error handlers — always return JSON, never HTML ─────────────────
+    from flask_jwt_extended import JWTManager
+    from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return jsonify({
+            'error': 'TOKEN_EXPIRED',
+            'message': 'הסשן פג, יש להתחבר מחדש'
+        }), 401
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(reason):
+        return jsonify({
+            'error': 'INVALID_TOKEN',
+            'message': 'טוקן לא תקין'
+        }), 401
+
+    @jwt.unauthorized_loader
+    def missing_token_callback(reason):
+        return jsonify({
+            'error': 'UNAUTHORIZED',
+            'message': 'נדרשת התחברות'
+        }), 401
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return jsonify({
+            'error': 'TOKEN_REVOKED',
+            'message': 'הסשן בוטל, יש להתחבר מחדש'
+        }), 401
+
+    # ─── Global error handlers ────────────────────────────────────────────────
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        import logging as _logging
+        _logging.error(f"Unhandled 500: {e}", exc_info=True)
+        return jsonify({'error': 'שגיאת שרת פנימית'}), 500
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return jsonify({'error': 'הדף לא נמצא'}), 404
+
+    @app.errorhandler(429)
+    def rate_limit_exceeded(e):
+        return jsonify({'error': 'RATE_LIMIT', 'message': 'יותר מדי בקשות, נסה שוב מאוחר יותר'}), 429
+
+
     
     flask_env = os.environ.get('FLASK_ENV', 'production')
 
@@ -144,7 +204,7 @@ def create_app():
     def add_security_headers(response):
         """Enforce strict security headers for all API requests"""
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
         response.headers['Permissions-Policy'] = 'geolocation=(self), microphone=(), camera=()'
@@ -156,11 +216,21 @@ def create_app():
             
         return response
 
-    # Initialize SocketIO with Redis message queue
-    socketio.init_app(app, 
-                       cors_allowed_origins="*", 
+    ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        os.environ.get('FRONTEND_URL', ''),
+    ]
+    ALLOWED_ORIGINS = [o for o in ALLOWED_ORIGINS if o]  # remove empty strings
+
+    # Initialize SocketIO with Redis message queue; Fix 10: no wildcard CORS
+    socketio.init_app(app,
+                       cors_allowed_origins=ALLOWED_ORIGINS,
                        message_queue=os.environ.get('REDIS_URL'),
-                       async_mode='gevent')
+                       async_mode='gevent',
+                       manage_session=False,
+                       logger=True, 
+                       engineio_logger=True)
     
     # Initialize all socket event handlers
     init_sockets(socketio)
@@ -177,8 +247,12 @@ def create_app():
     from routes.addresses import addresses_bp
     from routes.ratings import ratings_bp
     from routes.earnings_reports import earnings_reports_bp
+    from routes.payments import payments_bp
+    from routes.customer import customer_bp
+    from routes.pricing import pricing_bp
     
     app.register_blueprint(orders_bp, url_prefix='/api/orders')
+    app.register_blueprint(pricing_bp, url_prefix='/api/orders')
     app.register_blueprint(couriers_bp, url_prefix='/api/couriers')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
@@ -189,6 +263,8 @@ def create_app():
     app.register_blueprint(addresses_bp, url_prefix='/api/addresses')
     app.register_blueprint(ratings_bp, url_prefix='/api/ratings')
     app.register_blueprint(earnings_reports_bp, url_prefix='/api/couriers/earnings')
+    app.register_blueprint(payments_bp, url_prefix='/api/payments')
+    app.register_blueprint(customer_bp, url_prefix='/api')
     
     from routes.invoices import invoices_bp
     app.register_blueprint(invoices_bp, url_prefix='/api/invoices')
@@ -243,6 +319,10 @@ def create_app():
     try:
         from routes.zones import zones_bp
         app.register_blueprint(zones_bp, url_prefix='/api/zones')
+        app.register_blueprint(protocols_bp, url_prefix='/api/protocols')
+        app.register_blueprint(customer_orders_bp, url_prefix='/api/orders/customer')
+        app.register_blueprint(wallet_bp, url_prefix='/api/payments/wallet')
+        app.register_blueprint(academy_protocols_bp, url_prefix='/api/academy/protocols')
     except ImportError as e:
         print(f"Warning: Failed to import zones_bp: {e}")
     
@@ -321,6 +401,9 @@ def create_app():
                 db.session.rollback()
                 # print(f"DEBUG: DB Context Error: {e}")
                 pass
+
+    from utils.ip_blocker import check_ip_block
+    app.before_request(check_ip_block)
     
     # Create database tables & Auto-Seed
     with app.app_context():
@@ -420,10 +503,19 @@ def create_app():
         if users: db.session.add_all(users); db.session.add_all(couriers); db.session.commit()
         print("Data Generation Complete!")
 
-    return app
+    # Start APScheduler for DB backups (skipped in tests or when disabled).
+    disable_scheduler = os.environ.get('DISABLE_SCHEDULER', '').lower() in ('1', 'true', 'yes')
+    if not disable_scheduler:
+        try:
+            from utils.backup import init_scheduler
+            init_scheduler()
+        except Exception as scheduler_error:
+            print(f"Warning: backup scheduler disabled due to error: {scheduler_error}")
 
+    return app
 if __name__ == '__main__':
     app = create_app()
     port = int(os.environ.get('PORT', '5000'))
-    socketio.run(app, debug=True, use_reloader=True, host='0.0.0.0', port=port)
+    debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    socketio.run(app, debug=debug, use_reloader=debug, host='0.0.0.0', port=port)
 

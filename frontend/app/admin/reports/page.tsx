@@ -47,6 +47,25 @@ export default function ReportsPage() {
         }
     };
 
+    const handleRegulatoryDownload = async () => {
+        try {
+            const res = await api.get(`/reports/regulatory?start_date=${startDate}&end_date=${endDate}`, {
+                responseType: 'blob'
+            });
+
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `regulatory_report_${startDate}_${endDate}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            toast.success("דוח חוקי ורגולטורי (מע\"מ וביטוח לאומי) הורד בהצלחה");
+        } catch (error) {
+            toast.error("שגיאה בהורדת דוח רגולטורי");
+        }
+    };
+
     return (
         <div className={styles.reportsContainer}>
             <header className={styles.headerArea}>
@@ -154,16 +173,16 @@ export default function ReportsPage() {
 
                     <div className={styles.panelCard}>
                         <div className={styles.panelHeader}>
-                            <div className={styles.panelTitle} style={{ fontSize: '1rem' }}>דוח מע"מ</div>
+                            <div className={styles.panelTitle} style={{ fontSize: '1rem' }}>דוח רגולטורי (מע"מ וביטוח לאומי)</div>
                         </div>
                         <div className={styles.panelContent}>
-                            <button className={styles.btnOutline} style={{ width: '100%' }} onClick={() => handleDownload('revenue')}>הורד למחשב</button>
+                            <button className={styles.btnOutline} style={{ width: '100%' }} onClick={handleRegulatoryDownload}>הורד קובץ אקסל</button>
                         </div>
                     </div>
 
                     <div className={styles.panelCard}>
                         <div className={styles.panelHeader}>
-                            <div className={styles.panelTitle} style={{ fontSize: '1rem' }}>ריכוז חשבוניות</div>
+                            <div className={styles.panelTitle} style={{ fontSize: '1rem' }}>ריכוז חשבוניות (CSV)</div>
                         </div>
                         <div className={styles.panelContent}>
                             <button className={styles.btnOutline} style={{ width: '100%' }} onClick={() => handleDownload('revenue')}>הורד למחשב</button>

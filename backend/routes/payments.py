@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from models import db, Invoice, Payment
 from utils.decorators import token_required
+from utils.validation_helpers import is_valid_amount
 import logging
 
 payments_bp = Blueprint('payments', __name__)
@@ -32,8 +33,8 @@ def create_payment_intent(current_user):
         currency = data.get('currency', 'ILS')
         description = data.get('description', 'תשלום עבור משלוח TZIR')
         
-        if not amount:
-            return jsonify({'error': 'Amount is required'}), 400
+        if not amount or not is_valid_amount(amount):
+            return jsonify({'error': 'Valid amount is required'}), 400
             
         logging.info(f"Creating SmartBee payment request for {amount} {currency}")
         

@@ -279,6 +279,35 @@
     </style>
 </head>
 <body>
+    <!-- Login Modal -->
+    <div id="loginModal" style="display:none; position:fixed; top:0; left:0;
+         width:100%; height:100%; background:rgba(0,0,0,0.75);
+         z-index:99999; direction:rtl;">
+      <div style="background:white; width:360px; margin:12% auto;
+                  padding:32px; border-radius:16px; text-align:center;
+                  box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+        <h2 style="color:#FFA500; margin-bottom:8px; font-size:1.6em;">🚚 כניסה למערכת</h2>
+        <p style="color:#888; margin-bottom:24px; font-size:0.9em;">ניהול משלוחים</p>
+        <input id="adminUser" type="text" placeholder="שם משתמש"
+               style="width:100%; padding:12px; margin-bottom:12px;
+                      border:1.5px solid #ddd; border-radius:8px;
+                      font-size:16px; box-sizing:border-box;">
+        <input id="adminPass" type="password" placeholder="סיסמה"
+               style="width:100%; padding:12px; margin-bottom:16px;
+                      border:1.5px solid #ddd; border-radius:8px;
+                      font-size:16px; box-sizing:border-box;">
+        <div id="loginError" style="color:#dc3545; margin-bottom:12px;
+             display:none; font-weight:600;">שם משתמש או סיסמה שגויים</div>
+        <button onclick="doLogin()"
+                style="width:100%; padding:14px; background:linear-gradient(135deg,#667eea,#764ba2);
+                       color:white; border:none; border-radius:8px;
+                       font-size:16px; cursor:pointer; font-weight:bold;
+                       transition:opacity .2s;">
+          כניסה למערכת ←
+        </button>
+      </div>
+    </div>
+
     <!-- תפריט משותף -->
     <div class="topnav">
         <a href="orders.html"><i class="bi bi-box-seam me-2"></i>פאנל הזמנה</a>
@@ -372,11 +401,78 @@
     <script>
         const socket = io();
         socket.on('connect', () => {
-            // join admin room so server can emit admin-only events
             socket.emit('join', { role: 'admin' });
         });
 
-        // Helper: escape HTML to avoid XSS when inserting user-provided content
+        // ── Auth helpers ──────────────────────────────────────────────
+        function getToken() {
+            return localStorage.getItem('admin_token');
+        }
+
+        function getAuthHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + (getToken() || '')
+            };
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        async function doLogin() {
+            const username = document.getElementById('adminUser').value.trim();
+            const password = document.getElementById('adminPass').value;
+            document.getElementById('loginError').style.display = 'none';
+            if (!username || !password) {
+                document.getElementById('loginError').textContent = 'יש להזין שם משתמש וסיסמה';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
+            try {
+                const resp = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await resp.json();
+                const token = data.access_token || data.token || data.auth_token;
+                if (resp.ok && token) {
+                    localStorage.setItem('admin_token', token);
+                    hideLoginModal();
+                    loadOrders();
+                    loadCouriers();
+                } else {
+                    document.getElementById('loginError').textContent =
+                        data.message || 'שם משתמש או סיסמה שגויים';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Login error:', e);
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // Safe fetch wrapper – handles 401 by showing login modal
+        async function safeFetch(url, options = {}) {
+            const merged = {
+                ...options,
+                headers: { ...getAuthHeaders(), ...(options.headers || {}) }
+            };
+            const response = await fetch(url, merged);
+            if (response.status === 401) {
+                localStorage.removeItem('admin_token');
+                showLoginModal();
+                return null;
+            }
+            return response;
+        }
+
+        // Helper: escape HTML to avoid XSS
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str).replace(/[&<>"']/g, function (c) {
@@ -389,15 +485,20 @@
             'processing': 'status-processing',
             'onway': 'status-onway',
             'delivered': 'status-delivered',
-            'cancelled': 'status-cancelled'
+            'cancelled': 'status-cancelled',
+            'pending': 'status-new',
+            'assigned': 'status-processing'
         };
 
         // Orders
         async function loadOrders() {
             try {
-                const res = await fetch('/api/orders');
+                const res = await safeFetch('/api/orders');
+                if (!res) return; // 401 → modal shown
                 if (!res.ok) throw new Error('Network response was not ok');
-                const orders = await res.json();
+                const body = await res.json();
+                // Backend returns { data: [...] } paginated or plain array
+                const orders = Array.isArray(body) ? body : (body.data || []);
                 renderOrders(orders);
             } catch (err) {
                 document.getElementById('ordersGrid').innerHTML = '<p style="text-align:center;color:#dc3545;">שגיאה בטעינת הזמנות</p>';
@@ -415,23 +516,25 @@
             grid.innerHTML = orders.map(order => {
                 const statusKey = (order.status || '').toString().toLowerCase().replace(/\s+/g, '');
                 const statusClass = STATUS_CLASS_MAP[statusKey] || 'status-cancelled';
-                const itemsDisplay = Array.isArray(order.items) ? escapeHtml(JSON.stringify(order.items)) : escapeHtml(order.items || '[]');
+                const itemsDisplay = Array.isArray(order.items)
+                    ? escapeHtml(JSON.stringify(order.items))
+                    : escapeHtml(order.items || order.package_description || '');
 
                 return `
                 <div class="order-card">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                        <strong>הזמנה #${escapeHtml(order.id)}</strong>
+                        <strong>הזמנה #${escapeHtml(order.order_number || order.id)}</strong>
                         <span class="status-badge ${statusClass}">${escapeHtml(order.status)}</span>
                     </div>
                     <p><strong>מאת:</strong> ${escapeHtml(order.customer_name) || 'לא ידוע'}</p>
                     <p><strong>טלפון:</strong> ${escapeHtml(order.phone) || 'לא ידוע'}</p>
-                    <p><strong>כתובת:</strong> ${escapeHtml(order.address) || 'לא ידוע'}</p>
-                    <p><strong>סה"כ:</strong> ${escapeHtml(order.total) || 0} ₪</p>
+                    <p><strong>כתובת:</strong> ${escapeHtml(order.delivery_address || order.address) || 'לא ידוע'}</p>
+                    <p><strong>סה"כ:</strong> ${escapeHtml(String(order.total || 0))} ₪</p>
                     <p><strong>פריטים:</strong> ${itemsDisplay}</p>
                     <div style="display:flex;gap:8px;margin-top:12px;">
-                        <button class="btn btn-primary flex-fill" onclick="assignOrder(${escapeHtml(order.id)})">הקצה</button>
+                        <button class="btn btn-primary flex-fill" onclick="assignOrder(${escapeHtml(String(order.id))})">הקצה</button>
                         <button class="btn btn-warning flex-fill" onclick="alert('עריכה לא מומשת')">ערוך</button>
-                        <button class="btn btn-danger flex-fill" onclick="deleteOrder(${escapeHtml(order.id)})">מחק</button>
+                        <button class="btn btn-danger flex-fill" onclick="deleteOrder(${escapeHtml(String(order.id))})">מחק</button>
                     </div>
                 </div>`;
             }).join('');
@@ -444,7 +547,8 @@
         async function deleteOrder(orderId) {
             if (!confirm('למחוק הזמנה זו לצמיתות?')) return;
             try {
-                const res = await fetch(`/admin/delete/${orderId}`, { method: 'DELETE' });
+                const res = await safeFetch(`/admin/delete/${orderId}`, { method: 'DELETE' });
+                if (!res) return;
                 if (!res.ok) throw new Error('Delete failed');
                 await loadOrders();
             } catch (err) {
@@ -456,7 +560,8 @@
         // Couriers
         async function loadCouriers(populateSelect = false) {
             try {
-                const res = await fetch('/api/couriers');
+                const res = await safeFetch('/api/couriers');
+                if (!res) return [];
                 if (!res.ok) throw new Error('Network response was not ok');
                 const couriers = await res.json();
                 const grid = document.getElementById('couriersGrid');
@@ -503,11 +608,10 @@
                     commission_rate: 0.70
                 };
 
-                promises.push(fetch('/api/couriers', {
+                promises.push(safeFetch('/api/couriers', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
-                }).then(res => res.json()).catch(err => ({error: err.message})));
+                }).then(res => res ? res.json() : {error: 'auth'}).catch(err => ({error: err.message})));
             }
 
             const results = await Promise.all(promises);
@@ -516,7 +620,7 @@
             await loadCouriers();
         }
 
-        // Create order – accept either JSON array in textarea or comma-separated list
+        // Create order (admin form)
         async function createOrder(event) {
             event.preventDefault();
             const form = event.target;
@@ -542,11 +646,11 @@
             };
 
             try {
-                const res = await fetch('/api/orders', {
+                const res = await safeFetch('/api/orders', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ deliveries: [data] })
                 });
+                if (!res) return;
                 if (!res.ok) throw new Error('Create order failed');
                 await res.json();
                 alert('הזמנה נוצרה בהצלחה!');
@@ -564,7 +668,10 @@
             const select = document.getElementById('courierSelect');
             select.innerHTML = '<option value="">טוען...</option>';
             const couriers = await loadCouriers(true);
-            select.innerHTML = '<option value="">בחר שליח</option>' + (couriers || []).map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.full_name)} — ${escapeHtml(c.phone)}</option>`).join('');
+            select.innerHTML = '<option value="">בחר שליח</option>' +
+                (couriers || []).map(c =>
+                    `<option value="${escapeHtml(String(c.id))}">${escapeHtml(c.full_name)} — ${escapeHtml(c.phone)}</option>`
+                ).join('');
             document.getElementById('assignModal').classList.add('show');
         }
 
@@ -573,11 +680,11 @@
             const courierId = document.getElementById('courierSelect').value;
             if (!courierId) { alert('בחר שליח'); return; }
             try {
-                const res = await fetch(`/api/orders/${orderId}/assign`, {
+                const res = await safeFetch(`/api/orders/${orderId}/assign`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ courier_id: courierId })
                 });
+                if (!res) return;
                 if (!res.ok) throw new Error('Assign failed');
                 await res.json();
                 document.getElementById('assignModal').classList.remove('show');
@@ -588,16 +695,28 @@
             }
         }
 
-        // Modal close
+        // Modal close on backdrop click
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', e => {
                 if (e.target === modal) modal.classList.remove('show');
             });
         });
 
-        // Initialize
-        loadOrders();
-        loadCouriers();
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Allow Enter key in password field
+            document.getElementById('adminPass')
+                ?.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') doLogin();
+                });
+
+            if (!getToken()) {
+                showLoginModal();
+            } else {
+                loadOrders();
+                loadCouriers();
+            }
+        });
     </script>
 
 </body>

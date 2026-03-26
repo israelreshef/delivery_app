@@ -1,0 +1,95 @@
+﻿> Task :courierApp:preBuild UP-TO-DATE
+> Task :courierApp:preDebugBuild UP-TO-DATE
+> Task :courierApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :courierApp:checkKotlinGradlePluginConfigurationErrors
+> Task :courierApp:checkDebugAarMetadata UP-TO-DATE
+> Task :courierApp:generateDebugResValues UP-TO-DATE
+> Task :courierApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :courierApp:generateDebugResources UP-TO-DATE
+> Task :courierApp:mergeDebugResources UP-TO-DATE
+> Task :courierApp:packageDebugResources UP-TO-DATE
+> Task :courierApp:parseDebugLocalResources UP-TO-DATE
+> Task :courierApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :courierApp:extractDeepLinksDebug UP-TO-DATE
+> Task :courierApp:processDebugMainManifest UP-TO-DATE
+> Task :courierApp:processDebugManifest UP-TO-DATE
+> Task :courierApp:processDebugManifestForPackage UP-TO-DATE
+> Task :courierApp:processDebugResources UP-TO-DATE
+> Task :courierApp:compileDebugKotlin UP-TO-DATE
+> Task :courierApp:javaPreCompileDebug UP-TO-DATE
+> Task :courierApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :courierApp:mergeDebugShaders UP-TO-DATE
+> Task :courierApp:compileDebugShaders NO-SOURCE
+> Task :courierApp:generateDebugAssets UP-TO-DATE
+> Task :courierApp:mergeDebugAssets UP-TO-DATE
+> Task :courierApp:compressDebugAssets UP-TO-DATE
+> Task :courierApp:processDebugJavaRes
+> Task :courierApp:desugarDebugFileDependencies UP-TO-DATE
+> Task :courierApp:checkDebugDuplicateClasses
+> Task :courierApp:mergeDebugJavaResource
+> Task :courierApp:dexBuilderDebug
+> Task :courierApp:mergeLibDexDebug UP-TO-DATE
+> Task :courierApp:mergeDebugJniLibFolders UP-TO-DATE
+> Task :courierApp:mergeDebugNativeLibs NO-SOURCE
+> Task :courierApp:stripDebugDebugSymbols NO-SOURCE
+> Task :courierApp:validateSigningDebug UP-TO-DATE
+> Task :courierApp:writeDebugAppMetadata UP-TO-DATE
+> Task :courierApp:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :customerApp:preBuild UP-TO-DATE
+> Task :customerApp:preDebugBuild UP-TO-DATE
+> Task :customerApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :customerApp:checkKotlinGradlePluginConfigurationErrors
+> Task :customerApp:checkDebugAarMetadata UP-TO-DATE
+> Task :customerApp:generateDebugResValues UP-TO-DATE
+> Task :customerApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :customerApp:generateDebugResources UP-TO-DATE
+> Task :customerApp:mergeDebugResources UP-TO-DATE
+> Task :customerApp:packageDebugResources UP-TO-DATE
+> Task :customerApp:parseDebugLocalResources UP-TO-DATE
+> Task :customerApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :customerApp:extractDeepLinksDebug UP-TO-DATE
+> Task :customerApp:processDebugMainManifest UP-TO-DATE
+> Task :customerApp:processDebugManifest UP-TO-DATE
+> Task :customerApp:processDebugManifestForPackage UP-TO-DATE
+> Task :customerApp:processDebugResources UP-TO-DATE
+> Task :customerApp:compileDebugKotlin UP-TO-DATE
+> Task :customerApp:javaPreCompileDebug
+> Task :customerApp:mergeDebugShaders
+> Task :customerApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :customerApp:compileDebugShaders NO-SOURCE
+> Task :customerApp:generateDebugAssets UP-TO-DATE
+> Task :customerApp:mergeDebugAssets
+> Task :customerApp:compressDebugAssets
+> Task :customerApp:processDebugJavaRes
+> Task :customerApp:desugarDebugFileDependencies
+> Task :customerApp:checkDebugDuplicateClasses
+> Task :courierApp:mergeProjectDexDebug
+> Task :customerApp:dexBuilderDebug
+> Task :customerApp:mergeLibDexDebug
+> Task :customerApp:mergeDebugJniLibFolders
+> Task :customerApp:mergeDebugNativeLibs NO-SOURCE
+> Task :customerApp:stripDebugDebugSymbols NO-SOURCE
+> Task :customerApp:validateSigningDebug
+> Task :customerApp:writeDebugAppMetadata
+> Task :customerApp:writeDebugSigningConfigVersions
+> Task :customerApp:mergeDebugJavaResource
+> Task :customerApp:mergeProjectDexDebug
+> Task :courierApp:mergeExtDexDebug
+> Task :customerApp:mergeExtDexDebug
+> Task :courierApp:packageDebug
+> Task :courierApp:createDebugApkListingFileRedirect
+> Task :courierApp:assembleDebug
+> Task :customerApp:packageDebug
+> Task :customerApp:createDebugApkListingFileRedirect
+> Task :customerApp:assembleDebug
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 19s
+64 actionable tasks: 28 executed, 36 up-to-date

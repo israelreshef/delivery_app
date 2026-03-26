@@ -12,20 +12,48 @@ import { Maximize2, Navigation } from 'lucide-react';
 import { auth } from '@/lib/auth';
 import { api } from '@/lib/api';
 
-// Fix Leaflet Default Icon in Next.js
-const iconPerson = new L.Icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/6833/6833605.png', // Courier Icon
-    iconRetinaUrl: 'https://cdn-icons-png.flaticon.com/512/6833/6833605.png',
-    iconSize: [35, 35],
-    popupAnchor: [0, -15],
-    className: 'rounded-full border-2 border-white shadow-lg'
-});
+// Helper for custom colored icons
+const getCourierIcon = (isAvailable: boolean, activeDeliveryId: number | null, isLive: boolean) => {
+    let color = '#94a3b8'; // gray-400 (offline)
+    if (activeDeliveryId) color = '#f59e0b'; // amber-500 (busy)
+    else if (isAvailable && isLive) color = '#10b981'; // emerald-500 (available)
+
+    return L.divIcon({
+        className: 'custom-courier-icon',
+        html: `
+            <div style="
+                background-color: ${color};
+                width: 32px;
+                height: 32px;
+                border: 2px solid white;
+                border-radius: 50%;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"></path>
+                    <path d="M16.5 9.4 7.55 4.24"></path>
+                    <polyline points="3.29 7 12 12 20.71 7"></polyline>
+                    <line x1="12" y1="22" x2="12" y2="12"></line>
+                </svg>
+            </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -16]
+    });
+};
 
 interface CourierLocation {
     id: number;
     name: string;
     lat: number;
     lng: number;
+    isAvailable: boolean;
+    activeDeliveryId: number | null;
+    isLive: boolean;
     status: 'idle' | 'busy' | 'offline';
     lastUpdate: Date;
 }
@@ -73,28 +101,30 @@ export default function LiveMap() {
 
         const fetchInitialCouriers = async () => {
             try {
-                // Use the configured api instance for automatic interceptors and robustness
-                const res = await api.get('/couriers?limit=100');
+                const res = await api.get('/admin/couriers/locations');
                 const data = res.data;
 
-                if (data.data) {
+                if (data && Array.isArray(data.couriers)) {
                     const initialCouriers: Record<number, CourierLocation> = {};
-                    data.data.forEach((c: any) => {
-                        if (c.current_location) {
+                    data.couriers.forEach((c: any) => {
+                        if (c.latitude && c.longitude) {
                             initialCouriers[c.id] = {
                                 id: c.id,
-                                name: c.full_name,
-                                lat: c.current_location.lat,
-                                lng: c.current_location.lng,
-                                status: c.is_available ? 'idle' : 'offline', // Default, real-time will refine
-                                lastUpdate: new Date()
+                                name: c.name,
+                                lat: c.latitude,
+                                lng: c.longitude,
+                                isLive: !!c.is_live,
+                                isAvailable: !!c.is_available,
+                                activeDeliveryId: c.active_delivery_id || null,
+                                status: c.active_delivery_id ? 'busy' : (c.is_available ? 'idle' : 'offline'),
+                                lastUpdate: c.last_seen ? new Date(c.last_seen) : new Date()
                             };
                         }
                     });
                     setCouriers(initialCouriers);
                 }
             } catch (err) {
-                console.error("Failed to fetch initial couriers:", err);
+                console.error("Failed to fetch initial courier locations:", err);
             }
         };
 
@@ -113,7 +143,10 @@ export default function LiveMap() {
                     name: data.name || `שליח ${data.courier_id}`,
                     lat: data.lat,
                     lng: data.lng,
-                    status: data.status || 'busy',
+                    isLive: true,
+                    isAvailable: !!data.is_available,
+                    activeDeliveryId: data.active_delivery_id || null,
+                    status: data.active_delivery_id ? 'busy' : (data.is_available ? 'idle' : 'offline'),
                     lastUpdate: new Date()
                 }
             }));
@@ -150,7 +183,7 @@ export default function LiveMap() {
                         <Marker
                             key={courier.id}
                             position={[courier.lat, courier.lng]}
-                            icon={iconPerson}
+                            icon={getCourierIcon(courier.isAvailable, courier.activeDeliveryId, courier.isLive)}
                         >
                             <Popup>
                                 <div className="text-right p-1" dir="rtl">
@@ -188,16 +221,18 @@ export default function LiveMap() {
             </div>
 
             {/* Stats Overlay */}
-            <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm p-3 rounded-lg border shadow-lg pointer-events-none">
-                <div className="text-xs font-bold text-slate-700 mb-1">שליחים פעילים: {courierList.length}</div>
+            <div className="absolute bottom-4 left-4 z-[1000] bg-slate-900/90 backdrop-blur-sm p-3 rounded-lg border border-slate-700 shadow-lg pointer-events-none text-slate-100">
+                <div className="text-xs font-bold mb-1">
+                    שליחים מחוברים כעת: {courierList.filter(c => c.isLive).length}
+                </div>
                 <div className="flex gap-3">
                     <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                        <span className="text-[10px] text-slate-600">זמינים</span>
+                        <span className="text-[10px] text-slate-200">זמינים</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 rounded-full bg-amber-500" />
-                        <span className="text-[10px] text-slate-600">במשלוח</span>
+                        <span className="text-[10px] text-slate-200">במשלוח</span>
                     </div>
                 </div>
             </div>

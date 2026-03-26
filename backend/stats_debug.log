@@ -1,276 +1,1530 @@
 
-[2026-03-07T21:58:10.451912] --- Dashboard Refresh ---
+[2026-03-23T09:08:13.948337] --- Dashboard Refresh ---
 Connected SIDs/IDs: {}
 Online Courier IDs: []
-Available in DB: 5
+Available in DB: 1
 Active Couriers (Intersection): 0
 
-[2026-03-07T21:59:23.449951] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:08:55.036872] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'knR8sve3umSbF3xcAAAJ': 1}
+Online Courier IDs: [1]
+Available in DB: 1
+Active Couriers (Intersection): 1
+
+[2026-03-23T09:15:59.161517] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:00:11.367764] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:05.866451] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:01:43.572608] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:07.593648] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 1
+Active Couriers (Intersection): 1
+
+[2026-03-23T09:16:10.225810] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:02:43.330408] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:15.878740] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:03:43.704243] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:25.894223] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:04:42.694882] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:36.910330] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:05:44.177404] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:46.899856] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:06:43.382592] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:56.907639] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:07:42.694615] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:16:59.821624] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:08:42.694558] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:06.918851] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:09:44.613424] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:16.926611] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-07T22:10:42.694930] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:26.931086] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:41:40.726774] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:36.934138] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:42:39.212669] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:46.950795] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:43:39.078803] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:56.957352] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:44:38.777817] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:17:59.819422] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:45:39.535469] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:06.966279] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:46:38.777635] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:16.970117] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:47:40.718598] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:26.975605] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:48:40.274109] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:36.982185] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:49:39.460307] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:47.998829] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:50:38.777532] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:58.004653] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:51:40.924567] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:18:59.819242] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:52:40.350529] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:08.000679] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:53:39.904639] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:18.010531] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:54:39.737061] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:28.017672] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:55:39.454692] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:38.029913] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:56:38.777227] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:48.032112] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:57:38.777821] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:58.034317] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:58:40.501754] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:19:59.820199] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T14:59:39.665479] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:08.044101] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:00:38.925839] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:18.047531] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:01:38.777800] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:28.054546] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:02:38.777869] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:38.062558] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:03:38.777086] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:48.066715] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:04:39.999920] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:58.074169] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:05:38.912885] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:20:59.819662] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:06:38.777589] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:08.098207] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:07:40.806642] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:18.125685] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:08:39.909114] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:28.129256] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:09:38.803882] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:38.122131] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:10:38.778188] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:48.125041] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:23:19.520789] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:58.127492] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T15:59:57.163396] --- Dashboard Refresh ---
-Connected SIDs/IDs: {}
-Online Courier IDs: []
-Available in DB: 5
+[2026-03-23T09:21:59.820756] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
 Active Couriers (Intersection): 0
 
-[2026-03-09T16:00:56.871640] --- Dashboard Refresh ---
+[2026-03-23T09:22:08.132806] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:22:18.146028] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:22:28.143536] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:22:38.150382] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:22:48.154457] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:22:58.162552] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:08.169870] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:09.820805] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:18.194151] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:29.181812] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:39.188767] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:49.201699] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:23:59.206893] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:09.215271] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:09.818231] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:19.228991] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:29.224895] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:39.230713] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:49.234071] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:24:59.244732] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:09.251777] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:09.819777] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:19.257944] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:29.275644] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:39.291393] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:49.308229] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:25:59.311414] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:26:09.324225] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:26:09.817682] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:26:19.346286] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:26:30.320348] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:26:40.328818] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:26:50.334075] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:00.341887] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:09.820157] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:10.341880] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:20.651535] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:30.356744] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:40.368965] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:27:51.394548] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:01.382734] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:09.818236] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:11.396462] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:21.409242] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:31.404538] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:41.410535] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:28:51.417429] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:29:01.423953] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:29:09.818965] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:29:12.431177] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:29:22.446641] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:29:32.440813] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T09:29:42.457168] --- Dashboard Refresh ---
+Connected SIDs/IDs: {'GSkv1rXA87RXjSxmAAAB': 1}
+Online Courier IDs: [1]
+Available in DB: 0
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:16:09.823272] --- Dashboard Refresh ---
 Connected SIDs/IDs: {}
 Online Courier IDs: []
-Available in DB: 5
+Available in DB: 1
 Active Couriers (Intersection): 0
+
+[2026-03-23T10:17:09.827848] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:18:09.820542] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:19:09.825794] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:20:09.820976] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:21:09.822219] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:22:09.818652] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:23:09.828185] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:24:09.822506] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:25:09.826059] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:28:42.500954] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:28:57.820328] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:29:12.818295] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:29:27.820494] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:29:42.820276] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:29:57.819798] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:30:12.820401] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:31:09.819259] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:32:09.820135] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:33:09.820172] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:34:09.818835] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:35:09.817797] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:36:09.818645] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:37:09.820253] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:38:09.819094] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:39:09.827460] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:40:09.819526] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:41:09.819435] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:42:09.819778] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T10:43:27.661747] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:04:42.774581] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:04:57.704529] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:05:12.819165] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:05:27.819714] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:05:42.819601] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:05:57.821132] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:06:12.819692] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:06:27.819520] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:07:09.819195] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:08:09.817619] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:09:09.821075] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:10:09.818067] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:11:09.821971] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-23T13:12:09.819025] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (Intersection): 0
+
+[2026-03-24T14:31:29.856948] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:31:44.672692] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:31:59.670714] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:32:14.671498] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:32:29.671869] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:32:45.537644] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:33:00.539330] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:33:15.537163] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:33:30.537080] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:34:08.537871] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:35:08.535712] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:36:08.539534] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:37:08.535883] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:37:34.013916] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:37:44.671712] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:37:59.671621] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:38:14.671930] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:38:30.536662] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:38:44.670146] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:39:00.537835] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:39:15.535263] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:39:30.537742] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:39:45.537865] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:40:08.539032] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:41:08.837895] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:42:08.541799] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:43:08.536206] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:44:08.537695] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:45:08.536383] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:46:05.292475] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:46:15.536441] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:46:30.535750] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:46:45.538138] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:47:00.537965] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:48:08.537759] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:49:08.538695] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:50:08.535933] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:51:08.535764] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:52:08.537267] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:53:08.540583] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:54:08.537952] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:55:08.536792] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:56:08.536577] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:57:08.562805] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:58:08.538077] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T14:59:08.535858] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:00:08.538075] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:01:08.537000] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:02:05.450639] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:02:20.413770] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:02:35.412205] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:02:50.537819] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:03:05.537869] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:03:20.540704] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:03:35.536595] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:04:08.537921] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:05:08.536540] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:06:08.563254] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:07:08.536829] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:08:08.537684] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:09:08.536381] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:10:08.537030] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:11:08.838974] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:12:08.840766] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:13:08.562769] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:13:57.571750] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:14:05.413598] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:14:20.537536] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:14:35.539323] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:14:50.537508] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:15:05.538639] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:16:08.537500] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:17:08.567248] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:18:08.537990] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:19:08.536350] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:20:08.537140] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:21:08.536026] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:22:08.538335] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:23:08.563181] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:24:08.545577] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:25:08.537880] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:26:08.538150] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:27:08.536485] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:27:20.538566] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:27:35.536507] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:27:50.536273] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:28:05.537661] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:29:08.538648] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:30:08.537565] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T15:31:08.535970] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:03:42.764461] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:03:57.706411] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:04:12.705546] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:04:28.538362] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:04:43.538187] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:04:58.537347] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:05:13.536312] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:06:08.538230] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:07:08.535662] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:08:08.538386] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:09:08.535319] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:10:08.537380] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:11:08.839414] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:12:08.538698] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:13:08.538857] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:14:08.542547] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:15:08.535175] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:16:08.536306] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:17:08.537336] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-24T16:18:08.536736] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 1
+Active Couriers (From DB): 1
+
+[2026-03-26T16:18:54.361638] --- Dashboard Refresh ---
+Connected SIDs/IDs: {}
+Online Courier IDs: []
+Available in DB: 0
+Active Couriers (From DB): 0

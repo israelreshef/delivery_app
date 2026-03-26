@@ -1,6 +1,7 @@
+import json
 import logging
 from math import radians, cos, sin, asin, sqrt
-from models import Courier, Delivery, db
+from models import Courier, Delivery, db, Zone, AcademyProtocolCourse, AcademyProtocolProgress, DeliveryProtocolConfig
 from utils.google_maps import GoogleMapsService
 
 # Configure logging
@@ -58,6 +59,31 @@ class AllocationEngine:
             is_available=True,
             onboarding_status='approved' # Ensure only approved couriers
         ).all()
+
+        # Phase 3.5: Zone Filtering
+        active_zones = Zone.query.filter_by(is_active=True).all()
+        pickup_zone = cls._get_zone_for_location(pickup_lat, pickup_lng, active_zones)
+
+        if not pickup_zone:
+            logger.warning(f"No zone found for pickup location ({pickup_lat}, {pickup_lng}). Falling back to radius-based allocation.")
+        else:
+            logger.debug(f"Detected pickup zone: {pickup_zone.name} (ID: {pickup_zone.id})")
+            # Filter candidates to only those in the same zone
+            candidates_in_zone = []
+            for courier in candidates:
+                c_lat = courier.current_location_lat
+                c_lng = courier.current_location_lng
+                if c_lat is not None and c_lng is not None:
+                    c_zone = cls._get_zone_for_location(c_lat, c_lng, active_zones)
+                    if c_zone and c_zone.id == pickup_zone.id:
+                        candidates_in_zone.append(courier)
+            
+            if not candidates_in_zone:
+                logger.warning(f"No couriers found in zone {pickup_zone.id} for order {delivery.order_number}. No allocation possible.")
+                return None
+            
+            candidates = candidates_in_zone
+            logger.info(f"Zone-based filtering: {len(candidates)} couriers available in zone {pickup_zone.name}")
 
         scored_candidates = []
 
@@ -121,6 +147,55 @@ class AllocationEngine:
         return best_match['courier']
 
     @classmethod
+    def _is_point_in_polygon(cls, lat: float, lng: float, polygon_coords: list[dict]) -> bool:
+        """
+        Ray Casting algorithm to determine if a point (lat, lng) is inside a polygon.
+        
+        :param lat: Latitude of the point
+        :param lng: Longitude of the point
+        :param polygon_coords: List of dicts [{"lat": float, "lng": float}, ...]
+        :return: True if inside, False otherwise
+        """
+        if not polygon_coords or len(polygon_coords) < 3:
+            return False
+
+        inside = False
+        n = len(polygon_coords)
+        for i in range(n):
+            j = (i + 1) % n
+            # Coordinates of vertices i and j
+            yi, xi = polygon_coords[i]['lat'], polygon_coords[i]['lng']
+            yj, xj = polygon_coords[j]['lat'], polygon_coords[j]['lng']
+
+            # Check if point's latitude is between the vertex latitudes
+            if ((yi > lat) != (yj > lat)):
+                # Calculate the longitude intersection of the ray with the segment (i, j)
+                intersect_lng = (xj - xi) * (lat - yi) / (yj - yi) + xi
+                if lng < intersect_lng:
+                    inside = not inside
+                    
+        return inside
+
+    @classmethod
+    def _get_zone_for_location(cls, lat: float, lng: float, active_zones: list[Zone] = None) -> Zone | None:
+        """
+        Finds the first active zone containing the given lat/lng.
+        
+        :param lat: Latitude
+        :param lng: Longitude
+        :param active_zones: Optional list of pre-fetched active zones for efficiency.
+        :return: Zone object or None
+        """
+        if active_zones is None:
+            active_zones = Zone.query.filter_by(is_active=True).all()
+
+        for zone in active_zones:
+            coords = json.loads(zone.polygon_coords)
+            if cls._is_point_in_polygon(lat, lng, coords):
+                return zone
+        return None
+
+    @classmethod
     def _check_constraints(cls, courier: Courier, delivery: Delivery) -> bool:
         """
         Check hard constraints like vehicle type vs package size.
@@ -137,7 +212,7 @@ class AllocationEngine:
         if courier.vehicle_type not in allowed_vehicles.get(package_size, []):
             return False
             
-        # Phase 3: Academy Certification Checks
+        # Phase 3: Academy Certification Checks (Legacy / General)
         # If order type is 'medical' or 'legal_document', check if courier has certification
         restricted_types = {
             'medical': 'Medical Logistics',
@@ -155,6 +230,39 @@ class AllocationEngine:
                         break
             if not has_cert:
                 return False
+
+        # Phase 4: Strict Protocol-based Certification (Customer App Spec)
+        if not cls._check_protocol_certification(courier, delivery):
+            return False
+
+        return True
+
+    @classmethod
+    def _check_protocol_certification(cls, courier: Courier, delivery: Delivery) -> bool:
+        """
+        Check if courier has passed the Academy course for the delivery's protocol.
+        """
+        protocol_slug = delivery.protocol_slug
+        if not protocol_slug:
+            return True  # no protocol restriction
+
+        course = AcademyProtocolCourse.query.filter_by(
+            protocol_slug=protocol_slug,
+            is_active=True
+        ).first()
+
+        if not course:
+            return True  # no specific course defined yet for this protocol
+
+        progress = AcademyProtocolProgress.query.filter_by(
+            courier_id=courier.id,
+            course_id=course.id,
+            status='passed'
+        ).first()
+
+        if not progress:
+            logger.debug(f"Courier {courier.id} not certified for protocol {protocol_slug}")
+            return False
 
         return True
 

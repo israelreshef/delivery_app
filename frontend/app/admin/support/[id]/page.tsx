@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2, Send, ArrowRight, AlertCircle, User as UserIcon } from "lucide-react";
 import { supportApi } from "@/lib/api/support";
+import { api } from "@/lib/api";
 import { TicketDetails, TicketStatus, TicketPriority } from "@/types/support";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,23 @@ export default function TicketDetailsPage() {
     const [newMessage, setNewMessage] = useState("");
     const [isInternal, setIsInternal] = useState(false);
     const [sending, setSending] = useState(false);
+    const [couriers, setCouriers] = useState<Array<{id:number; full_name:string; user_id:number}>>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const fetchCouriers = async () => {
+        try {
+            const res = await api.get('/couriers');
+            if (res.data?.data && Array.isArray(res.data.data)) {
+                setCouriers(res.data.data);
+            } else if (Array.isArray(res.data)) {
+                setCouriers(res.data);
+            } else {
+                setCouriers([]);
+            }
+        } catch (error) {
+            console.error('Failed to fetch couriers', error);
+        }
+    };
 
     const fetchTicket = async () => {
         try {
@@ -35,6 +52,7 @@ export default function TicketDetailsPage() {
 
     useEffect(() => {
         fetchTicket();
+        fetchCouriers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ticketId]);
 
@@ -60,6 +78,18 @@ export default function TicketDetailsPage() {
             toast.error("שגיאה בשליחת ההודעה");
         } finally {
             setSending(false);
+        }
+    };
+
+    const handleAssignTo = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newAssignee = Number(e.target.value) || null;
+
+        try {
+            await supportApi.updateTicket(ticketId, { assigned_to: newAssignee });
+            toast.success("הוקצה משתמש לקריאה");
+            fetchTicket();
+        } catch (error) {
+            toast.error("שגיאה בהקצאת הקריאה");
         }
     };
 
@@ -219,6 +249,21 @@ export default function TicketDetailsPage() {
                             <option value="medium">רגילה</option>
                             <option value="high">גבוהה</option>
                             <option value="urgent">דחופה</option>
+                        </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>הקצה למשתמש</label>
+                        <select
+                            className={styles.selectInput}
+                            value={data.ticket.assigned_to ?? ''}
+                            onChange={handleAssignTo}
+                        >
+                            <option value="">ללא הקצאה</option>
+                            {couriers.map((courier) => (
+                                <option key={courier.id} value={courier.user_id}>
+                                    {courier.full_name}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </div>

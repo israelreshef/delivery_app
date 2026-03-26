@@ -1,41 +1,180 @@
-[2026-03-07T21:57:23.696419] ⏳ Client connecting: tTDKHO5k4iPWd5rnAAAD
-[2026-03-07T21:57:23.699934] ⏳ Client connecting: H2yc_fjv_kzTIWxkAAAE
-[2026-03-07T21:57:23.704547] ⏳ Client connecting: ytcDTTujlBf0ZrL2AAAF
-[2026-03-07T21:57:26.243704] ⏳ Client connecting: u6Yf7IfISxKtA2fXAAAH
-[2026-03-07T22:10:35.076358] ⏳ Client connecting: gqTFsD_fltdMWWC6AAAJ
-[2026-03-07T22:57:51.846568] ⏳ Client connecting: _VaDZp2VeQqOHqpyAAAB
-[2026-03-07T22:57:51.847793]  Client authenticated: User 4 (SID: _VaDZp2VeQqOHqpyAAAB)
-[2026-03-07T22:57:51.913105]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
-[2026-03-07T22:57:51.914114]  📍 Proactive location broadcast for Courier 1 on connect
-[2026-03-09T14:41:40.706731] ⏳ Client connecting: rs3YfCrcGsJe1o2dAAAE
-[2026-03-09T14:41:40.707734]  Client authenticated: User 1 (SID: rs3YfCrcGsJe1o2dAAAE)
-[2026-03-09T14:41:40.743393] ⏳ Client connecting: 2FP72NtTZ9ttnfKhAAAF
-[2026-03-09T14:41:40.743393]  Client authenticated: User 1 (SID: 2FP72NtTZ9ttnfKhAAAF)
-[2026-03-09T14:41:40.757443] ⏳ Client connecting: 6VqTN21AryJt1ITwAAAG
-[2026-03-09T14:41:40.758450]  Client authenticated: User 1 (SID: 6VqTN21AryJt1ITwAAAG)
-[2026-03-09T14:41:40.760450] ⏳ Client connecting: xKyicyiQU07wLpXnAAAH
-[2026-03-09T14:41:40.760450]  Client authenticated: User 1 (SID: xKyicyiQU07wLpXnAAAH)
-[2026-03-09T15:23:19.486403] ⏳ Client connecting: i8D7xCpuDiIaM3TpAAAM
-[2026-03-09T15:23:19.487402]  Client authenticated: User 1 (SID: i8D7xCpuDiIaM3TpAAAM)
-[2026-03-09T15:23:19.491401] ⏳ Client connecting: wEtcq96xed2ChAgNAAAN
-[2026-03-09T15:23:19.492401]  Client authenticated: User 1 (SID: wEtcq96xed2ChAgNAAAN)
-[2026-03-09T15:23:19.494918] ⏳ Client connecting: DUmsJnCGD99hZfjUAAAO
-[2026-03-09T15:23:19.495914]  Client authenticated: User 1 (SID: DUmsJnCGD99hZfjUAAAO)
-[2026-03-09T15:23:19.503945] ⏳ Client connecting: tqMbHgX5U-QP6LxtAAAP
-[2026-03-09T15:23:19.504954]  Client authenticated: User 1 (SID: tqMbHgX5U-QP6LxtAAAP)
-[2026-03-09T15:59:57.185135] ⏳ Client connecting: W5q2NNKgjzuum3xlAAAE
-[2026-03-09T15:59:57.186134]  Client authenticated: User 1 (SID: W5q2NNKgjzuum3xlAAAE)
-[2026-03-09T15:59:57.202322] ⏳ Client connecting: hg72rmKpRT20KXlKAAAF
-[2026-03-09T15:59:57.203387]  Client authenticated: User 1 (SID: hg72rmKpRT20KXlKAAAF)
-[2026-03-09T15:59:57.205000] ⏳ Client connecting: EEFUwsIx8RIHMKT5AAAG
-[2026-03-09T15:59:57.206081]  Client authenticated: User 1 (SID: EEFUwsIx8RIHMKT5AAAG)
-[2026-03-09T15:59:57.219303] ⏳ Client connecting: smNsp-Yzk2mMX5nEAAAH
-[2026-03-09T15:59:57.220686]  Client authenticated: User 1 (SID: smNsp-Yzk2mMX5nEAAAH)
-[2026-03-09T16:00:56.839766] ⏳ Client connecting: LXP45TLdnk-hjRAFAAAM
-[2026-03-09T16:00:56.840774]  Client authenticated: User 1 (SID: LXP45TLdnk-hjRAFAAAM)
-[2026-03-09T16:00:56.843285] ⏳ Client connecting: jIaPcuvjU3bcTfkDAAAN
-[2026-03-09T16:00:56.845284]  Client authenticated: User 1 (SID: jIaPcuvjU3bcTfkDAAAN)
-[2026-03-09T16:00:56.859618] ⏳ Client connecting: ylI_iUv_3QiZ2G5wAAAO
-[2026-03-09T16:00:56.860615]  Client authenticated: User 1 (SID: ylI_iUv_3QiZ2G5wAAAO)
-[2026-03-09T16:00:56.862614] ⏳ Client connecting: DwxJvHCbF0txkKEdAAAP
-[2026-03-09T16:00:56.863618]  Client authenticated: User 1 (SID: DwxJvHCbF0txkKEdAAAP)
+[2026-03-23T09:08:13.792008] ⏳ Client connecting: EO72Y9AY30cqaWIrAAAD
+[2026-03-23T09:08:13.794521]  Client authenticated: User 1 (SID: EO72Y9AY30cqaWIrAAAD)
+[2026-03-23T09:08:13.964532] ⏳ Client connecting: rrWdczvKswjmBsrvAAAE
+[2026-03-23T09:08:13.966548]  Client authenticated: User 1 (SID: rrWdczvKswjmBsrvAAAE)
+[2026-03-23T09:08:13.968825] ⏳ Client connecting: sr49s0-GNF1PK-mSAAAF
+[2026-03-23T09:08:13.969821]  Client authenticated: User 1 (SID: sr49s0-GNF1PK-mSAAAF)
+[2026-03-23T09:08:14.052579] ⏳ Client connecting: vze9QbEstR1BzAM1AAAH
+[2026-03-23T09:08:14.054605]  Client authenticated: User 1 (SID: vze9QbEstR1BzAM1AAAH)
+[2026-03-23T09:08:54.876828] ⏳ Client connecting: knR8sve3umSbF3xcAAAJ
+[2026-03-23T09:08:54.878335]  Client authenticated: User 4 (SID: knR8sve3umSbF3xcAAAJ)
+[2026-03-23T09:08:55.026021]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-23T09:15:37.904234] ⏳ Client connecting: GSkv1rXA87RXjSxmAAAB
+[2026-03-23T09:15:37.905241]  Client authenticated: User 4 (SID: GSkv1rXA87RXjSxmAAAB)
+[2026-03-23T09:15:37.935336]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-23T09:15:37.936844]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-03-23T09:15:59.181148] ⏳ Client connecting: vRqAW3TTmX4XYeaNAAAF
+[2026-03-23T09:15:59.181656]  Client authenticated: User 1 (SID: vRqAW3TTmX4XYeaNAAAF)
+[2026-03-23T09:15:59.184698] ⏳ Client connecting: uhXHgyjLZ2h3BXNRAAAG
+[2026-03-23T09:15:59.185707]  Client authenticated: User 1 (SID: uhXHgyjLZ2h3BXNRAAAG)
+[2026-03-23T09:15:59.188226] ⏳ Client connecting: eE4UIVU6rDK8ewS-AAAH
+[2026-03-23T09:15:59.189224]  Client authenticated: User 1 (SID: eE4UIVU6rDK8ewS-AAAH)
+[2026-03-23T09:15:59.353843] ⏳ Client connecting: xhu8Y4j_nPYEb6fKAAAJ
+[2026-03-23T09:15:59.354964]  Client authenticated: User 1 (SID: xhu8Y4j_nPYEb6fKAAAJ)
+[2026-03-23T09:31:10.759437] ⏳ Client connecting: 6hNThwbcEc0tg1ccAAAL
+[2026-03-23T09:31:10.760001]  Client authenticated: User 1 (SID: 6hNThwbcEc0tg1ccAAAL)
+[2026-03-23T09:31:10.905253] ⏳ Client connecting: Us9tG3f5Y-RrsdrWAAAN
+[2026-03-23T09:31:10.911946]  Client authenticated: User 1 (SID: Us9tG3f5Y-RrsdrWAAAN)
+[2026-03-23T09:31:11.182092] ⏳ Client connecting: ZYvsRqXyhRGVBkcYAAAP
+[2026-03-23T09:31:11.183161]  Client authenticated: User 1 (SID: ZYvsRqXyhRGVBkcYAAAP)
+[2026-03-23T09:31:11.751719] ⏳ Client connecting: tGXX0agvjQf7a4_SAAAT
+[2026-03-23T09:31:11.754229]  Client authenticated: User 1 (SID: tGXX0agvjQf7a4_SAAAT)
+[2026-03-23T09:31:11.757273] ⏳ Client connecting: vx5MmrRz9FPZ6v2ZAAAU
+[2026-03-23T09:31:11.758281]  Client authenticated: User 1 (SID: vx5MmrRz9FPZ6v2ZAAAU)
+[2026-03-23T09:31:11.762305] ⏳ Client connecting: sgMtpsuedkKPyaM0AAAV
+[2026-03-23T09:31:11.764313]  Client authenticated: User 1 (SID: sgMtpsuedkKPyaM0AAAV)
+[2026-03-23T09:31:12.060276] ⏳ Client connecting: B6Lb4_-xLPuLsAuRAAAX
+[2026-03-23T09:31:12.061784]  Client authenticated: User 1 (SID: B6Lb4_-xLPuLsAuRAAAX)
+[2026-03-23T09:31:20.784754] ⏳ Client connecting: Gumkhluh0byA5EIUAAAb
+[2026-03-23T09:31:20.787269]  Client authenticated: User 1 (SID: Gumkhluh0byA5EIUAAAb)
+[2026-03-23T09:31:20.792339] ⏳ Client connecting: lnRH41IkZcNPYN1SAAAc
+[2026-03-23T09:31:20.793339]  Client authenticated: User 1 (SID: lnRH41IkZcNPYN1SAAAc)
+[2026-03-23T09:31:20.796232] ⏳ Client connecting: HUVQ7dry5TGqP-cUAAAd
+[2026-03-23T09:31:20.797585]  Client authenticated: User 1 (SID: HUVQ7dry5TGqP-cUAAAd)
+[2026-03-23T09:31:21.058076] ⏳ Client connecting: lZ05KnlJlOTWZSYyAAAf
+[2026-03-23T09:31:21.059592]  Client authenticated: User 1 (SID: lZ05KnlJlOTWZSYyAAAf)
+[2026-03-23T09:35:28.906771] ⏳ Client connecting: QswdhZZ9A7KLGqmvAAAh
+[2026-03-23T09:35:28.907919]  Client authenticated: User 1 (SID: QswdhZZ9A7KLGqmvAAAh)
+[2026-03-23T10:09:10.352236] ⏳ Client connecting: e0sMWO6SGM9hUEt0AAAm
+[2026-03-23T10:09:10.354285]  Client authenticated: User 1 (SID: e0sMWO6SGM9hUEt0AAAm)
+[2026-03-23T10:09:10.356823] ⏳ Client connecting: yo5qvSEts8xTQO_SAAAn
+[2026-03-23T10:09:10.358071]  Client authenticated: User 1 (SID: yo5qvSEts8xTQO_SAAAn)
+[2026-03-23T10:09:10.361281] ⏳ Client connecting: u6YR-NOsxhGWqBrrAAAo
+[2026-03-23T10:09:10.362279]  Client authenticated: User 1 (SID: u6YR-NOsxhGWqBrrAAAo)
+[2026-03-23T10:09:10.364281] ⏳ Client connecting: 8bsIKtAZyRtu2z5xAAAp
+[2026-03-23T10:09:10.366408]  Client authenticated: User 1 (SID: 8bsIKtAZyRtu2z5xAAAp)
+[2026-03-23T10:28:25.368809] ⏳ Client connecting: NXUl92PJhbLA1EfzAAAr
+[2026-03-23T10:28:42.481210] ⏳ Client connecting: pIGThvVwprF_l4ytAAAv
+[2026-03-23T10:28:42.484289]  Client authenticated: User 1 (SID: pIGThvVwprF_l4ytAAAv)
+[2026-03-23T10:28:42.487298] ⏳ Client connecting: mXddXDyam14AZjxoAAAw
+[2026-03-23T10:28:42.488297]  Client authenticated: User 1 (SID: mXddXDyam14AZjxoAAAw)
+[2026-03-23T10:28:42.491889] ⏳ Client connecting: YnQYQtt_whGUkWbSAAAx
+[2026-03-23T10:28:42.492890]  Client authenticated: User 1 (SID: YnQYQtt_whGUkWbSAAAx)
+[2026-03-23T10:28:42.787305] ⏳ Client connecting: VxnWZ8Lcf7jMbnwCAAAz
+[2026-03-23T10:28:42.789306]  Client authenticated: User 1 (SID: VxnWZ8Lcf7jMbnwCAAAz)
+[2026-03-23T10:43:06.771633] ⏳ Client connecting: mdu-wxqOQz-tn8cnAAA1
+[2026-03-23T10:43:29.823058] ⏳ Client connecting: lKqMMRynDhKyx_YbAAA5
+[2026-03-23T10:43:29.824562]  Client authenticated: User 1 (SID: lKqMMRynDhKyx_YbAAA5)
+[2026-03-23T10:43:29.827568] ⏳ Client connecting: 9IP8vr3YSka6gjLxAAA6
+[2026-03-23T10:43:29.827568]  Client authenticated: User 1 (SID: 9IP8vr3YSka6gjLxAAA6)
+[2026-03-23T10:43:29.829991] ⏳ Client connecting: W5bLOUxJxSK9SMiRAAA7
+[2026-03-23T10:43:29.829991]  Client authenticated: User 1 (SID: W5bLOUxJxSK9SMiRAAA7)
+[2026-03-23T10:53:32.881033] ⏳ Client connecting: FaRQcIdMN6zJ4No8AAA9
+[2026-03-23T11:51:41.349523] ⏳ Client connecting: j93eaInbOFidD62qAAA_
+[2026-03-23T11:51:41.350530]  ❌ Connection Rejected: Invalid Token - Signature has expired (SID: j93eaInbOFidD62qAAA_)
+[2026-03-23T13:04:34.358589] ⏳ Client connecting: Qvh-vzDp_wYG43TAAABB
+[2026-03-23T13:04:42.738360] ⏳ Client connecting: 3dJnlKtYynKnjNPyAABG
+[2026-03-23T13:04:42.739361]  Client authenticated: User 1 (SID: 3dJnlKtYynKnjNPyAABG)
+[2026-03-23T13:04:42.741953] ⏳ Client connecting: IY1nGZVQ68U5b5lhAABH
+[2026-03-23T13:04:42.742962]  Client authenticated: User 1 (SID: IY1nGZVQ68U5b5lhAABH)
+[2026-03-23T13:04:42.745973] ⏳ Client connecting: xX0ZxOxiviAjM9roAABI
+[2026-03-23T13:04:42.746967]  Client authenticated: User 1 (SID: xX0ZxOxiviAjM9roAABI)
+[2026-03-23T13:04:42.749487] ⏳ Client connecting: R_U-7EtVuyBqN1RxAABJ
+[2026-03-23T13:04:42.750496]  Client authenticated: User 1 (SID: R_U-7EtVuyBqN1RxAABJ)
+[2026-03-24T14:31:29.716672] ⏳ Client connecting: PYqsLMrvRFodYL7pAAAD
+[2026-03-24T14:31:29.718681]  Client authenticated: User 1 (SID: PYqsLMrvRFodYL7pAAAD)
+[2026-03-24T14:31:29.881602] ⏳ Client connecting: 3R5YiGIu4L5ldMxFAAAE
+[2026-03-24T14:31:29.882600]  Client authenticated: User 1 (SID: 3R5YiGIu4L5ldMxFAAAE)
+[2026-03-24T14:31:29.888116] ⏳ Client connecting: FPLUuP8EJ5hhO2HnAAAF
+[2026-03-24T14:31:29.889633]  Client authenticated: User 1 (SID: FPLUuP8EJ5hhO2HnAAAF)
+[2026-03-24T14:31:29.988384] ⏳ Client connecting: MQkXSkEGRX6JyDj6AAAH
+[2026-03-24T14:31:29.989385]  Client authenticated: User 1 (SID: MQkXSkEGRX6JyDj6AAAH)
+[2026-03-24T14:38:08.964813] ⏳ Client connecting: 2tLiqmI2RhfxY9m3AAAJ
+[2026-03-24T15:02:05.457736] ⏳ Client connecting: 0TxoI1qrDRGXJ8znAAAN
+[2026-03-24T15:02:05.458744]  Client authenticated: User 1 (SID: 0TxoI1qrDRGXJ8znAAAN)
+[2026-03-24T15:02:05.462259] ⏳ Client connecting: _nx-nFFqTC2CxNLNAAAO
+[2026-03-24T15:02:05.463773]  Client authenticated: User 1 (SID: _nx-nFFqTC2CxNLNAAAO)
+[2026-03-24T15:02:05.466835] ⏳ Client connecting: vYS1_lPzNO1KD1IcAAAP
+[2026-03-24T15:02:05.467843]  Client authenticated: User 1 (SID: vYS1_lPzNO1KD1IcAAAP)
+[2026-03-24T15:02:05.557855] ⏳ Client connecting: dpFN-YSP3wDPcgHvAAAR
+[2026-03-24T15:02:05.558863]  Client authenticated: User 1 (SID: dpFN-YSP3wDPcgHvAAAR)
+[2026-03-24T15:02:32.476297] ⏳ Client connecting: ylGOszgBqdGsypFQAAAT
+[2026-03-24T16:03:42.730083] ⏳ Client connecting: vzyU7SVCEAP5DZkjAAAY
+[2026-03-24T16:03:42.731587]  Client authenticated: User 1 (SID: vzyU7SVCEAP5DZkjAAAY)
+[2026-03-24T16:03:42.740667] ⏳ Client connecting: sBHa73Os18zHvs5MAAAZ
+[2026-03-24T16:03:42.742668]  Client authenticated: User 1 (SID: sBHa73Os18zHvs5MAAAZ)
+[2026-03-24T16:03:42.750841] ⏳ Client connecting: PLAb-PVsNONPzTXpAAAa
+[2026-03-24T16:03:42.752355]  Client authenticated: User 1 (SID: PLAb-PVsNONPzTXpAAAa)
+[2026-03-24T16:03:42.754355] ⏳ Client connecting: YfdtJ7FmUiCSJT9TAAAb
+[2026-03-24T16:03:42.755893]  Client authenticated: User 1 (SID: YfdtJ7FmUiCSJT9TAAAb)
+[2026-03-24T16:04:01.562475] ⏳ Client connecting: awc8nlUCy8SyOVrYAAAd
+[2026-03-24T16:11:43.467765] ⏳ Client connecting: 8v9TndwLVVJehvvpAAAf
+[2026-03-25T19:08:55.990544] ⏳ Client connecting: KaDhPCA-LnJxRlI2AAAA
+[2026-03-25T19:08:56.303544] ⏳ Client connecting: DS-B5iOLn_lCUlfCAAAB
+[2026-03-25T19:08:56.313544] ⏳ Client connecting: D16ReqcyARmsWYUDAAAC
+[2026-03-25T19:08:56.324544] ⏳ Client connecting: RuxA7U560C_T7JWPAAAD
+[2026-03-25T19:09:35.561335] ⏳ Client connecting: lBw4WpIknFQbhuf3AAAA
+[2026-03-25T19:09:35.562334]  Client authenticated: User 4 (SID: lBw4WpIknFQbhuf3AAAA)
+[2026-03-25T19:09:35.904332] ⏳ Client connecting: 1M-XIKQAnsOqFoNuAAAB
+[2026-03-25T19:09:35.905332]  Client authenticated: User 4 (SID: 1M-XIKQAnsOqFoNuAAAB)
+[2026-03-25T19:09:35.907332]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-03-25T19:09:35.918332] ⏳ Client connecting: noQx8TjkFTBNMLQzAAAC
+[2026-03-25T19:09:35.919332]  Client authenticated: User 4 (SID: noQx8TjkFTBNMLQzAAAC)
+[2026-03-25T19:09:35.927332]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-25T19:09:36.036332] ⏳ Client connecting: 0ZnFsxIOv8wkG5rlAAAD
+[2026-03-25T19:09:36.037332]  Client authenticated: User 1 (SID: 0ZnFsxIOv8wkG5rlAAAD)
+[2026-03-25T19:09:36.040332] ⏳ Client connecting: 52GCJuDQev27wgMsAAAE
+[2026-03-25T19:09:36.041331]  Client authenticated: User 4 (SID: 52GCJuDQev27wgMsAAAE)
+[2026-03-25T19:09:36.046332]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-25T19:10:43.247719] ⏳ Client connecting: FpiEH0Tw3uVpTvPoAAAA
+[2026-03-25T19:10:43.248719]  Client authenticated: User 4 (SID: FpiEH0Tw3uVpTvPoAAAA)
+[2026-03-25T19:10:43.253719] ⏳ Client connecting: tW-5yirrlG6m1GyLAAAB
+[2026-03-25T19:10:43.254720]  Client authenticated: User 4 (SID: tW-5yirrlG6m1GyLAAAB)
+[2026-03-25T19:10:43.255719]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-03-25T19:10:43.258719] ⏳ Client connecting: W_EVvDG5n0LkPGJ3AAAC
+[2026-03-25T19:10:43.259717]  Client authenticated: User 4 (SID: W_EVvDG5n0LkPGJ3AAAC)
+[2026-03-25T19:10:43.263719]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-25T19:10:43.267718] ⏳ Client connecting: ALqoph5jaVEZdJwxAAAD
+[2026-03-25T19:10:43.268719]  Client authenticated: User 4 (SID: ALqoph5jaVEZdJwxAAAD)
+[2026-03-25T19:11:42.099206] ⏳ Client connecting: lyhgtV0DxeOI6YkYAAAA
+[2026-03-25T19:11:42.099206]  Client authenticated: User 4 (SID: lyhgtV0DxeOI6YkYAAAA)
+[2026-03-25T19:11:42.104206] ⏳ Client connecting: yekswzNpjohW5ZeCAAAB
+[2026-03-25T19:11:42.105206]  Client authenticated: User 4 (SID: yekswzNpjohW5ZeCAAAB)
+[2026-03-25T19:11:42.106206]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-03-25T19:11:42.110206] ⏳ Client connecting: XQrzQ-pM3jRTCG7TAAAC
+[2026-03-25T19:11:42.111207]  Client authenticated: User 4 (SID: XQrzQ-pM3jRTCG7TAAAC)
+[2026-03-25T19:11:42.116207]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-25T19:11:42.120206] ⏳ Client connecting: jrjoW3kxB0denDREAAAD
+[2026-03-25T19:11:42.121205]  Client authenticated: User 4 (SID: jrjoW3kxB0denDREAAAD)
+[2026-03-25T19:12:20.929020] ⏳ Client connecting: 0Al_kYbOeqrYl34uAAAA
+[2026-03-25T19:12:20.930020]  Client authenticated: User 4 (SID: 0Al_kYbOeqrYl34uAAAA)
+[2026-03-25T19:12:20.935020] ⏳ Client connecting: _Nioj9MHXWi3KkNDAAAB
+[2026-03-25T19:12:20.936020]  Client authenticated: User 4 (SID: _Nioj9MHXWi3KkNDAAAB)
+[2026-03-25T19:12:20.937020]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-03-25T19:12:20.941020] ⏳ Client connecting: Obr1MBmirsxsaye-AAAC
+[2026-03-25T19:12:20.942020]  Client authenticated: User 4 (SID: Obr1MBmirsxsaye-AAAC)
+[2026-03-25T19:12:20.947020]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-25T19:12:20.951020] ⏳ Client connecting: pXB67di6LZP1cLyqAAAD
+[2026-03-25T19:12:20.952021]  Client authenticated: User 4 (SID: pXB67di6LZP1cLyqAAAD)
+[2026-03-26T16:16:11.836879] ⏳ Client connecting: 62__PbLIkzqq64M_AAAA
+[2026-03-26T16:16:11.836879]  Client authenticated: User 4 (SID: 62__PbLIkzqq64M_AAAA)
+[2026-03-26T16:16:11.839882] ⏳ Client connecting: Qy9P2upX3Ig7AsrdAAAB
+[2026-03-26T16:16:11.839882]  Client authenticated: User 4 (SID: Qy9P2upX3Ig7AsrdAAAB)
+[2026-03-26T16:16:11.840884]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-03-26T16:16:11.843921] ⏳ Client connecting: fLxwoqAvLx3rm0WqAAAC
+[2026-03-26T16:16:11.844925]  Client authenticated: User 4 (SID: fLxwoqAvLx3rm0WqAAAC)
+[2026-03-26T16:16:11.846985]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-26T16:16:11.848989] ⏳ Client connecting: ml6Xp2z6rM-8vrHfAAAD
+[2026-03-26T16:16:11.849994]  Client authenticated: User 4 (SID: ml6Xp2z6rM-8vrHfAAAD)
+[2026-03-26T16:18:54.344445] ⏳ Client connecting: 5NECail7eXGyWzrSAAAD
+[2026-03-26T16:18:54.345446]  Client authenticated: User 1 (SID: 5NECail7eXGyWzrSAAAD)
+[2026-03-26T16:18:54.375342] ⏳ Client connecting: NDolH5okLV1OarTIAAAE
+[2026-03-26T16:18:54.376342]  Client authenticated: User 1 (SID: NDolH5okLV1OarTIAAAE)
+[2026-03-26T16:18:54.380410] ⏳ Client connecting: xB_Mj8EPm0wV0n0AAAAF
+[2026-03-26T16:18:54.381409]  Client authenticated: User 1 (SID: xB_Mj8EPm0wV0n0AAAAF)
+[2026-03-26T16:18:54.563042] ⏳ Client connecting: JZpiowIVzwE7FUzqAAAH
+[2026-03-26T16:18:54.563042]  Client authenticated: User 1 (SID: JZpiowIVzwE7FUzqAAAH)
+[2026-03-26T16:30:33.860000] ⏳ Client connecting: 6WjrwkFk2Vpe7dgGAAAJ
+[2026-03-26T16:30:33.861006]  Client authenticated: User 1 (SID: 6WjrwkFk2Vpe7dgGAAAJ)
+[2026-03-26T16:30:57.270898] ⏳ Client connecting: EUieMQRoxxQfEe04AAAL
+[2026-03-26T16:30:57.272404]  Client authenticated: User 1 (SID: EUieMQRoxxQfEe04AAAL)

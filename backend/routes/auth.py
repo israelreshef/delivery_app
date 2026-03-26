@@ -3,6 +3,9 @@ from werkzeug.security import check_password_hash
 import jwt
 import datetime
 import os
+import logging
+from extensions import db
+
 
 # Import from parent directory
 import sys
@@ -11,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from models import db, User, Courier, Customer
 from utils.decorators import token_required
+from utils.validation_helpers import is_valid_email, is_strong_password
 from extensions import limiter
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
@@ -20,28 +24,29 @@ auth_bp = Blueprint('auth', __name__)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("20 per minute")
+@limiter.limit("50 per minute; 200 per hour")
 def login():
     """התחברות למערכת"""
     try:
         data = request.json
         if not data:
-            return jsonify({'error': 'No data provided', 'message': 'לא התקבלו נתונים'}), 400
+            return jsonify({'success': False, 'error': 'No data provided', 'message': 'לא התקבלו נתונים'}), 400
         # תמיכה בהתחברות עם אימייל או שם משתמש
         identifier = data.get('email') or data.get('username')
         password = data.get('password')
+
+        if '@' in identifier and not is_valid_email(identifier):
+             return jsonify({'success': False, 'error': 'Invalid email format', 'message': 'פורמט אימייל לא תקין'}), 400
         
         if not identifier or not password:
-            return jsonify({'error': 'Email/Username and password required', 'message': 'יש להזין אימייל וסיסמה'}), 400
+            return jsonify({'success': False, 'error': 'Email/Username and password required', 'message': 'יש להזין אימייל וסיסמה'}), 400
         
         # מצא משתמש לפי שם משתמש או אימייל
         from sqlalchemy import or_
         user = User.query.filter(or_(User.username == identifier, User.email == identifier)).first()
-        
+
         if not user:
-            # Fake hash check to prevent timing attacks
-            # check_password_hash('pbkdf2:sha256:600000$dummy$dummy', 'dummy') 
-            return jsonify({'error': 'Invalid username or password', 'message': 'שם משתמש או סיסמה שגויים'}), 401
+            return jsonify({'success': False, 'error': 'Invalid username or password', 'message': 'שם משתמש או סיסמה שגויים'}), 401
             
         # Check Account Lockout
         if user.locked_until and user.locked_until > datetime.datetime.utcnow():
@@ -85,7 +90,7 @@ def login():
                  msg_en += f'. Warning: {remaining} attempts remaining before lockout.'
                  msg_he += f'. אזהרה: נותרו עוד {remaining} ניסיונות לפני נעילת החשבון.'
             
-            return jsonify({'error': msg_en, 'message': msg_he}), 401
+            return jsonify({'success': False, 'error': msg_en, 'message': msg_he}), 401
         
         # בדוק אם המשתמש פעיל
         if not user.is_active:
@@ -98,13 +103,15 @@ def login():
             db.session.commit()
         
         # בדיקה האם 2FA מופעל למשתמש זה
-        if user.is_two_factor_enabled or user.two_factor_enforced_by_admin:
+        if getattr(user, 'mfa_enabled', False) and user.user_type == 'admin':
             # במקום להחזיר טוקן מלא, אנחנו מסמנים שהמשתמש עבר סיסמה וצריך קוד OTP
+            import time
+            import os
             mfa_token = jwt.encode({
                 'user_id': user.id,
                 'mfa_pending': True,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
-            }, SECRET_KEY)
+                'exp': int(time.time()) + 300
+            }, os.environ.get('SECRET_KEY', 'default-key'), algorithm="HS256")
             
             return jsonify({
                 'requires_2fa': True,
@@ -113,7 +120,7 @@ def login():
             }), 200
 
         # צור JWT token (רגיל למשתמש ללא 2FA)
-        from flask_jwt_extended import create_access_token, set_access_cookies
+        from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies
         
         token = create_access_token(
             identity=str(user.id),
@@ -121,8 +128,10 @@ def login():
                 'username': user.username,
                 'user_type': user.user_type
             },
-            expires_delta=datetime.timedelta(days=7)
+            expires_delta=datetime.timedelta(minutes=60)
         )
+        
+        refresh_token = create_refresh_token(identity=str(user.id))
         
         # שמור בסשן (אופציונלי)
         session['user_id'] = user.id
@@ -152,6 +161,9 @@ def login():
                 user_data['full_name'] = customer.full_name
                 user_data['company_name'] = customer.company_name
         
+        elif user.user_type == 'admin':
+            user_data['full_name'] = user.username  # Admin doesn't have a separate profile
+        
         # AUDIT LOG
         from utils.audit import log_audit
         log_audit(
@@ -160,25 +172,86 @@ def login():
             details=f"User {user.username} logged in successfully"
         )
         
-        response = jsonify({
+        return jsonify({
             'success': True,
             'message': 'Login successful',
             'access_token': token,  #  Mobile app expects this field
+            'refresh_token': refresh_token,
             'token': token,  # Keep for backward compatibility
             'user': user_data
-        })
-        set_access_cookies(response, token)
-        return response, 200
+        }), 200
         
     except Exception as e:
         import logging
         logging.error(f"Login error: {str(e)}", exc_info=True)
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'error': 'שגיאה פנימית, נסה שוב מאוחר יותר'}), 500
+
+
+# ─── Fix 8: Refresh token rotation ────────────────────────────────────────────
+
+@auth_bp.route('/refresh', methods=['POST'])
+@limiter.limit("20 per minute")
+def refresh_token():
+    """Issue a new access + refresh token pair; blacklist the old refresh token."""
+    from flask_jwt_extended import (
+        verify_jwt_in_request, get_jwt_identity, get_jwt,
+        create_access_token, create_refresh_token
+    )
+    try:
+        verify_jwt_in_request(refresh=True)
+        jti = get_jwt().get("jti")
+        exp_ts = get_jwt().get("exp")
+        user_id = get_jwt_identity()
+
+        # Blacklist the old refresh token
+        if jti and exp_ts:
+            import datetime as _dt
+            from models import TokenBlacklist
+            expires_at = _dt.datetime.utcfromtimestamp(exp_ts)
+            if not TokenBlacklist.query.filter_by(jti=jti).first():
+                db.session.add(TokenBlacklist(jti=jti, expires_at=expires_at))
+                db.session.commit()
+
+        new_access = create_access_token(identity=user_id,
+                                         expires_delta=datetime.timedelta(minutes=60))
+        new_refresh = create_refresh_token(identity=user_id)
+
+        return jsonify({
+            'access_token': new_access,
+            'refresh_token': new_refresh
+        }), 200
+
+    except Exception as e:
+        logging.warning("Refresh token failed: %s", str(e))
+        return jsonify({'error': 'טוקן רענון לא תקין, יש להתחבר מחדש'}), 401
+
+
+@auth_bp.route('/logout', methods=['POST'])
+@token_required
+def logout(current_user):
+    """Blacklist the current access token so it can no longer be used."""
+    from flask_jwt_extended import get_jwt
+    import datetime as _dt
+    from models import TokenBlacklist
+    try:
+        claims = get_jwt()
+        jti = claims.get("jti")
+        exp_ts = claims.get("exp")
+        if jti and exp_ts:
+            expires_at = _dt.datetime.utcfromtimestamp(exp_ts)
+            if not TokenBlacklist.query.filter_by(jti=jti).first():
+                db.session.add(TokenBlacklist(jti=jti, expires_at=expires_at))
+                db.session.commit()
+        return jsonify({'success': True, 'message': 'התנתקת בהצלחה'}), 200
+    except Exception as e:
+        logging.error("Logout error: %s", str(e), exc_info=True)
+        return jsonify({'error': 'שגיאה בהתנתקות'}), 500
 
 
 @auth_bp.route('/register', methods=['POST'])
 @limiter.limit("10 per hour")
 def register():
+
     """רישום משתמש חדש"""
     try:
         from utils.sanitization import sanitize_input
@@ -186,10 +259,33 @@ def register():
         data = sanitize_input(request.json)
         
         # וולידציה
-        required_fields = ['username', 'email', 'password', 'phone', 'user_type']
+        required_fields = ['email', 'password', 'user_type']
         for field in required_fields:
             if field not in data:
                 return jsonify({'error': f'{field} is required'}), 400
+        
+        # Validate Email
+        if not is_valid_email(data['email']):
+            return jsonify({'error': 'Invalid email format', 'message': 'פורמט אימייל לא תקין'}), 400
+            
+        # Validate Password Strength
+        is_strong, error_msg = is_strong_password(data['password'])
+        if not is_strong:
+            return jsonify({'error': 'Weak password', 'message': error_msg}), 400
+        
+        # Auto-generate username if not provided
+        if 'username' not in data and 'email' in data:
+            base_username = data['email'].split('@')[0]
+            username = base_username
+            counter = 1
+            while User.query.filter_by(username=username).first():
+                username = f"{base_username}{counter}"
+                counter += 1
+            data['username'] = username
+            
+        # Optional fields defaults
+        if 'phone' not in data:
+            data['phone'] = ''
         
         # בדוק אם שם המשתמש כבר קיים
         if User.query.filter_by(username=data['username']).first():
@@ -199,16 +295,23 @@ def register():
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'error': 'Email already exists'}), 400
         
-        # בדוק אם הטלפון כבר קיים
-        if User.query.filter_by(phone=data['phone']).first():
+        # בדוק אם הטלפון כבר קיים (אם הוזן)
+        if data['phone'] and User.query.filter_by(phone=data['phone']).first():
             return jsonify({'error': 'Phone number already exists'}), 400
         
-        # צור משתמש חדש
+        # Mass Assignment Fix: Whitelist allowed fields only
+        # user_type can ONLY be 'customer' or 'courier' via registration — never 'admin'
+        ALLOWED_USER_TYPES = ['customer', 'courier']
+        if data.get('user_type') not in ALLOWED_USER_TYPES:
+            return jsonify({'error': 'Invalid user type. Allowed: customer, courier'}), 400
+        
+        # Mass Assignment Fix: Only extract whitelisted fields
         user = User(
             username=data['username'],
             email=data['email'],
-            phone=data['phone'],
-            user_type=data['user_type']
+            phone=data.get('phone', ''),
+            user_type=data['user_type']  # Whitelisted above
+            # Sensitive fields NOT set: is_admin, wallet_balance, is_verified, role, mfa_enabled, etc.
         )
         user.set_password(data['password'])
         
@@ -220,7 +323,8 @@ def register():
             customer = Customer(
                 user_id=user.id,
                 full_name=data.get('full_name', data['username']),
-                company_name=data.get('company_name')
+                company_name=data.get('company_name'),
+                customer_type=data.get('customer_type', 'private')
             )
             db.session.add(customer)
         
@@ -260,31 +364,6 @@ def register():
         return jsonify({'error': 'Internal server error'}), 500
 
 
-@auth_bp.route('/logout', methods=['POST'])
-def logout():
-    """יציאה מהמערכת"""
-    user_id = session.get('user_id')
-    
-    # AUDIT LOG
-    if user_id:
-        from utils.audit import log_audit
-        log_audit(
-            action='LOGOUT',
-            user_id=user_id,
-            status='SUCCESS'
-        )
-        
-    session.clear()
-    
-    # Clear JWT Cookies
-    from flask_jwt_extended import unset_jwt_cookies
-    response = jsonify({
-        'success': True,
-        'message': 'Logout successful'
-    })
-    unset_jwt_cookies(response)
-    
-    return response, 200
 
 
 @auth_bp.route('/me', methods=['GET'])
@@ -693,14 +772,12 @@ def google_login():
             customer = Customer.query.filter_by(user_id=user.id).first()
             if customer: user_data['customer_id'] = str(customer.id)
             
-        response = jsonify({
+        return jsonify({
             'success': True,
             'access_token': access_token,
             'token': access_token,
             'user': user_data
-        })
-        set_access_cookies(response, access_token)
-        return response, 200
+        }), 200
         
     except ValueError:
         return jsonify({'error': 'Invalid token'}), 401

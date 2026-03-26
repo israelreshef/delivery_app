@@ -76,8 +76,10 @@ export default function AdminDashboard() {
         if (user?.role !== 'admin') return;
         fetchStats();
 
-        // Fallback polling just in case WebSockets fail
-        const interval = setInterval(fetchStats, 60000); // 1-minute fallback
+        // LAYER 2 - Polling fallback (every 15 seconds) per requirement
+        const interval = setInterval(() => {
+            fetchStats();
+        }, 15000); 
         return () => clearInterval(interval);
     }, [user?.role]);
 
@@ -294,9 +296,9 @@ export default function AdminDashboard() {
 
             {/* Active Couriers Modal */}
             <Dialog open={isCouriersModalOpen} onOpenChange={setIsCouriersModalOpen}>
-                <DialogContent className="max-w-md bg-white">
+                <DialogContent className="max-w-md bg-slate-900 border border-slate-700 text-slate-100" dir="rtl">
                     <DialogHeader>
-                        <DialogTitle className="text-right">שליחים מחוברים כעת</DialogTitle>
+                        <DialogTitle className="text-right text-white">שליחים מחוברים כעת</DialogTitle>
                         <DialogDescription className="text-right">
                             רשימת השליחים שזמינים כרגע ומחוברים מהאפליקציה
                         </DialogDescription>
@@ -305,35 +307,51 @@ export default function AdminDashboard() {
                     <div className="mt-4 space-y-3">
                         {stats.active_courier_list && stats.active_courier_list.length > 0 ? (
                             stats.active_courier_list.map((courier: any) => (
-                                <div key={courier.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 transition-colors">
+                                <div
+                                    key={courier.id}
+                                    className="flex items-center justify-between p-3 border border-slate-700 rounded-lg hover:bg-slate-800 transition-colors bg-slate-900"
+                                >
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-10 w-10 border-2 border-brand/20">
-                                            <AvatarFallback className="bg-brand/10 text-brand">
+                                        <Avatar className="h-10 w-10 border-2 border-brand/40">
+                                            <AvatarFallback className="bg-brand/20 text-brand">
                                                 {courier.name.charAt(0)}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="text-right">
-                                            <div className="font-bold text-slate-900">{courier.name}</div>
-                                            <div className="text-xs text-slate-500">ID: {courier.id}</div>
+                                            <div className="font-bold text-slate-100">{courier.name}</div>
+                                            <div className="text-xs text-slate-400">ID: {courier.id}</div>
                                         </div>
                                     </div>
                                     <div className="text-left">
-                                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">זמין</Badge>
+                                        <Badge
+                                            variant="outline"
+                                            className="bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                                        >
+                                            זמין
+                                        </Badge>
                                         <div className="text-[10px] text-slate-400 mt-1">
-                                            {courier.lat.toFixed(4)}, {courier.lng.toFixed(4)}
+                                            {courier.lat && courier.lng 
+                                                ? `${courier.lat.toFixed(4)}, ${courier.lng.toFixed(4)}`
+                                                : "ממתין למיקום..."}
                                         </div>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <div className="text-center py-10 text-slate-400 border-2 border-dashed rounded-lg">
+                            <div className="text-center py-10 text-slate-400 border-2 border-dashed border-slate-700 rounded-lg">
                                 אין שליחים מחוברים כרגע
                             </div>
                         )}
                     </div>
 
                     <div className="mt-6 flex justify-end">
-                        <Button variant="secondary" onClick={() => setIsCouriersModalOpen(false)}>סגור</Button>
+                        <Button
+                            variant="secondary"
+                            className="bg-slate-800 text-slate-100 hover:bg-slate-700 border border-slate-600"
+                            onClick={() => setIsCouriersModalOpen(false)}
+                        >
+                            סגור
+                        </Button>
                     </div>
                 </DialogContent>
             </Dialog>

@@ -4,8 +4,8 @@ import time
 
 # Configuration
 BASE_URL = "http://localhost:5000"
-COURIER_USER = "demo_courier"
-COURIER_PASS = "TzirRiderSpeed!77"
+COURIER_USER = "e2e_bot"
+COURIER_PASS = "TestBot2026!"
 
 
 

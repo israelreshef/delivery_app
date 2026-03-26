@@ -212,3 +212,35 @@ class GamificationService:
         except Exception as e:
             db.session.rollback()
             logging.error(f"Error checking milestones: {e}")
+
+    @staticmethod
+    def get_leaderboard(limit=10):
+        """מחזיר את רשימת השליחים המובילים ממויינים לפי XP ורמה"""
+        try:
+            # Join CourierGamification with Courier to get names and avatars
+            top_gamers = db.session.query(CourierGamification, Courier).join(
+                Courier, CourierGamification.courier_id == Courier.id
+            ).filter(
+                CourierGamification.xp > 0
+            ).order_by(
+                CourierGamification.xp.desc(),
+                CourierGamification.level.desc()
+            ).limit(limit).all()
+
+            leaderboard = []
+            for rank, (gamification, courier) in enumerate(top_gamers, start=1):
+                badge = GamificationService.get_rank_badge(courier.performance_index)
+                leaderboard.append({
+                    "rank": rank,
+                    "courier_name": courier.full_name,
+                    "courier_id": courier.id,
+                    "level": gamification.level,
+                    "xp": gamification.xp,
+                    "badge": badge,
+                    "total_deliveries": courier.total_deliveries
+                })
+
+            return leaderboard
+        except Exception as e:
+            logging.error(f"Error fetching leaderboard: {e}")
+            return []

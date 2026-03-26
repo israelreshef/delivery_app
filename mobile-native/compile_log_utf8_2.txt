@@ -1,0 +1,154 @@
+﻿> Task :courierApp:checkKotlinGradlePluginConfigurationErrors
+> Task :courierApp:preBuild UP-TO-DATE
+> Task :courierApp:preDebugBuild UP-TO-DATE
+> Task :courierApp:checkDebugAarMetadata UP-TO-DATE
+> Task :courierApp:generateDebugResValues UP-TO-DATE
+> Task :courierApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :courierApp:generateDebugResources UP-TO-DATE
+> Task :courierApp:mergeDebugResources UP-TO-DATE
+> Task :courierApp:packageDebugResources UP-TO-DATE
+> Task :courierApp:parseDebugLocalResources UP-TO-DATE
+> Task :courierApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :courierApp:extractDeepLinksDebug UP-TO-DATE
+> Task :courierApp:processDebugMainManifest UP-TO-DATE
+> Task :courierApp:processDebugManifest UP-TO-DATE
+> Task :courierApp:processDebugManifestForPackage UP-TO-DATE
+> Task :courierApp:processDebugResources UP-TO-DATE
+
+> Task :courierApp:compileDebugKotlin FAILED
+./gradlew : e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/networ
+k/KtorClientFactory.kt:5:31 Unresolved reference: logging
+At line:1 char:1
++ ./gradlew :courierApp:compileDebugKotlin 2>&1 | Out-File -Encoding UT ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...erence: logging:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:6:31 Unresolved reference: logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:7:31 Unresolved reference: logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:23:21 Unresolved reference: Logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:24:17 Unresolved reference: logger
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:24:35 Unresolved reference: Logger
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:25:21 'log' overrides nothing
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:29:17 Unresolved reference: level
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/KtorClient
+Factory.kt:29:25 Unresolved reference: LogLevel
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Academy
+Screen.kt:33:31 Unresolved reference: academyCourses
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Academy
+Screen.kt:34:39 Unresolved reference: academyProtocolCourses
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Academy
+Screen.kt:42:20 Unresolved reference: refreshAcademyCourses
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Academy
+Screen.kt:43:20 Unresolved reference: refreshAcademyProtocolCourses
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseD
+etailScreen.kt:39:24 Unresolved reference: getAcademyProtocolCourseContent
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/CourseD
+etailScreen.kt:41:24 Unresolved reference: getCourseDetails
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Earning
+sScreen.kt:88:37 Too many arguments for public final suspend fun refreshStats(): Unit defined in 
+com.tzir.delivery.courier.repository.CourierRepository
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Earning
+sScreen.kt:91:37 Too many arguments for public final suspend fun refreshStats(): Unit defined in 
+com.tzir.delivery.courier.repository.CourierRepository
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Earning
+sScreen.kt:205:58 Unresolved reference: completionRate
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Earning
+sScreen.kt:206:56 Unresolved reference: avgDeliveryMins
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Leaderb
+oardScreen.kt:34:38 Unresolved reference: getGamificationLeaderboard
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualR
+outePlannerScreen.kt:235:53 Unresolved reference: full_address
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualR
+outePlannerScreen.kt:314:68 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+public val JsonElement.jsonObject: JsonObject defined in kotlinx.serialization.json
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualR
+outePlannerScreen.kt:317:59 Overload resolution ambiguity: 
+public inline fun <T> Iterable<TypeVariable(T)>.forEach(action: (TypeVariable(T)) -> Unit): Unit defined in kotlin.collections
+public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.forEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> 
+Unit): Unit defined in kotlin.collections
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/ManualR
+outePlannerScreen.kt:317:69 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:48:5 Unresolved reference: PremiumBackground
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:49:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:56:43 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:95:41 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:116:5 Unresolved reference: GlassCard
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:122:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:130:50 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:150:55 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:152:55 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:173:39 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:176:42 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:176:108 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:178:46 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:178:94 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:181:42 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:182:42 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:188:41 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+HistoryScreen.kt:195:37 Unresolved reference: R
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+ProtocolScreen.kt:55:36 Unresolved reference: getProtocolSteps
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/Mission
+ProtocolScreen.kt:107:66 Unresolved reference: completeProtocolStep
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/QuizScr
+een.kt:45:33 Unresolved reference: getAcademyProtocolQuizQuestions
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/QuizScr
+een.kt:149:69 Unresolved reference: submitAcademyProtocolQuiz
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/RouteOp
+timizationScreen.kt:114:113 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Pair<Double, 
+Double>?
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/RouteOp
+timizationScreen.kt:115:113 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Pair<Double, 
+Double>?
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/courier/RouteOp
+timizationScreen.kt:117:54 Unresolved reference: optimizeRoute
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':courierApp:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 9s
+14 actionable tasks: 2 executed, 12 up-to-date

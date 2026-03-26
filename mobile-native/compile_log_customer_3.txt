@@ -1,0 +1,111 @@
+﻿> Task :customerApp:checkKotlinGradlePluginConfigurationErrors
+> Task :customerApp:preBuild UP-TO-DATE
+> Task :customerApp:preDebugBuild UP-TO-DATE
+> Task :customerApp:generateDebugResValues UP-TO-DATE
+> Task :customerApp:checkDebugAarMetadata
+> Task :customerApp:mapDebugSourceSetPaths
+> Task :customerApp:generateDebugResources UP-TO-DATE
+> Task :customerApp:packageDebugResources UP-TO-DATE
+> Task :customerApp:parseDebugLocalResources UP-TO-DATE
+> Task :customerApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :customerApp:extractDeepLinksDebug UP-TO-DATE
+> Task :customerApp:processDebugMainManifest
+> Task :customerApp:processDebugManifest
+> Task :customerApp:processDebugManifestForPackage
+> Task :customerApp:mergeDebugResources
+> Task :customerApp:processDebugResources
+
+> Task :customerApp:compileDebugKotlin FAILED
+./gradlew : e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/a
+uth/LoginScreen.kt:28:26 Unresolved reference: shared
+At line:1 char:1
++ ./gradlew :customerApp:compileDebugKotlin 2>&1 | Out-File -Encoding U ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...ference: shared:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/LoginScr
+een.kt:34:17 Unresolved reference: AuthRepository
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:21:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:22:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:23:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:35:17 Unresolved reference: AuthRepository
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:47:25 Not enough information to infer type variable T
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:47:25 Property delegate must have a 'getValue(Nothing?, KProperty<*>)' method. None of the following functions is suitable: 
+public inline operator fun <T> State<???>.getValue(thisObj: Any?, property: KProperty<*>): ??? defined in androidx.compose.runtime
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:47:51 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:140:57 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:146:51 Unresolved reference: RegisterRequest
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:153:75 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:154:76 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:155:75 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:182:19 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:183:22 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:192:38 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:193:36 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:201:38 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:202:36 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:243:11 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:252:22 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:255:17 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:68:60 Unresolved reference: clickable
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerHomeScreen.kt:67:21 Cannot find a parameter with this name: icon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerNavGraph.kt:28:89 Unresolved reference: AccountBalanceWallet
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerNavGraph.kt:29:92 Unresolved reference: Place
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerNavGraph.kt:30:104 Unresolved reference: Description
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Orde
+rSummaryScreen.kt:71:58 Unresolved reference: clickable
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Paym
+entMethodsScreen.kt:62:25 Cannot find a parameter with this name: icon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:136:25 Cannot find a parameter with this name: icon
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':customerApp:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 8s
+14 actionable tasks: 9 executed, 5 up-to-date

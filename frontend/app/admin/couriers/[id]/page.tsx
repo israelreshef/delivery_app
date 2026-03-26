@@ -34,6 +34,11 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
     const [editOpen, setEditOpen] = useState(false);
     const [editForm, setEditForm] = useState<any>({});
 
+    // Order modal state
+    const [orderModalOpen, setOrderModalOpen] = useState(false);
+    const [selectedOrderDetails, setSelectedOrderDetails] = useState<any>(null);
+    const [loadingOrderDetails, setLoadingOrderDetails] = useState(false);
+
     useEffect(() => {
         fetchCourierData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,6 +87,21 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
         } catch (error: any) {
             console.error("Failed to delete courier", error);
             toast.error(error.response?.data?.error || "שגיאה במחיקת השליח");
+        }
+    };
+
+    const handleDeliveryClick = async (orderId: number) => {
+        try {
+            setOrderModalOpen(true);
+            setLoadingOrderDetails(true);
+            const res = await api.get(`/orders/${orderId}`);
+            setSelectedOrderDetails(res.data);
+        } catch (err: any) {
+            toast.error('שגיאה בטעינת פרטי הזמנה');
+            console.error(err);
+            setOrderModalOpen(false);
+        } finally {
+            setLoadingOrderDetails(false);
         }
     };
 
@@ -259,21 +279,28 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
                                     <div className="empty-state">לא נמצאו משימות לשליח זה.</div>
                                 ) : (
                                     deliveries.map((delivery, i) => (
-                                        <div key={i} className="timeline-item">
+                                        <div 
+                                            key={i} 
+                                            className="timeline-item" 
+                                            onClick={() => handleDeliveryClick(delivery.id)}
+                                            style={{ cursor: 'pointer', opacity: 0.9, transition: 'all 0.2s ease' }}
+                                            onMouseOver={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateX(-2px)'; }}
+                                            onMouseOut={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'none'; }}
+                                        >
                                             <div className="t-icon" style={{ background: delivery.status === 'delivered' ? 'rgba(16,185,129,0.1)' : 'rgba(79,110,247,0.1)', color: delivery.status === 'delivered' ? 'var(--green)' : 'var(--accent)' }}>📦</div>
-                                            <div className="t-content">
-                                                <div className="t-header">
-                                                    <span className="t-title">הזמנה #{delivery.order_number || delivery.id}</span>
-                                                    <span className="t-date">{delivery.timestamp ? new Date(delivery.timestamp).toLocaleDateString('he-IL') : ''}</span>
+                                            <div className="t-content" style={{ padding: '12px', background: 'var(--surface2)', borderRadius: '10px', flex: 1, border: '1px solid var(--border)' }}>
+                                                <div className="t-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                                    <span className="t-title" style={{ fontWeight: 600 }}>הזמנה #{delivery.order_number || delivery.id}</span>
+                                                    <span className="t-date" style={{ fontSize: '12px', color: 'var(--muted)' }}>{delivery.timestamp ? new Date(delivery.timestamp).toLocaleDateString('he-IL') : ''}</span>
                                                 </div>
-                                                <div className="t-desc">
+                                                <div className="t-desc" style={{ fontSize: '13px', color: 'var(--soft)', marginBottom: '8px' }}>
                                                     {delivery.pickup} ➔ {delivery.dropoff}
                                                 </div>
-                                                <div className="t-footer">
-                                                    <span className="t-badge" style={{ color: delivery.status === 'delivered' ? 'var(--green)' : 'var(--accent)', borderColor: delivery.status === 'delivered' ? 'rgba(16,185,129,0.3)' : 'rgba(79,110,247,0.3)' }}>
+                                                <div className="t-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <span className="t-badge" style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: '1px solid', color: delivery.status === 'delivered' ? 'var(--green)' : 'var(--accent)', borderColor: delivery.status === 'delivered' ? 'rgba(16,185,129,0.3)' : 'rgba(79,110,247,0.3)', background: delivery.status === 'delivered' ? 'rgba(16,185,129,0.1)' : 'rgba(79,110,247,0.1)' }}>
                                                         {delivery.status}
                                                     </span>
-                                                    {delivery.amount > 0 && <span style={{ fontSize: 12, color: 'var(--text)', fontWeight: 500 }}>₪{delivery.amount.toFixed(2)} שכר</span>}
+                                                    {delivery.amount > 0 && <span style={{ fontSize: 13, color: 'var(--text)', fontWeight: 600 }}>₪{delivery.amount.toFixed(2)}</span>}
                                                 </div>
                                             </div>
                                         </div>
@@ -495,6 +522,139 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
                                     }}>שמור שינויים</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Order Details Modal Component */}
+                {orderModalOpen && (
+                    <div style={{
+                        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        zIndex: 1000, fontFamily: "'Heebo', sans-serif",
+                    }} onClick={() => setOrderModalOpen(false)}>
+                        <div style={{
+                            background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16,
+                            padding: 32, width: 640, direction: 'rtl', boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                            maxHeight: '90vh', overflowY: 'auto'
+                        }} onClick={e => e.stopPropagation()}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>
+                                <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <span style={{ fontSize: 24 }}>📦</span> פרטי משלוח מלאים
+                                </div>
+                                <button onClick={() => setOrderModalOpen(false)} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 20 }}>✕</button>
+                            </div>
+
+                            {loadingOrderDetails ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40, color: 'var(--muted)', gap: 16 }}>
+                                    <div style={{
+                                        width: 32, height: 32, border: `3px solid var(--border)`,
+                                        borderTopColor: 'var(--accent)', borderRadius: '50%',
+                                        animation: 'spin 0.8s linear infinite',
+                                    }} />
+                                    <span>טוען נתונים מהשרת...</span>
+                                </div>
+                            ) : selectedOrderDetails ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                                    {/* Link To Full Page Tracking Option */}
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -16 }}>
+                                        <Link href={`/tracking/${selectedOrderDetails.id}`} target="_blank" style={{ fontSize: 13, color: 'var(--accent)', textDecoration: 'none', fontWeight: 500, display: 'flex', gap: 4, alignItems: 'center' }}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                            פתיחה בעמוד מעקב המלא
+                                        </Link>
+                                    </div>
+
+                                    {/* Customer & Status Info */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                                        <div style={{ background: 'var(--surface2)', padding: 16, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                            <h4 style={{ margin: '0 0 12px 0', color: 'var(--muted)', fontSize: 13, fontWeight: 600 }}>לקוח שולח (מזמין)</h4>
+                                            <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)', marginBottom: 4 }}>
+                                                {selectedOrderDetails.customer?.name || 'לא צוין'}
+                                            </div>
+                                            <div style={{ fontSize: 13, color: 'var(--soft)' }}>
+                                                {selectedOrderDetails.customer?.phone || 'לא הוזן טלפון'}
+                                            </div>
+                                        </div>
+                                        <div style={{ background: 'var(--surface2)', padding: 16, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                            <h4 style={{ margin: '0 0 12px 0', color: 'var(--muted)', fontSize: 13, fontWeight: 600 }}>סטטוס מערכת</h4>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                                                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>
+                                                    {selectedOrderDetails.status === 'delivered' ? 'נמסר ליעד ✅' : selectedOrderDetails.status === 'pending' ? 'ממתין לשליח ⏳' : selectedOrderDetails.status === 'assigned' ? 'בטיפול ע"י השליח 🛵' : selectedOrderDetails.status}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: 13, color: 'var(--soft)' }}>מזהה הזמנה: #{selectedOrderDetails.order_number || selectedOrderDetails.id}</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Pickup & Delivery */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                        <div style={{ background: 'linear-gradient(to right, rgba(79, 110, 247, 0.05), var(--surface2))', padding: 16, borderRadius: 12, border: '1px solid var(--border)', borderRight: '4px solid var(--accent)' }}>
+                                            <div style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>נקודת איסוף (A)</div>
+                                            <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 8, fontSize: 15 }}>{selectedOrderDetails.pickup?.address || 'לא צוין'}</div>
+                                            <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--muted)', background: 'var(--surface)', padding: 8, borderRadius: 8 }}>
+                                                <div><strong>איש קשר:</strong> {selectedOrderDetails.pickup?.contact || 'לא הוזן'}</div>
+                                                <div><strong>טלפון:</strong> <a href={`tel:${selectedOrderDetails.pickup?.phone}`} style={{ color: 'var(--text)', textDecoration: 'none' }}>{selectedOrderDetails.pickup?.phone || 'לא הוזן'}</a></div>
+                                            </div>
+                                        </div>
+
+                                        <div style={{ background: 'linear-gradient(to right, rgba(16, 185, 129, 0.05), var(--surface2))', padding: 16, borderRadius: 12, border: '1px solid var(--border)', borderRight: '4px solid var(--green)' }}>
+                                            <div style={{ fontSize: 12, color: 'var(--green)', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>נקודת מסירה (B)</div>
+                                            <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 8, fontSize: 15 }}>{selectedOrderDetails.delivery?.address || 'לא צוין'}</div>
+                                            <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--muted)', background: 'var(--surface)', padding: 8, borderRadius: 8 }}>
+                                                <div><strong>נמען:</strong> {selectedOrderDetails.delivery?.contact || 'לא הוזן'}</div>
+                                                <div><strong>טלפון:</strong> <a href={`tel:${selectedOrderDetails.delivery?.phone}`} style={{ color: 'var(--text)', textDecoration: 'none' }}>{selectedOrderDetails.delivery?.phone || 'לא הוזן'}</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Package Info */}
+                                    <div style={{ background: 'var(--surface2)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
+                                        <h4 style={{ margin: '0 0 16px 0', color: 'var(--muted)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase' }}>תעריף ופרטי משלוח</h4>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ color: 'var(--soft)', fontSize: 14 }}>גודל חבילה מרבי</span>
+                                                <span style={{ fontWeight: 600, color: 'var(--text)', background: 'var(--surface3)', padding: '2px 10px', borderRadius: 6, fontSize: 13 }}>
+                                                    {selectedOrderDetails.package?.size === 'envelope' ? 'מעטפה' : 
+                                                     selectedOrderDetails.package?.size === 'small' ? 'קופסה קטנה' : 
+                                                     selectedOrderDetails.package?.size === 'medium' ? 'בינונית' : 
+                                                     selectedOrderDetails.package?.size === 'large' ? 'גדולה / משטח' : selectedOrderDetails.package?.size || 'לא הוגדר'}
+                                                </span>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ color: 'var(--soft)', fontSize: 14 }}>תכולה / הערות</span>
+                                                <span style={{ fontWeight: 500, color: 'var(--text)', fontSize: 14, maxWidth: '60%', textAlign: 'left', wordBreak: 'break-word' }}>
+                                                    {selectedOrderDetails.package?.description || 'אין פירוט מהלקוח'}
+                                                </span>
+                                            </div>
+                                            
+                                            <div style={{ borderTop: '1px solid var(--border)', margin: '4px 0' }}></div>
+                                            
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ color: 'var(--text)', fontSize: 15, fontWeight: 700 }}>תעריף חיוב (כולל מע״מ)</span>
+                                                <span style={{ fontWeight: 800, color: 'var(--green)', fontSize: 18 }}>₪{Number(selectedOrderDetails.price || 0).toFixed(2)}</span>
+                                            </div>
+                                            
+                                            {selectedOrderDetails.notes && (
+                                                <div style={{ background: 'var(--surface)', padding: 12, borderRadius: 8, marginTop: 8, fontSize: 13, color: 'var(--amber)', borderLeft: '3px solid var(--amber)' }}>
+                                                    <strong style={{ display: 'block', marginBottom: 4 }}>הוראות מיוחדות מהמערכת: </strong> 
+                                                    {selectedOrderDetails.notes}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <button onClick={() => setOrderModalOpen(false)} style={{
+                                            padding: '10px 24px', borderRadius: 8, fontSize: 14, cursor: 'pointer',
+                                            border: '1px solid var(--border)', background: 'var(--surface3)', color: 'var(--text)', fontWeight: 600,
+                                        }}>סגור חלון זה</button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ textAlign: 'center', color: 'var(--red)', padding: '40px 0', fontSize: 15, fontWeight: 500 }}>
+                                    שגיאה בטעינת נתוני ההזמנה. הנתון עשוי להיות חסר או לא תקין.
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

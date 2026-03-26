@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input"
 import { Plus, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
+import { PhoneListEditor } from "@/components/customer/PhoneListEditor"
 
 const formSchema = z
     .object({
@@ -43,7 +44,7 @@ const formSchema = z
         payment_terms: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
-        additional_phones: z.string().optional(),
+        additional_phones: z.array(z.string()).optional(),
         billing_address: z.string().optional(),
         credit_limit: z.any().optional(),
         is_business: z.boolean(),
@@ -105,7 +106,7 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
             payment_terms: "net_30",
             email: "",
             phone: "",
-            additional_phones: "",
+            additional_phones: [],
             billing_address: "",
             credit_limit: 0,
             is_business: false,
@@ -125,10 +126,10 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                 delete payload.password
                 // NOTE: email and phone are kept even without account so they can be saved on the customer
             }
-            if (payload.additional_phones) {
-                // Split by comma and clean up whitespace
+            if (payload.additional_phones && payload.additional_phones.length > 0) {
+                // Extract values and clean up
                 payload.additional_phones = JSON.stringify(
-                    payload.additional_phones.split(",").map((p: string) => p.trim()).filter(Boolean)
+                    payload.additional_phones.map((p: string) => p.trim()).filter(Boolean)
                 )
             } else {
                 payload.additional_phones = "[]"
@@ -229,7 +230,7 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                                 control={form.control}
                                 name="full_name"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="col-span-2">
                                         <FormLabel>שם מלא / שם תצוגה</FormLabel>
                                         <FormControl>
                                             <Input placeholder="ישראל ישראלי" {...field} />
@@ -238,22 +239,9 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="phone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>טלפון</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="0500000000" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-4 border rounded-md p-4 bg-muted/20">
                             <FormField
                                 control={form.control}
                                 name="email"
@@ -267,18 +255,12 @@ export function AddCustomerModal({ onSuccess }: AddCustomerModalProps) {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="additional_phones"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>טלפונים נוספים (מופרדים בפסיקים)</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="0501111111, 0502222222" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+
+                            <PhoneListEditor
+                                primaryPhone={form.watch("phone") || ""}
+                                onPrimaryPhoneChange={(val) => form.setValue("phone", val)}
+                                additionalPhones={form.watch("additional_phones") || []}
+                                onAdditionalPhonesChange={(phones) => form.setValue("additional_phones", phones)}
                             />
                         </div>
 

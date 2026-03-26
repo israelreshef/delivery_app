@@ -215,3 +215,23 @@ def _after_flush_handler(session, flush_context):
                 _record_history(session, 'DELETE', obj)
     except Exception as e:
         logger.warning(f"Audit trail flush error: {e}")
+def log_action(user_id, action, status='SUCCESS', details=None):
+    """
+    Manually log a sensitive action that doesn't necessarily involve a database change.
+    Example: LOGIN, VIEW_SENSITIVE, DECRYPT.
+    """
+    from models import AuditLog
+    
+    ip, ua = _get_request_metadata()
+    
+    log_entry = AuditLog(
+        user_id=user_id,
+        action=action,
+        status=status,
+        details=details,
+        ip_address=ip,
+        timestamp=datetime.utcnow()
+    )
+    db.session.add(log_entry)
+    db.session.commit()
+    logger.info(f"Audit Log: {action} by user {user_id} - {status}")

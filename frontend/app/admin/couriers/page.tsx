@@ -24,6 +24,8 @@ export default function AdminCouriersPage() {
     const [newPassword, setNewPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isResetLoading, setIsResetLoading] = useState(false);
+    const [availableCount, setAvailableCount] = useState<number>(0);
+    const [candidatesCount, setCandidatesCount] = useState<number>(0);
 
     // New Courier Form State
     const [newCourier, setNewCourier] = useState({
@@ -39,6 +41,7 @@ export default function AdminCouriersPage() {
 
     useEffect(() => {
         fetchCouriers();
+        fetchAvailabilityMetrics();
     }, []);
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -79,12 +82,27 @@ export default function AdminCouriersPage() {
         }
     };
 
+    const fetchAvailabilityMetrics = async () => {
+        try {
+            const [availableRes, candidatesRes] = await Promise.all([
+                api.get('/admin/couriers/available-count'),
+                api.get('/admin/couriers/candidates').catch(() => ({ data: { candidates_count: 0 } }))
+            ]);
+
+            setAvailableCount(availableRes.data?.available_count ?? 0);
+            setCandidatesCount(candidatesRes.data?.candidates_count ?? 0);
+        } catch (error) {
+            console.error("Failed to fetch courier metrics", error);
+        }
+    };
+
     const handleAddCourier = async () => {
         try {
             await api.post('/couriers', newCourier);
             toast.success("שליח נוצר בהצלחה!");
             setIsAddOpen(false);
             fetchCouriers();
+            fetchAvailabilityMetrics();
             setNewCourier({
                 username: "",
                 email: "",
@@ -130,18 +148,30 @@ export default function AdminCouriersPage() {
     };
 
     const handleDeleteCourier = async (id: number, name: string) => {
-        if (!confirm(`האם אתה בטוח שברצונך למחוק לחלוטין את השליח "${name}"?
-פעולה זו תמחק גם את פרטי המשתמש שלו ולא ניתנת לביטול.`)) {
-            return;
-        }
-
         try {
-            await api.delete(`/admin/couriers/${id}`);
-            toast.success("השליח נמחק בהצלחה");
+            const countRes = await api.get(`/admin/couriers/${id}/delivery-count`);
+            const deliveryCount = countRes.data?.delivery_count ?? 0;
+
+            const confirmed = deliveryCount === 0
+                ? confirm(`האם אתה בטוח שברצונך למחוק לצמיתות את השליח "${name}"?\nפעולה זו אינה הפיכה.`)
+                : confirm(`האם אתה בטוח שברצונך להשבית את השליח "${name}"?\nהשליח לא יופיע יותר כזמין במערכת, אך הנתונים ההיסטוריים שלו יישמרו.`);
+
+            if (!confirmed) return;
+
+            const res = await api.delete(`/admin/couriers/${id}`);
+            const action = res.data?.action;
+
+            if (action === 'deleted') {
+                toast.success("השליח נמחק לצמיתות מהמערכת");
+            } else {
+                toast.success("השליח הושבת בהצלחה");
+            }
+
             fetchCouriers();
+            fetchAvailabilityMetrics();
         } catch (error: any) {
-            console.error("Failed to delete courier", error);
-            toast.error(error.response?.data?.error || "שגיאה במחיקת השליח");
+            console.error("Failed to delete/disable courier", error);
+            toast.error(error.response?.data?.error || "שגיאה במחיקה/השבתה של השליח");
         }
     };
 
@@ -158,10 +188,16 @@ export default function AdminCouriersPage() {
         c.phone?.includes(searchTerm)
     );
 
+    const sortedCouriers = [...filteredCouriers].sort((a, b) => {
+        const aDisabled = a?.is_active === false;
+        const bDisabled = b?.is_active === false;
+        return Number(aDisabled) - Number(bDisabled);
+    });
+
     const totalCouriers = couriers.length;
-    const activeCouriers = couriers.filter(c => c.is_available).length;
-    const newCandidates = couriers.filter(c => c.onboarding_status === 'new').length;
-    const totalDeliveries = couriers.reduce((sum, c) => sum + (c.total_deliveries || 0), 0);
+    const activeCouriers = availableCount;
+    const newCandidates = candidatesCount;
+    const disabledCouriers = couriers.filter(c => c?.is_active === false);
 
     return (
         <div className={styles.listContainer}>
@@ -285,14 +321,26 @@ export default function AdminCouriersPage() {
                         <UserPlus size={24} />
                     </div>
                 </div>
-                <div className={styles.metricCard}>
-                    <div>
-                        <div className={styles.metricLabel}>סה״כ מסירות</div>
-                        <div className={styles.metricValue}>
-                            {totalDeliveries}
-                        </div>
+                <div className={styles.metricCard} style={{ alignItems: 'flex-start' }}>
+                    <div className={styles.disabledCardContent}>
+                        <div className={styles.metricLabel}>שליחים מושבתים</div>
+                        {disabledCouriers.length === 0 ? (
+                            <div className={styles.subText}>אין שליחים מושבתים</div>
+                        ) : (
+                            <ul className={styles.disabledList}>
+                                {disabledCouriers.slice(0, 4).map((c: any) => (
+                                    <li key={c.id} className={styles.disabledItem}>
+                                        <span className={styles.disabledName}>{c.full_name}</span>
+                                        <span className={`${styles.badge} ${styles.badgeDestructive}`}>מושבת</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        <div className={styles.subText}>סה״כ: {disabledCouriers.length}</div>
                     </div>
-                    <div className={`${styles.badge} ${styles.badgeOutline}`}><Package size={14} className="mr-1" /> All Time</div>
+                    <div className={`${styles.metricIcon} ${styles.iconWarning}`}>
+                        <Package size={24} />
+                    </div>
                 </div>
             </div>
 
@@ -332,7 +380,7 @@ export default function AdminCouriersPage() {
                                 <td colSpan={6} className="text-center py-10 text-slate-500">לא נמצאו שליחים</td>
                             </tr>
                         ) : (
-                            filteredCouriers.map((courier: any) => (
+                            sortedCouriers.map((courier: any) => (
                                 <tr key={courier.id}>
                                     <td>
                                         <div className={styles.courierName}>
@@ -368,8 +416,8 @@ export default function AdminCouriersPage() {
                                         <div className="flex gap-2 justify-end">
                                             {(user?.role === 'admin' || user?.user_type === 'admin') && (
                                                 <button
-                                                    className={`${styles.btnAction} text-red-500 hover:text-red-700 hover:bg-red-500/10`}
-                                                    title="מחק שליח"
+                                                    className={`${styles.btnAction} text-red-400 hover:text-red-500 hover:bg-red-500/10`}
+                                                    title="השבת שליח"
                                                     onClick={() => handleDeleteCourier(courier.id, courier.full_name)}
                                                 >
                                                     <Trash size={16} />

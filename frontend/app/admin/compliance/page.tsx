@@ -12,6 +12,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -34,6 +37,15 @@ export default function CompliancePage() {
 
     const [trafficRecords, setTrafficRecords] = useState<any[]>([]);
     const [legalCases, setLegalCases] = useState<any[]>([]);
+
+    const [addTrafficOpen, setAddTrafficOpen] = useState(false);
+    const [newTraffic, setNewTraffic] = useState({
+        courier_id: '',
+        violation_type: '',
+        points: 0,
+        violation_date: new Date().toISOString().split('T')[0],
+        notes: ''
+    });
 
     const fetchDocuments = async () => {
         setLoading(true);
@@ -74,6 +86,20 @@ export default function CompliancePage() {
             fetchDocuments();
         } catch (error) {
             toast.error("שגיאה בעדכון המסמך");
+        }
+    };
+
+    const handleAddTraffic = async () => {
+        try {
+            await api.post('/legal/traffic', {
+                ...newTraffic,
+                points: Number(newTraffic.points)
+            });
+            toast.success("רשומת תעבורה נוספה בהצלחה!");
+            setAddTrafficOpen(false);
+            fetchTrafficAndLegal();
+        } catch (error) {
+            toast.error("שגיאה בהוספת רשומה");
         }
     };
 
@@ -228,9 +254,14 @@ export default function CompliancePage() {
                         {/* Traffic Scores */}
                         <Card>
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <AlertTriangle className="w-5 h-5 text-brand" />
-                                    ניקוד תעבורתי לשליחים
+                                <CardTitle className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2">
+                                        <AlertTriangle className="w-5 h-5 text-brand" />
+                                        ניקוד תעבורתי לשליחים
+                                    </div>
+                                    <Button variant="outline" size="sm" onClick={() => setAddTrafficOpen(true)}>
+                                        הוסף דיווח
+                                    </Button>
                                 </CardTitle>
                                 <CardDescription>תיעוד עבירות משמעת, חריגות מהירות ונקודות חובה</CardDescription>
                             </CardHeader>
@@ -315,6 +346,72 @@ export default function CompliancePage() {
                     </div>
                 </TabsContent>
             </Tabs>
+
+            <Dialog open={addTrafficOpen} onOpenChange={setAddTrafficOpen}>
+                <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-xl rounded-xl" dir="rtl">
+                    <DialogHeader className="border-b pb-4 mb-4">
+                        <DialogTitle className="text-xl font-bold text-slate-800">הוספת דיווח תעבורתי</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-2">
+                        <div className="space-y-2">
+                            <Label htmlFor="courier_id">מזהה שליח</Label>
+                            <Input
+                                id="courier_id"
+                                value={newTraffic.courier_id}
+                                onChange={(e) => setNewTraffic({...newTraffic, courier_id: e.target.value})}
+                                placeholder="לדוגמה: 12"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="violation_type">סוג עבירה</Label>
+                            <Input
+                                id="violation_type"
+                                value={newTraffic.violation_type}
+                                onChange={(e) => setNewTraffic({...newTraffic, violation_type: e.target.value})}
+                                placeholder="לדוגמה: מהירות, רמזור אדום"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="points">נקודות</Label>
+                                <Input
+                                    id="points"
+                                    type="number"
+                                    min="0"
+                                    value={newTraffic.points}
+                                    onChange={(e) => setNewTraffic({...newTraffic, points: parseInt(e.target.value) || 0})}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="date">תאריך</Label>
+                                <Input
+                                    id="date"
+                                    type="date"
+                                    value={newTraffic.violation_date}
+                                    onChange={(e) => setNewTraffic({...newTraffic, violation_date: e.target.value})}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="notes">הערות</Label>
+                            <Input
+                                id="notes"
+                                value={newTraffic.notes}
+                                onChange={(e) => setNewTraffic({...newTraffic, notes: e.target.value})}
+                                placeholder="פרטים נוספים..."
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="mt-6 gap-2 sm:gap-0">
+                        <Button variant="outline" onClick={() => setAddTrafficOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-50">
+                            ביטול
+                        </Button>
+                        <Button onClick={handleAddTraffic} className="bg-brand hover:bg-brand-dark text-black font-medium">
+                            שמור דיווח
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

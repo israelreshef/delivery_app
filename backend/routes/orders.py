@@ -9,34 +9,111 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import db, Delivery, Address, PickupPoint, DeliveryPoint, Customer, User, Pricing, Invoice, Courier
+from models import db, Delivery, Address, PickupPoint, DeliveryPoint, Customer, User, Pricing, Invoice, Courier, DeliveryStatus
 from utils.decorators import token_required, role_required
+from utils.validation_helpers import is_valid_amount, is_valid_gps
 import logging
 from extensions import limiter
 from sqlalchemy.orm import joinedload
 from services.notifications import notify_new_mission
+import re
 
 orders_bp = Blueprint('orders', __name__)
 
-from utils.pricing import PricingEngine
+from utils.pricing import PricingEngine, calculate_delivery_price
+
+PROTOCOL_PROGRESS_PREFIX = "[[TZIR_PROTOCOL_STEP:"
+
+
+def _read_protocol_progress(notes: str | None) -> int:
+    if not notes:
+        return 1
+    match = re.search(r"\[\[TZIR_PROTOCOL_STEP:(\d+)\]\]", notes)
+    if not match:
+        return 1
+    return max(1, int(match.group(1)))
+
+
+def _write_protocol_progress(notes: str | None, next_step: int) -> str:
+    marker = f"{PROTOCOL_PROGRESS_PREFIX}{next_step}]]"
+    if not notes:
+        return marker
+    if re.search(r"\[\[TZIR_PROTOCOL_STEP:\d+\]\]", notes):
+        return re.sub(r"\[\[TZIR_PROTOCOL_STEP:\d+\]\]", marker, notes)
+    return f"{notes}\n{marker}"
+
+
+def _protocol_step_enabled(step: dict, config) -> bool:
+    conditional = step.get('conditional')
+    if not conditional:
+        return True
+    if conditional == 'requires_id_verification':
+        return bool(getattr(config, 'requires_id_verification', False))
+    if conditional == 'multi_stop_allowed':
+        return bool(getattr(config, 'multi_stop_allowed', False))
+    if conditional == 'return_document_required':
+        return bool(getattr(config, 'return_document_required', False))
+    if conditional == 'max_attempts_exhausted':
+        return int(getattr(config, 'max_attempts', 1) or 1) >= 3
+    match = re.match(r"max_attempts\s*>=\s*(\d+)", conditional)
+    if match:
+        return int(getattr(config, 'max_attempts', 1) or 1) >= int(match.group(1))
+    return True
+
+
+def _get_order_protocol_steps(delivery):
+    if not delivery.protocol_slug:
+        return []
+    from models import DeliveryProtocolConfig, DeliveryProtocolTemplate
+    config = DeliveryProtocolConfig.query.filter_by(slug=delivery.protocol_slug).first()
+    if not config:
+        return []
+    template = DeliveryProtocolTemplate.query.filter_by(code=config.base_protocol).first()
+    if not template or not template.steps:
+        return []
+    raw_steps = template.steps if isinstance(template.steps, list) else []
+    return [step for step in raw_steps if _protocol_step_enabled(step, config)]
 
 # Old calculate_price removed - using PricingEngine.calculate_price directly
 
+
+@orders_bp.route('/price-estimate', methods=['GET'])
+@limiter.limit("60 per minute")
+@token_required
+def get_price_estimate(current_user):
+    """
+    Returns price estimate for a given distance (Israeli tiered pricing).
+    Query params: distance=<km>
+    """
+    try:
+        distance = request.args.get('distance', type=float)
+        if distance is None or distance <= 0:
+            return jsonify({'error': 'distance parameter is required and must be positive'}), 400
+
+        result = calculate_delivery_price(distance)
+        return jsonify({
+            'success': True,
+            'total_price': result['total_price'],
+            'courier_payment': result['courier_payment'],
+            'platform_margin': result['platform_margin'],
+            'distance_km': result['distance_km'],
+            'currency': 'ILS'
+        }), 200
+    except Exception as e:
+        logging.error(f"price-estimate error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 
 @orders_bp.route('/create', methods=['POST'])
 @orders_bp.route('', methods=['POST'])
 @limiter.limit("30 per minute")  # DDoS Protection
 @token_required
-# @role_required(['admin', 'customer']) # Temporarily disabled for dev flow if needed, but best to keep
-def create_order(current_user=None):
+@role_required(['admin', 'customer'])
+def create_order(current_user):
     """יצירת הזמנה חדשה - תומך במבנה Wizard המורכב"""
-    
-    # [DEV MODE] Fallback user
-    if not current_user:
-        current_user = User.query.filter_by(user_type='admin').first() or User.query.first()
 
-    logging.info("Received create_order request (Wizard Flow)") 
+    logging.info("Received create_order request (Wizard Flow)")
+
     try:
         from utils.sanitization import sanitize_input
         # Sanitize incoming payload
@@ -210,9 +287,23 @@ def create_order(current_user=None):
         db.session.flush()
         
         # 4. נתוני חבילה ושירות
-        package_size = package_data.get('packageSize', 'small')
-        package_content = package_data.get('packageContent', '')
-        package_weight = float(package_data.get('packageWeight', 0))
+        package_size = package_data.get('packageSize') or 'small'
+        package_content = package_data.get('packageContent') or ''
+        package_weight = float(package_data.get('packageWeight') or 0)
+        
+        if not is_valid_amount(package_weight):
+            return jsonify({'error': 'Invalid package weight'}), 400
+            
+        # Validate coordinates (if provided)
+        s_lat = s_addr.get('lat')
+        s_lon = s_addr.get('lon')
+        if s_lat and s_lon and not is_valid_gps(s_lat, s_lon):
+            return jsonify({'error': 'Invalid pickup coordinates'}), 400
+            
+        r_lat = r_addr.get('lat')
+        r_lon = r_addr.get('lon')
+        if r_lat and r_lon and not is_valid_gps(r_lat, r_lon):
+            return jsonify({'error': 'Invalid delivery coordinates'}), 400
         
         service_type = service_data.get('serviceType', 'regular')
         
@@ -246,7 +337,7 @@ def create_order(current_user=None):
             insurance_value=insurance_value,
             weight_kg=package_weight,
             customer_id=customer.id,
-            pickup_coords=(pickup_lat, pickup_lng),
+            pickup_coords=(pickup_address_obj.latitude, pickup_address_obj.longitude),
             delivery_coords=(delivery_address_obj.latitude, delivery_address_obj.longitude)
         )
         
@@ -257,6 +348,11 @@ def create_order(current_user=None):
         
         # Handle 'envelope' mapping for DB enum
         db_package_size = 'small' if package_size == 'envelope' else package_size
+
+        # Prepare Waypoints JSON
+        import json
+        waypoints_data = data.get('waypoints', [])
+        waypoints_json = json.dumps(waypoints_data) if waypoints_data else None
 
         delivery = Delivery(
             order_number=order_number,
@@ -270,6 +366,7 @@ def create_order(current_user=None):
             package_size=db_package_size,
             distance_km=distance_km,
             notes=f"Service: {service_type}. Content: {package_content}",
+            waypoints=waypoints_json,
             # Logistics Fields
             delivery_type=service_data.get('deliveryType', 'standard'),
             urgency=service_data.get('urgency', 'standard'),
@@ -293,9 +390,21 @@ def create_order(current_user=None):
         vat_amount = price * 0.17
         total_amount = price + vat_amount
         
-        invoice_number = f"INV-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
-        
         payment_method_data = data.get('payment', {}).get('paymentMethod', 'credit_card')
+        
+        # Wallet / Balance Check
+        available_funds = float(customer.balance or 0) + float(customer.credit_limit or 0)
+        # We enforce balance check if payment is from balance/wallet or if we strictly require prepayment
+        if payment_method_data in ['wallet', 'balance', 'account'] or (payment_method_data == 'invoice' and available_funds < float(total_amount)):
+             if available_funds < float(total_amount):
+                 db.session.rollback()
+                 return jsonify({
+                     'error': 'Insufficient funds. Please top up your wallet or use a credit card.', 
+                     'required': total_amount, 
+                     'balance': available_funds
+                 }), 402
+                 
+        invoice_number = f"INV-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
         
         invoice = Invoice(
             invoice_number=invoice_number,
@@ -377,6 +486,7 @@ def create_order(current_user=None):
             'success': True,
             'id': delivery.id,
             'order_number': order_number,
+            'tracking_token': order_number,
             'price': total_amount,
             'invoice_number': invoice_number,
             'assigned_courier': best_courier.full_name if best_courier else None
@@ -388,20 +498,30 @@ def create_order(current_user=None):
         db.session.rollback()
         logging.error(f"Error creating order: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+@orders_bp.route('/price-estimate', methods=['GET'])
 @orders_bp.route('/calculate', methods=['POST'])
 @limiter.limit("60 per minute")  # DDoS Protection for pricing engine
 @token_required
 def calculate_quote(current_user):
     """Endpoint to get price quote before creating order"""
     try:
-        data = request.json
+        # Support both GET query params and POST json body
+        data = request.json if request.is_json else request.args.to_dict()
         
-        distance_km = data.get('distance_km', 10.0) # In future, calculate from addresses here
+        distance_km = float(data.get('distance_km', 10.0)) # In future, calculate from addresses here
         
         # Try to get coordinates if not provided but address is
-        pickup_coords = data.get('pickup_coords')
-        delivery_coords = data.get('delivery_coords')
+        pickup_coords = data.get('pickup_coords') or (float(data.get('pickup_lat', 0)), float(data.get('pickup_lng', 0))) if data.get('pickup_lat') else None
+        delivery_coords = data.get('delivery_coords') or (float(data.get('delivery_lat', 0)), float(data.get('delivery_lng', 0))) if data.get('delivery_lat') else None
         
+        if not is_valid_amount(distance_km) or not is_valid_amount(data.get('weight', 0)):
+             return jsonify({'error': 'Invalid numeric values for distance or weight'}), 400
+             
+        if pickup_coords and not is_valid_gps(pickup_coords[0], pickup_coords[1]):
+             return jsonify({'error': 'Invalid pickup coordinates'}), 400
+        if delivery_coords and not is_valid_gps(delivery_coords[0], delivery_coords[1]):
+             return jsonify({'error': 'Invalid delivery coordinates'}), 400
+
         quote = PricingEngine.calculate_price(
             distance_km=distance_km,
             package_size=data.get('package_size', 'small'),
@@ -422,6 +542,58 @@ def calculate_quote(current_user):
         
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
+
+@orders_bp.route('/track/<string:tracking_token>', methods=['GET'])
+@limiter.limit("100 per minute")
+def public_track_order(tracking_token):
+    """Public tracking endpoint - no login required"""
+    try:
+        delivery = Delivery.query.filter(
+            db.or_(
+                Delivery.order_number == tracking_token,
+                Delivery.tracking_number == tracking_token
+            )
+        ).first()
+        
+        if not delivery:
+            return jsonify({'error': 'Order not found'}), 404
+            
+        # Data for public view (limited for privacy)
+        courier_location = None
+        if delivery.status in ['assigned', 'picked_up', 'in_transit'] and delivery.courier:
+            courier_location = {
+                'lat': delivery.courier.current_location_lat,
+                'lng': delivery.courier.current_location_lng
+            }
+            
+        return jsonify({
+            'success': True,
+            'order_number': delivery.order_number,
+            'status': delivery.status,
+            'status_history': [{
+                'status': h.status,
+                'timestamp': h.timestamp.isoformat(),
+                'notes': h.notes
+            } for h in delivery.status_history.order_by(DeliveryStatus.timestamp.asc())],
+            'estimated_delivery': (delivery.estimated_delivery_time or delivery.estimated_pickup_time).isoformat() if (delivery.estimated_delivery_time or delivery.estimated_pickup_time) else None,
+            'courier_location': courier_location,
+            'pickup_city': delivery.pickup_point.address.city if delivery.pickup_point and delivery.pickup_point.address else None,
+            'delivery_city': delivery.delivery_point.address.city if delivery.delivery_point and delivery.delivery_point.address else None,
+            'created_at': delivery.created_at.isoformat()
+        }), 200
+    except Exception as e:
+        logging.error(f"Error in public tracking: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@orders_bp.route('/customer', methods=['GET'])
+@token_required
+@role_required('customer')
+def get_customer_orders_alias(current_user):
+    """Explicit endpoint for current customer's orders"""
+    return get_orders(current_user)
+
 
 
 
@@ -460,11 +632,31 @@ def get_orders(current_user):
                  return jsonify([]), 200
              query = query.filter_by(courier_id=courier.id)
         
-        # Admin sees all (no filter added)
-        
+        # Status filter
+        status_filter = request.args.get('status')
+        if status_filter and status_filter != 'all':
+            query = query.filter(Delivery.status == status_filter)
+
+        # Date range filter
+        date_from = request.args.get('date_from')
+        date_to = request.args.get('date_to')
+        if date_from:
+            try:
+                query = query.filter(Delivery.created_at >= datetime.strptime(date_from, '%Y-%m-%d'))
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                from datetime import timedelta
+                dt_end = datetime.strptime(date_to, '%Y-%m-%d') + timedelta(days=1)
+                query = query.filter(Delivery.created_at < dt_end)
+            except ValueError:
+                pass
+
         # Pagination
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 50, type=int)
+
         
         # Eager Loading to avoid N+1
         query = query.options(
@@ -531,6 +723,16 @@ def get_order(current_user, order_id):
     """קבלת הזמנה ספציפית"""
     try:
         delivery = Delivery.query.get_or_404(order_id)
+        
+        # IDOR Check: Ensure user has permission to view this order
+        if current_user.user_type == 'customer':
+            customer = Customer.query.filter_by(user_id=current_user.id).first()
+            if not customer or delivery.customer_id != customer.id:
+                return jsonify({'error': 'Unauthorized to view this order'}), 403
+        elif current_user.user_type == 'courier':
+             courier = Courier.query.filter_by(user_id=current_user.id).first()
+             if not courier or delivery.courier_id != courier.id:
+                 return jsonify({'error': 'Unauthorized to view this order'}), 403
         
         # AUDIT LOG - Access to sensitive data
         from utils.audit import log_audit
@@ -639,6 +841,78 @@ def assign_order(current_user, order_id):
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error assigning courier: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@orders_bp.route('/<int:order_id>/protocol-steps', methods=['GET'])
+@token_required
+@role_required(['courier', 'admin'])
+def get_order_protocol_steps(current_user, order_id):
+    """Return the configured protocol steps for a delivery with lightweight persisted progress."""
+    try:
+        delivery = Delivery.query.get_or_404(order_id)
+
+        if current_user.user_type == 'courier':
+            courier = Courier.query.filter_by(user_id=current_user.id).first()
+            if not courier or delivery.courier_id != courier.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+
+        steps = _get_order_protocol_steps(delivery)
+        if not steps:
+            return jsonify([]), 200
+
+        current_step = _read_protocol_progress(delivery.notes)
+        result = []
+        for index, step in enumerate(steps, start=1):
+            result.append({
+                **step,
+                'step': int(step.get('step', index)),
+                'completed': current_step > index,
+                'current': current_step == index
+            })
+
+        return jsonify(result), 200
+    except Exception as e:
+        logging.error(f"Error fetching protocol steps: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@orders_bp.route('/<int:order_id>/protocol-steps/<int:step>/complete', methods=['POST'])
+@token_required
+@role_required(['courier', 'admin'])
+def complete_order_protocol_step(current_user, order_id, step):
+    """Persist minimal protocol progress without blocking future dedicated workflow storage."""
+    try:
+        delivery = Delivery.query.get_or_404(order_id)
+
+        if current_user.user_type == 'courier':
+            courier = Courier.query.filter_by(user_id=current_user.id).first()
+            if not courier or delivery.courier_id != courier.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+
+        steps = _get_order_protocol_steps(delivery)
+        if not steps:
+            return jsonify({'error': 'No protocol configured for this order'}), 404
+
+        current_step = _read_protocol_progress(delivery.notes)
+        if step > current_step:
+            return jsonify({'error': 'Cannot skip protocol steps'}), 400
+
+        max_step = max(int(item.get('step', idx + 1)) for idx, item in enumerate(steps))
+        next_step = min(max_step + 1, max(current_step, step + 1))
+        delivery.notes = _write_protocol_progress(delivery.notes, next_step)
+        delivery.updated_at = datetime.utcnow()
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'completed_step': step,
+            'next_step': None if next_step > max_step else next_step,
+            'all_completed': next_step > max_step
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error completing protocol step: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 

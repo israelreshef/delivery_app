@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import db, Warehouse, StorageZone, StorageBin, InventoryItem, ItemLocation, StockMovement, User
 from utils.decorators import token_required, role_required
+from utils.sanitization import sanitize_input
 from datetime import datetime
 
 wms_bp = Blueprint('wms', __name__)
@@ -104,7 +105,7 @@ def get_inventory(current_user):
 def check_in(current_user):
     """Receive goods precisely into a designated Storage Bin"""
     try:
-        data = request.json
+        data = sanitize_input(request.json)
         sku = data.get('sku')
         quantity = int(data.get('quantity', 0))
         bin_id = data.get('bin_id')
@@ -196,7 +197,7 @@ def check_in(current_user):
 def check_out(current_user):
     """Release specific goods from an exact Bin"""
     try:
-        data = request.json
+        data = sanitize_input(request.json)
         sku = data.get('sku')
         quantity = int(data.get('quantity', 0))
         bin_id = data.get('bin_id')
@@ -258,7 +259,7 @@ def check_out(current_user):
 @role_required('admin')
 def create_warehouse(current_user):
     try:
-        data = request.json
+        data = sanitize_input(request.json)
         name = data.get('name')
         address = data.get('address', '')
         
@@ -303,7 +304,7 @@ def order_check_in(current_user):
     # Import Delivery locally to avoid circular import if needed (but models is safe here)
     from models import Delivery
     try:
-        data = request.json
+        data = sanitize_input(request.json)
         order_number = data.get('order_number')
         bin_id = data.get('bin_id')
         
@@ -346,7 +347,7 @@ def order_check_in(current_user):
 def order_check_out(current_user):
     from models import Delivery
     try:
-        data = request.json
+        data = sanitize_input(request.json)
         order_number = data.get('order_number')
         
         delivery = Delivery.query.filter_by(order_number=order_number).first()

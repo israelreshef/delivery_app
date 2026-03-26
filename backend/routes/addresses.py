@@ -49,7 +49,7 @@ def _google_places_autocomplete(query):
             'key': GOOGLE_PLACES_API_KEY,
             'components': 'country:il',
             'language': lang,
-            'types': 'address',
+            # Removed 'types': 'address' to allow more flexible results (cities, POIs)
         }
         resp = http_requests.get(url, params=params, timeout=5)
         data = resp.json()
@@ -62,15 +62,24 @@ def _google_places_autocomplete(query):
         suggestions = []
         for i, prediction in enumerate(data.get('predictions', [])[:8]):
             desc = prediction.get('description', '')
-            terms = prediction.get('terms', [])
             
-            # Parse structured address from terms
-            street = terms[0]['value'] if len(terms) > 0 else ''
-            city = terms[1]['value'] if len(terms) > 1 else ''
+            # Use structured formatting for more reliable parsing
+            structured = prediction.get('structured_formatting', {})
+            main_text = structured.get('main_text', '')
+            secondary_text = structured.get('secondary_text', '')
             
+            # Try to extract city from secondary text (usually "City, Country" or "Neighborhood, City, Country")
+            city = ''
+            if secondary_text:
+                parts = [p.strip() for p in secondary_text.split(',')]
+                if len(parts) >= 2:
+                    city = parts[-2] # Second to last is usually city in Israel (e.g., "Tel Aviv-Yafo, Israel")
+                elif len(parts) == 1:
+                    city = parts[0]
+
             suggestions.append({
                 'id': f'gp_{i}',
-                'street': street,
+                'street': main_text,
                 'city': city,
                 'number': '',
                 'full_address': desc,
@@ -185,7 +194,8 @@ def geocode_address():
                     'lat': loc['lat'],
                     'lng': loc['lng'],
                     'formatted_address': data['results'][0].get('formatted_address', ''),
-                    'source': 'google'
+                    'source': 'google',
+                    'is_verified': True
                 }), 200
         except Exception as e:
             print(f"Google Geocode error: {e}")
@@ -208,7 +218,8 @@ def geocode_address():
                 'lat': float(data[0]['lat']),
                 'lng': float(data[0]['lon']),
                 'formatted_address': data[0].get('display_name', ''),
-                'source': 'nominatim'
+                'source': 'nominatim',
+                'is_verified': False
             }), 200
     except Exception as e:
         print(f"Nominatim Geocode error: {e}")

@@ -22,8 +22,25 @@ build/
 mobile-native/androidApp/build/
 mobile-native/shared/build/
 mobile-native/.idea/
+mobile-native/.gradle-user-home/
+mobile-native/courierApp/build/
+mobile-native/customerApp/build/
+**/.gradle/
 
 *.apk
 *.aab
 
 *.hprof
+
+# Backup Security — database backups contain real customer PII
+backend/backups/
+backend/*.db
+backend/*.sql
+backend/delivery.db
+
+# Uploaded files — may contain PII/signatures
+backend/uploads/
+
+# Logs — may contain sensitive data
+*.log
+backend/courier_debug.log

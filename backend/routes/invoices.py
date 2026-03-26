@@ -42,8 +42,8 @@ def create_invoice(current_user):
             
         from decimal import Decimal, ROUND_HALF_UP
         
-        # 1. Determine VAT Rate (0% for Eilat/Exempt, 17% otherwise)
-        vat_rate_applicable = Decimal('0.0') if customer.vat_status == 'exempt' else Decimal('0.17')
+        # 1. Determine VAT Rate (0% for Eilat/Exempt, 18% otherwise via user requirements for 2026)
+        vat_rate_applicable = Decimal('0.0') if customer.vat_status == 'exempt' else Decimal('0.18')
         
         subtotal = Decimal(str(data.get('subtotal', delivery.delivery_fee)))
         vat_amount = (subtotal * vat_rate_applicable).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
@@ -55,7 +55,7 @@ def create_invoice(current_user):
         
         # We need a safe transaction to get max ID
         # In SQLite this is a normal query, in Postgres we would ideally use FOR UPDATE or a Sequence
-        last_invoice = Invoice.query.filter(Invoice.invoice_number.like(f"{prefix}-%")).order_by(Invoice.id.desc()).first()
+        last_invoice = Invoice.query.with_for_update().filter(Invoice.invoice_number.like(f"{prefix}-%")).order_by(Invoice.id.desc()).first()
         
         if last_invoice:
             last_num = int(last_invoice.invoice_number.split('-')[1])
@@ -156,3 +156,70 @@ def list_invoices(current_user):
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@invoices_bp.route('/by-order/<int:order_id>', methods=['GET'])
+@token_required
+def get_invoice_by_order(current_user, order_id):
+    """Get invoice metadata for a specific order. Used by the mobile customer app."""
+    try:
+        delivery = Delivery.query.get(order_id)
+        if not delivery:
+            return jsonify({'error': 'Order not found'}), 404
+
+        # Customers can only see their own invoices
+        if current_user.user_type == 'customer':
+            customer = Customer.query.filter_by(user_id=current_user.id).first()
+            if not customer or delivery.customer_id != customer.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+
+        invoice = delivery.invoice
+        if not invoice:
+            return jsonify({'error': 'No invoice found for this order'}), 404
+
+        return jsonify({
+            'id': invoice.id,
+            'invoice_number': invoice.invoice_number,
+            'total_amount': float(invoice.total_amount),
+            'vat_amount': float(invoice.vat_amount),
+            'status': invoice.status,
+            'issue_date': invoice.issue_date.isoformat() if invoice.issue_date else None,
+            'download_url': f"/api/invoices/by-order/{order_id}/download"
+        }), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching invoice by order: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@invoices_bp.route('/by-order/<int:order_id>/download', methods=['GET'])
+@token_required
+def download_invoice_by_order(current_user, order_id):
+    """Download the PDF invoice for a specific order. Used by the mobile customer app."""
+    try:
+        delivery = Delivery.query.get(order_id)
+        if not delivery:
+            return jsonify({'error': 'Order not found'}), 404
+
+        # Customers can only download their own invoices
+        if current_user.user_type == 'customer':
+            customer = Customer.query.filter_by(user_id=current_user.id).first()
+            if not customer or delivery.customer_id != customer.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+
+        invoice = delivery.invoice
+        if not invoice:
+            return jsonify({'error': 'No invoice found for this order'}), 404
+
+        pdf_filename = f"{invoice.invoice_number}.pdf"
+        pdf_path = os.path.join(PDF_STORAGE_DIR, pdf_filename)
+
+        if not os.path.exists(pdf_path):
+            generate_israeli_invoice(invoice, pdf_path)
+
+        return send_file(pdf_path, as_attachment=False, download_name=pdf_filename, mimetype='application/pdf')
+
+    except Exception as e:
+        logging.error(f"Error downloading invoice by order: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+

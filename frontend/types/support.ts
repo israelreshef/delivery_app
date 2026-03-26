@@ -20,6 +20,7 @@ export interface SupportTicket {
     user_id: number;
     user_name: string;
     assigned_to?: number;
+    assigned_to_name?: string;
     order_id?: number;
 }
 
@@ -33,6 +34,7 @@ export interface CreateTicketDTO {
     message?: string;
     priority?: TicketPriority;
     order_id?: number;
+    assigned_to?: number;
 }
 
 export interface AddMessageDTO {

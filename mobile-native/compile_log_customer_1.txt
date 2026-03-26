@@ -1,0 +1,229 @@
+﻿> Task :customerApp:checkKotlinGradlePluginConfigurationErrors
+> Task :customerApp:preBuild UP-TO-DATE
+> Task :customerApp:preDebugBuild UP-TO-DATE
+> Task :customerApp:generateDebugResValues
+> Task :customerApp:checkDebugAarMetadata
+> Task :customerApp:mapDebugSourceSetPaths
+> Task :customerApp:generateDebugResources
+> Task :customerApp:packageDebugResources
+> Task :customerApp:createDebugCompatibleScreenManifests
+> Task :customerApp:mergeDebugResources
+> Task :customerApp:extractDeepLinksDebug
+> Task :customerApp:parseDebugLocalResources
+> Task :customerApp:processDebugMainManifest
+> Task :customerApp:processDebugManifest
+> Task :customerApp:processDebugManifestForPackage
+> Task :customerApp:processDebugResources
+
+> Task :customerApp:compileDebugKotlin FAILED
+./gradlew : e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/netw
+ork/DeliveryApi.kt:90:2 Missing '}
+At line:1 char:1
++ ./gradlew :customerApp:compileDebugKotlin 2>&1 | Out-File -Encoding U ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...90:2 Missing '}:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/Delivery
+Api.kt:79:5 Modifier 'override' is not applicable to 'local function'
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:5:31 Unresolved reference: logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:6:31 Unresolved reference: logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:7:31 Unresolved reference: logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:23:21 Unresolved reference: Logging
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:24:17 Unresolved reference: logger
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:24:35 Unresolved reference: Logger
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:25:21 'log' overrides nothing
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:29:17 Unresolved reference: level
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/KtorClie
+ntFactory.kt:29:25 Unresolved reference: LogLevel
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:4:11 Unresolved reference: socket
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:5:11 Unresolved reference: socket
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:15:26 Unresolved reference: Socket
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:26:27 Unresolved reference: IO
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:27:21 Variable expected
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:28:21 Variable expected
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:32:25 Variable expected
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:33:25 Variable expected
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:36:23 Unresolved reference: IO
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:38:25 Unresolved reference: Socket
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:48:47 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/network/SocketMa
+nager.kt:59:55 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/LoginScr
+een.kt:28:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/LoginScr
+een.kt:34:17 Unresolved reference: AuthRepository
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:21:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:22:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:23:26 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:35:17 Unresolved reference: AuthRepository
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:47:25 Not enough information to infer type variable T
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:47:25 Property delegate must have a 'getValue(Nothing?, KProperty<*>)' method. None of the following functions is suitable: 
+public inline operator fun <T> State<???>.getValue(thisObj: Any?, property: KProperty<*>): ??? defined in androidx.compose.runtime
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:47:51 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:140:57 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:146:51 Unresolved reference: RegisterRequest
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:153:75 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:154:76 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:155:75 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:182:19 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:183:22 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:192:38 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:193:36 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:201:38 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:202:36 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:243:11 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:252:22 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/auth/Register
+Screen.kt:255:17 Unresolved reference: UserRole
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/components/Pr
+emiumComponents.kt:154:50 Unresolved reference: shared
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:46:25 Cannot find a parameter with this name: placeholder
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:47:25 Cannot find a parameter with this name: leadingIcon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:47:41 @Composable invocations can only happen from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:54:25 Cannot find a parameter with this name: placeholder
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:55:25 Cannot find a parameter with this name: leadingIcon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:55:41 @Composable invocations can only happen from the context of a @Composable function
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Addr
+essSelectionScreen.kt:68:60 Unresolved reference: clickable
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerHomeScreen.kt:67:21 Cannot find a parameter with this name: icon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerNavGraph.kt:28:89 Unresolved reference: Wallet
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerNavGraph.kt:29:92 Unresolved reference: Place
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Cust
+omerNavGraph.kt:30:104 Unresolved reference: Assignment
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Orde
+rSummaryScreen.kt:71:58 Unresolved reference: clickable
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Paym
+entMethodsScreen.kt:62:25 Cannot find a parameter with this name: icon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:21:19 Unresolved reference: android
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:22:19 Unresolved reference: android
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:23:19 Unresolved reference: android
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:24:19 Unresolved reference: maps
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:44:28 Not enough information to infer type variable T
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:44:28 Property delegate must have a 'getValue(Nothing?, KProperty<*>)' method. None of the following functions is 
+suitable: 
+public inline operator fun <T> State<???>.getValue(thisObj: Any?, property: KProperty<*>): ??? defined in androidx.compose.runtime
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:44:54 Unresolved reference: LatLng
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:46:31 Unresolved reference: rememberCameraPositionState
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:47:9 Unresolved reference: position
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:47:20 Unresolved reference: CameraPosition
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:73:35 Unresolved reference: LatLng
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:75:45 Unresolved reference: CameraUpdateFactory
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:84:36 Unresolved reference: LatLng
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:85:38 Variable expected
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:85:49 Unresolved reference: CameraPosition
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:91:9 Unresolved reference: GoogleMap
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:94:26 Unresolved reference: MapProperties
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:95:26 Unresolved reference: MapUiSettings
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:98:13 Unresolved reference: Marker
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:99:25 Unresolved reference: MarkerState
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/Trac
+kingMapScreen.kt:136:25 Cannot find a parameter with this name: icon
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:6:19 Unresolved reference: android
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:11:39 Unresolved reference: LocationServices
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:18:31 Unresolved reference: LocationRequest
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:18:55 Unresolved reference: Priority
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:22:41 Unresolved reference: LocationCallback
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:23:13 'onLocationResult' overrides nothing
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:23:59 Unresolved reference: LocationResult
+e: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/util/LocationPro
+vider.kt:25:46 Unresolved reference: it
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':customerApp:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 8s
+14 actionable tasks: 14 executed

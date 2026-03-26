@@ -6,6 +6,21 @@ import logging
 
 optimization_bp = Blueprint('optimization', __name__)
 
+
+def _run_manual_optimization(data):
+    lat = data.get('lat')
+    lng = data.get('lng')
+    stops = data.get('stops', [])
+
+    if lat is None or lng is None:
+        return jsonify({'error': 'Starting GPS coordinates required.'}), 400
+
+    if not stops:
+        return jsonify({'message': 'No stops to optimize.', 'optimized_sequence': []}), 200
+
+    optimization_result = RouteOptimizer.optimize_route(lat, lng, stops)
+    return jsonify(optimization_result), 200
+
 @optimization_bp.route('/optimize-my-route', methods=['GET', 'POST'])
 @token_required
 @role_required('courier')
@@ -350,6 +365,7 @@ def get_my_assigned_route(current_user):
     }), 200
 
 @optimization_bp.route('/manual-run', methods=['POST'])
+@optimization_bp.route('/optimize-manual', methods=['POST'])
 @token_required
 @role_required('courier')
 def manual_run_optimization(current_user):
@@ -357,22 +373,8 @@ def manual_run_optimization(current_user):
     Takes a list of manual stops from the mobile app and returns the optimal sequence.
     """
     try:
-        data = request.json
-        lat = data.get('lat')
-        lng = data.get('lng')
-        stops = data.get('stops', [])
-        
-        if lat is None or lng is None:
-            return jsonify({'error': 'Starting GPS coordinates required.'}), 400
-            
-        if not stops:
-            return jsonify({'message': 'No stops to optimize.', 'optimized_sequence': []}), 200
-            
-        # Run Optimization Engine
-        optimization_result = RouteOptimizer.optimize_route(lat, lng, stops)
-        
-        return jsonify(optimization_result), 200
-        
+        data = request.json or {}
+        return _run_manual_optimization(data)
     except Exception as e:
         logging.error(f"Manual Route Optimization Error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500

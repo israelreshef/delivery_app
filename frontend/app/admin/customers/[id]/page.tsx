@@ -140,6 +140,17 @@ export default function CustomerCardPage({ params }: { params: { id: string } })
         } catch { toast.error('שגיאה ביצירת משימה'); }
     };
 
+    const handleToggleActive = async () => {
+        try {
+            const res = await api.post(`/customers/${params.id}/toggle-active`);
+            toast.success(res.data.message || 'סטטוס לקוח עודכן');
+            fetchCustomerData();
+        } catch (error: any) {
+            console.error("Failed to toggle customer active status", error);
+            toast.error(error.response?.data?.error || 'שגיאה בעדכון הסטטוס');
+        }
+    };
+
     const handleDeleteCustomer = async () => {
         if (!confirm(`האם אתה בטוח שברצונך למחוק לחלוטין את הלקוח "${customer.full_name}"?\nפעולה זו תמחק גם את פרטי המשתמש שלו ולא ניתנת לביטול.`)) {
             return;
@@ -208,6 +219,11 @@ export default function CustomerCardPage({ params }: { params: { id: string } })
                         {(user?.role === 'admin' || user?.user_type === 'admin') && (
                             <button onClick={handleDeleteCustomer} className="btn" style={{ background: '#ef4444', color: 'white', border: 'none' }}>
                                 🗑 מחק לקוח
+                            </button>
+                        )}
+                        {(user?.role === 'admin' || user?.user_type === 'admin') && (
+                            <button onClick={handleToggleActive} className="btn btn-ghost" style={{ color: customer.is_active ? '#ef4444' : '#10b981', border: '1px solid currentColor' }}>
+                                {customer.is_active ? '⏸ השבת לקוח' : '▶ הפעל הצגת לקוח'}
                             </button>
                         )}
                         <a href={customer.email ? `mailto:${customer.email}` : '#'} className="btn btn-ghost" style={{ textDecoration: 'none' }}>

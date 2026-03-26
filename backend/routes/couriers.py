@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from models import db, Courier, User, Delivery, ShiftSession, CourierGamification, DailyMission
 from werkzeug.security import generate_password_hash
 from utils.decorators import token_required, role_required
+from utils.validation_helpers import is_valid_gps
 from sqlalchemy.orm import joinedload
 import logging
 
@@ -102,8 +103,10 @@ def get_couriers(current_user):
 
             result.append({
                 'id': c.id,
+                'user_id': c.user.id if c.user else None,
                 'full_name': c.full_name,
                 'phone': c.user.phone if c.user else '',
+                'is_active': c.user.is_active if c.user else True,
                 'vehicle_type': vehicle_type_str,
                 'is_available': c.is_available,
                 'onboarding_status': str(c.onboarding_status.value) if hasattr(c.onboarding_status, 'value') else str(c.onboarding_status),
@@ -155,6 +158,11 @@ def handle_courier(current_user, courier_id):
     """Get Courier details (GET) or Update Courier details (PUT)"""
         
     if request.method == 'GET':
+        if current_user.user_type == 'courier':
+            my_courier = Courier.query.filter_by(user_id=current_user.id).first()
+            if not my_courier or my_courier.id != courier_id:
+                return jsonify({'error': 'Unauthorized to view this courier profile'}), 403
+                
         try:
             courier = Courier.query.get_or_404(courier_id)
             return jsonify({
@@ -297,6 +305,9 @@ def update_availability(current_user):
         return jsonify({'success': True, 'is_available': courier.is_available}), 200
     except Exception as e:
         db.session.rollback()
+        import traceback
+        with open('courier_debug.log', 'a', encoding='utf-8') as f:
+            f.write(f"ERROR inside /availability: {str(e)}\n{traceback.format_exc()}\n")
         return jsonify({'error': str(e)}), 500
 
 @couriers_bp.route('/location', methods=['POST'])
@@ -311,6 +322,9 @@ def update_location(current_user):
         
         if lat is None or lng is None:
             return jsonify({'error': 'lat and lng are required'}), 400
+            
+        if not is_valid_gps(lat, lng):
+            return jsonify({'error': 'Invalid GPS coordinates'}), 400
             
         courier = Courier.query.filter_by(user_id=current_user.id).first()
         if not courier:
@@ -376,11 +390,12 @@ def get_available_orders(current_user):
                 'pickup_address': o.pickup_address,
                 'delivery_address': o.delivery_address,
                 'package_description': "חבילה רגילה",
-                'estimated_price': float(o.price) if o.price else 30.0,
+                'estimated_price': float(o.delivery_fee) if o.delivery_fee else 30.0,
                 'pickup_lat': p_addr.latitude if p_addr else None,
                 'pickup_lng': p_addr.longitude if p_addr else None,
                 'delivery_lat': d_addr.latitude if d_addr else None,
-                'delivery_lng': d_addr.longitude if d_addr else None
+                'delivery_lng': d_addr.longitude if d_addr else None,
+                'protocol_slug': o.protocol_slug
             })
         return jsonify(result), 200
     except Exception as e:
@@ -413,7 +428,8 @@ def get_active_order(current_user):
             'delivery_address': f"{order.delivery_point.address.street} {order.delivery_point.address.building_number}, {order.delivery_point.address.city}" if order.delivery_point and order.delivery_point.address else "כתובת מסירה חסרה",
             'recipient_phone': order.delivery_point.recipient_phone if order.delivery_point else "050-0000000",
             'package_description': order.package_description or "לא צוין פירוט",
-            'price': float(order.delivery_fee) if order.delivery_fee else 0.0
+            'price': float(order.delivery_fee) if order.delivery_fee else 0.0,
+            'protocol_slug': order.protocol_slug
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -459,13 +475,14 @@ def get_courier_stats(current_user):
         rank_badge = GamificationService.get_rank_badge(courier.performance_index)
 
         return jsonify({
-            'totalDeliveries': courier.total_deliveries,
-            'todayEarnings': today_earnings,
-            'weeklyEarnings': weekly_earnings,
+            'total_deliveries': courier.total_deliveries,
+            'today_earnings': today_earnings,
+            'weekly_earnings': weekly_earnings,
             'rating': float(courier.rating or 5.0),
-            'performanceIndex': courier.performance_index,
-            'rankBadge': rank_badge,
-            'balance': 0.0 # Placeholder for now, could be integrated with finance
+            'performance_index': courier.performance_index,
+            'rank_badge': rank_badge,
+            'balance': 0.0, # Placeholder for now, could be integrated with finance
+            'is_available': courier.is_available
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -491,7 +508,7 @@ def get_courier_history(current_user):
         result = []
         total_earnings = 0
         for d in deliveries:
-            earning = float(d.price or 0)
+            earning = float(d.delivery_fee or 0)
             total_earnings += earning
             
             # Duration calculation (if available)
@@ -509,8 +526,9 @@ def get_courier_history(current_user):
                 'earning': earning,
                 'distance_km': d.distance_km or 0.0,
                 'duration_mins': duration_mins,
-                'base_fare': float(d.price or 0) * 0.8, # Mock breakdown
-                'tip': float(d.price or 0) * 0.2  # Mock breakdown
+                'base_fare': round(float(d.delivery_fee or 0) * 0.8, 2),
+                'tip': round(float(d.delivery_fee or 0) * 0.2, 2),
+                'protocol_slug': d.protocol_slug
             })
             
         return jsonify({
@@ -533,8 +551,12 @@ def accept_order(current_user, order_id):
             
         delivery = Delivery.query.get_or_404(order_id)
         
-        if delivery.status != 'assigned' and delivery.status != 'pending':
+        if delivery.status not in ['assigned', 'pending']:
              return jsonify({'error': 'Order not available'}), 400
+             
+        # IDOR Fix: Prevent accepting someone else's assigned order
+        if delivery.status == 'assigned' and delivery.courier_id and delivery.courier_id != courier.id:
+             return jsonify({'error': 'Order assigned to someone else'}), 403
         
         delivery.courier_id = courier.id
         delivery.status = 'assigned' # Enum matching
@@ -585,9 +607,32 @@ def update_delivery_status(current_user, order_id):
         from app import socketio
         data = request.json
         new_status = data.get('status')
+        
+        # Business Logic: Enforce valid state machine transitions
+        # Prevents skipping steps like pending -> delivered
+        VALID_TRANSITIONS = {
+            'assigned':   ['picked_up', 'cancelled', 'failed'],
+            'picked_up':  ['in_transit', 'cancelled', 'failed'],
+            'in_transit': ['delivered', 'failed'],
+            'delivered':  [],  # terminal state
+            'cancelled':  [],  # terminal state
+            'failed':     [],  # terminal state
+        }
+            
         courier = Courier.query.filter_by(user_id=current_user.id).first()
         
         delivery = Delivery.query.get_or_404(order_id)
+        
+        # IDOR Fix: Ensure courier is assigned to this delivery
+        if delivery.courier_id != courier.id:
+             return jsonify({'error': 'Unauthorized: Not assigned to this delivery'}), 403
+        
+        current_status = delivery.status
+        allowed_next = VALID_TRANSITIONS.get(current_status, [])
+        if new_status not in allowed_next:
+             return jsonify({
+                 'error': f'Invalid state transition: {current_status} → {new_status}. Allowed next: {allowed_next}'
+             }), 400
         
         # Update Status
         delivery.status = new_status
@@ -849,6 +894,19 @@ def get_shift_status(current_user):
         }), 200
     except Exception as e:
         db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@couriers_bp.route('/gamification/leaderboard', methods=['GET'])
+@token_required
+@role_required(['courier', 'admin'])
+def get_gamification_leaderboard():
+    """החזרת טבלת המובילים ב-Gamification"""
+    try:
+        from services.gamification import GamificationService
+        leaderboard = GamificationService.get_leaderboard(limit=10)
+        return jsonify(leaderboard), 200
+    except Exception as e:
+        logging.error(f"Error fetching gamification leaderboard: {e}")
         return jsonify({'error': str(e)}), 500
 
 @couriers_bp.route('/gamification/profile', methods=['GET'])

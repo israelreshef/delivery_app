@@ -15,5 +15,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "TzirDelivery"
-include(":androidApp")
-include(":shared")
+include(":courierApp")
+include(":customerApp")
+
+project(":courierApp").projectDir = file("courier-android")
+project(":customerApp").projectDir = file("customer-android")

@@ -37,19 +37,14 @@ def get_dashboard_stats(current_user):
         with open('stats_debug.log', 'a') as f:
             f.write(f"Available in DB: {available_couriers_count}\n")
         
-        # Intersection: Available in DB AND Online via Socket
-        if online_courier_ids:
-            active_couriers_query = Courier.query.filter(
-                Courier.is_available == True,
-                Courier.id.in_(online_courier_ids)
-            ).all()
-        else:
-            active_couriers_query = []
+        # We will trust the database 'is_available' flag directly, discarding the strict socket requirement
+        # as mobile sockets can disconnect while the courier is ostensibly still active in the DB.
+        active_couriers_query = Courier.query.filter_by(is_available=True).all()
             
         active_couriers_count = len(active_couriers_query)
         
         with open('stats_debug.log', 'a') as f:
-            f.write(f"Active Couriers (Intersection): {active_couriers_count}\n")
+            f.write(f"Active Couriers (From DB): {active_couriers_count}\n")
         
         active_courier_list = [{
             'id': c.id,

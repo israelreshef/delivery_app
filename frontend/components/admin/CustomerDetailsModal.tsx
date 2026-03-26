@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
 import { Loader2, ShieldCheck, ShieldAlert, KeyRound, User, Building2, Phone, Mail, MapPin } from "lucide-react"
+import { PhoneListEditor } from "@/components/customer/PhoneListEditor"
 
 interface CustomerDetailsModalProps {
     customer: any
@@ -71,11 +72,26 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
         discount_percentage: '0'
     })
 
+    const parsePhones = (raw: string | string[] | any): string[] => {
+        if (!raw) return []
+        if (Array.isArray(raw)) return raw
+        if (typeof raw === 'string') {
+            try {
+                const parsed = JSON.parse(raw)
+                if (Array.isArray(parsed)) return parsed
+            } catch {
+                // Not valid JSON, might be legacy comma-separated
+                return raw.split(',').map(s => s.trim()).filter(Boolean)
+            }
+        }
+        return []
+    }
+
     const [formData, setFormData] = useState({
         full_name: customer?.full_name || '',
         email: customer?.email || '',
         phone: customer?.phone || '',
-        additional_phones: customer?.additional_phones || '',
+        additional_phones: parsePhones(customer?.additional_phones),
         company_name: customer?.company_name || '',
         business_id: customer?.business_id || '',
         contact_person: customer?.contact_person || '',
@@ -106,7 +122,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                 credit_limit: formData.credit_limit,
                 email: formData.email,
                 phone: formData.phone,
-                additional_phones: formData.additional_phones
+                additional_phones: JSON.stringify(formData.additional_phones.map((p: string) => p.trim()).filter(Boolean))
             }
             await api.put(`/customers/${customer.id}`, customerPayload)
 
@@ -165,11 +181,11 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
 
     const toggleActive = async () => {
         try {
-            const res = await api.post(`/admin/users/${customer.user_id}/toggle-active`)
-            toast.success(res.data.message)
+            const res = await api.post(`/customers/${customer.id}/toggle-active`)
+            toast.success(res.data?.message || "סטטוס עודכן")
             onUpdate()
         } catch (error: any) {
-            toast.error("שגיאה בשינוי סטטוס משתמש")
+            toast.error(error.response?.data?.error || "שגיאה בשינוי סטטוס לקוח")
         }
     }
 
@@ -361,7 +377,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
             full_name: customer?.full_name || '',
             email: customer?.email || '',
             phone: customer?.phone || '',
-            additional_phones: customer?.additional_phones || '',
+            additional_phones: parsePhones(customer?.additional_phones),
             company_name: customer?.company_name || '',
             business_id: customer?.business_id || '',
             contact_person: customer?.contact_person || '',
@@ -395,11 +411,16 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                             </DialogDescription>
                         </div>
                         {hasAccount ? (
-                            <Badge variant={customer.is_active ? "default" : "destructive"} className="cursor-pointer" onClick={toggleActive}>
+                            <Badge variant={customer.is_active ? "default" : "destructive"} className="cursor-pointer hover:opacity-80 transition" onClick={toggleActive}>
                                 {customer.is_active ? "פעיל" : "מושבת"}
                             </Badge>
                         ) : (
-                            <Badge variant="secondary">ללא חשבון</Badge>
+                            <div className="flex gap-2 items-center">
+                                <Badge variant="outline">ללא חשבון</Badge>
+                                <Badge variant={customer.is_active ? "default" : "destructive"} className="cursor-pointer hover:opacity-80 transition" onClick={toggleActive}>
+                                    {customer.is_active ? "פעיל" : "מושבת"}
+                                </Badge>
+                            </div>
                         )}
                     </div>
                 </DialogHeader>
@@ -485,42 +506,24 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
                                     onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label>דוא״ל</Label>
-                                <Input
-                                    type="email"
-                                    value={formData.email}
+                            <div className="space-y-4 col-span-2 border rounded-md p-4 bg-muted/20">
+                                <div className="space-y-2">
+                                    <Label>דוא״ל</Label>
+                                    <Input
+                                        type="email"
+                                        value={formData.email}
+                                        disabled={!editMode}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        dir="ltr"
+                                        className="text-right"
+                                    />
+                                </div>
+                                <PhoneListEditor
+                                    primaryPhone={formData.phone}
+                                    onPrimaryPhoneChange={(val) => setFormData({ ...formData, phone: val })}
+                                    additionalPhones={formData.additional_phones}
+                                    onAdditionalPhonesChange={(phones) => setFormData({ ...formData, additional_phones: phones })}
                                     disabled={!editMode}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>טלפון עיקרי</Label>
-                                <Input
-                                    value={formData.phone}
-                                    disabled={!editMode}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>טלפונים נוספים (מופרדים בפסיקים)</Label>
-                                <Input
-                                    value={
-                                        (typeof formData.additional_phones === 'string' && formData.additional_phones.startsWith('['))
-                                            ? (() => {
-                                                try { return JSON.parse(formData.additional_phones).join(', ') }
-                                                catch { return formData.additional_phones }
-                                            })()
-                                            : formData.additional_phones
-                                    }
-                                    disabled={!editMode}
-                                    onChange={(e) => setFormData({ ...formData, additional_phones: e.target.value })}
-                                    onBlur={(e) => {
-                                        if (!editMode) return;
-                                        const val = e.target.value;
-                                        const jsonStr = JSON.stringify(val.split(',').map(s => s.trim()).filter(Boolean));
-                                        setFormData({ ...formData, additional_phones: jsonStr });
-                                    }}
                                 />
                             </div>
                             <div className="space-y-2">

@@ -50,7 +50,7 @@ def get_customers(current_user):
                 'credit_limit': float(c.credit_limit or 0.0),
                 'total_orders': c.total_orders or 0,
                 'rating': float(c.rating or 5.0),
-                'is_active': c.user.is_active if c.user else False,
+                'is_active': c.user.is_active if c.user else (c.status == 'active'),
                 'two_factor_enforced_by_admin': c.user.two_factor_enforced_by_admin if c.user else False,
                 'has_account': bool(c.user_id),
                 'created_at': c.created_at.isoformat() if c.created_at else None,
@@ -187,7 +187,7 @@ def get_customer(current_user, customer_id):
             'total_orders': customer.total_orders or 0,
             'total_spent': float(total_spent),
             'rating': float(customer.rating or 5.0),
-            'is_active': customer.user.is_active if customer.user else False,
+            'is_active': customer.user.is_active if customer.user else (customer.status == 'active'),
             'has_account': bool(customer.user_id),
             'created_at': customer.created_at.isoformat() if customer.created_at else None,
             'last_order_at': last_order.created_at.isoformat() if last_order and last_order.created_at else None,
@@ -197,6 +197,38 @@ def get_customer(current_user, customer_id):
         }), 200
     except Exception as e:
         logging.error(f"Error fetching customer {customer_id}: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@customers_bp.route('/<int:customer_id>/toggle-active', methods=['POST'])
+@token_required
+@role_required('admin')
+def toggle_customer_active(current_user, customer_id):
+    """הפעלה או השבתה של לקוח"""
+    try:
+        customer = Customer.query.get_or_404(customer_id)
+        
+        # Determine the current status
+        current_is_active = customer.user.is_active if customer.user else (customer.status == 'active')
+        new_is_active = not current_is_active
+        
+        # Update customer status
+        customer.status = 'active' if new_is_active else 'inactive'
+        
+        # If the customer has an associated user account, sync it too
+        if customer.user:
+            customer.user.is_active = new_is_active
+            
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'is_active': new_is_active,
+            'message': 'הלקוח הופעל בהצלחה' if new_is_active else 'הלקוח הושבת בהצלחה'
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error toggling active for customer {customer_id}: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 
@@ -542,9 +574,32 @@ def upload_customer_file(current_user, customer_id):
         archived = request.form.get('archived', 'false').lower() == 'true'
 
         created_ids = []
+        
+        # File Upload Security: Whitelist allowed MIME types
+        ALLOWED_MIME_TYPES = {
+            'application/pdf', 'image/jpeg', 'image/png', 'image/gif',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',  # .docx
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',  # .xlsx
+        }
+        MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB
+        
         for file in files:
             if not file or file.filename == '':
                 continue
+            
+            # MIME type check
+            if file.mimetype not in ALLOWED_MIME_TYPES:
+                return jsonify({'error': f'File type not allowed: {file.mimetype}. Allowed: PDF, images, Word, Excel'}), 400
+            
+            # Size check (read file; then seek back)
+            file.stream.seek(0, 2)  # Seek to end
+            file_size_bytes = file.stream.tell()
+            file.stream.seek(0)  # Reset
+            if file_size_bytes > MAX_FILE_SIZE_BYTES:
+                return jsonify({'error': f'File too large. Max size is 10MB'}), 400
+            
             ext = os.path.splitext(file.filename)[1].lower()
             safe_name = secure_filename(os.path.splitext(file.filename)[0])
             stored_name = f"{customer_id}_{safe_name}_{uuid.uuid4().hex[:8]}{ext}"
@@ -622,6 +677,155 @@ def add_customer_note(current_user, customer_id):
         db.session.commit()
 
         return jsonify({'success': True, 'id': note.id, 'message': 'Note added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
+# Customer Self-Service Endpoints (Profile & Addresses)
+# ============================================================================
+
+@customers_bp.route('/profile', methods=['GET'])
+@token_required
+@role_required('customer')
+def get_my_profile(current_user):
+    """GET /api/customers/profile - פרטי הלקוח המחובר"""
+    try:
+        from models import Customer
+        c = Customer.query.filter_by(user_id=current_user.id).first()
+        if not c:
+            return jsonify({'error': 'Customer profile not found'}), 404
+            
+        return jsonify({
+            'id': c.id,
+            'user_id': c.user_id,
+            'full_name': c.full_name,
+            'email': c.email or current_user.email,
+            'phone': c.phone or current_user.phone,
+            'company_name': c.company_name,
+            'business_id': c.business_id,
+            'tax_id': c.tax_id,
+            'customer_type': c.customer_type,
+            'balance': float(c.balance or 0.0),
+            'credit_limit': float(c.credit_limit or 0.0),
+            'rating': float(c.rating or 5.0),
+            'total_orders': c.total_orders or 0,
+            'created_at': c.created_at.isoformat() if c.created_at else None
+        }), 200
+    except Exception as e:
+        import logging
+        logging.error(f"Error fetching customer profile: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@customers_bp.route('/profile', methods=['PUT'])
+@token_required
+@role_required('customer')
+def update_my_profile(current_user):
+    """PUT /api/customers/profile - עדכון שם, טלפון"""
+    try:
+        data = request.json
+        from models import Customer
+        c = Customer.query.filter_by(user_id=current_user.id).first()
+        if not c:
+            return jsonify({'error': 'Customer profile not found'}), 404
+            
+        if 'full_name' in data:
+            c.full_name = data['full_name']
+        if 'company_name' in data:
+            c.company_name = data['company_name']
+        if 'phone' in data:
+            c.phone = data['phone']
+            current_user.phone = data['phone'] # Keep sync
+            
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Profile updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        import logging
+        logging.error(f"Error updating customer profile: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@customers_bp.route('/addresses', methods=['GET'])
+@token_required
+@role_required('customer')
+def get_my_addresses(current_user):
+    """GET /api/customers/addresses - כתובות שמורות של הלקוח"""
+    try:
+        from models import Address
+        # Only query for current user's addresses
+        addresses = Address.query.filter_by(user_id=current_user.id).all()
+        result = []
+        for a in addresses:
+            result.append({
+                'id': a.id,
+                'street': a.street,
+                'city': a.city,
+                'postal_code': a.postal_code,
+                'building_number': a.building_number,
+                'apartment': a.apartment,
+                'floor': a.floor,
+                'entrance': a.entrance,
+                'latitude': a.latitude,
+                'longitude': a.longitude,
+                'notes': a.notes
+            })
+        return jsonify({'addresses': result}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@customers_bp.route('/addresses', methods=['POST'])
+@token_required
+@role_required('customer')
+def add_my_address(current_user):
+    """POST /api/customers/addresses - הוספת כתובת שמורה"""
+    try:
+        data = request.json
+        required = ['street', 'city', 'building_number']
+        for field in required:
+            if field not in data:
+                return jsonify({'error': f'{field} is required'}), 400
+                
+        from models import Address
+        address = Address(
+            user_id=current_user.id,
+            street=data['street'],
+            city=data['city'],
+            building_number=data['building_number'],
+            postal_code=data.get('postal_code'),
+            apartment=data.get('apartment'),
+            floor=data.get('floor'),
+            entrance=data.get('entrance'),
+            latitude=data.get('latitude'),
+            longitude=data.get('longitude'),
+            notes=data.get('notes')
+        )
+        db.session.add(address)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'id': address.id, 'message': 'Address added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@customers_bp.route('/addresses/<int:address_id>', methods=['DELETE'])
+@token_required
+@role_required('customer')
+def delete_my_address(current_user, address_id):
+    """DELETE /api/customers/addresses/<id> - מחיקת כתובת שמורה"""
+    try:
+        from models import Address
+        address = Address.query.filter_by(id=address_id, user_id=current_user.id).first()
+        if not address:
+            return jsonify({'error': 'Address not found or unauthorized'}), 404
+            
+        db.session.delete(address)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Address deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

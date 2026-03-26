@@ -1,0 +1,28 @@
+﻿> Task :courierApp:checkKotlinGradlePluginConfigurationErrors
+> Task :courierApp:preBuild UP-TO-DATE
+> Task :courierApp:preDebugBuild UP-TO-DATE
+> Task :courierApp:checkDebugAarMetadata UP-TO-DATE
+> Task :courierApp:generateDebugResValues UP-TO-DATE
+> Task :courierApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :courierApp:generateDebugResources UP-TO-DATE
+> Task :courierApp:mergeDebugResources UP-TO-DATE
+> Task :courierApp:packageDebugResources UP-TO-DATE
+> Task :courierApp:parseDebugLocalResources UP-TO-DATE
+> Task :courierApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :courierApp:extractDeepLinksDebug UP-TO-DATE
+> Task :courierApp:processDebugMainManifest UP-TO-DATE
+> Task :courierApp:processDebugManifest UP-TO-DATE
+> Task :courierApp:processDebugManifestForPackage UP-TO-DATE
+> Task :courierApp:processDebugResources UP-TO-DATE
+> Task :courierApp:compileDebugKotlin UP-TO-DATE
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1s
+14 actionable tasks: 1 executed, 13 up-to-date

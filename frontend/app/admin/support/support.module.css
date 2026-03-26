@@ -277,6 +277,35 @@
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+/* Tab Styles */
+.btnTab {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnTab:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #E2E8F0;
+}
+
+.btnTabActive {
+    padding: 0.5rem 1rem;
+    background: #3B82F6;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
 /* Form Elements (Dialog support) */
 .formGroup {
     margin-bottom: 1.5rem;

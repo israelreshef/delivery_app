@@ -12,4 +12,9 @@ db = SQLAlchemy()
 socketio = SocketIO()
 migrate = Migrate()
 jwt = JWTManager()
-limiter = Limiter(key_func=get_remote_address)
+# Fix 13: global default rate limits so un-decorated endpoints are still protected
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["50000 per day", "10000 per hour"],
+    storage_uri="memory://"
+)

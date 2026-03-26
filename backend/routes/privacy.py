@@ -143,7 +143,11 @@ def record_consent(current_user):
     Record that the user has accepted the Privacy Policy and Terms of Service (Cookie Banner)
     """
     try:
-        current_user.privacy_consent_at = datetime.utcnow()
+        now = datetime.utcnow()
+        # Persist using canonical consent columns used across the auth/profile flows.
+        current_user.privacy_policy_accepted_at = now
+        if current_user.terms_accepted_at is None:
+            current_user.terms_accepted_at = now
         db.session.commit()
         return jsonify({'message': 'Privacy consent recorded successfully'}), 200
     except Exception as e:

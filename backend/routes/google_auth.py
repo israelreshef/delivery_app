@@ -91,8 +91,12 @@ def google_callback():
             redirect_uri=config['web']['redirect_uris'][0]
         )
         
-        # Use the full URL to fetch the token
-        flow.fetch_token(authorization_response=request.url.replace('http://', 'https://'))
+        # Use the full URL to fetch the token, ensuring HTTPS for security (Required by Google)
+        current_url = request.url
+        if current_url.startswith('http://') and not request.is_secure:
+            current_url = current_url.replace('http://', 'https://', 1)
+            
+        flow.fetch_token(authorization_response=current_url)
         credentials = flow.credentials
         
         user = User.query.get(int(state_user_id))
@@ -108,6 +112,10 @@ def google_callback():
             user.google_token_expiry = credentials.expiry
             
         db.session.commit()
+        
+        # Log successful OAuth sync
+        from utils.audit_trail import log_action
+        log_action(user.id, 'GOOGLE_CALENDAR_SYNC', 'SUCCESS', f"Google Calendar synced for user {user.username}")
         
         return redirect(f"{frontend_url}/admin/crm?google_sync=success")
         

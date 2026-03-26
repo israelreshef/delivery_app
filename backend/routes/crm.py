@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from models import db, Lead, LeadActivity, User, Customer, CustomerPricingOverride, lead_status_enum, lead_source_enum, activity_type_enum
 from utils.decorators import token_required, role_required
+from utils.sanitization import sanitize_input
 import logging
 from datetime import datetime
 from sqlalchemy import desc
@@ -104,7 +105,7 @@ def create_lead(current_user):
     Create a new lead
     """
     try:
-        data = request.get_json()
+        data = sanitize_input(request.get_json())
         
         company_val = data.get('company_name')
         if not company_val or str(company_val).strip() == '':
@@ -140,7 +141,7 @@ def update_lead(current_user, lead_id):
     """
     try:
         lead = Lead.query.get_or_404(lead_id)
-        data = request.get_json()
+        data = sanitize_input(request.get_json())
         
         if 'status' in data:
             lead.status = data['status']
@@ -190,7 +191,7 @@ def add_activity(current_user, lead_id):
     """
     try:
         lead = Lead.query.get_or_404(lead_id)
-        data = request.get_json()
+        data = sanitize_input(request.get_json())
         
         activity = LeadActivity(
             lead_id=lead.id,
@@ -334,7 +335,7 @@ def get_customer_pricing(current_user, customer_id):
 def update_customer_pricing(current_user, customer_id):
     """Set or update B2B pricing overrides for a customer"""
     try:
-        data = request.json
+        data = sanitize_input(request.json)
         customer = Customer.query.get_or_404(customer_id)
         override = CustomerPricingOverride.query.filter_by(customer_id=customer.id).first()
         
