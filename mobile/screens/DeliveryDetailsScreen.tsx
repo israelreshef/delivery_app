@@ -10,7 +10,7 @@ export default function DeliveryDetailsScreen() {
     const route = useRoute();
     const navigation = useNavigation();
     const { order } = route.params as { order: any };
-    const { isConnected } = useCourierStore();
+    const { isConnected, updateOrderStatus, acceptOrder } = useCourierStore();
     const colorScheme = useColorScheme();
     const theme = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
 
@@ -32,17 +32,13 @@ export default function DeliveryDetailsScreen() {
         }
     };
 
-    const handleStatusUpdate = (status: string) => {
-        if (!isConnected) {
-            Toast.show({
-                type: 'info',
-                text1: 'Offline Mode',
-                text2: 'Status update saved to queue.'
-            });
-            // Queue logic will be handled in store action (to be implemented)
-        }
-        // Mock success for now until store action is ready
-        Toast.show({ type: 'success', text1: `Status updated to ${status}` });
+    const handleStatusUpdate = async (status: string) => {
+        await updateOrderStatus(order.id, status);
+        navigation.goBack();
+    };
+
+    const handleAccept = async () => {
+        await acceptOrder(order.id);
         navigation.goBack();
     };
 
@@ -87,15 +83,26 @@ export default function DeliveryDetailsScreen() {
                 </View>
 
                 <View style={styles.statusActions}>
-                    <TouchableOpacity style={[styles.btn, styles.actionBtn]} onPress={() => handleStatusUpdate('PICKED_UP')}>
-                        <Text style={styles.btnText}>Mark Picked Up</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.btn, styles.successBtn]}
-                        onPress={() => navigation.navigate('ProofOfDelivery' as any, { order } as any)}
-                    >
-                        <Text style={styles.btnText}>Complete Delivery</Text>
-                    </TouchableOpacity>
+                    {order.status.toLowerCase() === 'assigned' && (
+                        <TouchableOpacity style={[styles.btn, styles.actionBtn, { backgroundColor: '#007AFF' }]} onPress={handleAccept}>
+                            <Text style={styles.btnText}>Accept Order</Text>
+                        </TouchableOpacity>
+                    )}
+                    
+                    {['accepted', 'assigned'].includes(order.status.toLowerCase()) && (
+                        <TouchableOpacity style={[styles.btn, styles.actionBtn]} onPress={() => handleStatusUpdate('picked_up')}>
+                            <Text style={styles.btnText}>Mark Picked Up</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {['picked_up', 'in_transit'].includes(order.status.toLowerCase()) && (
+                        <TouchableOpacity
+                            style={[styles.btn, styles.successBtn]}
+                            onPress={() => navigation.navigate('ProofOfDelivery' as any, { order } as any)}
+                        >
+                            <Text style={styles.btnText}>Complete Delivery</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
         </ScrollView>

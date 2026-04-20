@@ -111,3 +111,5 @@
 {"timestamp": "2026-03-26T13:40:03.843966", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
 {"timestamp": "2026-03-26T13:44:46.487296", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
 {"timestamp": "2026-03-26T13:44:46.618297", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-04-08T19:59:58.924807", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
+{"timestamp": "2026-04-08T20:00:24.084543", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}

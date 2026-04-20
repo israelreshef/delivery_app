@@ -70,7 +70,7 @@ data class MapsResult(val success: Boolean, val data: JsonElement? = null)
 
 class DeliveryApiImpl(
     private val client: HttpClient,
-    private val baseUrl: String = "http://10.0.2.2:5000" // Default to Android Emulator loopback
+    private val baseUrl: String = "http://192.168.33.12:5000" // Default to Android Emulator loopback
 ) : DeliveryApi {
 
     // NOTE: Auth token injection is handled globally by KtorClientFactory.defaultRequest

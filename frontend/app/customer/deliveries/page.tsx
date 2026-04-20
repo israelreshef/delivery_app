@@ -22,7 +22,7 @@ export default function CustomerDeliveriesPage() {
         try {
             // כרגע מושך הכל, בהמשך נסנן לפי הלקוח המחובר ב-Backend
             const res = await api.get('/orders');
-            setDeliveries(res.data);
+            setDeliveries(res.data.data || res.data);
         } catch (err) {
             console.error(err);
         } finally {

@@ -40,6 +40,35 @@ api.interceptors.request.use(
     }
 );
 
+// Add response interceptor to handle 401 and global auth errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (typeof window !== 'undefined' && error.response && error.response.status === 401) {
+            // Only redirect if we are not already on a login page
+            const isAuthPage = window.location.pathname.includes('/login') || window.location.pathname.includes('/register');
+            if (!isAuthPage) {
+                console.warn('[API] 401 Unauthorized, clearing token and redirecting to login...');
+                
+                // Clear tokens safely
+                sessionStorage.removeItem('tzir_auth_token');
+                localStorage.removeItem('tzir_auth_token');
+                sessionStorage.removeItem('token');
+                localStorage.removeItem('token');
+                Cookies.remove('token');
+                
+                // Determine login route based on context, default to /admin/login
+                if (window.location.pathname.startsWith('/courier')) {
+                    window.location.href = '/courier/login';
+                } else {
+                    window.location.href = '/admin/login';
+                }
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 // Fetch real stats from backend
 export const fetchDashboardStats = async () => {
     try {

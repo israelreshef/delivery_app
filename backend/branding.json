@@ -13,5 +13,6 @@
   "logoUrl": "",
   "faviconUrl": "",
   "companyName": "TZIR",
-  "companyTagline": "שליחויות חכמות"
+  "companyTagline": "שליחויות חכמות",
+  "location_verification_enabled": false
 }

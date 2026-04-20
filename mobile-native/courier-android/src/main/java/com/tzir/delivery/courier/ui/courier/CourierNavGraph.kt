@@ -37,19 +37,16 @@ fun CourierNavGraph(
     courierRepository: CourierRepository,
     locationManager: LocationManager
 ) {
-    // ── Navigation State (Copied from MainActivity) ──
+    // ── Navigation State ──
     var currentNav by remember { mutableStateOf(NavItem.CONTROL) }
     var selectedMissionId by remember { mutableStateOf<Int?>(null) }
     var showHistory by remember { mutableStateOf(false) }
     var showNotifications by remember { mutableStateOf(false) }
     var showSupport by remember { mutableStateOf(false) }
     var showDocuments by remember { mutableStateOf(false) }
-    var showCalendar by remember { mutableStateOf(false) }
     var showClients by remember { mutableStateOf(false) }
-    var showSettings by remember { mutableStateOf(false) }
     var showWorkerRating by remember { mutableStateOf(false) }
     var showRouteOptimization by remember { mutableStateOf(false) }
-    var showManualRoutePlanner by remember { mutableStateOf(false) }
     var showAcademy by remember { mutableStateOf(false) }
     var showProfile by remember { mutableStateOf(false) }
     var showEarnings by remember { mutableStateOf(false) }
@@ -61,14 +58,19 @@ fun CourierNavGraph(
 
     val isAnyModalOpen = selectedMissionId != null || selectedCourseId != null ||
             showHistory || showNotifications || showSupport || showDocuments ||
-            showCalendar || showClients || showSettings || showWorkerRating ||
+            showClients || showWorkerRating ||
             showAcademy || showProfile || showEarnings || showRouteOptimization ||
-            showVehicles || showLeaderboard || selectedProtocolMissionId != null || 
-            selectedProtocolCourseId != null || showManualRoutePlanner
+            showVehicles || showLeaderboard || selectedProtocolMissionId != null ||
+            selectedProtocolCourseId != null
 
     Scaffold(
         topBar = {
-            if (!isAnyModalOpen && currentNav != NavItem.CONTROL) {
+            if (!isAnyModalOpen &&
+                currentNav != NavItem.CONTROL &&
+                currentNav != NavItem.CALENDAR &&
+                currentNav != NavItem.BUSINESS &&
+                currentNav != NavItem.SETTINGS
+            ) {
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -183,10 +185,6 @@ fun CourierNavGraph(
                 DocumentsScreen(
                     onBack = { showDocuments = false }
                 )
-            } else if (showCalendar) {
-                CalendarScreen(
-                    onBack = { showCalendar = false }
-                )
             } else if (selectedCourseId != null) {
                 CourseDetailScreen(
                     courseId = selectedCourseId!!,
@@ -220,11 +218,6 @@ fun CourierNavGraph(
                 VehicleScreen(
                     onBack = { showVehicles = false }
                 )
-            } else if (showSettings) {
-                SettingsScreen(
-                    onBack = { showSettings = false },
-                    onVehicleSettings = { showVehicles = true }
-                )
             } else if (showWorkerRating) {
                 WorkerRatingScreen(
                     onBack = { showWorkerRating = false }
@@ -236,14 +229,9 @@ fun CourierNavGraph(
                     onBack = { showRouteOptimization = false },
                     onApprove = { showRouteOptimization = false }
                 )
-            } else if (showManualRoutePlanner) {
-                ManualRoutePlannerScreen(
-                    repository = courierRepository,
-                    locationManager = locationManager,
-                    onBack = { showManualRoutePlanner = false }
-                )
+
             } else {
-                // ── Tab Screens (Courier Flow) ──
+                // ── Tab Screens ──
                 when (currentNav) {
                     NavItem.CONTROL -> DashboardScreen(
                         user = currentUser,
@@ -252,45 +240,29 @@ fun CourierNavGraph(
                         onMenuClick = { },
                         onMissionClick = { id -> selectedMissionId = id },
                         onNotificationClick = { showNotifications = true },
-                        onLogout = {
-                            authRepository.logout()
-                        },
+                        onLogout = { authRepository.logout() },
                         onReportsClick = { showEarnings = true },
                         onProfileClick = { showProfile = true },
-                        onSettingsClick = { showSettings = true },
-                        onRouteClick = { showManualRoutePlanner = true },
+                        onSettingsClick = { currentNav = NavItem.SETTINGS },
                         onSupportClick = { showSupport = true },
-                        onCalendarClick = { showCalendar = true },
+                        onCalendarClick = { currentNav = NavItem.CALENDAR },
                         onDocumentsClick = { showDocuments = true },
                         onClientsClick = { showClients = true },
                         onAcademyClick = { showAcademy = true }
                     )
-                    NavItem.MISSIONS -> MissionsScreen(
-                        repository = courierRepository,
-                        onMissionClick = { id -> selectedMissionId = id }
-                    )
-                    NavItem.EARNINGS -> EarningsScreen(
-                        user = currentUser,
-                        repository = courierRepository,
-                        onShowHistory = { showHistory = true },
+                    NavItem.CALENDAR -> CalendarScreen(
                         onBack = { currentNav = NavItem.CONTROL }
                     )
-                    NavItem.MORE -> MoreScreen(
-                        userName = currentUser.username,
-                        onProfileClick = { showProfile = true },
-                        onEarningsClick = {
-                            currentNav = NavItem.EARNINGS
-                        },
-                        onRouteClick = { showManualRoutePlanner = true },
-                        onCalendarClick = { showCalendar = true },
+                    NavItem.BUSINESS -> BusinessScreen()
+                    NavItem.SETTINGS -> SettingsScreen(
+                        onBack = { currentNav = NavItem.CONTROL },
+                        onVehicleSettings = { showVehicles = true },
+                        onRouteClick = { currentNav = NavItem.CONTROL },
+                        onCalendarClick = { currentNav = NavItem.CALENDAR },
                         onDocumentsClick = { showDocuments = true },
-                        onVehiclesClick = { showVehicles = true },
                         onAcademyClick = { showAcademy = true },
                         onSupportClick = { showSupport = true },
-                        onSettingsClick = { showSettings = true },
-                        onLogout = {
-                            authRepository.logout()
-                        }
+                        onLogout = { authRepository.logout() }
                     )
                 }
             }

@@ -12,6 +12,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -68,7 +71,6 @@ fun DashboardScreen(
     onReportsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    onRouteClick: () -> Unit = {},
     onSupportClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
     onDocumentsClick: () -> Unit = {},
@@ -81,28 +83,52 @@ fun DashboardScreen(
     
     val context = LocalContext.current
     val activeMission = activeMissions.firstOrNull()
-    var isOnline by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    val shiftStatus by repository.shiftStatus.collectAsState()
+    val acceptedMissionIds = remember { mutableStateListOf<Int>() }
     
     val scope = rememberCoroutineScope()
-    val prefs = remember { context.getSharedPreferences("TzirAcademy", Context.MODE_PRIVATE) }
+    
+    // Route Planner State
+    val stops = remember { mutableStateListOf<PlannerStop>() }
+    var plannerMode by remember { mutableStateOf(PlannerMode.LIST) }
+    var editingStopIndex by remember { mutableStateOf<Int?>(null) }
+    
+    // Polyline Geometry from routing API (if available)
+    var routeGeometry by remember { mutableStateOf<List<LatLng>?>(null) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var isAppInForeground by remember { mutableStateOf(true) }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_RESUME) {
+                isAppInForeground = true
+                com.tzir.delivery.courier.services.SocketManager.setAvailabilityStatus(true, user.id.toString())
+            } else if (event == Lifecycle.Event.ON_PAUSE || event == Lifecycle.Event.ON_STOP) {
+                isAppInForeground = false
+                com.tzir.delivery.courier.services.SocketManager.setAvailabilityStatus(false, user.id.toString())
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     LaunchedEffect(Unit) {
         // Initial fetch of status from server
         repository.refreshStats()
+        repository.refreshActiveMissions()
     }
 
-    LaunchedEffect(stats) {
-        stats?.let {
-            isOnline = it.isAvailable
+    LaunchedEffect(Unit) {
+        com.tzir.delivery.courier.services.SocketManager.missionUpdates.collect {
+            repository.refreshActiveMissions()
         }
     }
 
-    // Reactive Service Management: Start/Stop LocationService based on isOnline or activeMission
-    LaunchedEffect(isOnline, activeMission) {
+    // Reactive Service Management: Start/Stop LocationService based on isAppInForeground or activeMission
+    LaunchedEffect(isAppInForeground, activeMission) {
         val courierId = user.courierId ?: ""
-        if (courierId.isNotEmpty() && (isOnline || activeMission != null)) {
+        if (courierId.isNotEmpty() && (isAppInForeground || activeMission != null)) {
             val intent = Intent(context, com.tzir.delivery.courier.services.LocationService::class.java).apply {
                 putExtra("courier_id", courierId)
             }
@@ -111,7 +137,7 @@ fun DashboardScreen(
             } else {
                 context.startService(intent)
             }
-        } else if (courierId.isNotEmpty() && !isOnline && activeMission == null) {
+        } else if (courierId.isNotEmpty() && !isAppInForeground && activeMission == null) {
             val intent = Intent(context, com.tzir.delivery.courier.services.LocationService::class.java)
             context.stopService(intent)
         }
@@ -178,6 +204,50 @@ fun DashboardScreen(
                         icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
                     )
                 }
+
+                // Route Planner Polyline & Markers
+                if (routeGeometry != null && routeGeometry!!.isNotEmpty()) {
+                    Polyline(
+                        points = routeGeometry!!,
+                        color = Color(0xFF8ECFB9).copy(alpha = 0.8f),
+                        width = 8f
+                    )
+                } else if (stops.size >= 2) {
+                    Polyline(
+                        points = stops.map { LatLng(it.lat, it.lng) },
+                        color = Color(0xFF8ECFB9).copy(alpha = 0.6f),
+                        width = 6f
+                    )
+                }
+                for (idx in stops.indices) {
+                    val stop = stops[idx]
+                    MarkerComposable(
+                        state = rememberMarkerState(position = LatLng(stop.lat, stop.lng)),
+                        title = "${idx + 1}. ${stop.address}",
+                        snippet = if (stop.stopType == "pickup") "איסוף" else "מסירה",
+                        onClick = {
+                            editingStopIndex = idx
+                            plannerMode = PlannerMode.STOP_DETAIL
+                            true
+                        }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
+                                .background(if (stop.stopType == "pickup") Color(0xFF8ECFB9) else Color(0xFF6B7280))
+                                .border(2.dp, Color.White, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = (stop.orderIndex ?: (idx + 1)).toString(),
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
             }
 
             // --- 2. Top Bar (Floating Bell & Status Toggle) ---
@@ -207,241 +277,55 @@ fun DashboardScreen(
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(16.dp)
                     .fillMaxWidth()
-                    .zIndex(10f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .zIndex(10f)
             ) {
 
-
                 // Active Mission Overlay (if exists)
-                AnimatedVisibility(visible = activeMission != null) {
+                AnimatedVisibility(
+                    visible = activeMission != null && (activeMission?.status != "assigned" || activeMission?.id in acceptedMissionIds),
+                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)
+                ) {
                     activeMission?.let { mission ->
                         ActiveMissionCard(mission = mission, onDetailsClick = { onMissionClick(mission.id) })
                     }
                 }
 
-                // Main Dashboard Panel
-                GlassCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    cornerRadius = 32.dp
-                ) {
-                    Column(modifier = Modifier.padding(24.dp)) {
-                        // Earnings Header
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            val profit = stats?.todayEarnings ?: 0.0
-                            Text(
-                                text = stringResource(R.string.earnings_today_prefix),
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                text = "+₪$profit",
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Black,
-                                color = Color.White
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text("₪", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = SuccessDark)
-                        }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
-                        Spacer(modifier = Modifier.height(20.dp))
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        AvailabilityButton(
-                            isAvailable = isOnline,
-                            isLoading = isLoading,
-                            onToggle = {
+                if (activeMission != null && activeMission?.status == "assigned" && activeMission?.id !in acceptedMissionIds) {
+                    Box(modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) {
+                        OrderOfferDialog(
+                            mission = activeMission!!,
+                            onAccept = {
+                                val mId = activeMission!!.id
+                                acceptedMissionIds.add(mId)
                                 scope.launch {
-                                    isLoading = true
-                                    val newStatus = !isOnline
-                                    val success = repository.updateAvailability(newStatus)
-                                    if (success) {
-                                        isOnline = newStatus
-                                        com.tzir.delivery.courier.services.SocketManager.setAvailabilityStatus(newStatus, user.id.toString())
-                                    } else {
-                                        android.widget.Toast.makeText(context, "שגיאה בעדכון הסטטוס, נסה שוב", android.widget.Toast.LENGTH_SHORT).show()
-                                    }
-                                    isLoading = false
+                                    repository.acceptMission(mId)
+                                    onMissionClick(mId)
+                                }
+                            },
+                            onDecline = {
+                                scope.launch {
+                                    repository.rejectMission(activeMission!!.id)
                                 }
                             }
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Route Planner Button
-                        Button(
-                            onClick = onRouteClick,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(60.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = AmberGold),
-                            shape = RoundedCornerShape(18.dp)
-                        ) {
-                            Text(
-                                stringResource(R.string.plan_route),
-                                color = Graphite950,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 18.sp
-                            )
-                        }
                     }
                 }
-                
+
+                // Main Dashboard Panel (Route Planner)
+                RoutePlannerPanel(
+                    repository = repository,
+                    locationManager = locationManager,
+                    stops = stops,
+                    editingStopIndex = editingStopIndex,
+                    onEditingStopIndexChange = { editingStopIndex = it },
+                    mode = plannerMode,
+                    onModeChange = { plannerMode = it },
+                    onRouteGeometryReady = { geometry -> routeGeometry = geometry }
+                )
+
                 // Navigation Spacer for System Bar
                 Spacer(modifier = Modifier.navigationBarsPadding())
-            }
-        }
-    }
-}
-
-@Composable
-fun AvailabilityButton(
-    isAvailable: Boolean,
-    isLoading: Boolean,
-    onToggle: () -> Unit
-) {
-    val availableColor = Color(0xFF22C55E)      // green
-    val unavailableColor = Color(0xFF1C1C1E)    // dark, matches app bg
-    val primaryGold = Color(0xFFF59E0B)         // your app's gold
-
-    val backgroundColor by animateColorAsState(
-        targetValue = if (isAvailable) 
-            availableColor else unavailableColor,
-        animationSpec = tween(400),
-        label = "bg"
-    )
-    val borderColor by animateColorAsState(
-        targetValue = if (isAvailable) 
-            availableColor else Color(0xFF374151),
-        animationSpec = tween(400),
-        label = "border"
-    )
-
-    // Pulse glow when available
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val glowAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.15f,
-        targetValue = if (isAvailable) 0.4f else 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "glow"
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            // Removed vertical padding inside to let caller control Spacing (spacedBy 16dp)
-    ) {
-        // Glow effect behind button
-        if (isAvailable) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(availableColor.copy(alpha = glowAlpha))
-            )
-        }
-
-        Button(
-            onClick = { if (!isLoading) onToggle() },
-            enabled = !isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .border(
-                    width = 1.dp,
-                    color = borderColor,
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = backgroundColor,
-                disabledContainerColor = backgroundColor.copy(alpha = 0.6f)
-            ),
-            shape = RoundedCornerShape(16.dp),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = if (isAvailable) 8.dp else 2.dp
-            )
-        ) {
-            AnimatedContent(
-                targetState = isLoading,
-                label = "btn_content"
-            ) { loading ->
-                if (loading) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator(
-                            color = primaryGold,
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            "מעדכן סטטוס...",
-                            color = Color.White.copy(alpha = 0.7f),
-                            fontSize = 15.sp
-                        )
-                    }
-                } else {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        // Live dot
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if (isAvailable) Color.White 
-                                    else Color(0xFF6B7280)
-                                )
-                        )
-                        Spacer(Modifier.width(10.dp))
-
-                        Text(
-                            text = if (isAvailable) 
-                                "זמין למשלוחים" else "התחל זמינות",
-                            color = if (isAvailable) 
-                                Color.White else Color(0xFF9CA3AF),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
-                        )
-
-                        if (isAvailable) {
-                            Spacer(Modifier.width(10.dp))
-                            // Small live badge
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(Color.White.copy(alpha = 0.15f))
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
-                            ) {
-                                Text(
-                                    "LIVE",
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 1.sp
-                                )
-                            }
-                        }
-                    }
-                }
             }
         }
     }

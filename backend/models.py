@@ -18,7 +18,7 @@ class EncryptedString(TypeDecorator):
 # ============================================================================
 # Shared Enums
 # ============================================================================
-delivery_status_enum = db.Enum('pending', 'assigned', 'picked_up', 'in_transit', 'delivered', 'cancelled', 'failed', name='delivery_status_type', metadata=db.metadata)
+delivery_status_enum = db.Enum('pending', 'assigned', 'picked_up', 'in_transit', 'arrived', 'delivered', 'cancelled', 'failed', name='delivery_status_type', metadata=db.metadata)
 priority_enum = db.Enum('low', 'normal', 'high', 'urgent', name='priority_level_type', metadata=db.metadata)
 package_size_enum = db.Enum('small', 'medium', 'large', 'xlarge', name='package_size_type', metadata=db.metadata)
 admin_role_enum = db.Enum('super_admin', 'support_admin', 'content_admin', 'finance_admin', name='admin_role_types', metadata=db.metadata)

@@ -18,67 +18,130 @@ payments_bp = Blueprint('payments', __name__)
 
 SMARTBEE_API_KEY = os.environ.get('SMARTBEE_API_KEY')
 SMARTBEE_COMPANY_ID = os.environ.get('SMARTBEE_COMPANY_ID')
-SMARTBEE_API_URL = "https://server.smartbee.co.il/api/v1" # Example/Standard endpoint
+SMARTBEE_API_URL = "https://server.smartbee.co.il/api/v1"
+
+
+@payments_bp.route('/process-mock', methods=['POST'])
+@token_required
+def process_mock_payment(current_user):
+    """
+    Mock payment processing - simulates credit card payment.
+    Accepts card details and always returns 'approved'.
+    When real SmartBee API is connected, this will be replaced.
+    """
+    try:
+        data = request.json or {}
+        amount = data.get('amount')
+        order_id = data.get('order_id')
+        card_number = data.get('card_number', '')
+        card_expiry = data.get('card_expiry', '')
+        card_cvv = data.get('card_cvv', '')
+        card_holder = data.get('card_holder', '')
+        currency = data.get('currency', 'ILS')
+
+        if not amount or not is_valid_amount(amount):
+            return jsonify({'error': 'Valid amount is required'}), 400
+
+        if not order_id:
+            return jsonify({'error': 'order_id is required'}), 400
+
+        # Basic card validation (mock)
+        card_last4 = card_number[-4:] if len(card_number) >= 4 else '0000'
+
+        # Generate mock transaction ID
+        transaction_id = f"txn_mock_{uuid.uuid4().hex[:12]}"
+
+        # Update invoice status to paid
+        invoice = Invoice.query.filter_by(delivery_id=order_id).first()
+        if invoice:
+            invoice.status = 'paid'
+            invoice.paid_at = datetime.utcnow()
+            invoice.payment_method = 'credit_card'
+
+        # Create payment record
+        payment = Payment(
+            invoice_id=invoice.id if invoice else None,
+            amount=float(amount),
+            payment_method='credit_card',
+            transaction_id=transaction_id,
+            status='completed',
+            payment_date=datetime.utcnow()
+        )
+        db.session.add(payment)
+        db.session.commit()
+
+        logging.info(f"Mock payment processed: {transaction_id} for order {order_id}, amount {amount} {currency}")
+
+        return jsonify({
+            'success': True,
+            'status': 'approved',
+            'transaction_id': transaction_id,
+            'amount': float(amount),
+            'currency': currency,
+            'card_last4': card_last4,
+            'isMock': True,
+            'message': 'Payment processed successfully (mock)'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error processing mock payment: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@payments_bp.route('/order/<int:order_id>/status', methods=['GET'])
+@token_required
+def get_payment_status(current_user, order_id):
+    """Get payment status for a specific order."""
+    try:
+        invoice = Invoice.query.filter_by(delivery_id=order_id).first()
+        if not invoice:
+            return jsonify({'status': 'no_invoice', 'paid': False}), 200
+
+        payment = Payment.query.filter_by(invoice_id=invoice.id).order_by(Payment.payment_date.desc()).first()
+
+        return jsonify({
+            'status': invoice.status,
+            'paid': invoice.status == 'paid',
+            'total_amount': float(invoice.total_amount),
+            'payment_method': invoice.payment_method,
+            'paid_at': invoice.paid_at.isoformat() if invoice.paid_at else None,
+            'transaction_id': payment.transaction_id if payment else None,
+            'currency': 'ILS'
+        }), 200
+
+    except Exception as e:
+        logging.error(f"Error getting payment status: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
 
 @payments_bp.route('/create-intent', methods=['POST'])
 @token_required
 def create_payment_intent(current_user):
     """
-    יצירת דרישת תשלום מול חברת סליקה SmartBee.
-    אם מפתח API לא קיים, מוחזר Mock (סימולציה) כדי לאפשר פיתוח.
+    Create a payment intent via SmartBee.
+    Falls back to mock if API key is not configured.
     """
     try:
         data = request.json
         amount = data.get('amount')
         currency = data.get('currency', 'ILS')
-        description = data.get('description', 'תשלום עבור משלוח TZIR')
-        
+        description = data.get('description', 'Payment for TZIR delivery')
+
         if not amount or not is_valid_amount(amount):
             return jsonify({'error': 'Valid amount is required'}), 400
-            
-        logging.info(f"Creating SmartBee payment request for {amount} {currency}")
-        
+
         if SMARTBEE_API_KEY and SMARTBEE_COMPANY_ID:
-            # --- Actual SmartBee Logic ---
-            # SmartBee usually requires generating a payment document or a payment link.
-            # This is a boilerplate structure for their API.
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {SMARTBEE_API_KEY}'
-            }
-            payload = {
-                'companyId': SMARTBEE_COMPANY_ID,
-                'amount': float(amount),
-                'currency': currency,
-                'description': description,
-                'customerName': current_user.username,
-                'customerEmail': getattr(current_user, 'email', ''),
-                'successUrl': f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/payment/success",
-                'cancelUrl': f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/payment/cancel"
-            }
-            
-            # Example API Call (Adjust path based on exact SmartBee docs when provided)
-            # response = requests.post(f"{SMARTBEE_API_URL}/payments/create", json=payload, headers=headers)
-            # response.raise_for_status()
-            # result = response.json()
-            
-            # return jsonify({
-            #     'paymentUrl': result.get('payment_url'),
-            #     'transactionId': result.get('transaction_id'),
-            #     'isMock': False
-            # }), 200
-            
-            # Temporary mock within the 'live' block until exact API endpoint is confirmed
+            # Real SmartBee integration (pending API docs)
             return jsonify({
                 'error': 'SmartBee configured but exact endpoint pending API docs',
                 'isMock': False
             }), 501
-            
         else:
-            # --- Mock Fallback ---
+            # Mock fallback
             logging.warning("SMARTBEE_API_KEY is missing. Using MOCK payment intent.")
             mock_transaction_id = f"sb_mock_{uuid.uuid4().hex[:16]}"
-            
+
             return jsonify({
                 'paymentUrl': f"http://localhost:3000/mock-payment-page/{mock_transaction_id}",
                 'transactionId': mock_transaction_id,
@@ -86,37 +149,29 @@ def create_payment_intent(current_user):
             }), 200
 
     except Exception as e:
-        logging.error(f"Error creating SmartBee payment intent: {e}", exc_info=True)
+        logging.error(f"Error creating payment intent: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 
 @payments_bp.route('/webhook', methods=['POST'])
 def smartbee_webhook():
-    """
-    נקודת קצה לקבלת עדכונים (Webhooks) מ-SmartBee על עסקאות שאושרו.
-    """
+    """Webhook endpoint for SmartBee payment updates."""
     payload = request.json
-    
     logging.info("Received SmartBee Webhook")
-    
+
     if not SMARTBEE_API_KEY:
-         logging.warning("SMARTBEE keys missing. Bypassing Webhook validation (MOCK).")
-         return jsonify({'status': 'ignored_no_secret'}), 200
-         
+        logging.warning("SMARTBEE keys missing. Bypassing Webhook validation (MOCK).")
+        return jsonify({'status': 'ignored_no_secret'}), 200
+
     try:
-        # Validate SmartBee Webhook signature according to their docs
-        # (Usually an HMAC signature in headers or a token in the payload)
-        
         transaction_id = payload.get('transactionId')
         status = payload.get('status')
-        
+
         if status == 'approved':
-             logging.info(f"SmartBee Payment {transaction_id} approved!")
-             # Update DB logic here (e.g., mark invoice/delivery as paid)
-             
+            logging.info(f"SmartBee Payment {transaction_id} approved!")
         elif status == 'declined':
-             logging.info(f"SmartBee Payment {transaction_id} declined.")
-             
+            logging.info(f"SmartBee Payment {transaction_id} declined.")
+
     except Exception as e:
         logging.error(f"Error processing SmartBee webhook: {e}")
         return jsonify({'error': 'Webhook processing failed'}), 500

@@ -1,13 +1,15 @@
 package com.tzir.delivery.courier.ui.courier
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -17,35 +19,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tzir.delivery.courier.ui.components.*
+import android.util.Log
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.maps.android.compose.*
+import com.tzir.delivery.courier.R
+import com.tzir.delivery.courier.model.AutocompleteSuggestion
 import com.tzir.delivery.courier.repository.CourierRepository
 import com.tzir.delivery.courier.location.LocationManager
-import com.tzir.delivery.courier.model.AutocompleteSuggestion
-import com.tzir.delivery.courier.model.GeocodeResult
+import com.tzir.delivery.courier.ui.components.*
+import com.tzir.delivery.courier.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.tzir.delivery.courier.ui.theme.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.model.TypeFilter
-import androidx.compose.ui.platform.LocalContext
-import android.util.Log
 
+// ─── Data model for a route stop ────────────────────────────────────────────
+data class RouteStop(
+    val address: String,
+    val lat: Double,
+    val lng: Double,
+    var stopType: String = "delivery",   // "delivery" | "pickup"
+    var packageCount: Int = 1,
+    var orderIndex: Int? = null,          // numeric ordering (null = auto)
+    var notes: String = "",
+    var arrivalTime: String = "בכל עת",
+    var durationMinutes: Int = 3,
+    val orderId: Any? = null,
+    val isVerified: Boolean = true
+)
+
+// ─── Main Screen ─────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManualRoutePlannerScreen(
@@ -55,429 +69,861 @@ fun ManualRoutePlannerScreen(
 ) {
     val context = LocalContext.current
     val placesClient = remember { Places.createClient(context) }
-
-    var searchAddress by remember { mutableStateOf("") }
-    var suggestions by remember { mutableStateOf<List<AutocompleteSuggestion>>(emptyList()) }
-    var stops by remember { mutableStateOf(mutableStateListOf<Map<String, Any?>>()) }
-    var isLoading by remember { mutableStateOf(false) }
-    var isSearching by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
     val focusManager = LocalFocusManager.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        PremiumBackground {
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                containerColor = Color.Transparent,
-            ) { padding ->
-                // Clear suggestions when search is cleared
-                LaunchedEffect(searchAddress) {
-                    if (searchAddress.length < 2) {
-                        suggestions = emptyList()
-                        isSearching = false
-                        return@LaunchedEffect
+    var searchText by remember { mutableStateOf("") }
+    var suggestions by remember { mutableStateOf<List<AutocompleteSuggestion>>(emptyList()) }
+    var isSearching by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+    val stops = remember { mutableStateListOf<RouteStop>() }
+    var selectedStopIndex by remember { mutableStateOf<Int?>(null) }
+    var showSuggestions by remember { mutableStateOf(false) }
+
+    // Bottom sheet
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    var showStopDetail by remember { mutableStateOf(false) }
+
+    // Map
+    val telAviv = LatLng(32.0853, 34.7818)
+    val cameraState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(telAviv, 13f)
+    }
+    val mapStyleOptions = remember {
+        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style_midnight)
+    }
+
+    // Debounce search
+    LaunchedEffect(searchText) {
+        showSuggestions = false
+        if (searchText.length < 2) { suggestions = emptyList(); return@LaunchedEffect }
+        delay(500)
+        isSearching = true
+        try {
+            val req = FindAutocompletePredictionsRequest.builder()
+                .setQuery(searchText).setCountries(listOf("IL")).build()
+            placesClient.findAutocompletePredictions(req)
+                .addOnSuccessListener { resp ->
+                    suggestions = resp.autocompletePredictions.map {
+                        AutocompleteSuggestion(
+                            description = it.getPrimaryText(null).toString(),
+                            fullAddress = it.getFullText(null).toString(),
+                            placeId = it.placeId,
+                            source = "google_sdk"
+                        )
                     }
-                    
-                    try {
-                        isSearching = true
-                        Log.d("SearchBar", "Querying Places for: $searchAddress")
-                        delay(600) // Debounce
-
-                        val request = FindAutocompletePredictionsRequest.builder()
-                            .setQuery(searchAddress)
-                            .setCountries(listOf("IL"))
-                            .build()
-
-                        placesClient.findAutocompletePredictions(request)
-                            .addOnSuccessListener { response ->
-                                Log.d("Places", "Got ${response.autocompletePredictions.size} results for: $searchAddress")
-                                suggestions = response.autocompletePredictions.map { prediction ->
-                                    AutocompleteSuggestion(
-                                        description = prediction.getPrimaryText(null).toString(),
-                                        fullAddress = prediction.getFullText(null).toString(),
-                                        placeId = prediction.placeId,
-                                        source = "google_sdk"
-                                    )
-                                }
-                                isSearching = false
-                            }
-                            .addOnFailureListener { exception ->
-                                Log.e("Places", "Autocomplete failed for '$searchAddress': ${exception.message}")
-                                errorMessage = exception.message
-                                isSearching = false
-                            }
-                    } catch (e: Exception) {
-                        if (e !is kotlinx.coroutines.CancellationException) {
-                            Log.e("ManualRoutePlanner", "Error: ${e.message}")
-                        }
-                        isSearching = false
-                    }
+                    showSuggestions = suggestions.isNotEmpty()
+                    isSearching = false
                 }
+                .addOnFailureListener { isSearching = false }
+        } catch (e: Exception) { isSearching = false }
+    }
 
+    // Focus camera on new stop
+    LaunchedEffect(stops.size) {
+        if (stops.isNotEmpty()) {
+            val last = stops.last()
+            cameraState.animate(CameraUpdateFactory.newLatLngZoom(LatLng(last.lat, last.lng), 13f))
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // ─── Map (full screen background) ───────────────────────────────
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraState,
+            properties = MapProperties(mapStyleOptions = mapStyleOptions),
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false,
+                compassEnabled = false,
+                myLocationButtonEnabled = false
+            )
+        ) {
+            // Draw route polyline
+            if (stops.size >= 2) {
+                Polyline(
+                    points = stops.map { LatLng(it.lat, it.lng) },
+                    color = AmberGold,
+                    width = 8f
+                )
+            }
+            // Draw stop markers
+            stops.forEachIndexed { idx, stop ->
+                Marker(
+                    state = rememberMarkerState(position = LatLng(stop.lat, stop.lng)),
+                    title = stop.address,
+                    snippet = if (stop.stopType == "pickup") "איסוף" else "מסירה",
+                    icon = BitmapDescriptorFactory.defaultMarker(
+                        if (stop.stopType == "pickup") BitmapDescriptorFactory.HUE_AZURE
+                        else BitmapDescriptorFactory.HUE_ORANGE
+                    )
+                )
+            }
+        }
+
+        // ─── Bottom Sheet Panel ──────────────────────────────────────────
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp)
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .shadow(
+                    elevation = 32.dp,
+                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.4f)
+                )
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(Color(0xFF0E0E0E))
+                .padding(bottom = 16.dp)
         ) {
-            // Header
+            // Handle bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(40.dp).height(4.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.3f))
+                )
+            }
+
+            // ─── Search bar (inside sheet) ───────────────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Three-dot menu
                 IconButton(
-                    onClick = onBack,
-                    modifier = Modifier.size(48.dp).background(Color.White, CircleShape)
+                    onClick = { /* drawer/options */ },
+                    modifier = Modifier.size(40.dp)
                 ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextOfficial)
+                    Icon(Icons.Default.MoreVert, null, tint = Color.White.copy(alpha = 0.7f))
                 }
-                Text(
-                    text = "תכנון מסלול ידני",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Black,
-                    color = TextOfficial,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.size(48.dp)) // To completely center the text against the back button
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(Modifier.width(8.dp))
 
-            // Address Search Input with Autocomplete
-            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                // Glass search pill
                 Surface(
-                    shape = CircleShape, // Fully rounded capsule
-                    color = Color.White,
-                    border = androidx.compose.foundation.BorderStroke(5.dp, TextOfficial), // Thick Navy Border
-                    shadowElevation = 8.dp,
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color(0xFF1C1C1E),
+                    border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.15f))
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // RTL places the first item on the RIGHT (Search Icon)
-                        if (isSearching) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = PrimaryTurquoise)
-                        } else {
-                            Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
-                        }
-                        
-                        Spacer(modifier = Modifier.width(12.dp))
-                        
-                        // Text Field taking up the center space
-                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
-                            if (searchAddress.isEmpty()) {
-                                Text("חפש כתובת...", color = Color.Gray)
+                        // Mic icon (amber)
+                        Icon(
+                            Icons.Default.Mic,
+                            contentDescription = null,
+                            tint = AmberGold,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+
+                        // Text field (center)
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (searchText.isEmpty()) {
+                                Text(
+                                    "הקישו להוספת עצירות...",
+                                    color = Color.Gray,
+                                    fontSize = 15.sp
+                                )
                             }
                             androidx.compose.foundation.text.BasicTextField(
-                                value = searchAddress,
-                                onValueChange = { searchAddress = it },
-                                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start, color = TextOfficial, fontSize = 16.sp),
+                                value = searchText,
+                                onValueChange = { searchText = it },
+                                textStyle = LocalTextStyle.current.copy(
+                                    color = Color.White,
+                                    fontSize = 15.sp
+                                ),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .onKeyEvent { event ->
-                                        if (event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
-                                            focusManager.clearFocus()
-                                            true
-                                        } else false
-                                    }
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
 
-                        // RTL places the last item on the LEFT (Close Icon)
-                        if (searchAddress.isNotEmpty()) {
-                            Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(Modifier.width(10.dp))
+
+                        // Search icon or clear
+                        if (searchText.isNotEmpty()) {
                             IconButton(
-                                onClick = { 
-                                    searchAddress = ""
-                                    focusManager.clearFocus()
-                                },
-                                modifier = Modifier.size(24.dp)
+                                onClick = { searchText = ""; suggestions = emptyList(); showSuggestions = false },
+                                modifier = Modifier.size(18.dp)
                             ) {
-                                Icon(Icons.Default.Close, contentDescription = "Clear", tint = Color.Gray)
+                                Icon(Icons.Default.Close, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
                             }
+                        } else {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = null,
+                                tint = AmberGold,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     }
                 }
             }
 
-            // Suggestions List
-            if (isSearching) {
-                Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = PrimaryTurquoise, strokeWidth = 2.dp)
-                }
-            } else if (suggestions.isNotEmpty()) {
-                Box(modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp)) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 300.dp),
-                        shape = RoundedCornerShape(24.dp),
-                        color = Color.White,
-                        shadowElevation = 8.dp
-                    ) {
-                        LazyColumn {
-                            itemsIndexed(suggestions) { index, suggestion ->
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            searchAddress = suggestion.fullAddress
-                                            suggestions = emptyList()
-                                            scope.launch {
-                                                isLoading = true
-                                                val geo = repository.geocodeAddress(
-                                                    query = suggestion.fullAddress, 
-                                                    placeId = suggestion.placeId
+            // ─── Autocomplete suggestions ────────────────────────────────
+            AnimatedVisibility(
+                visible = showSuggestions && suggestions.isNotEmpty(),
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 220.dp)
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    itemsIndexed(suggestions) { _, suggestion ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    searchText = suggestion.fullAddress
+                                    showSuggestions = false
+                                    focusManager.clearFocus()
+                                    scope.launch {
+                                        isLoading = true
+                                        val geo = repository.geocodeAddress(
+                                            query = suggestion.fullAddress,
+                                            placeId = suggestion.placeId
+                                        )
+                                        if (geo != null) {
+                                            stops.add(
+                                                RouteStop(
+                                                    address = geo.formattedAddress,
+                                                    lat = geo.lat,
+                                                    lng = geo.lng
                                                 )
-                                                if (geo != null) {
-                                                    val newStop = mutableMapOf<String, Any?>(
-                                                        "address" to geo.formattedAddress,
-                                                        "lat" to geo.lat,
-                                                        "lng" to geo.lng,
-                                                        "stop_type" to "delivery",
-                                                        "is_verified" to true
-                                                    )
-                                                    stops.add(newStop)
-                                                    searchAddress = ""
-                                                } else {
-                                                    scope.launch { snackbarHostState.showSnackbar("לא ניתן היה לאמת את הכתובת") }
-                                                }
-                                                isLoading = false
-                                            }
+                                            )
+                                            searchText = ""
+                                        } else {
+                                            snackbarHostState.showSnackbar("לא ניתן לאמת את הכתובת")
                                         }
-                                        .padding(16.dp)
-                                ) {
-                                    Text(suggestion.fullAddress, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = TextOfficial)
-                                    Text(suggestion.source.uppercase(), fontSize = 10.sp, color = Color.Gray)
+                                        isLoading = false
+                                    }
                                 }
-                                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray.copy(alpha = 0.5f))
-                            }
-                        }
-                    }
-                }
-            } else if (searchAddress.length >= 2 && !isSearching) {
-                Box(modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp)) {
-                    Surface(shape = RoundedCornerShape(24.dp), color = Color.White, shadowElevation = 4.dp) {
-                        Text(
-                            "לא נמצאו תוצאות",
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            textAlign = TextAlign.Center,
-                            color = Color.Gray
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Stops List
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                itemsIndexed(stops) { index, stop ->
-                    ManualStopItem(
-                        index = index,
-                        stop = stop,
-                        onRemove = { stops.removeAt(index) },
-                        onTypeChange = { newType ->
-                            val updated = stop.toMutableMap()
-                            updated["stop_type"] = newType
-                            stops[index] = updated
-                        }
-                    )
-                }
-
-                if (stops.isEmpty()) {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
-                            contentAlignment = Alignment.Center
+                                .padding(horizontal = 8.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 48.dp)) {
-                                Icon(Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(64.dp), tint = Color.Gray.copy(alpha = 0.2f))
-                                Text("טרם הוספת תחנות למסלול", color = Color.Gray, fontWeight = FontWeight.Medium)
-                                Text("חפש כתובות למעלה כדי להתחיל לתכנן את המסלול שלך", color = Color.Gray.copy(alpha = 0.6f), fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                            Icon(Icons.Default.LocationOn, null, tint = AmberGold, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text(suggestion.description, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(suggestion.fullAddress, color = Color.Gray, fontSize = 11.sp, maxLines = 1)
                             }
                         }
+                        HorizontalDivider(color = Color.White.copy(alpha = 0.06f), thickness = 0.5.dp)
                     }
                 }
             }
 
-            // Bottom Actions
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shadowElevation = 16.dp,
-                color = Color.White,
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
-            ) {
-                Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            // ─── Content: Empty state OR stop list ───────────────────────
+            if (stops.isEmpty()) {
+                // Empty state
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Dashed + icon
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .border(
+                                width = 1.5.dp,
+                                color = Color.White.copy(alpha = 0.2f),
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Default.Add, null, tint = Color.White.copy(alpha = 0.3f), modifier = Modifier.size(28.dp))
+                    }
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        "הוסיפו את העצירות הראשונות שלכם",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        "כדי להתחיל ביצירת המסלול",
+                        color = Color.Gray,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.height(24.dp))
+
+                    // Primary button
+                    Button(
+                        onClick = { focusManager.clearFocus() },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(18.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AmberGold)
+                    ) {
+                        Icon(Icons.Default.Add, null, tint = Graphite950, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("להוסיף עצירה", color = Graphite950, fontWeight = FontWeight.Black, fontSize = 16.sp)
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    // Secondary button
+                    OutlinedButton(
+                        onClick = { /* copy from previous */ },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
+                    ) {
+                        Text("להעתיק עצירות ממסלול קודם", color = Color.White, fontSize = 14.sp)
+                    }
+                }
+            } else {
+                // Route summary
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "• ${stops.size} עצירות",
+                        color = Color.Gray,
+                        fontSize = 13.sp,
+                        modifier = Modifier.weight(1f)
+                    )
                     if (stops.size >= 2) {
-                        Button(
+                        TextButton(
                             onClick = {
                                 scope.launch {
                                     isLoading = true
                                     val loc = locationManager.currentLocation.value
-                                    val lat = loc?.first ?: 32.0853
-                                    val lng = loc?.second ?: 34.7818
-                                    val result = repository.optimizeManualRoute(lat, lng, stops.toList())
-                                    if (result.error == null) {
-                                        if (result.optimizedSequence.isNotEmpty()) {
-                                            stops.clear()
-                                            result.optimizedSequence.forEach { stop ->
-                                                stops.add(mutableMapOf(
-                                                    "address" to (stop.address ?: ""),
-                                                    "lat" to (stop.lat ?: 0.0),
-                                                    "lng" to (stop.lng ?: 0.0),
-                                                    "stop_type" to (stop.type ?: "delivery"),
-                                                    "is_verified" to true,
-                                                    "order_id" to stop.orderId
-                                                ))
-                                            }
-                                        } else if (!result.message.isNullOrBlank()) {
-                                            snackbarHostState.showSnackbar(result.message!!)
+                                    val stopsMaps = stops.map { s ->
+                                        mutableMapOf<String, Any?>(
+                                            "address" to s.address,
+                                            "lat" to s.lat,
+                                            "lng" to s.lng,
+                                            "stop_type" to s.stopType
+                                        )
+                                    }
+                                    val result = repository.optimizeManualRoute(
+                                        loc?.first ?: 32.0853,
+                                        loc?.second ?: 34.7818,
+                                        stopsMaps
+                                    )
+                                    if (result.error == null && result.optimizedSequence.isNotEmpty()) {
+                                        val reordered = result.optimizedSequence.mapIndexed { i, s ->
+                                            val orig = stops.find { it.address == s.address } ?: RouteStop(
+                                                address = s.address ?: "",
+                                                lat = s.lat ?: 0.0,
+                                                lng = s.lng ?: 0.0
+                                            )
+                                            orig.copy(orderIndex = i + 1)
                                         }
-                                    } else {
-                                        snackbarHostState.showSnackbar(result.error ?: "Route optimization failed")
+                                        stops.clear()
+                                        stops.addAll(reordered)
                                     }
                                     isLoading = false
                                 }
-                            },
-                            modifier = Modifier.fillMaxWidth().height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryTurquoise, contentColor = TextOfficial)
+                            }
                         ) {
-                            Text(if (isLoading) "מחשב מסלול..." else "בצע אופטימיזציה (TSP)", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("⚡ אופטימיזציה", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
+                }
 
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("🚀 מסלול עם ${stops.size} תחנות מוכן! ניווט מתחיל...")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.08f))
+
+                // Stop list
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 240.dp),
+                    contentPadding = PaddingValues(vertical = 4.dp)
+                ) {
+                    itemsIndexed(stops) { idx, stop ->
+                        RouteStopRow(
+                            index = idx,
+                            stop = stop,
+                            onClick = {
+                                selectedStopIndex = idx
+                                showStopDetail = true
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth().height(56.dp),
-                        enabled = stops.isNotEmpty() && !isLoading,
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryTurquoise, 
-                            contentColor = TextOfficial,
-                            disabledContainerColor = PrimaryTurquoise.copy(alpha = 0.5f),
-                            disabledContentColor = TextOfficial.copy(alpha = 0.5f)
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp)
-                    ) {
-                         Text("התחל ניווט למסלול הנבחר", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        )
+                        HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
                     }
+                }
+
+                HorizontalDivider(color = Color.White.copy(alpha = 0.08f))
+
+                // Approve route button
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedButton(
+                            onClick = { /* change details */ },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
+                        ) {
+                            Text("לשנות פרטים", color = Color.White, fontSize = 14.sp)
+                        }
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("🚀 מסלול עם ${stops.size} עצירות מוכן!")
+                                }
+                            },
+                            modifier = Modifier.weight(2f).height(48.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = AmberGold),
+                            enabled = !isLoading
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(color = Graphite950, modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                            } else {
+                                Text("אישור המסלול", color = Graphite950, fontWeight = FontWeight.Black, fontSize = 15.sp)
+                            }
+                        }
+                    }
+                    Spacer(Modifier.navigationBarsPadding())
                 }
             }
         }
-        } // end Scaffold
-        } // end PremiumBackground
-    } // end CompositionLocalProvider
-} // end ManualRoutePlannerScreen
 
-@Composable
-fun ManualStopItem(
-    index: Int,
-    stop: Map<String, Any?>,
-    onRemove: () -> Unit,
-    onTypeChange: (String) -> Unit
-) {
-    val address = stop["address"] as? String ?: ""
-    val type = stop["stop_type"] as? String ?: "delivery"
+        // ─── Snackbar ────────────────────────────────────────────────────
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 16.dp)
+        )
+    }
 
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        shadowElevation = 4.dp,
-        modifier = Modifier.fillMaxWidth().animateContentSize()
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+    // ─── Stop Detail Bottom Sheet ────────────────────────────────────────
+    if (showStopDetail && selectedStopIndex != null && selectedStopIndex!! < stops.size) {
+        val stopIdx = selectedStopIndex!!
+        val stop = stops[stopIdx]
+
+        ModalBottomSheet(
+            onDismissRequest = { showStopDetail = false },
+            sheetState = sheetState,
+            containerColor = Color(0xFF0E0E0E),
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+            dragHandle = {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(modifier = Modifier.width(40.dp).height(4.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.3f)))
+                }
+            }
         ) {
-            Surface(
-                color = PrimaryTurquoise.copy(alpha = 0.1f),
-                shape = CircleShape,
-                modifier = Modifier.size(32.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text((index + 1).toString(), fontWeight = FontWeight.Bold, color = PrimaryTurquoise)
+            StopDetailSheet(
+                stop = stop,
+                onDismiss = { showStopDetail = false },
+                onRemove = {
+                    stops.removeAt(stopIdx)
+                    showStopDetail = false
+                },
+                onUpdate = { updated ->
+                    stops[stopIdx] = updated
                 }
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(address, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextOfficial, modifier = Modifier.weight(1f, fill = false))
-                    if (stop["is_verified"] == true) {
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            Icons.Default.CheckCircle, 
-                            contentDescription = "Verified", 
-                            tint = Color(0xFF388E3C), 
-                            modifier = Modifier.size(14.dp)
-                        )
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    TypeBadge(type = type, onClick = {
-                        val nextType = when(type) {
-                            "delivery" -> "pickup"
-                            "pickup" -> "waypoint"
-                            else -> "delivery"
-                        }
-                        onTypeChange(nextType)
-                    })
-                    if (stop["order_id"] != null) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("#${stop["order_id"]}", fontSize = 10.sp, color = Color.Gray)
-                    }
-                }
-            }
-
-            IconButton(onClick = onRemove) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red.copy(alpha = 0.6f))
-            }
+            )
         }
     }
 }
 
+// ─── Route Stop Row (in the list) ────────────────────────────────────────────
 @Composable
-fun TypeBadge(type: String, onClick: () -> Unit) {
-    val (label, color, icon) = when(type) {
-        "pickup" -> Triple("איסוף", Color(0xFF1976D2), Icons.Default.KeyboardArrowUp)
-        "delivery" -> Triple("מסירה", Color(0xFF388E3C), Icons.Default.KeyboardArrowDown)
-        else -> Triple("תחנה", Color(0xFF616161), Icons.Default.Place)
+private fun RouteStopRow(index: Int, stop: RouteStop, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Number badge
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(AmberGold),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                (stop.orderIndex ?: (index + 1)).toString(),
+                color = Graphite950,
+                fontWeight = FontWeight.Black,
+                fontSize = 13.sp
+            )
+        }
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                stop.address,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Text(
+                if (stop.stopType == "pickup") "איסוף" else "מסירה",
+                color = if (stop.stopType == "pickup") Color(0xFF4FC3F7) else AmberGold,
+                fontSize = 12.sp
+            )
+        }
+
+        Spacer(Modifier.width(8.dp))
+
+        // Arrival time if set
+        Text(
+            stop.arrivalTime,
+            color = Color.Gray,
+            fontSize = 12.sp
+        )
+
+        Spacer(Modifier.width(4.dp))
+
+        Icon(
+            Icons.Default.ChevronRight,
+            null,
+            tint = Color.Gray,
+            modifier = Modifier.size(16.dp)
+        )
+    }
+}
+
+// ─── Stop Detail Sheet Content ───────────────────────────────────────────────
+@Composable
+private fun StopDetailSheet(
+    stop: RouteStop,
+    onDismiss: () -> Unit,
+    onRemove: () -> Unit,
+    onUpdate: (RouteStop) -> Unit
+) {
+    var stopType by remember { mutableStateOf(stop.stopType) }
+    var packageCount by remember { mutableIntStateOf(stop.packageCount) }
+    var orderIndex by remember { mutableStateOf(stop.orderIndex?.toString() ?: "") }
+    var notes by remember { mutableStateOf(stop.notes) }
+    var arrivalTime by remember { mutableStateOf(stop.arrivalTime) }
+    var durationMinutes by remember { mutableIntStateOf(stop.durationMinutes) }
+    var showDuplicateConfirm by remember { mutableStateOf(false) }
+    var showRemoveConfirm by remember { mutableStateOf(false) }
+
+    val rowHeight = Modifier
+        .fillMaxWidth()
+        .height(54.dp)
+
+    LaunchedEffect(stopType, packageCount, orderIndex, notes, arrivalTime, durationMinutes) {
+        onUpdate(stop.copy(
+            stopType = stopType,
+            packageCount = packageCount,
+            orderIndex = orderIndex.toIntOrNull(),
+            notes = notes,
+            arrivalTime = arrivalTime,
+            durationMinutes = durationMinutes
+        ))
     }
 
-    Surface(
-        color = color.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.clickable { onClick() }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(icon, null, modifier = Modifier.size(12.dp), tint = color)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(label, fontSize = 10.sp, color = color, fontWeight = FontWeight.Bold)
+        // ── Header: address ──────────────────────────────────────────────
+        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+            Text(
+                stop.address.substringBefore(","),
+                color = Color.White,
+                fontWeight = FontWeight.Black,
+                fontSize = 20.sp
+            )
+            Text(
+                stop.address.substringAfter(",", "").trim(),
+                color = Color.Gray,
+                fontSize = 13.sp
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { /* access instructions */ },
+                shape = RoundedCornerShape(10.dp),
+                border = BorderStroke(1.dp, AmberGold.copy(alpha = 0.5f)),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                modifier = Modifier.height(34.dp)
+            ) {
+                Icon(Icons.Default.Add, null, tint = AmberGold, modifier = Modifier.size(14.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("הוראות גישה", color = AmberGold, fontSize = 13.sp)
+            }
         }
+
+        HorizontalDivider(color = Color.White.copy(alpha = 0.08f))
+
+        LazyColumn {
+            // ── Notes ────────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.clickable { }.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("הוספת הערות", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Spacer(Modifier.width(12.dp))
+                    Icon(Icons.Default.CameraAlt, null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            // ── Package tracking ─────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("איתור חבילות", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("לא הוגדר", color = Color.Gray, fontSize = 14.sp)
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            // ── Package count ────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("חבילות", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = { if (packageCount > 1) packageCount-- },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, null, tint = AmberGold, modifier = Modifier.size(18.dp))
+                        }
+                        Text(
+                            packageCount.toString(),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            modifier = Modifier.width(32.dp),
+                            textAlign = TextAlign.Center
+                        )
+                        IconButton(
+                            onClick = { packageCount++ },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(Icons.Default.Add, null, tint = AmberGold, modifier = Modifier.size(18.dp))
+                        }
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            // ── Order (numeric) ──────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("סידור", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("מיקום:", color = Color.Gray, fontSize = 12.sp)
+                        Spacer(Modifier.width(6.dp))
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFF1C1C1E),
+                            border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+                            modifier = Modifier.width(56.dp).height(34.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                androidx.compose.foundation.text.BasicTextField(
+                                    value = orderIndex,
+                                    onValueChange = { v -> if (v.length <= 2 && (v.isEmpty() || v.toIntOrNull() != null)) orderIndex = v },
+                                    textStyle = LocalTextStyle.current.copy(
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center
+                                    ),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done,
+                                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                if (orderIndex.isEmpty()) {
+                                    Text("אוטו", color = Color.Gray, fontSize = 11.sp, textAlign = TextAlign.Center)
+                                }
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            // ── Stop type ────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("סוג", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("מסירה" to "delivery", "איסוף" to "pickup").forEach { (label, value) ->
+                            Surface(
+                                modifier = Modifier
+                                    .height(32.dp)
+                                    .clickable { stopType = value },
+                                shape = RoundedCornerShape(10.dp),
+                                color = if (stopType == value) AmberGold else Color(0xFF1C1C1E),
+                                border = BorderStroke(0.5.dp, if (stopType == value) AmberGold else Color.White.copy(alpha = 0.15f))
+                            ) {
+                                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 14.dp)) {
+                                    Text(
+                                        label,
+                                        color = if (stopType == value) Graphite950 else Color.White,
+                                        fontWeight = if (stopType == value) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 13.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            // ── Arrival time ─────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.clickable { }.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("שעת הגעה", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(arrivalTime, color = Color.Gray, fontSize = 14.sp)
+                        Spacer(Modifier.width(4.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            // ── Duration ─────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.clickable { }.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("משך העצירה המשוערת", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("$durationMinutes דק׳", color = Color.Gray, fontSize = 14.sp)
+                        Spacer(Modifier.width(4.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.12f), thickness = 1.dp)
+            }
+
+            // ── Actions ──────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = rowHeight.clickable { }.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("שינוי כתובת", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Search, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            item {
+                Row(
+                    modifier = rowHeight.clickable { showDuplicateConfirm = true }.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("שכפול עצירה", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.CopyAll, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                    }
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
+            }
+
+            item {
+                Row(
+                    modifier = rowHeight.clickable { showRemoveConfirm = true }.padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("להסיר עצירה", color = Color(0xFFFF453A), fontSize = 15.sp, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Delete, null, tint = Color(0xFFFF453A), modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = Color(0xFFFF453A).copy(alpha = 0.5f), modifier = Modifier.size(16.dp))
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+            }
+        }
+    }
+
+    // Remove confirmation dialog
+    if (showRemoveConfirm) {
+        AlertDialog(
+            onDismissRequest = { showRemoveConfirm = false },
+            title = { Text("הסרת עצירה", color = Color.White, fontWeight = FontWeight.Bold) },
+            text = { Text("האם להסיר את העצירה הזו מהמסלול?", color = Color.Gray) },
+            confirmButton = {
+                TextButton(onClick = { showRemoveConfirm = false; onRemove() }) {
+                    Text("הסר", color = Color(0xFFFF453A), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRemoveConfirm = false }) {
+                    Text("ביטול", color = Color.Gray)
+                }
+            },
+            containerColor = Color(0xFF1C1C1E)
+        )
     }
 }

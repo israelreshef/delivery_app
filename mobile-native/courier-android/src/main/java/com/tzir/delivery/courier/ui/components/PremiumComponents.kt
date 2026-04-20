@@ -1,5 +1,7 @@
 package com.tzir.delivery.courier.ui.components
 
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
@@ -22,6 +24,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,12 +33,12 @@ import androidx.compose.ui.unit.sp
 import com.tzir.delivery.courier.ui.theme.*
 
 // TZIR Premium Components v3.0
-// Glassmorphic · Theme-Aware · Apple-Inspired
+// Glassmorphic ֲ· Theme-Aware ֲ· Apple-Inspired
 // Glassmorphism components already available in PremiumComponents.kt (ported per Phase 2)
-// ════════════════════════════════════════
+// ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•
 
 /**
- * Glassmorphic Card — the primary card component.
+ * Glassmorphic Card ג€” the primary card component.
  * Adapts automatically to dark/light mode.
  * Uses semi-transparent background with subtle border.
  */
@@ -43,26 +46,38 @@ import com.tzir.delivery.courier.ui.theme.*
 fun GlassCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 24.dp,
-    opacity: Float = 1f,
+    opacity: Float = 0.85f,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val isDark = true // Force dark for premium components
-    val bgColor = if (isDark) Color(0xCC080808) else Color(0xCCFFFFFF)
-    val borderColor = if (isDark) Color(0x1AFFFFFF) else Color(0x14000000)
+    val isDark = TZIRTheme.colors == DarkExtendedColors
+    val bgColor = if (isDark) Color(0xFF0D0D10).copy(alpha = opacity) else Color(0xFFFFFFFF).copy(alpha = opacity)
+    val borderColor = if (isDark) Color(0x33FFFFFF) else Color(0x14000000)
 
     Box(
         modifier = modifier
             .shadow(
-                elevation = if (isDark) 20.dp else 10.dp,
+                elevation = 12.dp,
                 shape = RoundedCornerShape(cornerRadius),
-                ambientColor = Color.Black.copy(alpha = if (isDark) 0.5f else 0.08f),
-                spotColor = Color.Black.copy(alpha = if (isDark) 0.5f else 0.08f)
+                ambientColor = Color.Black.copy(alpha = if (isDark) 0.4f else 0.05f),
+                spotColor = Color.Black.copy(alpha = if (isDark) 0.4f else 0.05f)
             )
             .clip(RoundedCornerShape(cornerRadius))
-            .background(bgColor.copy(alpha = bgColor.alpha * opacity))
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        bgColor,
+                        bgColor.copy(alpha = bgColor.alpha * 0.9f)
+                    )
+                )
+            )
             .border(
-                width = 0.5.dp,
-                color = borderColor,
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        borderColor,
+                        borderColor.copy(alpha = 0.1f)
+                    )
+                ),
                 shape = RoundedCornerShape(cornerRadius)
             )
     ) {
@@ -71,7 +86,7 @@ fun GlassCard(
 }
 
 /**
- * Glow Card — glassmorphic card with animated amber glow.
+ * Glow Card ג€” glassmorphic card with animated amber glow.
  * Used for highlighted items like active missions.
  */
 @Composable
@@ -108,7 +123,7 @@ fun GlowCard(
 
 
 /**
- * Earnings Row — used in earnings detail sheets.
+ * Earnings Row ג€” used in earnings detail sheets.
  * Theme-aware text colors.
  */
 @Composable
@@ -146,7 +161,7 @@ fun EarningsRow(
 }
 
 /**
- * Active Mission Card — glassmorphic with amber glow accent.
+ * Active Mission Card ג€” glassmorphic with amber glow accent.
  */
 @Composable
 fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetailsClick: () -> Unit) {
@@ -185,7 +200,7 @@ fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetail
                     modifier = Modifier.size(32.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text("🚚", fontSize = 16.sp)
+                        Text("נ", fontSize = 16.sp)
                     }
                 }
                 Spacer(modifier = Modifier.width(12.dp))
@@ -205,7 +220,7 @@ fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetail
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("📍", fontSize = 12.sp)
+                Text("נ“", fontSize = 12.sp)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     mission.pickupAddress,
@@ -226,7 +241,7 @@ fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetail
 }
 
 /**
- * Apple-style button — used for secondary/outlined actions.
+ * Apple-style button ג€” used for secondary/outlined actions.
  */
 @Composable
 fun AppleButton(
@@ -270,5 +285,105 @@ fun AppleButton(
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.3.sp
         )
+    }
+}
+
+@Composable
+fun OrderOfferDialog(
+    mission: com.tzir.delivery.courier.model.Mission,
+    onAccept: () -> Unit,
+    onDecline: () -> Unit,
+    isLoading: Boolean = false
+) {
+    Dialog(
+        onDismissRequest = { /* No dismiss outside */ },
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Header
+                Text(
+                    text = "הצעה למשלוח חדש!",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = AmberGold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Addresses
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Text("🟢", fontSize = 16.sp)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = mission.pickupAddress,
+                        maxLines = 1,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Text("🔴", fontSize = 16.sp)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = mission.deliveryAddress,
+                        maxLines = 1,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = Color.Gray.copy(alpha = 0.2f))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Price
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    val displayPrice = mission.price ?: mission.estimatedPrice
+                    Text(
+                        text = "₪ $displayPrice",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Black,
+                        color = SuccessDark
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Buttons
+                if (isLoading) {
+                    CircularProgressIndicator(color = AmberGold)
+                } else {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Button(
+                            onClick = onDecline,
+                            modifier = Modifier.weight(1f).height(50.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray, contentColor = Color.White),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("דחה", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
+                        
+                        Button(
+                            onClick = onAccept,
+                            modifier = Modifier.weight(1f).height(50.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = AmberGold, contentColor = Color.Black),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("קבל", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

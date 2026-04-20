@@ -18,7 +18,9 @@ data class Mission(
     @SerialName("completed_at")
     val completedAt: String? = null,
     @SerialName("estimated_price")
-    val estimatedPrice: Double,
+    val estimatedPrice: Double = 0.0,
+    @SerialName("price")
+    val price: Double? = null,
     @SerialName("pickup_lat")
     val pickupLat: Double? = null,
     @SerialName("pickup_lng")

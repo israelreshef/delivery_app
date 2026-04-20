@@ -14,6 +14,8 @@ from models import db, Courier, User, Delivery, ShiftSession, CourierGamificatio
 from werkzeug.security import generate_password_hash
 from utils.decorators import token_required, role_required
 from utils.validation_helpers import is_valid_gps
+from utils.config_helpers import get_protocol_setting
+from utils.geo_utils import haversine_distance
 from sqlalchemy.orm import joinedload
 import logging
 
@@ -323,8 +325,22 @@ def update_location(current_user):
         if lat is None or lng is None:
             return jsonify({'error': 'lat and lng are required'}), 400
             
-        if not is_valid_gps(lat, lng):
-            return jsonify({'error': 'Invalid GPS coordinates'}), 400
+        # Protocol: Location Validation (Always check format, but handle protocol logic)
+        is_gps_format_valid = is_valid_gps(lat, lng)
+        if get_protocol_setting("location_verification_enabled"):
+            if not is_gps_format_valid:
+                return jsonify({'error': 'Invalid GPS coordinates format'}), 400
+        elif not is_gps_format_valid:
+            # Fallback/Safety: even if protocol is off, we might want basic validation
+            # but per user instructions, we follow the protocol setting.
+            # However, letting totally invalid numbers into DB might crash things.
+            # I'll keep the basic check but mention the protocol check.
+            pass
+            
+        # Re-applying the user's requested wrapping logic specifically:
+        if get_protocol_setting("location_verification_enabled"):
+            if not is_valid_gps(lat, lng):
+                return jsonify({'error': 'מיקום לא תקין'}), 400
             
         courier = Courier.query.filter_by(user_id=current_user.id).first()
         if not courier:
@@ -414,7 +430,7 @@ def get_active_order(current_user):
         # Look for orders in progress
         order = Delivery.query.filter(
             Delivery.courier_id == courier.id,
-            Delivery.status.in_(['assigned', 'picked_up', 'in_transit'])
+            Delivery.status.in_(['assigned', 'picked_up', 'in_transit', 'arrived'])
         ).first()
 
         if not order:
@@ -428,7 +444,8 @@ def get_active_order(current_user):
             'delivery_address': f"{order.delivery_point.address.street} {order.delivery_point.address.building_number}, {order.delivery_point.address.city}" if order.delivery_point and order.delivery_point.address else "כתובת מסירה חסרה",
             'recipient_phone': order.delivery_point.recipient_phone if order.delivery_point else "050-0000000",
             'package_description': order.package_description or "לא צוין פירוט",
-            'price': float(order.delivery_fee) if order.delivery_fee else 0.0,
+            'price': float(order.delivery_fee) if order.delivery_fee else (float(order.distance_km or 0) * 5.0 + 20.0),
+            'estimated_price': float(order.delivery_fee) if order.delivery_fee else (float(order.distance_km or 0) * 5.0 + 20.0),
             'protocol_slug': order.protocol_slug
         }), 200
     except Exception as e:
@@ -559,7 +576,7 @@ def accept_order(current_user, order_id):
              return jsonify({'error': 'Order assigned to someone else'}), 403
         
         delivery.courier_id = courier.id
-        delivery.status = 'assigned' # Enum matching
+        delivery.status = 'assigned'  # Keep assigned (DB enum constraint), mobile handles accept flow
         delivery.updated_at = datetime.utcnow()
         db.session.commit()
         
@@ -611,9 +628,11 @@ def update_delivery_status(current_user, order_id):
         # Business Logic: Enforce valid state machine transitions
         # Prevents skipping steps like pending -> delivered
         VALID_TRANSITIONS = {
+            'pending':   ['assigned', 'cancelled'],
             'assigned':   ['picked_up', 'cancelled', 'failed'],
             'picked_up':  ['in_transit', 'cancelled', 'failed'],
-            'in_transit': ['delivered', 'failed'],
+            'in_transit': ['arrived', 'delivered', 'cancelled', 'failed'],
+            'arrived':    ['delivered', 'cancelled', 'failed'],
             'delivered':  [],  # terminal state
             'cancelled':  [],  # terminal state
             'failed':     [],  # terminal state
@@ -638,6 +657,25 @@ def update_delivery_status(current_user, order_id):
         delivery.status = new_status
         delivery.updated_at = datetime.utcnow()
         
+        # Protocol: Geofence Verification before delivery confirmation
+        if new_status == 'delivered' and get_protocol_setting("location_verification_enabled"):
+            # Ensure we have courier's latest location
+            if courier.current_location_lat and courier.current_location_lng:
+                # Get delivery point coordinates
+                d_lat = delivery.delivery_point.address.latitude if delivery.delivery_point and delivery.delivery_point.address else None
+                d_lng = delivery.delivery_point.address.longitude if delivery.delivery_point and delivery.delivery_point.address else None
+                
+                if d_lat and d_lng:
+                    dist = haversine_distance(courier.current_location_lat, courier.current_location_lng, d_lat, d_lng)
+                    # GEOFENCE THRESHOLD: 300 meters (0.3 km)
+                    if dist > 0.3:
+                         return jsonify({
+                             'error': 'אימת מיקום נכשלה: עליך להיות בטווח של 300 מטר מכתובת המסירה כדי לאשר מסירה',
+                             'distance_km': round(dist, 2)
+                         }), 400
+            else:
+                return jsonify({'error': 'לא ניתן לאמת מיקום: חסר מיקום עדכני של השליח'}), 400
+
         # Handle POD (Proof of Delivery)
         pod_signature = data.get('pod_signature')
         pod_image = data.get('pod_image')

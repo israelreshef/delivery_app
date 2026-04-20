@@ -273,6 +273,15 @@ class CourierRepository(
         return success
     }
 
+    suspend fun rejectMission(missionId: Int): Boolean {
+        val success = api.rejectOrder(missionId)
+        if (success) {
+            refreshAvailableMissions()
+            refreshActiveMissions()
+        }
+        return success
+    }
+
     suspend fun updateMissionStatus(
         missionId: Int, 
         status: String, 

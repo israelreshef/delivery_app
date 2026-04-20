@@ -30,6 +30,7 @@ fun OrderSummaryScreen(
     pLng: Double,
     dLat: Double,
     dLng: Double,
+    protocol: String = "standard",
     navController: NavHostController,
     repository: CustomerRepository
 ) {
@@ -41,6 +42,17 @@ fun OrderSummaryScreen(
     var estimatedPrice by remember { mutableStateOf<Double?>(null) }
     var distanceKm by remember { mutableStateOf<Double?>(null) }
     var durationMins by remember { mutableStateOf<Double?>(null) }
+
+    // Map protocol slug to delivery type and display label
+    val deliveryTypeInfo = remember(protocol) {
+        when (protocol) {
+            "legal_document" -> Triple("legal_document", "מסמך משפטי", "medium")
+            "food_fragile" -> Triple("food_fragile", "אוכל / שביר", "medium")
+            "large_package" -> Triple("large_package", "חבילה גדולה", "large")
+            else -> Triple("standard", "חבילה רגילה", "small")
+        }
+    }
+    val (deliveryType, deliveryTypeLabel, packageSize) = deliveryTypeInfo
 
     LaunchedEffect(pLat, pLng, dLat, dLng) {
         val quote = repository.getOrderQuote(pLat, pLng, dLat, dLng)
@@ -72,7 +84,14 @@ fun OrderSummaryScreen(
                     SummaryItem(icon = Icons.Default.MyLocation, label = stringResource(R.string.pickup), value = pickup)
                     Spacer(Modifier.height(16.dp))
                     SummaryItem(icon = Icons.Default.Place, label = stringResource(R.string.delivery_dest), value = delivery, iconColor = Color.Red)
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                    Spacer(Modifier.height(12.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("סוג משלוח", color = Graphite400)
+                        Text(deliveryTypeLabel, color = AmberGold, fontWeight = FontWeight.SemiBold)
+                    }
+                    Spacer(Modifier.height(12.dp))
                     HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
                     Spacer(Modifier.height(16.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -149,11 +168,11 @@ fun OrderSummaryScreen(
                                     package_data = PackageData(
                                         packageContent = mockPackageLabel,
                                         packageWeight = 1.0,
-                                        packageSize = "small"
+                                        packageSize = packageSize
                                     ),
                                     service = ServiceData(
-                                        deliveryType = "standard",
-                                        urgency = "standard"
+                                        deliveryType = deliveryType,
+                                        urgency = if (protocol == "legal_document") "express" else "standard"
                                     )
                                 )
                             )

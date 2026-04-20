@@ -103,6 +103,8 @@ export default function AdminOrders() {
                 setOrders(data);
             } else if (data.orders) {
                 setOrders(data.orders);
+            } else if (data.data) {
+                setOrders(data.data);
             }
         } catch (error: any) {
             console.error(error);

@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { useSocket } from "@/lib/socket";
+import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import styles from './courier-list.module.css';
 
@@ -26,6 +27,9 @@ export default function AdminCouriersPage() {
     const [isResetLoading, setIsResetLoading] = useState(false);
     const [availableCount, setAvailableCount] = useState<number>(0);
     const [candidatesCount, setCandidatesCount] = useState<number>(0);
+    const [locationVerificationEnabled, setLocationVerificationEnabled] = useState(false);
+    const [smsProtocolEnabled, setSmsProtocolEnabled] = useState(false);
+    const [photoProtocolEnabled, setPhotoProtocolEnabled] = useState(false);
 
     // New Courier Form State
     const [newCourier, setNewCourier] = useState({
@@ -42,6 +46,7 @@ export default function AdminCouriersPage() {
     useEffect(() => {
         fetchCouriers();
         fetchAvailabilityMetrics();
+        fetchProtocolSettings();
     }, []);
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -93,6 +98,56 @@ export default function AdminCouriersPage() {
             setCandidatesCount(candidatesRes.data?.candidates_count ?? 0);
         } catch (error) {
             console.error("Failed to fetch courier metrics", error);
+        }
+    };
+
+    const fetchProtocolSettings = async () => {
+        try {
+            const res = await api.get('/admin/protocols/location-verification');
+            setLocationVerificationEnabled(res.data.enabled);
+        } catch (error) {
+            console.error("Failed to fetch protocol settings", error);
+        }
+        try {
+            const smsRes = await api.get('/admin/protocols/sms-notification').catch(() => ({ data: { enabled: false } }));
+            setSmsProtocolEnabled(smsRes.data.enabled);
+        } catch {}
+        try {
+            const photoRes = await api.get('/admin/protocols/photo-proof').catch(() => ({ data: { enabled: false } }));
+            setPhotoProtocolEnabled(photoRes.data.enabled);
+        } catch {}
+    };
+
+    const handleToggleLocationVerification = async (val: boolean) => {
+        setLocationVerificationEnabled(val);
+        try {
+            await api.post('/admin/protocols/location-verification', { enabled: val });
+            toast.success(val ? "פרוטוקול אימות מיקום הופעל" : "פרוטוקול אימות מיקום הופסק");
+        } catch (error) {
+            toast.error("שגיאה בעדכון הפרוטוקול");
+            setLocationVerificationEnabled(!val);
+        }
+    };
+
+    const handleToggleSms = async (val: boolean) => {
+        setSmsProtocolEnabled(val);
+        try {
+            await api.post('/admin/protocols/sms-notification', { enabled: val });
+            toast.success(val ? "פרוטוקול SMS הופעל" : "פרוטוקול SMS הופסק");
+        } catch {
+            toast.error("שגיאה בעדכון פרוטוקול SMS");
+            setSmsProtocolEnabled(!val);
+        }
+    };
+
+    const handleTogglePhoto = async (val: boolean) => {
+        setPhotoProtocolEnabled(val);
+        try {
+            await api.post('/admin/protocols/photo-proof', { enabled: val });
+            toast.success(val ? "פרוטוקול תמונה הופעל" : "פרוטוקול תמונה הופסק");
+        } catch {
+            toast.error("שגיאה בעדכון פרוטוקול תמונה");
+            setPhotoProtocolEnabled(!val);
         }
     };
 
@@ -344,6 +399,73 @@ export default function AdminCouriersPage() {
                 </div>
             </div>
 
+            {/* פרוטוקולים */}
+            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-6">
+              <h2 className="text-xl font-semibold text-white text-right mb-4">ניהול פרוטוקולים</h2>
+              <p className="text-slate-400 text-sm text-right mb-5">הגדר אילו פרוטוקולים נדרשים מהשליח בעת ביצוע מסירה.</p>
+
+              <div className="flex flex-col gap-4">
+
+                {/* Location Verification */}
+                <div className="flex items-center justify-end gap-3 bg-slate-800/40 rounded-lg px-4 py-3">
+                  <button
+                    onClick={() => handleToggleLocationVerification(!locationVerificationEnabled)}
+                    style={{
+                      width: '44px', height: '24px', borderRadius: '12px',
+                      backgroundColor: locationVerificationEnabled ? '#f59e0b' : '#475569',
+                      border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', flexShrink: 0,
+                    }}
+                  />
+                  <span className="text-slate-200 font-medium">פרוטוקול אימות מיקום</span>
+                  <div className="relative group">
+                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-amber-400 hover:text-amber-400 transition-colors">?</div>
+                    <div className="absolute z-50 hidden group-hover:block bg-slate-900 border border-slate-600 text-slate-300 text-sm rounded-lg p-3 shadow-xl text-right leading-relaxed" style={{ width: '280px', left: '24px', top: '0' }}>
+                      כאשר פעיל, השליח חייב להיות בטווח של 300 מטר מכתובת המסירה כדי לאשר סיום משימה. המיקום נבדק בזמן אמת מול ה-GPS של השליח.
+                    </div>
+                  </div>
+                </div>
+
+                {/* SMS Protocol */}
+                <div className="flex items-center justify-end gap-3 bg-slate-800/40 rounded-lg px-4 py-3">
+                  <button
+                    onClick={() => handleToggleSms(!smsProtocolEnabled)}
+                    style={{
+                      width: '44px', height: '24px', borderRadius: '12px',
+                      backgroundColor: smsProtocolEnabled ? '#f59e0b' : '#475569',
+                      border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', flexShrink: 0,
+                    }}
+                  />
+                  <span className="text-slate-200 font-medium">פרוטוקול SMS</span>
+                  <div className="relative group">
+                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-amber-400 hover:text-amber-400 transition-colors">?</div>
+                    <div className="absolute z-50 hidden group-hover:block bg-slate-900 border border-slate-600 text-slate-300 text-sm rounded-lg p-3 shadow-xl text-right leading-relaxed" style={{ width: '280px', left: '24px', top: '0' }}>
+                      כאשר פעיל, נשלחת הודעת SMS אוטומטית ללקוח עם אישור המסירה ושם השליח. דורש הגדרת ספק SMS בהגדרות המערכת.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Photo Protocol */}
+                <div className="flex items-center justify-end gap-3 bg-slate-800/40 rounded-lg px-4 py-3">
+                  <button
+                    onClick={() => handleTogglePhoto(!photoProtocolEnabled)}
+                    style={{
+                      width: '44px', height: '24px', borderRadius: '12px',
+                      backgroundColor: photoProtocolEnabled ? '#f59e0b' : '#475569',
+                      border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', flexShrink: 0,
+                    }}
+                  />
+                  <span className="text-slate-200 font-medium">פרוטוקול תמונה</span>
+                  <div className="relative group">
+                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-amber-400 hover:text-amber-400 transition-colors">?</div>
+                    <div className="absolute z-50 hidden group-hover:block bg-slate-900 border border-slate-600 text-slate-300 text-sm rounded-lg p-3 shadow-xl text-right leading-relaxed" style={{ width: '280px', left: '24px', top: '0' }}>
+                      כאשר פעיל, השליח נדרש לצלם תמונת הוכחת מסירה (חבילה בדלת / חתימה) לפני שיוכל לאשר את סיום המשימה.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
             <div className={styles.tableContainer}>
                 <div className={styles.tableHeader}>
                     <div className={styles.tableTitle}>סגל שליחים ({filteredCouriers.length})</div>
@@ -440,6 +562,7 @@ export default function AdminCouriersPage() {
                     </tbody>
                 </table>
             </div>
+
 
             <Dialog open={!!resetTokenUser} onOpenChange={(open) => !open && setResetTokenUser(null)}>
                 <DialogContent className="bg-slate-900 border-slate-700 text-slate-100" dir="rtl">

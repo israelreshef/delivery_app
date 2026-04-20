@@ -1,0 +1,1 @@
+﻿delivery_status_enum = db.Enum('pending', 'assigned', 'picked_up', 'in_transit', 'delivered', 'cancelled', 'failed', name='delivery_status_type', metadata=db.metadata)

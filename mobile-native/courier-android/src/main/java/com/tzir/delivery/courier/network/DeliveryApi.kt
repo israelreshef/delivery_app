@@ -16,6 +16,7 @@ interface DeliveryApi {
     suspend fun sendLocation(request: LocationRequest): Boolean
     suspend fun getAvailableOrders(): List<Mission>
     suspend fun acceptOrder(orderId: Int): Boolean
+    suspend fun rejectOrder(orderId: Int): Boolean
     suspend fun optimizeRoute(lat: Double, lng: Double): RouteOptimizationResult
     suspend fun getStats(): CourierStats
     suspend fun updateStatus(orderId: Int, request: StatusUpdateRequest): Boolean
@@ -48,7 +49,7 @@ interface DeliveryApi {
 
 class DeliveryApiImpl(
     private val client: HttpClient,
-    private val baseUrl: String = "http://10.0.2.2:5000"
+    private val baseUrl: String = "http://192.168.33.19:5000"
 ) : DeliveryApi {
 
     override suspend fun login(request: LoginRequest): AuthResponse {
@@ -110,6 +111,17 @@ class DeliveryApiImpl(
     override suspend fun acceptOrder(orderId: Int): Boolean {
         return try {
             val response = client.post("$baseUrl/api/couriers/orders/$orderId/accept") {
+                contentType(ContentType.Application.Json)
+            }
+            response.status.value in 200..299
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun rejectOrder(orderId: Int): Boolean {
+        return try {
+            val response = client.post("$baseUrl/api/couriers/orders/$orderId/reject") {
                 contentType(ContentType.Application.Json)
             }
             response.status.value in 200..299
@@ -274,8 +286,8 @@ class DeliveryApiImpl(
     override suspend fun geocodeAddress(query: String?, placeId: String?): GeocodeResult? {
         return try {
             client.get("$baseUrl/api/addresses/geocode") {
+                if (query != null) parameter("q", query)
                 if (placeId != null) parameter("place_id", placeId)
-                else parameter("q", query)
             }.body()
         } catch (e: Exception) {
             null

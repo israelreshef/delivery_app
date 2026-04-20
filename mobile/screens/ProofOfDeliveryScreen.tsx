@@ -12,7 +12,7 @@ export default function ProofOfDeliveryScreen() {
     const route = useRoute();
     const navigation = useNavigation();
     const { order } = route.params as { order: any };
-    const { addToQueue, courierId } = useCourierStore();
+    const { completeDelivery, courierId } = useCourierStore();
     const colorScheme = useColorScheme();
     const theme = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
 
@@ -63,16 +63,8 @@ export default function ProofOfDeliveryScreen() {
             timestamp: new Date().toISOString()
         };
 
-        // Add to offline queue / send
-        // We use a generic 'update_order' action or specific 'complete_delivery'
-        addToQueue('complete_delivery', payload);
-
-        Toast.show({
-            type: 'success',
-            text1: 'Delivery Completed!',
-            text2: 'Proof of delivery saved.'
-        });
-
+        // Dispatch completeDelivery action to the store
+        await completeDelivery(payload);
         navigation.navigate('Home' as never);
     };
 

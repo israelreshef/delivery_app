@@ -1,5 +1,6 @@
 import requests
 import os
+import math
 
 NOMINATIM_URL = os.getenv('NOMINATIM_URL', 'http://localhost:8080')
 OSRM_URL = os.getenv('OSRM_URL', 'http://localhost:5000')
@@ -35,3 +36,14 @@ def get_route_info(pickup_coords, delivery_coords):
     except Exception as e:
         print(f"Routing error: {e}")
     return None
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate the great-circle distance between two points on Earth (km)."""
+    R = 6371 # Earth radius in km
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (math.sin(dlat / 2) ** 2 +
+         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+         math.sin(dlon / 2) ** 2)
+    c = 2 * math.asin(math.sqrt(a))
+    return R * c

@@ -15,6 +15,7 @@ from models import (
     GroupPermission,
 )
 from utils.decorators import token_required, role_required
+from utils.config_helpers import get_protocol_setting, save_protocol_setting
 import logging
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
@@ -72,6 +73,30 @@ def _effective_user_permission_keys(user):
             if gp.permission and gp.permission.permission_key:
                 keys.add(gp.permission.permission_key)
     return sorted(keys)
+
+
+@admin_bp.route('/protocols/location-verification', methods=['GET'])
+@token_required
+@role_required('admin')
+def get_location_verification_protocol(current_user):
+    enabled = get_protocol_setting('location_verification_enabled', True)
+    return jsonify({'enabled': enabled}), 200
+
+
+@admin_bp.route('/protocols/location-verification', methods=['POST'])
+@token_required
+@role_required('admin')
+def update_location_verification_protocol(current_user):
+    data = request.json
+    enabled = data.get('enabled')
+    if enabled is None:
+        return jsonify({'error': 'enabled status is required'}), 400
+    
+    success = save_protocol_setting('location_verification_enabled', bool(enabled))
+    if success:
+        return jsonify({'success': True, 'enabled': enabled}), 200
+    else:
+        return jsonify({'error': 'Failed to save setting'}), 500
 
 
 @admin_bp.route('/dashboard', methods=['GET'])

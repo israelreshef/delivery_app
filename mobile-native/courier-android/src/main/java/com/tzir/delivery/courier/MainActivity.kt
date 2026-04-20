@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.LayoutDirection
 
 enum class NavItem(val labelRes: Int, val icon: ImageVector) {
     CONTROL(R.string.control, Icons.Default.Home),
-    MISSIONS(R.string.missions, Icons.Default.List),
-    EARNINGS(R.string.business_management, Icons.Default.AccountBalanceWallet),
-    MORE(R.string.drawer_settings, Icons.Default.GridView)
+    CALENDAR(R.string.calendar, Icons.Default.CalendarToday),
+    BUSINESS(R.string.business_management, Icons.Default.AccountBalanceWallet),
+    SETTINGS(R.string.drawer_settings, Icons.Default.Settings)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

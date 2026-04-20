@@ -176,7 +176,16 @@ fun MissionsScreen(
                                                     if (success) selectedTab = 1
                                                 }
                                             },
-                                            onClick = { onMissionClick(mission.id) }
+                                            onClick = { onMissionClick(mission.id) },
+                                            onMarkDelivered = if (selectedTab == 1) ({
+                                                scope.launch {
+                                                    isLoading = true
+                                                    repository.updateMissionStatus(mission.id, "delivered")
+                                                    delay(500)
+                                                    repository.refreshActiveMissions()
+                                                    isLoading = false
+                                                }
+                                            }) else null
                                         )
                                     }
                                 }
@@ -194,7 +203,8 @@ fun MissionCard(
     mission: Mission,
     showAcceptButton: Boolean,
     onAccept: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onMarkDelivered: (() -> Unit)? = null
 ) {
     val isUrgent = mission.isUrgent == true
     val deliverySteps = listOf(
@@ -263,6 +273,16 @@ fun MissionCard(
                         Text("דחה", color = Color.Gray, fontWeight = FontWeight.Bold)
                     }
                     TzirButton(text = stringResource(R.string.accept_mission), onClick = onAccept, modifier = Modifier.weight(1f).height(52.dp))
+                }
+            } else if (onMarkDelivered != null && mission.status != "delivered") {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = onMarkDelivered,
+                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF22C55E))
+                ) {
+                    Text("✅  סמן מסירה", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         }

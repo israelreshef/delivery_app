@@ -17,11 +17,14 @@ object SocketManager {
     private val _routeUpdates = MutableSharedFlow<String>(replay = 1)
     val routeUpdates = _routeUpdates.asSharedFlow()
     
+    private val _missionUpdates = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val missionUpdates = _missionUpdates.asSharedFlow()
+    
     private var currentAvailabilityStatus: Boolean = false
     private var currentCourierId: String? = null
     
     // Default emulator loopback host for testing
-    private const val SOCKET_URL = "http://10.0.2.2:5000"
+    private const val SOCKET_URL = "http://192.168.33.19:5000"
     private var mContext: android.content.Context? = null
 
     fun init(context: android.content.Context) {
@@ -104,6 +107,21 @@ object SocketManager {
                     CoroutineScope(Dispatchers.IO).launch {
                         _routeUpdates.emit(data)
                     }
+                }
+            }
+
+            // Listen to Mission Assignments
+            mSocket?.on("new_assignment") { args ->
+                Log.d("SocketManager", "Received new_assignment event")
+                CoroutineScope(Dispatchers.IO).launch {
+                    _missionUpdates.emit(Unit)
+                }
+            }
+
+            mSocket?.on("delivery_status_update") { args ->
+                Log.d("SocketManager", "Received delivery_status_update event")
+                CoroutineScope(Dispatchers.IO).launch {
+                    _missionUpdates.emit(Unit)
                 }
             }
 

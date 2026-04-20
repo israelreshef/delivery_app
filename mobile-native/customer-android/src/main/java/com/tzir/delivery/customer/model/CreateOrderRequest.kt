@@ -1,11 +1,13 @@
 package com.tzir.delivery.customer.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 
 @Serializable
 data class CreateOrderRequest(
     val sender: SenderData,
     val recipient: RecipientData,
+    @SerialName("package")
     val package_data: PackageData, // Backend uses 'package' but Kotlin 'package' is reserved. Ktor will handle mapping if we use serial name or manual mapping
     val service: ServiceData
 )

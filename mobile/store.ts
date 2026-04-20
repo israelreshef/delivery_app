@@ -29,6 +29,12 @@ interface CourierState {
     disconnect: () => void;
     sendLocation: (lat: number, lng: number) => void;
     logout: () => Promise<void>;
+    
+    // Order Actions
+    fetchMyOrders: () => Promise<void>;
+    acceptOrder: (orderId: number) => Promise<void>;
+    updateOrderStatus: (orderId: number, status: string) => Promise<void>;
+    completeDelivery: (payload: any) => Promise<void>;
 
     // Offline / Sync
     addToQueue: (action: string, payload: any) => void;
@@ -159,6 +165,98 @@ export const useCourierStore = create<CourierState>()(
                         lng,
                         timestamp: new Date().toISOString(),
                     });
+                }
+            },
+
+            fetchMyOrders: async () => {
+                const { token } = get();
+                if (!token) return;
+                try {
+                    const response = await fetch(`${API_URL}/api/orders`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        const orders = data.data || data; // Handle pagination
+                        // Filter active orders based on status
+                        const active = orders.filter((o: any) => ['pending', 'assigned', 'accepted', 'picked_up', 'in_transit'].includes(o.status.toLowerCase()));
+                        set({ activeOrders: active });
+                    }
+                } catch (e) {
+                    console.error('Error fetching orders:', e);
+                }
+            },
+
+            acceptOrder: async (orderId: number) => {
+                const { token } = get();
+                if (!token) return;
+                try {
+                    const response = await fetch(`${API_URL}/api/orders/${orderId}/accept`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        get().fetchMyOrders();
+                        Toast.show({ type: 'success', text1: 'Order Accepted' });
+                    } else {
+                        Toast.show({ type: 'error', text1: 'Failed to accept order' });
+                    }
+                } catch (e) {
+                    console.error('Error accepting order:', e);
+                }
+            },
+
+            updateOrderStatus: async (orderId: number, status: string) => {
+                const { token, isConnected } = get();
+                if (!isConnected) {
+                    get().addToQueue('UPDATE_ORDER_STATUS', { orderId, status });
+                    return;
+                }
+                if (!token) return;
+                try {
+                    const response = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({ status })
+                    });
+                    if (response.ok) {
+                        get().fetchMyOrders();
+                        Toast.show({ type: 'success', text1: `Status updated to ${status}` });
+                    } else {
+                        Toast.show({ type: 'error', text1: 'Failed to update order status' });
+                    }
+                } catch (e) {
+                    console.error('Error updating order status:', e);
+                }
+            },
+
+            completeDelivery: async (payload: any) => {
+                const { token, isConnected } = get();
+                if (!isConnected) {
+                    get().addToQueue('COMPLETE_DELIVERY', payload);
+                    return;
+                }
+                if (!token) return;
+                try {
+                    const response = await fetch(`${API_URL}/api/orders/${payload.order_id}/status`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        get().fetchMyOrders();
+                        Toast.show({ type: 'success', text1: 'Delivery Completed', text2: 'Proof saved successfully.' });
+                    } else {
+                        Toast.show({ type: 'error', text1: 'Failed to complete delivery' });
+                    }
+                } catch (e) {
+                    console.error('Error completing delivery:', e);
                 }
             },
 

@@ -178,3 +178,461 @@
 [2026-03-26T16:30:33.861006]  Client authenticated: User 1 (SID: 6WjrwkFk2Vpe7dgGAAAJ)
 [2026-03-26T16:30:57.270898] ⏳ Client connecting: EUieMQRoxxQfEe04AAAL
 [2026-03-26T16:30:57.272404]  Client authenticated: User 1 (SID: EUieMQRoxxQfEe04AAAL)
+[2026-03-30T15:18:58.798683] ⏳ Client connecting: TtH6NSR-rVDq0agHAAAD
+[2026-03-30T15:18:58.799682]  Client authenticated: User 1 (SID: TtH6NSR-rVDq0agHAAAD)
+[2026-03-30T15:18:58.830307] ⏳ Client connecting: jUhY-FFtNd7PYDY1AAAE
+[2026-03-30T15:18:58.831307]  Client authenticated: User 1 (SID: jUhY-FFtNd7PYDY1AAAE)
+[2026-03-30T15:18:58.833821] ⏳ Client connecting: pvdS5UizMDOlrppKAAAF
+[2026-03-30T15:18:58.834826]  Client authenticated: User 1 (SID: pvdS5UizMDOlrppKAAAF)
+[2026-03-30T15:18:59.010115] ⏳ Client connecting: 7mM9YiUtj0pysz-XAAAH
+[2026-03-30T15:18:59.011114]  Client authenticated: User 1 (SID: 7mM9YiUtj0pysz-XAAAH)
+[2026-03-30T15:21:21.989757] ⏳ Client connecting: R5uOjrVEXLSRKWprAAAB
+[2026-03-30T15:21:21.990756]  Client authenticated: User 1 (SID: R5uOjrVEXLSRKWprAAAB)
+[2026-03-30T15:21:24.854813] ⏳ Client connecting: fEmyLqj2BPqlY1WxAAAF
+[2026-03-30T15:21:24.855813]  Client authenticated: User 1 (SID: fEmyLqj2BPqlY1WxAAAF)
+[2026-03-30T15:21:24.857813] ⏳ Client connecting: tivn64-xhKsQE-KUAAAG
+[2026-03-30T15:21:24.858815]  Client authenticated: User 1 (SID: tivn64-xhKsQE-KUAAAG)
+[2026-03-30T15:21:24.862812] ⏳ Client connecting: HuDO1tKKdv0KlVIKAAAH
+[2026-03-30T15:21:24.863814]  Client authenticated: User 1 (SID: HuDO1tKKdv0KlVIKAAAH)
+[2026-03-30T15:44:08.189655] ⏳ Client connecting: h-tJWPf8VePYEO-8AAAE
+[2026-03-30T15:44:08.192173]  Client authenticated: User 1 (SID: h-tJWPf8VePYEO-8AAAE)
+[2026-03-30T15:44:08.339329] ⏳ Client connecting: mKbSD6IzjgCTY3_NAAAF
+[2026-03-30T15:44:08.340835]  Client authenticated: User 1 (SID: mKbSD6IzjgCTY3_NAAAF)
+[2026-03-30T15:44:08.343843] ⏳ Client connecting: tkR-5wmRZ8EFMksAAAAG
+[2026-03-30T15:44:08.345198]  Client authenticated: User 1 (SID: tkR-5wmRZ8EFMksAAAAG)
+[2026-03-30T15:44:08.348748] ⏳ Client connecting: Gdd5gHJzcr9X_tJKAAAH
+[2026-03-30T15:44:08.349757]  Client authenticated: User 1 (SID: Gdd5gHJzcr9X_tJKAAAH)
+[2026-03-30T17:56:48.832110] ⏳ Client connecting: ycBM8wft3isP_RYFAAAJ
+[2026-03-30T17:56:48.833615]  Client authenticated: User 4 (SID: ycBM8wft3isP_RYFAAAJ)
+[2026-03-30T17:56:48.853205]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-30T17:56:48.853205]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-03-31T13:37:47.040761] ⏳ Client connecting: Wis81kxVe1UoY6n2AAAB
+[2026-03-31T13:37:47.041762]  Client authenticated: User 4 (SID: Wis81kxVe1UoY6n2AAAB)
+[2026-03-31T13:37:47.060819]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-03-31T13:37:47.061819]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-03-31T13:38:17.152567] ⏳ Client connecting: M990PtI69DbMueShAAAF
+[2026-03-31T13:38:17.153565]  Client authenticated: User 1 (SID: M990PtI69DbMueShAAAF)
+[2026-03-31T13:38:17.180668] ⏳ Client connecting: sdC7YGbUVTHmpS7tAAAG
+[2026-03-31T13:38:17.181675]  Client authenticated: User 1 (SID: sdC7YGbUVTHmpS7tAAAG)
+[2026-03-31T13:38:17.183681] ⏳ Client connecting: YaK-QrQV_1fkEp4VAAAH
+[2026-03-31T13:38:17.183681]  Client authenticated: User 1 (SID: YaK-QrQV_1fkEp4VAAAH)
+[2026-03-31T13:38:17.446557] ⏳ Client connecting: -0dFLD6HcQOjplHuAAAJ
+[2026-03-31T13:38:17.447565]  Client authenticated: User 1 (SID: -0dFLD6HcQOjplHuAAAJ)
+[2026-04-08T16:48:53.336580] ⏳ Client connecting: a92dlGE4rKkwZJKQAAAD
+[2026-04-08T16:48:53.337578]  Client authenticated: User 1 (SID: a92dlGE4rKkwZJKQAAAD)
+[2026-04-08T16:48:53.340086] ⏳ Client connecting: Xh3Cq2i74Fp7sLykAAAE
+[2026-04-08T16:48:53.340618]  Client authenticated: User 1 (SID: Xh3Cq2i74Fp7sLykAAAE)
+[2026-04-08T16:48:53.344624] ⏳ Client connecting: w-FL3BkjWNz9Ze0KAAAF
+[2026-04-08T16:48:53.345625]  Client authenticated: User 1 (SID: w-FL3BkjWNz9Ze0KAAAF)
+[2026-04-08T16:48:53.570049] ⏳ Client connecting: BdrRCA9DSs30GcZfAAAH
+[2026-04-08T16:48:53.571054]  Client authenticated: User 1 (SID: BdrRCA9DSs30GcZfAAAH)
+[2026-04-08T18:19:11.155354] ⏳ Client connecting: kvbkWP-D5OIWUXqSAAAD
+[2026-04-08T18:19:11.155865]  Client authenticated: User 1 (SID: kvbkWP-D5OIWUXqSAAAD)
+[2026-04-08T18:19:11.185228] ⏳ Client connecting: ERItPs4zAxYetyiGAAAE
+[2026-04-08T18:19:11.186221]  Client authenticated: User 1 (SID: ERItPs4zAxYetyiGAAAE)
+[2026-04-08T18:19:11.188734] ⏳ Client connecting: MvaWUNTr6HEUGrAAAAAF
+[2026-04-08T18:19:11.189240]  Client authenticated: User 1 (SID: MvaWUNTr6HEUGrAAAAAF)
+[2026-04-08T18:19:11.445061] ⏳ Client connecting: DnzqScQ2oQ9J1PcSAAAH
+[2026-04-08T18:19:11.446068]  Client authenticated: User 1 (SID: DnzqScQ2oQ9J1PcSAAAH)
+[2026-04-08T18:21:56.852178] ⏳ Client connecting: FObAwQ-qL2F8DYFmAAAJ
+[2026-04-08T18:21:56.852178]  Client authenticated: User 1 (SID: FObAwQ-qL2F8DYFmAAAJ)
+[2026-04-08T18:22:13.172152] ⏳ Client connecting: v2xCH9oEJvJ50Rl2AAAL
+[2026-04-08T18:22:13.173336]  Client authenticated: User 4 (SID: v2xCH9oEJvJ50Rl2AAAL)
+[2026-04-08T18:22:13.198349]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T18:22:13.199349]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-08T18:22:21.393036] ⏳ Client connecting: 3vNC2LcLG9yYtkeKAAAN
+[2026-04-08T18:22:21.394544]  Client authenticated: User 4 (SID: 3vNC2LcLG9yYtkeKAAAN)
+[2026-04-08T18:22:21.413563]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T18:22:21.415072]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-08T18:22:45.800794] ⏳ Client connecting: T1_T1OM8SQjS38caAAAP
+[2026-04-08T18:22:45.801800]  Client authenticated: User 4 (SID: T1_T1OM8SQjS38caAAAP)
+[2026-04-08T18:22:45.819063]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T18:22:45.820063]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-08T19:03:07.892236] ⏳ Client connecting: WV85jeVDDP2fhRTBAAAR
+[2026-04-08T19:03:07.893242]  Client authenticated: User 4 (SID: WV85jeVDDP2fhRTBAAAR)
+[2026-04-08T19:03:07.962433]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T19:03:07.963438]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-08T19:03:12.941996] ⏳ Client connecting: xSq3GdDgVejjB02pAAAT
+[2026-04-08T19:03:12.943005]  Client authenticated: User 4 (SID: xSq3GdDgVejjB02pAAAT)
+[2026-04-08T19:03:12.957907]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T19:03:12.959439]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-08T19:15:17.104388] ⏳ Client connecting: kEhWQMMPNoYL8HwDAAAV
+[2026-04-08T19:15:17.105384]  Client authenticated: User 4 (SID: kEhWQMMPNoYL8HwDAAAV)
+[2026-04-08T19:15:17.119392]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T19:15:17.119897]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-08T19:50:10.195572] ⏳ Client connecting: 9S72MHP_cm7EyeQBAAAX
+[2026-04-08T19:50:10.196578]  Client authenticated: User 4 (SID: 9S72MHP_cm7EyeQBAAAX)
+[2026-04-08T19:50:10.213803]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-08T19:50:10.213803]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-09T11:02:21.673684] ⏳ Client connecting: 1vugcTYDVyEKg_WUAAAB
+[2026-04-09T11:02:21.675755]  Client authenticated: User 4 (SID: 1vugcTYDVyEKg_WUAAAB)
+[2026-04-09T11:02:21.795961]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-09T11:02:21.796468]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-09T11:03:17.462049] ⏳ Client connecting: FdMRs-s2H0dFKSffAAAF
+[2026-04-09T11:03:17.463052]  Client authenticated: User 1 (SID: FdMRs-s2H0dFKSffAAAF)
+[2026-04-09T11:03:17.497300] ⏳ Client connecting: l4-Y8eyFVCBEQZ_dAAAG
+[2026-04-09T11:03:17.498299]  Client authenticated: User 1 (SID: l4-Y8eyFVCBEQZ_dAAAG)
+[2026-04-09T11:03:17.500299] ⏳ Client connecting: ElWJeHjKqZtxsG2SAAAH
+[2026-04-09T11:03:17.501299]  Client authenticated: User 1 (SID: ElWJeHjKqZtxsG2SAAAH)
+[2026-04-09T11:03:17.759568] ⏳ Client connecting: xoDVM_uDQZh-5Rt-AAAJ
+[2026-04-09T11:03:17.759568]  Client authenticated: User 1 (SID: xoDVM_uDQZh-5Rt-AAAJ)
+[2026-04-09T11:03:31.803682] ⏳ Client connecting: p8_l8XjSPQMFs-1HAAAO
+[2026-04-09T11:03:31.804684]  Client authenticated: User 1 (SID: p8_l8XjSPQMFs-1HAAAO)
+[2026-04-09T11:03:31.809237] ⏳ Client connecting: hNBATQcvTLAWm4CPAAAP
+[2026-04-09T11:03:31.810757]  Client authenticated: User 1 (SID: hNBATQcvTLAWm4CPAAAP)
+[2026-04-09T11:03:31.812767] ⏳ Client connecting: wCPKXnPDoIvNGSbrAAAQ
+[2026-04-09T11:03:31.812767]  Client authenticated: User 1 (SID: wCPKXnPDoIvNGSbrAAAQ)
+[2026-04-09T11:03:31.848761] ⏳ Client connecting: _UdcX4p1LZYid5drAAAR
+[2026-04-09T11:03:31.850761]  Client authenticated: User 1 (SID: _UdcX4p1LZYid5drAAAR)
+[2026-04-12T15:13:49.097742] ⏳ Client connecting: A3ovZJS0OdToUsOvAAAB
+[2026-04-12T15:13:49.098746]  Client authenticated: User 4 (SID: A3ovZJS0OdToUsOvAAAB)
+[2026-04-12T15:13:49.133356]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-12T15:13:49.134356]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-12T15:14:04.933306] ⏳ Client connecting: nng8FxCE5r-XcqFVAAAD
+[2026-04-12T15:14:04.934307]  Client authenticated: User 4 (SID: nng8FxCE5r-XcqFVAAAD)
+[2026-04-12T15:14:04.944124]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-12T15:14:04.945122]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-12T15:19:10.989678] ⏳ Client connecting: iFWIKaW52IFWSbMpAAAH
+[2026-04-12T15:19:10.990686]  Client authenticated: User 1 (SID: iFWIKaW52IFWSbMpAAAH)
+[2026-04-12T15:19:10.992684] ⏳ Client connecting: 4fP1ZkG2dkITaa-UAAAI
+[2026-04-12T15:19:10.993684]  Client authenticated: User 1 (SID: 4fP1ZkG2dkITaa-UAAAI)
+[2026-04-12T15:19:10.997816] ⏳ Client connecting: jDcNnJWS3OaylXZ0AAAJ
+[2026-04-12T15:19:10.998321]  Client authenticated: User 1 (SID: jDcNnJWS3OaylXZ0AAAJ)
+[2026-04-12T15:19:11.102495] ⏳ Client connecting: aFzxp_S6q5P0F4QDAAAL
+[2026-04-12T15:19:11.103495]  Client authenticated: User 1 (SID: aFzxp_S6q5P0F4QDAAAL)
+[2026-04-12T16:06:38.447846] ⏳ Client connecting: G6YCZLV0Q_HofPNZAAAD
+[2026-04-12T16:06:38.448855]  Client authenticated: User 1 (SID: G6YCZLV0Q_HofPNZAAAD)
+[2026-04-12T16:06:38.451941] ⏳ Client connecting: _fy7Io4MM8iOj_VSAAAE
+[2026-04-12T16:06:38.452952]  Client authenticated: User 1 (SID: _fy7Io4MM8iOj_VSAAAE)
+[2026-04-12T16:06:38.457146] ⏳ Client connecting: RydIpH1ldSJQ1whSAAAF
+[2026-04-12T16:06:38.457146]  Client authenticated: User 1 (SID: RydIpH1ldSJQ1whSAAAF)
+[2026-04-12T16:06:38.636190] ⏳ Client connecting: _cEQpJFZtDJNi7ySAAAH
+[2026-04-12T16:06:38.638093]  Client authenticated: User 1 (SID: _cEQpJFZtDJNi7ySAAAH)
+[2026-04-12T16:06:41.203184] ⏳ Client connecting: TdvAP02r65M9dUnrAAAJ
+[2026-04-12T16:06:41.204194]  Client authenticated: User 1 (SID: TdvAP02r65M9dUnrAAAJ)
+[2026-04-12T16:46:37.527470] ⏳ Client connecting: rUUCp-Y7yVR39R1cAAAD
+[2026-04-12T16:46:37.528997]  Client authenticated: User 1 (SID: rUUCp-Y7yVR39R1cAAAD)
+[2026-04-12T16:46:37.531510] ⏳ Client connecting: Saz4Az_q0E0xEJdWAAAE
+[2026-04-12T16:46:37.532517]  Client authenticated: User 1 (SID: Saz4Az_q0E0xEJdWAAAE)
+[2026-04-12T16:46:37.535023] ⏳ Client connecting: hS_8eawGb-S-9BEsAAAF
+[2026-04-12T16:46:37.536029]  Client authenticated: User 1 (SID: hS_8eawGb-S-9BEsAAAF)
+[2026-04-12T16:46:37.716180] ⏳ Client connecting: dVDUYD948-LGo36_AAAH
+[2026-04-12T16:46:37.716180]  Client authenticated: User 1 (SID: dVDUYD948-LGo36_AAAH)
+[2026-04-12T16:50:12.084072] ⏳ Client connecting: B2bzySGQhiK8adf6AAAD
+[2026-04-12T16:50:12.086271]  Client authenticated: User 1 (SID: B2bzySGQhiK8adf6AAAD)
+[2026-04-12T16:50:12.095447] ⏳ Client connecting: U_6-jisq683Gki8pAAAE
+[2026-04-12T16:50:12.103540]  Client authenticated: User 1 (SID: U_6-jisq683Gki8pAAAE)
+[2026-04-12T16:50:12.238604] ⏳ Client connecting: GhYKF8tAAGtQvmLTAAAF
+[2026-04-12T16:50:12.240123]  Client authenticated: User 1 (SID: GhYKF8tAAGtQvmLTAAAF)
+[2026-04-12T16:50:12.437737] ⏳ Client connecting: YD6cA_CIAai0fUAkAAAH
+[2026-04-12T16:50:12.438808]  Client authenticated: User 1 (SID: YD6cA_CIAai0fUAkAAAH)
+[2026-04-12T16:50:15.448071] ⏳ Client connecting: 9kx3vLYPGac48ga2AAAJ
+[2026-04-12T16:50:15.449683]  Client authenticated: User 1 (SID: 9kx3vLYPGac48ga2AAAJ)
+[2026-04-12T16:52:44.084740] ⏳ Client connecting: onxQbHjFuA1YD5eWAAAL
+[2026-04-12T16:52:44.086303]  Client authenticated: User 1 (SID: onxQbHjFuA1YD5eWAAAL)
+[2026-04-12T16:54:38.672825] ⏳ Client connecting: BBzL3OSEZU8KEkUFAAAN
+[2026-04-12T16:54:38.673827]  Client authenticated: User 1 (SID: BBzL3OSEZU8KEkUFAAAN)
+[2026-04-12T16:55:07.669845] ⏳ Client connecting: u8qlUgKLl3F0eBaAAAAP
+[2026-04-12T16:55:07.671847]  Client authenticated: User 1 (SID: u8qlUgKLl3F0eBaAAAAP)
+[2026-04-12T16:56:27.266957] ⏳ Client connecting: Sq5cgv-dBoSGfhTqAAAR
+[2026-04-12T16:56:27.268958]  Client authenticated: User 1 (SID: Sq5cgv-dBoSGfhTqAAAR)
+[2026-04-12T17:00:24.347919] ⏳ Client connecting: IMAdBdBqafAu3RF8AAAT
+[2026-04-12T17:00:24.349584]  Client authenticated: User 1 (SID: IMAdBdBqafAu3RF8AAAT)
+[2026-04-12T17:00:39.837607] ⏳ Client connecting: epzwcfkJMDWLg190AAAV
+[2026-04-12T17:00:39.838114]  Client authenticated: User 1 (SID: epzwcfkJMDWLg190AAAV)
+[2026-04-12T17:01:57.992850] ⏳ Client connecting: akSo55w7BODc-rvwAAAX
+[2026-04-12T17:01:57.993850]  Client authenticated: User 1 (SID: akSo55w7BODc-rvwAAAX)
+[2026-04-12T17:05:59.313339] ⏳ Client connecting: HaazxvBEl5j2UY7iAAAZ
+[2026-04-12T17:05:59.314339]  Client authenticated: User 1 (SID: HaazxvBEl5j2UY7iAAAZ)
+[2026-04-12T17:13:57.575681] ⏳ Client connecting: CJ4Y54EqjatZKZt9AAAb
+[2026-04-12T17:13:57.577289]  Client authenticated: User 1 (SID: CJ4Y54EqjatZKZt9AAAb)
+[2026-04-12T17:14:52.770002] ⏳ Client connecting: si1eR2et7llXm-OcAAAd
+[2026-04-12T17:14:52.772002]  Client authenticated: User 1 (SID: si1eR2et7llXm-OcAAAd)
+[2026-04-12T17:32:19.258051] ⏳ Client connecting: ZN2cER9zWB5oFf0sAAAh
+[2026-04-12T17:32:19.259053]  Client authenticated: User 1 (SID: ZN2cER9zWB5oFf0sAAAh)
+[2026-04-12T17:32:19.278839] ⏳ Client connecting: e3KfaLI7KtpxbzJPAAAi
+[2026-04-12T17:32:19.279837]  Client authenticated: User 1 (SID: e3KfaLI7KtpxbzJPAAAi)
+[2026-04-12T17:32:19.282923] ⏳ Client connecting: nx20VIoVl2rn121SAAAj
+[2026-04-12T17:32:19.283924]  Client authenticated: User 1 (SID: nx20VIoVl2rn121SAAAj)
+[2026-04-12T17:32:19.548210] ⏳ Client connecting: x6C6wvv1vW1QNd9YAAAl
+[2026-04-12T17:32:19.549731]  Client authenticated: User 1 (SID: x6C6wvv1vW1QNd9YAAAl)
+[2026-04-12T17:32:22.299494] ⏳ Client connecting: GVzzgx7IfeTeW7evAAAn
+[2026-04-12T17:32:22.301029]  Client authenticated: User 1 (SID: GVzzgx7IfeTeW7evAAAn)
+[2026-04-12T17:34:18.984706] ⏳ Client connecting: _3mL1u0NCa8Lsf1QAAAp
+[2026-04-12T17:34:18.986796]  Client authenticated: User 1 (SID: _3mL1u0NCa8Lsf1QAAAp)
+[2026-04-12T17:34:20.273526] ⏳ Client connecting: YjgFeu6w1181awhyAAAu
+[2026-04-12T17:34:20.274528]  Client authenticated: User 1 (SID: YjgFeu6w1181awhyAAAu)
+[2026-04-12T17:34:20.278039] ⏳ Client connecting: 4hqGQrMhYBKYmPh1AAAv
+[2026-04-12T17:34:20.279039]  Client authenticated: User 1 (SID: 4hqGQrMhYBKYmPh1AAAv)
+[2026-04-12T17:34:20.302032] ⏳ Client connecting: moI98zIPche45j4VAAAw
+[2026-04-12T17:34:20.303039]  Client authenticated: User 1 (SID: moI98zIPche45j4VAAAw)
+[2026-04-12T17:34:20.307200] ⏳ Client connecting: bm7gE6X5cRfgvDpMAAAx
+[2026-04-12T17:34:20.308763]  Client authenticated: User 1 (SID: bm7gE6X5cRfgvDpMAAAx)
+[2026-04-12T18:24:54.764491] ⏳ Client connecting: 1K-SyPYWu-i53DalAAA2
+[2026-04-12T18:24:54.765997]  Client authenticated: User 1 (SID: 1K-SyPYWu-i53DalAAA2)
+[2026-04-12T18:24:54.771008] ⏳ Client connecting: 8bRBnOLvpRe8sC15AAA3
+[2026-04-12T18:24:54.772517]  Client authenticated: User 1 (SID: 8bRBnOLvpRe8sC15AAA3)
+[2026-04-12T18:24:54.779096] ⏳ Client connecting: BKb24f92gBjVRbfcAAA4
+[2026-04-12T18:24:54.780388]  Client authenticated: User 1 (SID: BKb24f92gBjVRbfcAAA4)
+[2026-04-12T18:24:54.782930] ⏳ Client connecting: rGuH4CDGWjtZnmKPAAA5
+[2026-04-12T18:24:54.784970]  Client authenticated: User 1 (SID: rGuH4CDGWjtZnmKPAAA5)
+[2026-04-12T20:13:49.788892] ⏳ Client connecting: ihPICz7IOn0VHNkWAAA-
+[2026-04-12T20:13:49.791409]  Client authenticated: User 1 (SID: ihPICz7IOn0VHNkWAAA-)
+[2026-04-12T20:13:49.795418] ⏳ Client connecting: rQ0jMdwl1TcJ9IkjAAA_
+[2026-04-12T20:13:49.796418]  Client authenticated: User 1 (SID: rQ0jMdwl1TcJ9IkjAAA_)
+[2026-04-12T20:13:49.799974] ⏳ Client connecting: ZsmMAhfaB6JjCX1AAABA
+[2026-04-12T20:13:49.801510]  Client authenticated: User 1 (SID: ZsmMAhfaB6JjCX1AAABA)
+[2026-04-12T20:13:49.807172] ⏳ Client connecting: 25UwwNWQ5Pd67HTiAABB
+[2026-04-12T20:13:49.809181]  Client authenticated: User 1 (SID: 25UwwNWQ5Pd67HTiAABB)
+[2026-04-12T20:15:07.865838] ⏳ Client connecting: DD3ZzVOvVw3PFtp6AABD
+[2026-04-12T20:15:07.867846]  Client authenticated: User 4 (SID: DD3ZzVOvVw3PFtp6AABD)
+[2026-04-12T20:15:07.934942]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-12T20:15:07.936458]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-15T16:52:10.096188] ⏳ Client connecting: ttWQ7nM7J9ovu2SHAAAB
+[2026-04-15T16:52:10.096703]  Client authenticated: User 4 (SID: ttWQ7nM7J9ovu2SHAAAB)
+[2026-04-15T16:52:10.149567]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-15T16:52:10.151071]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-15T16:52:22.979809] ⏳ Client connecting: Wfmm-GbR69l7FczkAAAD
+[2026-04-15T16:52:22.981317]  Client authenticated: User 4 (SID: Wfmm-GbR69l7FczkAAAD)
+[2026-04-15T16:52:23.039856]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-15T16:52:23.040866]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-15T16:54:56.225044] ⏳ Client connecting: fpTL22nnvPo_sbQeAAAH
+[2026-04-15T16:54:56.226574]  Client authenticated: User 1 (SID: fpTL22nnvPo_sbQeAAAH)
+[2026-04-15T16:54:56.228087] ⏳ Client connecting: vzEOdUHFgFPzF7eHAAAI
+[2026-04-15T16:54:56.229097]  Client authenticated: User 1 (SID: vzEOdUHFgFPzF7eHAAAI)
+[2026-04-15T16:54:56.231602] ⏳ Client connecting: gxkEzIbCF4poTE27AAAJ
+[2026-04-15T16:54:56.231602]  Client authenticated: User 1 (SID: gxkEzIbCF4poTE27AAAJ)
+[2026-04-15T16:54:56.495517] ⏳ Client connecting: KxNqzr_hCs7IlaiYAAAL
+[2026-04-15T16:54:56.496808]  Client authenticated: User 1 (SID: KxNqzr_hCs7IlaiYAAAL)
+[2026-04-15T16:54:58.734856] ⏳ Client connecting: rsA3FjM9Otk4YQ-gAAAN
+[2026-04-15T16:54:58.735854]  Client authenticated: User 1 (SID: rsA3FjM9Otk4YQ-gAAAN)
+[2026-04-15T17:29:40.019709] ⏳ Client connecting: hafJ7jTspn6mPdSMAAAB
+[2026-04-15T17:29:40.020719]  Client authenticated: User 4 (SID: hafJ7jTspn6mPdSMAAAB)
+[2026-04-15T17:29:40.169455]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-15T17:29:40.170980]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-15T17:30:47.634146] ⏳ Client connecting: yipKlZQg52gd974KAAAF
+[2026-04-15T17:30:47.634146]  Client authenticated: User 1 (SID: yipKlZQg52gd974KAAAF)
+[2026-04-15T17:30:47.662519] ⏳ Client connecting: B7X89fUIEVOehzAuAAAG
+[2026-04-15T17:30:47.664025]  Client authenticated: User 1 (SID: B7X89fUIEVOehzAuAAAG)
+[2026-04-15T17:30:47.666110] ⏳ Client connecting: CbD18obY5ZEfUtT4AAAH
+[2026-04-15T17:30:47.667619]  Client authenticated: User 1 (SID: CbD18obY5ZEfUtT4AAAH)
+[2026-04-15T17:30:47.923932] ⏳ Client connecting: kSpR6ZzF2wyzKwK9AAAJ
+[2026-04-15T17:30:47.925439]  Client authenticated: User 1 (SID: kSpR6ZzF2wyzKwK9AAAJ)
+[2026-04-15T17:31:02.630384] ⏳ Client connecting: J2bSBc4ZnADI2MtUAAAL
+[2026-04-15T17:31:02.631383]  Client authenticated: User 1 (SID: J2bSBc4ZnADI2MtUAAAL)
+[2026-04-15T17:44:51.398235] ⏳ Client connecting: qWr5zFWGTvOQ1QpOAAAC
+[2026-04-15T17:44:51.398235]  Client authenticated: User 4 (SID: qWr5zFWGTvOQ1QpOAAAC)
+[2026-04-15T17:44:51.402049] ⏳ Client connecting: 8xN6DH904tUmnrFFAAAD
+[2026-04-15T17:44:51.402049]  Client authenticated: User 4 (SID: 8xN6DH904tUmnrFFAAAD)
+[2026-04-15T17:44:51.467568]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-15T17:44:51.468109]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-15T17:44:51.560491]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-15T17:44:51.561568]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-15T17:50:53.153409] ⏳ Client connecting: JcqQL8wQn_QCy9oSAAAF
+[2026-04-15T17:50:53.153915]  Client authenticated: User 4 (SID: JcqQL8wQn_QCy9oSAAAF)
+[2026-04-15T17:50:53.250330]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-15T17:50:53.250330]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:14:58.440355] ⏳ Client connecting: h1W0eERVHSlxpjSYAAAB
+[2026-04-16T15:14:58.442737]  Client authenticated: User 4 (SID: h1W0eERVHSlxpjSYAAAB)
+[2026-04-16T15:14:58.546435]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:14:58.546435]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:19:04.226359] ⏳ Client connecting: IFIfeQecdzCcqw69AAAD
+[2026-04-16T15:19:04.227360]  Client authenticated: User 4 (SID: IFIfeQecdzCcqw69AAAD)
+[2026-04-16T15:19:04.308435]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:19:04.309515]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:30:40.054275] ⏳ Client connecting: yxOu0LBka9RRkoHYAAAF
+[2026-04-16T15:30:40.054787]  Client authenticated: User 4 (SID: yxOu0LBka9RRkoHYAAAF)
+[2026-04-16T15:30:40.115747]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:30:40.115747]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:31:09.872856] ⏳ Client connecting: 3lDNwXNelWkSebvjAAAH
+[2026-04-16T15:31:09.872856]  Client authenticated: User 4 (SID: 3lDNwXNelWkSebvjAAAH)
+[2026-04-16T15:31:09.936955]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:31:09.936955]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:36:29.597520] ⏳ Client connecting: Kzfzj1Nn_58X5eIzAAAJ
+[2026-04-16T15:36:29.598522]  Client authenticated: User 4 (SID: Kzfzj1Nn_58X5eIzAAAJ)
+[2026-04-16T15:36:29.648756]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:36:29.648756]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:36:41.012599] ⏳ Client connecting: MK_AzRSeh5tMWkDSAAAL
+[2026-04-16T15:36:41.014715]  Client authenticated: User 4 (SID: MK_AzRSeh5tMWkDSAAAL)
+[2026-04-16T15:36:41.088358]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:36:41.089355]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:45:37.328112] ⏳ Client connecting: phaeAEw9kPeJLieCAAAP
+[2026-04-16T15:45:37.329651]  Client authenticated: User 1 (SID: phaeAEw9kPeJLieCAAAP)
+[2026-04-16T15:45:37.367227] ⏳ Client connecting: BS33P6zveqUbF1aQAAAQ
+[2026-04-16T15:45:37.368768]  Client authenticated: User 1 (SID: BS33P6zveqUbF1aQAAAQ)
+[2026-04-16T15:45:37.370776] ⏳ Client connecting: I5sxJ7vSgHf4jIc3AAAR
+[2026-04-16T15:45:37.372891]  Client authenticated: User 1 (SID: I5sxJ7vSgHf4jIc3AAAR)
+[2026-04-16T15:45:37.478160] ⏳ Client connecting: NPkTChLZ9Q9iQvrFAAAT
+[2026-04-16T15:45:37.479708]  Client authenticated: User 1 (SID: NPkTChLZ9Q9iQvrFAAAT)
+[2026-04-16T15:45:45.696343] ⏳ Client connecting: -srgYrN5LQlh6-soAAAY
+[2026-04-16T15:45:45.697676]  Client authenticated: User 1 (SID: -srgYrN5LQlh6-soAAAY)
+[2026-04-16T15:45:45.701163] ⏳ Client connecting: Uf4ggbH7KN-pJDIcAAAZ
+[2026-04-16T15:45:45.702164]  Client authenticated: User 1 (SID: Uf4ggbH7KN-pJDIcAAAZ)
+[2026-04-16T15:45:45.717526] ⏳ Client connecting: 4p4rNADnzxAPZ0aLAAAa
+[2026-04-16T15:45:45.718533]  Client authenticated: User 1 (SID: 4p4rNADnzxAPZ0aLAAAa)
+[2026-04-16T15:45:45.721048] ⏳ Client connecting: Ca6sJN1oMHCQEog8AAAb
+[2026-04-16T15:45:45.722046]  Client authenticated: User 1 (SID: Ca6sJN1oMHCQEog8AAAb)
+[2026-04-16T15:45:50.560505] ⏳ Client connecting: CWqztsEY9fKZVO3OAAAd
+[2026-04-16T15:45:50.561011]  Client authenticated: User 1 (SID: CWqztsEY9fKZVO3OAAAd)
+[2026-04-16T15:50:12.463778] ⏳ Client connecting: STY3eFpGEFlxq4nnAAAf
+[2026-04-16T15:50:12.464355]  Client authenticated: User 1 (SID: STY3eFpGEFlxq4nnAAAf)
+[2026-04-16T15:51:01.476886] ⏳ Client connecting: LmSZIJGT4WL5Uuo3AAAh
+[2026-04-16T15:51:01.478888]  Client authenticated: User 1 (SID: LmSZIJGT4WL5Uuo3AAAh)
+[2026-04-16T15:55:38.500844] ⏳ Client connecting: 0Ee7gBPUjyF3auLVAAAj
+[2026-04-16T15:55:38.502352]  Client authenticated: User 4 (SID: 0Ee7gBPUjyF3auLVAAAj)
+[2026-04-16T15:55:38.558947]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:55:38.559471]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T15:55:48.458753] ⏳ Client connecting: FVYXNwuwqIT6IBIMAAAl
+[2026-04-16T15:55:48.459275]  Client authenticated: User 4 (SID: FVYXNwuwqIT6IBIMAAAl)
+[2026-04-16T15:55:48.523045]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T15:55:48.523045]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:03:44.842958] ⏳ Client connecting: w3Sl05Lu7l2zmdrRAAAn
+[2026-04-16T16:03:44.843965]  Client authenticated: User 4 (SID: w3Sl05Lu7l2zmdrRAAAn)
+[2026-04-16T16:03:44.900647]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:03:44.901651]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:03:54.528009] ⏳ Client connecting: YSAOXvuDnjFnxbXuAAAp
+[2026-04-16T16:03:54.529012]  Client authenticated: User 4 (SID: YSAOXvuDnjFnxbXuAAAp)
+[2026-04-16T16:03:54.580687]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:03:54.582729]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:09:21.188642] ⏳ Client connecting: 2O_FgfmLIFV2kq0AAAAr
+[2026-04-16T16:09:21.188642]  Client authenticated: User 4 (SID: 2O_FgfmLIFV2kq0AAAAr)
+[2026-04-16T16:09:21.245482]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:09:21.245482]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:09:31.105112] ⏳ Client connecting: YD0hQLNoEJ1kPDT1AAAt
+[2026-04-16T16:09:31.106109]  Client authenticated: User 4 (SID: YD0hQLNoEJ1kPDT1AAAt)
+[2026-04-16T16:09:31.159453]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:09:31.160459]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:17:06.001050] ⏳ Client connecting: 3KU0R6UuJfNu21axAAAv
+[2026-04-16T16:17:06.001050]  Client authenticated: User 4 (SID: 3KU0R6UuJfNu21axAAAv)
+[2026-04-16T16:17:06.055398]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:17:06.056904]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:17:25.888245] ⏳ Client connecting: 0wRGLCa3iVbaCMDcAAAx
+[2026-04-16T16:17:25.888245]  Client authenticated: User 4 (SID: 0wRGLCa3iVbaCMDcAAAx)
+[2026-04-16T16:17:25.944519]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:17:25.945522]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T16:21:11.675300] ⏳ Client connecting: c_Pw9ouXNp8JV-PJAAAz
+[2026-04-16T16:21:11.676300]  Client authenticated: User 4 (SID: c_Pw9ouXNp8JV-PJAAAz)
+[2026-04-16T16:21:11.729620]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T16:21:11.730629]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T17:24:35.446749] ⏳ Client connecting: pM9Q-YJgYV--t5lsAAA1
+[2026-04-16T17:24:35.446749]  Client authenticated: User 4 (SID: pM9Q-YJgYV--t5lsAAA1)
+[2026-04-16T17:24:35.528954]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T17:24:35.529953]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-16T17:24:53.588417] ⏳ Client connecting: cK4Q6HWvLxeVqUlYAAA3
+[2026-04-16T17:24:53.589476]  Client authenticated: User 4 (SID: cK4Q6HWvLxeVqUlYAAA3)
+[2026-04-16T17:24:53.686224]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-16T17:24:53.687647]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T17:38:44.897669] ⏳ Client connecting: f7LTI4943lhfXCa0AAAD
+[2026-04-20T17:38:44.898676]  Client authenticated: User 1 (SID: f7LTI4943lhfXCa0AAAD)
+[2026-04-20T17:38:44.929031] ⏳ Client connecting: Sq7viowe27N895bMAAAE
+[2026-04-20T17:38:44.930039]  Client authenticated: User 1 (SID: Sq7viowe27N895bMAAAE)
+[2026-04-20T17:38:44.932076] ⏳ Client connecting: 0Yp5X2wWY-9aJoSWAAAF
+[2026-04-20T17:38:44.932076]  Client authenticated: User 1 (SID: 0Yp5X2wWY-9aJoSWAAAF)
+[2026-04-20T17:38:45.110057] ⏳ Client connecting: s4FlmUXzg1VnI92RAAAH
+[2026-04-20T17:38:45.111057]  Client authenticated: User 1 (SID: s4FlmUXzg1VnI92RAAAH)
+[2026-04-20T17:38:48.122266] ⏳ Client connecting: DlTYsCsPYvaGp4eKAAAJ
+[2026-04-20T17:38:48.123266]  Client authenticated: User 1 (SID: DlTYsCsPYvaGp4eKAAAJ)
+[2026-04-20T17:44:38.689519] ⏳ Client connecting: MYkWEm5V_VXUKVv8AAAL
+[2026-04-20T17:44:38.690523]  Client authenticated: User 4 (SID: MYkWEm5V_VXUKVv8AAAL)
+[2026-04-20T17:44:38.769096]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T17:44:38.769096]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T18:36:33.239516] ⏳ Client connecting: bu7uRC8iwVJ8fYcpAAAQ
+[2026-04-20T18:36:33.240519]  Client authenticated: User 1 (SID: bu7uRC8iwVJ8fYcpAAAQ)
+[2026-04-20T18:36:33.245081] ⏳ Client connecting: i3YeqNHB47LntfMPAAAR
+[2026-04-20T18:36:33.245081]  Client authenticated: User 1 (SID: i3YeqNHB47LntfMPAAAR)
+[2026-04-20T18:36:33.248145] ⏳ Client connecting: 8spMyKSgZ4M9QAZPAAAS
+[2026-04-20T18:36:33.249149]  Client authenticated: User 1 (SID: 8spMyKSgZ4M9QAZPAAAS)
+[2026-04-20T18:36:33.260774] ⏳ Client connecting: 2CkUq8CnyOsQ1klHAAAT
+[2026-04-20T18:36:33.261771]  Client authenticated: User 1 (SID: 2CkUq8CnyOsQ1klHAAAT)
+[2026-04-20T18:39:45.085592] ⏳ Client connecting: OEBNz3wrYtlokZG1AAAV
+[2026-04-20T18:39:45.086602]  Client authenticated: User 4 (SID: OEBNz3wrYtlokZG1AAAV)
+[2026-04-20T18:39:45.176253]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T18:39:45.177251]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T18:46:24.724416] ⏳ Client connecting: eEASllKcaylsCVoCAAAX
+[2026-04-20T18:46:24.725415]  Client authenticated: User 4 (SID: eEASllKcaylsCVoCAAAX)
+[2026-04-20T18:46:24.795044]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T18:46:24.796568]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T18:48:09.015154] ⏳ Client connecting: HLM1gPg-fOxwSmPDAAAZ
+[2026-04-20T18:48:09.016160]  Client authenticated: User 4 (SID: HLM1gPg-fOxwSmPDAAAZ)
+[2026-04-20T18:48:09.068923]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T18:48:09.070432]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:05:43.777440] ⏳ Client connecting: 0LfspdqN8_GLYc0EAAAb
+[2026-04-20T19:05:43.777440]  Client authenticated: User 4 (SID: 0LfspdqN8_GLYc0EAAAb)
+[2026-04-20T19:05:43.871301]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:05:43.872817]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:10:25.852183] ⏳ Client connecting: ieY0OttT3LJGwqsTAAAd
+[2026-04-20T19:10:25.853302]  Client authenticated: User 4 (SID: ieY0OttT3LJGwqsTAAAd)
+[2026-04-20T19:10:25.905475]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:10:25.906993]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:10:28.525575] ⏳ Client connecting: rGIsqH3Ac0d5lgigAAAf
+[2026-04-20T19:10:28.526573]  Client authenticated: User 4 (SID: rGIsqH3Ac0d5lgigAAAf)
+[2026-04-20T19:10:28.584153]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:10:28.585738]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:10:30.590713] ⏳ Client connecting: FQClVMrS2mDBtSbKAAAh
+[2026-04-20T19:10:30.590713]  Client authenticated: User 4 (SID: FQClVMrS2mDBtSbKAAAh)
+[2026-04-20T19:10:30.652649]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:10:30.653656]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:11:58.339367] ⏳ Client connecting: vibBMO854lG2CBMBAAAj
+[2026-04-20T19:11:58.341095]  Client authenticated: User 4 (SID: vibBMO854lG2CBMBAAAj)
+[2026-04-20T19:11:58.393865]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:11:58.395440]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:43:25.319264] ⏳ Client connecting: 4CG1u49sEWPl-w0jAAAl
+[2026-04-20T19:43:25.319264]  Client authenticated: User 4 (SID: 4CG1u49sEWPl-w0jAAAl)
+[2026-04-20T19:43:25.389343]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:43:25.390350]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:46:59.992412] ⏳ Client connecting: D8lDGXifKXwb_b-dAAAn
+[2026-04-20T19:46:59.993926]  Client authenticated: User 4 (SID: D8lDGXifKXwb_b-dAAAn)
+[2026-04-20T19:47:00.090033]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:47:00.090033]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:50:35.445166] ⏳ Client connecting: s7HAKA6N5ozGhG2nAAAp
+[2026-04-20T19:50:35.446173]  Client authenticated: User 4 (SID: s7HAKA6N5ozGhG2nAAAp)
+[2026-04-20T19:50:35.506735]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:50:35.507925]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:50:39.211418] ⏳ Client connecting: QUmkiHWncEBi5VpnAAAr
+[2026-04-20T19:50:39.212924]  Client authenticated: User 4 (SID: QUmkiHWncEBi5VpnAAAr)
+[2026-04-20T19:50:39.262811]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:50:39.262811]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:51:11.690085] ⏳ Client connecting: pZ85HMFncT7dxbteAAAt
+[2026-04-20T19:51:11.691094]  Client authenticated: User 4 (SID: pZ85HMFncT7dxbteAAAt)
+[2026-04-20T19:51:11.744942]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:51:11.746464]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:52:15.902096] ⏳ Client connecting: wU29VHDd4W_XpGzeAAAv
+[2026-04-20T19:52:15.903094]  Client authenticated: User 4 (SID: wU29VHDd4W_XpGzeAAAv)
+[2026-04-20T19:52:16.011715]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:52:16.011715]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T19:55:45.280763] ⏳ Client connecting: MjLaPNskdCKJ8D_OAAAx
+[2026-04-20T19:55:45.281946]  Client authenticated: User 4 (SID: MjLaPNskdCKJ8D_OAAAx)
+[2026-04-20T19:55:45.397107]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T19:55:45.397107]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:00:03.642407] ⏳ Client connecting: 8Lf9dV_Kq-rWgbadAAAz
+[2026-04-20T20:00:03.644473]  Client authenticated: User 4 (SID: 8Lf9dV_Kq-rWgbadAAAz)
+[2026-04-20T20:00:03.695128]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:00:03.696647]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:02:15.958891] ⏳ Client connecting: 1wAFNs6pJN6S4R1_AAA1
+[2026-04-20T20:02:15.959890]  Client authenticated: User 4 (SID: 1wAFNs6pJN6S4R1_AAA1)
+[2026-04-20T20:02:16.053186]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:02:16.053186]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:04:58.934699] ⏳ Client connecting: _eKJQz1wcpawamX9AAA3
+[2026-04-20T20:04:58.935760]  Client authenticated: User 4 (SID: _eKJQz1wcpawamX9AAA3)
+[2026-04-20T20:04:58.989027]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:04:58.990463]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:14:10.698449] ⏳ Client connecting: 82DCf0cDT6IU9h7DAAA5
+[2026-04-20T20:14:10.699449]  Client authenticated: User 4 (SID: 82DCf0cDT6IU9h7DAAA5)
+[2026-04-20T20:14:10.794502]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:14:10.795026]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:16:25.358290] ⏳ Client connecting: R9x3MNjhb8iWxS0LAAA7
+[2026-04-20T20:16:25.358290]  Client authenticated: User 4 (SID: R9x3MNjhb8iWxS0LAAA7)
+[2026-04-20T20:16:25.430576]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:16:25.430576]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:17:41.012149] ⏳ Client connecting: saNHOxV2lBuHGlciAAA9
+[2026-04-20T20:17:41.013654]  Client authenticated: User 4 (SID: saNHOxV2lBuHGlciAAA9)
+[2026-04-20T20:17:41.069681]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:17:41.070681]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:31:47.559512] ⏳ Client connecting: t-qAlxIQ74qJewrnAAA_
+[2026-04-20T20:31:47.560634]  Client authenticated: User 4 (SID: t-qAlxIQ74qJewrnAAA_)
+[2026-04-20T20:31:47.649958]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:31:47.649958]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-04-20T20:44:55.565133] ⏳ Client connecting: LiMPuEB7jsMQypOGAABB
+[2026-04-20T20:44:55.566141]  Client authenticated: User 4 (SID: LiMPuEB7jsMQypOGAABB)
+[2026-04-20T20:44:55.666027]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-04-20T20:44:55.666537]  📍 Proactive location broadcast for Courier 1 on connect

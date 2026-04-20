@@ -498,6 +498,76 @@ def create_order(current_user):
         db.session.rollback()
         logging.error(f"Error creating order: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+
+
+def _haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate the great-circle distance between two points on Earth (km)."""
+    import math
+    R = 6371
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (math.sin(dlat / 2) ** 2 +
+         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+         math.sin(dlon / 2) ** 2)
+    c = 2 * math.asin(math.sqrt(a))
+    return R * c
+
+
+@orders_bp.route('/quote', methods=['POST'])
+@limiter.limit("60 per minute")
+@token_required
+def get_price_quote(current_user):
+    """Get a price quote based on pickup/delivery coordinates."""
+    try:
+        data = request.json or {}
+        pickup_lat = data.get('pickup_lat') or data.get('p_lat')
+        pickup_lng = data.get('pickup_lng') or data.get('p_lng')
+        delivery_lat = data.get('delivery_lat') or data.get('d_lat')
+        delivery_lng = data.get('delivery_lng') or data.get('d_lng')
+
+        if not all([pickup_lat, pickup_lng, delivery_lat, delivery_lng]):
+            return jsonify({'error': 'All coordinates are required'}), 400
+
+        pickup_lat, pickup_lng = float(pickup_lat), float(pickup_lng)
+        delivery_lat, delivery_lng = float(delivery_lat), float(delivery_lng)
+
+        distance_km = None
+        duration_mins = None
+        used_road = False
+        try:
+            from utils.google_maps import GoogleMapsService
+            road_info = GoogleMapsService.get_road_distance(
+                (pickup_lat, pickup_lng), (delivery_lat, delivery_lng))
+            if road_info:
+                distance_km = road_info['distance_km']
+                duration_mins = road_info.get('duration_min', distance_km * 2.5)
+                used_road = True
+        except Exception:
+            pass
+
+        if distance_km is None:
+            distance_km = _haversine_distance(
+                pickup_lat, pickup_lng, delivery_lat, delivery_lng)
+            distance_km = round(distance_km * 1.3, 2)
+            duration_mins = round(distance_km / 30 * 60, 1)
+
+        price_data = calculate_delivery_price(distance_km)
+
+        return jsonify({
+            'success': True,
+            'price': price_data['total_price'],
+            'courier_share': price_data['courier_payment'],
+            'platform_margin': price_data['platform_margin'],
+            'distance_km': round(distance_km, 1),
+            'duration_mins': round(duration_mins, 0),
+            'used_road_distance': used_road,
+            'currency': 'ILS'
+        }), 200
+    except Exception as e:
+        logging.error(f"Quote error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 400
+
+
 @orders_bp.route('/price-estimate', methods=['GET'])
 @orders_bp.route('/calculate', methods=['POST'])
 @limiter.limit("60 per minute")  # DDoS Protection for pricing engine
@@ -1010,4 +1080,89 @@ def update_order(current_user, order_id):
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error updating order: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@orders_bp.route('/<int:order_id>/accept', methods=['POST'])
+@token_required
+@role_required('courier')
+def accept_order(current_user, order_id):
+    """Courier accepts an assigned order."""
+    try:
+        delivery = Delivery.query.get_or_404(order_id)
+        courier = Courier.query.filter_by(user_id=current_user.id).first()
+        if not courier:
+            return jsonify({'error': 'Courier profile not found'}), 404
+        if delivery.courier_id != courier.id:
+            return jsonify({'error': 'This order is not assigned to you'}), 403
+        if delivery.status not in ['assigned', 'pending']:
+            return jsonify({'error': f'Cannot accept order in status: {delivery.status}'}), 400
+
+        delivery.status = 'accepted'
+        delivery.updated_at = datetime.utcnow()
+        db.session.commit()
+
+        from extensions import socketio
+        if socketio:
+            socketio.emit('order_update', {
+                'id': delivery.id,
+                'status': 'accepted',
+                'courier_name': courier.full_name
+            }, room='admin')
+
+        return jsonify({'success': True, 'message': 'Order accepted'}), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error accepting order: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@orders_bp.route('/<int:order_id>/status', methods=['PUT'])
+@token_required
+@role_required(['courier', 'admin'])
+def update_order_status(current_user, order_id):
+    """Update order status - accessible by courier (own orders) and admin."""
+    try:
+        delivery = Delivery.query.get_or_404(order_id)
+        data = request.json or {}
+        new_status = data.get('status')
+
+        valid_statuses = ['accepted', 'picked_up', 'in_transit', 'delivered', 'cancelled']
+        if new_status not in valid_statuses:
+            return jsonify({'error': f'Invalid status. Must be one of: {valid_statuses}'}), 400
+
+        # Courier can only update their own orders
+        if current_user.user_type == 'courier':
+            courier = Courier.query.filter_by(user_id=current_user.id).first()
+            if not courier or delivery.courier_id != courier.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+
+        delivery.status = new_status
+        delivery.updated_at = datetime.utcnow()
+
+        # If delivered, update invoice to paid and record completion
+        if new_status == 'delivered':
+            delivery.actual_delivery_time = datetime.utcnow()
+            if delivery.invoice:
+                delivery.invoice.status = 'paid'
+                delivery.invoice.paid_at = datetime.utcnow()
+            # Update courier stats
+            if delivery.courier:
+                delivery.courier.total_deliveries = (delivery.courier.total_deliveries or 0) + 1
+
+        db.session.commit()
+
+        # Notify via socket
+        from extensions import socketio
+        if socketio:
+            socketio.emit('order_update', {
+                'id': delivery.id,
+                'order_number': delivery.order_number,
+                'status': new_status
+            }, room='admin')
+
+        return jsonify({'success': True, 'status': new_status}), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error updating order status: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500

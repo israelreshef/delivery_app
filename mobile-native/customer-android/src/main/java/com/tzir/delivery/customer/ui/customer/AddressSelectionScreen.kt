@@ -1,5 +1,6 @@
 package com.tzir.delivery.customer.ui.customer
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -46,7 +47,7 @@ data class AddressResult(
 // Backend endpoint helpers (public – no auth required)
 // ────────────────────────────────────────────────────────────────────────────
 
-private const val BASE_URL = "http://10.0.2.2:5000"
+private const val BASE_URL = "http://192.168.33.19:5000"
 
 private suspend fun searchAddressesBackend(query: String): List<AddressResult> = withContext(Dispatchers.IO) {
     try {
@@ -95,7 +96,7 @@ private suspend fun geocodeBackend(fullAddress: String, placeId: String): Pair<D
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddressSelectionScreen(navController: NavHostController) {
+fun AddressSelectionScreen(navController: NavHostController, protocol: String = "standard") {
     var pickupAddress   by remember { mutableStateOf("") }
     var deliveryAddress by remember { mutableStateOf("") }
     var pickupLatLng    by remember { mutableStateOf<Pair<Double, Double>?>(null) }
@@ -271,7 +272,8 @@ fun AddressSelectionScreen(navController: NavHostController) {
                         val pidParam = if (pid.isNotBlank() && !pid.startsWith("nom_") && !pid.startsWith("local_")) 
                             "&place_id=${URLEncoder.encode(pid, "UTF-8")}" else ""
                         val url = URL("$BASE_URL/api/addresses/geocode?q=$encoded$pidParam")
-                        val json = org.json.JSONObject(url.readText())
+                        val jsonString = withContext(Dispatchers.IO) { url.readText() }
+                        val json = org.json.JSONObject(jsonString)
                         val lat = json.optDouble("lat", Double.NaN)
                         val lng = json.optDouble("lng", Double.NaN)
                         val isVerified = json.optBoolean("is_verified", false)
@@ -346,7 +348,11 @@ fun AddressSelectionScreen(navController: NavHostController) {
                 text = if (geocodingBusy) "בודק כתובות..." else stringResource(R.string.next_summary),
                 onClick = {
                     if (pickupLatLng != null && deliveryLatLng != null) {
-                        navController.navigate("order_summary/$pickupAddress/$deliveryAddress/${pickupLatLng!!.first}/${pickupLatLng!!.second}/${deliveryLatLng!!.first}/${deliveryLatLng!!.second}")
+                        val encodedPickup = Uri.encode(pickupAddress)
+                        val encodedDelivery = Uri.encode(deliveryAddress)
+                        navController.navigate(
+                            "order_summary?pickup=$encodedPickup&delivery=$encodedDelivery&pLat=${pickupLatLng!!.first}&pLng=${pickupLatLng!!.second}&dLat=${deliveryLatLng!!.first}&dLng=${deliveryLatLng!!.second}&protocol=$protocol"
+                        )
                     } else {
                         // Trigger one-time geocoding for both if missing
                         geocodingBusy = true

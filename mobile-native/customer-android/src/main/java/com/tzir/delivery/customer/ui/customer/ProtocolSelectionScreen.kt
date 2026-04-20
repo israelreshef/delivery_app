@@ -20,6 +20,7 @@ import com.tzir.delivery.customer.ui.theme.*
 import com.tzir.delivery.customer.ui.components.*
 
 data class DeliveryProtocol(
+    val slug: String,
     val title: String,
     val description: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -30,10 +31,10 @@ data class DeliveryProtocol(
 @Composable
 fun ProtocolSelectionScreen(navController: NavHostController) {
     val protocols = listOf(
-        DeliveryProtocol(stringResource(R.string.standard_package), stringResource(R.string.standard_package_desc), Icons.Default.Inventory, "₪ 25"),
-        DeliveryProtocol(stringResource(R.string.legal_document), stringResource(R.string.legal_document_desc), Icons.Default.Description, "₪ 45"),
-        DeliveryProtocol(stringResource(R.string.food_and_fragile), stringResource(R.string.food_and_fragile_desc), Icons.Default.Restaurant, "₪ 35"),
-        DeliveryProtocol(stringResource(R.string.large_package), stringResource(R.string.large_package_desc), Icons.Default.LocalShipping, "₪ 85")
+        DeliveryProtocol("standard", stringResource(R.string.standard_package), stringResource(R.string.standard_package_desc), Icons.Default.Inventory, "₪ 25"),
+        DeliveryProtocol("legal_document", stringResource(R.string.legal_document), stringResource(R.string.legal_document_desc), Icons.Default.Description, "₪ 45"),
+        DeliveryProtocol("food_fragile", stringResource(R.string.food_and_fragile), stringResource(R.string.food_and_fragile_desc), Icons.Default.Restaurant, "₪ 35"),
+        DeliveryProtocol("large_package", stringResource(R.string.large_package), stringResource(R.string.large_package_desc), Icons.Default.LocalShipping, "₪ 85")
     )
 
     PremiumBackground {
@@ -50,7 +51,7 @@ fun ProtocolSelectionScreen(navController: NavHostController) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(protocols) { protocol ->
                     ProtocolCard(protocol = protocol) {
-                        navController.navigate(CustomerScreen.AddressSelection.route) 
+                        navController.navigate("address_selection?protocol=${protocol.slug}") 
                     }
                 }
             }

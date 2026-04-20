@@ -139,10 +139,30 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.tableTitle {
+.tableTitle, .sectionTitle {
     font-size: 1.25rem;
     font-weight: 600;
     color: #ffffff;
+}
+
+.protocolsSection {
+    margin-top: 2rem;
+    background: rgba(30, 41, 59, 0.4);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.protocolItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .searchBox {

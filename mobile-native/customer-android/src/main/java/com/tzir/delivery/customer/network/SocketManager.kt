@@ -17,7 +17,7 @@ object SocketManager {
     val courierLocationUpdates = _courierLocationUpdates.asSharedFlow()
     
     // Default emulator loopback host for testing
-    private const val SOCKET_URL = "http://10.0.2.2:5000"
+    private const val SOCKET_URL = "http://192.168.33.19:5000"
 
     fun connect(customerId: String) {
         if (mSocket != null && mSocket!!.connected()) return

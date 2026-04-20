@@ -34,7 +34,7 @@ const ShiftTimer = () => {
 };
 
 export default function HomeScreen() {
-    const { isConnected, token, logout, courierId, setCourierId, activeOrders, isShiftActive, toggleShift } = useCourierStore();
+    const { isConnected, token, logout, courierId, setCourierId, activeOrders, isShiftActive, toggleShift, fetchMyOrders } = useCourierStore();
     const navigation = useNavigation();
     const colorScheme = useColorScheme();
     const theme = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
@@ -61,6 +61,7 @@ export default function HomeScreen() {
                 if (data.courier) {
                     setCourierId(data.courier.id);
                     setCourierName(data.courier.full_name);
+                    fetchMyOrders();
                 } else {
                     Alert.alert('Error', 'No courier profile found for this user');
                     logout();
@@ -85,13 +86,11 @@ export default function HomeScreen() {
         }
     }, [isShiftActive]);
 
-    const onRefresh = useCallback(() => {
+    const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        // Simulate refresh or fetch orders from API
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 1000);
-    }, []);
+        await fetchMyOrders();
+        setRefreshing(false);
+    }, [fetchMyOrders]);
 
     const renderOrder = ({ item }: { item: any }) => (
         <TouchableOpacity

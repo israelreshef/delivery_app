@@ -112,7 +112,7 @@ data class AutocompleteSuggestion(
 data class GeocodeResult(
     val lat: Double,
     val lng: Double,
-    val address: String,
+    val address: String? = null,
     @SerialName("formatted_address")
     val formattedAddress: String = ""
 )

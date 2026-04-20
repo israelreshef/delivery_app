@@ -28,7 +28,7 @@ interface DeliveryApi {
 
 class DeliveryApiImpl(
     private val client: HttpClient,
-    private val baseUrl: String = "http://10.0.2.2:5000"
+    private val baseUrl: String = "http://192.168.33.19:5000"
 ) : DeliveryApi {
 
     private fun formatError(e: Exception): String {
@@ -111,17 +111,10 @@ class DeliveryApiImpl(
 
     override suspend fun createOrder(request: CreateOrderRequest): String? {
         return try {
-            // Using a Map to avoid 'package' keyword collision in Kotlin
-            val payload = mapOf(
-                "sender" to request.sender,
-                "recipient" to request.recipient,
-                "package" to request.package_data,
-                "service" to request.service
-            )
-            val resp = client.post("$baseUrl/api/orders") {
+            val resp = client.post("$baseUrl/api/orders/create") {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${TokenManager.token ?: ""}")
-                setBody(payload)
+                setBody(request)
             }
             if (resp.status.value in 200..299) {
                 val bodyText = resp.bodyAsText()
@@ -143,7 +136,7 @@ class DeliveryApiImpl(
 
     override suspend fun getOrderQuote(pLat: Double, pLng: Double, dLat: Double, dLng: Double): QuoteResponse? {
         return try {
-            client.get("$baseUrl/api/orders/quote?p_lat=$pLat&p_lng=$pLng&d_lat=$dLat&d_lng=$dLng").body()
+            client.get("$baseUrl/api/pricing/quote?p_lat=$pLat&p_lng=$pLng&d_lat=$dLat&d_lng=$dLng").body()
         } catch (e: Exception) {
             Log.e("DeliveryApi", "getOrderQuote exception", e)
             null

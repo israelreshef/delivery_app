@@ -1,0 +1,59 @@
+> Task :customerApp:checkKotlinGradlePluginConfigurationErrors
+> Task :customerApp:preBuild UP-TO-DATE
+> Task :customerApp:preDebugBuild UP-TO-DATE
+> Task :customerApp:checkDebugAarMetadata UP-TO-DATE
+> Task :customerApp:generateDebugResValues UP-TO-DATE
+> Task :customerApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :customerApp:generateDebugResources UP-TO-DATE
+> Task :customerApp:mergeDebugResources UP-TO-DATE
+> Task :customerApp:packageDebugResources UP-TO-DATE
+> Task :customerApp:parseDebugLocalResources UP-TO-DATE
+> Task :customerApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :customerApp:extractDeepLinksDebug UP-TO-DATE
+> Task :customerApp:processDebugMainManifest UP-TO-DATE
+> Task :customerApp:processDebugManifest UP-TO-DATE
+> Task :customerApp:processDebugManifestForPackage UP-TO-DATE
+> Task :customerApp:processDebugResources UP-TO-DATE
+> Task :customerApp:javaPreCompileDebug UP-TO-DATE
+> Task :customerApp:mergeDebugShaders UP-TO-DATE
+> Task :customerApp:compileDebugShaders NO-SOURCE
+> Task :customerApp:generateDebugAssets UP-TO-DATE
+> Task :customerApp:mergeDebugAssets UP-TO-DATE
+> Task :customerApp:compressDebugAssets UP-TO-DATE
+> Task :customerApp:checkDebugDuplicateClasses UP-TO-DATE
+> Task :customerApp:desugarDebugFileDependencies UP-TO-DATE
+> Task :customerApp:mergeExtDexDebug UP-TO-DATE
+> Task :customerApp:mergeLibDexDebug UP-TO-DATE
+> Task :customerApp:mergeDebugJniLibFolders UP-TO-DATE
+> Task :customerApp:mergeDebugNativeLibs NO-SOURCE
+> Task :customerApp:stripDebugDebugSymbols NO-SOURCE
+> Task :customerApp:validateSigningDebug UP-TO-DATE
+> Task :customerApp:writeDebugAppMetadata UP-TO-DATE
+> Task :customerApp:writeDebugSigningConfigVersions UP-TO-DATE
+
+> Task :customerApp:compileDebugKotlin
+w: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android/src/main/java/com/tzir/delivery/customer/ui/customer/OrderSummaryScreen.kt:75:40 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+
+> Task :customerApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :customerApp:processDebugJavaRes UP-TO-DATE
+> Task :customerApp:mergeDebugJavaResource UP-TO-DATE
+> Task :customerApp:dexBuilderDebug
+> Task :customerApp:mergeProjectDexDebug
+> Task :customerApp:packageDebug
+> Task :customerApp:createDebugApkListingFileRedirect UP-TO-DATE
+
+> Task :customerApp:installDebug
+Skipping device 'emulator-5562' (emulator-5562): Device is OFFLINE.
+Installing APK 'customerApp-debug.apk' on 'Pixel_6a(AVD) - 16' for :customerApp:debug
+Installed on 1 device.
+
+[Incubating] Problems report is available at: file:///C:/Users/Israel/Desktop/delivery_app/mobile-native/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 9s
+33 actionable tasks: 6 executed, 27 up-to-date

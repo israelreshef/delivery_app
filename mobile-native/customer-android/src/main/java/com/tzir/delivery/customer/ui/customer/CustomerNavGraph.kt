@@ -1,5 +1,6 @@
 package com.tzir.delivery.customer.ui.customer
 
+import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -9,9 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.tzir.delivery.customer.model.User
 import com.tzir.delivery.customer.repository.AuthRepository
 import com.tzir.delivery.customer.repository.CustomerRepository
@@ -25,8 +28,8 @@ sealed class CustomerScreen(val route: String, val labelRes: Int, val icon: Imag
     object Profile : CustomerScreen("profile", R.string.nav_profile, Icons.Default.Person)
     object Tracking : CustomerScreen("tracking/{orderId}", R.string.nav_tracking, Icons.Default.LocalShipping)
     object PaymentMethods : CustomerScreen("payment_methods", R.string.nav_payments, Icons.Default.AccountBalanceWallet)
-    object AddressSelection : CustomerScreen("address_selection", R.string.nav_address, Icons.Default.Place)
-    object OrderSummary : CustomerScreen("order_summary/{pickup}/{delivery}/{pLat}/{pLng}/{dLat}/{dLng}", R.string.nav_summary, Icons.Default.Description)
+    object AddressSelection : CustomerScreen("address_selection?protocol={protocol}", R.string.nav_address, Icons.Default.Place)
+    object OrderSummary : CustomerScreen("order_summary?pickup={pickup}&delivery={delivery}&pLat={pLat}&pLng={pLng}&dLat={dLat}&dLng={dLng}&protocol={protocol}", R.string.nav_summary, Icons.Default.Description)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,16 +112,34 @@ fun CustomerNavGraph(
             composable(CustomerScreen.PaymentMethods.route) {
                 PaymentMethodsScreen(navController = navController)
             }
-            composable(CustomerScreen.AddressSelection.route) {
-                AddressSelectionScreen(navController = navController)
+            composable(
+                route = "address_selection?protocol={protocol}",
+                arguments = listOf(
+                    navArgument("protocol") { type = NavType.StringType; defaultValue = "standard" }
+                )
+            ) { backStackEntry ->
+                val protocol = backStackEntry.arguments?.getString("protocol") ?: "standard"
+                AddressSelectionScreen(navController = navController, protocol = protocol)
             }
-            composable(CustomerScreen.OrderSummary.route) { backStackEntry ->
-                val pickup = backStackEntry.arguments?.getString("pickup") ?: ""
-                val delivery = backStackEntry.arguments?.getString("delivery") ?: ""
+            composable(
+                route = "order_summary?pickup={pickup}&delivery={delivery}&pLat={pLat}&pLng={pLng}&dLat={dLat}&dLng={dLng}&protocol={protocol}",
+                arguments = listOf(
+                    navArgument("pickup") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("delivery") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("pLat") { type = NavType.StringType; defaultValue = "0.0" },
+                    navArgument("pLng") { type = NavType.StringType; defaultValue = "0.0" },
+                    navArgument("dLat") { type = NavType.StringType; defaultValue = "0.0" },
+                    navArgument("dLng") { type = NavType.StringType; defaultValue = "0.0" },
+                    navArgument("protocol") { type = NavType.StringType; defaultValue = "standard" }
+                )
+            ) { backStackEntry ->
+                val pickup = Uri.decode(backStackEntry.arguments?.getString("pickup") ?: "")
+                val delivery = Uri.decode(backStackEntry.arguments?.getString("delivery") ?: "")
                 val pLat = backStackEntry.arguments?.getString("pLat")?.toDoubleOrNull() ?: 0.0
                 val pLng = backStackEntry.arguments?.getString("pLng")?.toDoubleOrNull() ?: 0.0
                 val dLat = backStackEntry.arguments?.getString("dLat")?.toDoubleOrNull() ?: 0.0
                 val dLng = backStackEntry.arguments?.getString("dLng")?.toDoubleOrNull() ?: 0.0
+                val protocol = backStackEntry.arguments?.getString("protocol") ?: "standard"
                 
                 OrderSummaryScreen(
                     pickup = pickup,
@@ -127,6 +148,7 @@ fun CustomerNavGraph(
                     pLng = pLng,
                     dLat = dLat,
                     dLng = dLng,
+                    protocol = protocol,
                     navController = navController,
                     repository = customerRepository
                 )

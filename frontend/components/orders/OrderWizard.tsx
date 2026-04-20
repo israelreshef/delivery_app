@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronRight, ChevronLeft, Package, MapPin, CheckCircle, AlertCircle, Loader2, ShoppingCart } from "lucide-react";
+import { ChevronRight, ChevronLeft, Package, MapPin, CheckCircle, AlertCircle, Loader2, ShoppingCart, CreditCard } from "lucide-react";
+import MockPaymentForm from "@/components/orders/MockPaymentForm";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -77,6 +78,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
         duration_mins: number;
     } | null>(null);
     const [quoteFetching, setQuoteFetching] = useState(false);
+    const [createdOrderId, setCreatedOrderId] = useState<number | null>(null);
+    const [createdOrderPrice, setCreatedOrderPrice] = useState<number>(0);
 
     // Validation errors state
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -189,23 +192,56 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
             return;
         }
 
-        const nextStep = Math.min(currentStep + 1, 4);
+        const nextStep = Math.min(currentStep + 1, 5);
         setCurrentStep(nextStep);
 
         // Fetch price quote when reaching confirmation step
-        if (nextStep === 4 && formData.pickup_lat && formData.pickup_lng && formData.delivery_lat && formData.delivery_lng) {
+        if (nextStep === 4) {
             setQuoteFetching(true);
             setPriceQuote(null);
-            api.post('/orders/quote', {
-                p_lat: formData.pickup_lat,
-                p_lng: formData.pickup_lng,
-                d_lat: formData.delivery_lat,
-                d_lng: formData.delivery_lng,
-            }).then(res => {
-                if (res.data?.success) setPriceQuote(res.data);
-            }).catch(() => {
-                // silently ignore — price shown as TBD
-            }).finally(() => setQuoteFetching(false));
+
+            // Client-side Haversine fallback
+            const haversineFallback = () => {
+                if (formData.pickup_lat && formData.pickup_lng && formData.delivery_lat && formData.delivery_lng) {
+                    const R = 6371;
+                    const dLat = (formData.delivery_lat - formData.pickup_lat) * Math.PI / 180;
+                    const dLon = (formData.delivery_lng - formData.pickup_lng) * Math.PI / 180;
+                    const a = Math.sin(dLat / 2) ** 2 +
+                        Math.cos(formData.pickup_lat * Math.PI / 180) * Math.cos(formData.delivery_lat * Math.PI / 180) *
+                        Math.sin(dLon / 2) ** 2;
+                    const c = 2 * Math.asin(Math.sqrt(a));
+                    const dist = Math.round(R * c * 1.3 * 10) / 10; // ~road factor
+                    const dur = Math.round(dist / 30 * 60);
+                    // Use Israeli tiered pricing approximation
+                    let price = 56.10;
+                    if (dist > 6) price = 87.60;
+                    if (dist > 12) price = 135.70;
+                    if (dist > 22) price = 150.85;
+                    if (dist > 25) price = 192.00;
+                    if (dist > 36) price = 202.80;
+                    if (dist > 44) price = 251.75;
+                    if (dist > 59) price = 320.85;
+                    if (dist > 79) price = 320.85 + (dist - 79) * 3.70;
+                    setPriceQuote({ price, distance_km: dist, duration_mins: dur });
+                }
+                setQuoteFetching(false);
+            };
+
+            if (formData.pickup_lat && formData.pickup_lng && formData.delivery_lat && formData.delivery_lng) {
+                api.post('/orders/quote', {
+                    pickup_lat: formData.pickup_lat,
+                    pickup_lng: formData.pickup_lng,
+                    delivery_lat: formData.delivery_lat,
+                    delivery_lng: formData.delivery_lng,
+                }).then(res => {
+                    if (res.data?.success) setPriceQuote(res.data);
+                    else haversineFallback();
+                }).catch(() => {
+                    haversineFallback();
+                }).finally(() => setQuoteFetching(false));
+            } else {
+                haversineFallback();
+            }
         }
     };
 
@@ -216,7 +252,6 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            // Prepare payload
             const payload = {
                 pickup_address: {
                     city: formData.pickup_city,
@@ -224,7 +259,9 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                     number: formData.pickup_number,
                     floor: formData.pickup_floor,
                     apartment: formData.pickup_apartment,
-                    notes: formData.pickup_notes
+                    notes: formData.pickup_notes,
+                    lat: formData.pickup_lat,
+                    lon: formData.pickup_lng,
                 },
                 pickup_contact_name: formData.pickup_contact_name,
                 pickup_contact_phone: formData.pickup_contact_phone,
@@ -234,7 +271,9 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                     number: formData.delivery_number,
                     floor: formData.delivery_floor,
                     apartment: formData.delivery_apartment,
-                    notes: formData.delivery_notes
+                    notes: formData.delivery_notes,
+                    lat: formData.delivery_lat,
+                    lon: formData.delivery_lng,
                 },
                 recipient_name: formData.delivery_contact_name,
                 recipient_phone: formData.delivery_contact_phone,
@@ -249,13 +288,11 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
 
             const res = await api.post('/orders', payload);
 
-            toast.success("ההזמנה נוצרה בהצלחה!");
-
-            // Redirect based on user type
-            if (userType === 'admin') {
-                router.push('/admin/orders');
-            } else {
-                router.push('/customer/deliveries');
+            if (res.data?.success) {
+                setCreatedOrderId(res.data.id);
+                setCreatedOrderPrice(res.data.price || priceQuote?.price || 0);
+                toast.success("ההזמנה נוצרה! ממשיך לתשלום...");
+                setCurrentStep(5);
             }
         } catch (error: any) {
             console.error(error);
@@ -269,7 +306,8 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
         { number: 1, title: "פרטי איסוף", icon: MapPin },
         { number: 2, title: "פרטי מקבל", icon: MapPin },
         { number: 3, title: "פרטי חבילה", icon: Package },
-        { number: 4, title: "אישור", icon: CheckCircle }
+        { number: 4, title: "סיכום", icon: CheckCircle },
+        { number: 5, title: "תשלום", icon: CreditCard }
     ];
 
     return (
@@ -620,7 +658,30 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                         </div>
                     )}
 
+                    {/* Step 5: Payment */}
+                    {currentStep === 5 && createdOrderId && (
+                        <MockPaymentForm
+                            amount={createdOrderPrice}
+                            orderId={createdOrderId}
+                            onSuccess={() => {
+                                if (userType === 'admin') {
+                                    router.push('/admin/orders');
+                                } else {
+                                    router.push('/customer/deliveries');
+                                }
+                            }}
+                            onCancel={() => {
+                                if (userType === 'admin') {
+                                    router.push('/admin/orders');
+                                } else {
+                                    router.push('/customer/deliveries');
+                                }
+                            }}
+                        />
+                    )}
+
                     {/* Navigation Buttons */}
+                    {currentStep < 5 && (
                     <div className="flex justify-between pt-6 border-t">
                         <Button
                             variant="outline"
@@ -638,10 +699,11 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                             </Button>
                         ) : (
                             <Button onClick={handleSubmit} disabled={loading}>
-                                {loading ? "שולח..." : "אשר ושלח"}
+                                {loading ? "שולח..." : "אשר ושלח הזמנה"}
                             </Button>
                         )}
                     </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

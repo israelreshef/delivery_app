@@ -187,7 +187,7 @@ _PRICING_TIERS = [
 _BASE_80_PLUS = 320.85      # Base total for 79 km
 _EXTRA_KM_RATE = 3.70       # Per km above 79
 _MIN_PRICE = 56.10
-_COURIER_SHARE = 0.70       # Freelance courier gets 70%
+_COURIER_SHARE = 0.75       # Freelance courier gets 75%
 
 
 def calculate_delivery_price(distance_km: float) -> dict:
