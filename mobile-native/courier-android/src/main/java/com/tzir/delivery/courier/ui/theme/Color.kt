@@ -4,51 +4,54 @@ import androidx.compose.ui.graphics.Color
 import com.tzir.delivery.courier.ui.theme.*
 
 // ════════════════════════════════════════
-// TZIR COMMAND — Android Color System v3.0
-// Dark Graphite + Amber Gold · Apple-Inspired
+// TZIR COMMAND — Android Color System v5.0
+// Navy + Blue · Brand Kit V5
 // ════════════════════════════════════════
 
-// ── Amber Gold (Primary Brand) ──
-val AmberGold       = Color(0xFFF5A623)
-val AmberGoldDark   = Color(0xFFD48A00)
-val AmberGoldLight  = Color(0xFFFFCC66)
-val AmberGoldDim    = Color(0x1AF5A623)
-val AmberGoldGlow   = Color(0x4DF5A623) // Increased glow
+// ── Brand Blue (Primary) ──
+val BrandBlue        = Color(0xFF145DDB)
+val BrandBlueDark    = Color(0xFF1048B0)
+val BrandBlueLight   = Color(0xFF5AA0FF)
+val BrandBlueDim     = Color(0x1A145DDB)
+val BrandBlueGlow    = Color(0x4D145DDB)
 
-// ── Graphite Scale ──
-val Graphite950     = Color(0xFF080808) // Deeper black
-val Graphite900     = Color(0xFF0E0E0E)
-val Graphite800     = Color(0xFF141416) // Slightly warmer dark
-val Graphite700     = Color(0xFF1C1C1E)
-val Graphite600     = Color(0xFF3A3A3C)
-val Graphite500     = Color(0xFF48484A)
-val Graphite400     = Color(0xFF636366)
-val Graphite300     = Color(0xFF8E8E93)
-val Graphite200     = Color(0xFFAEAEB2)
-val Graphite100     = Color(0xFFC7C7CC)
-val Graphite50      = Color(0xFFE5E5EA)
+// ── Navy Scale (Brand Kit V5) ──
+val Navy950          = Color(0xFF07162C)
+val Navy900          = Color(0xFF0C1E3A)
+val Navy800          = Color(0xFF112648)
+val Navy700          = Color(0xFF1A3566)
+val Navy600          = Color(0xFF244A84)
+val Navy500          = Color(0xFF3D6DA8)
+val Navy400          = Color(0xFF5A8AC0)
+val Navy300          = Color(0xFF7BA3CC)
+val Navy200          = Color(0xFFB8CDE5)
+val Navy100          = Color(0xFFDCE8F5)
+
+// ── Ice / Paper (Light Surfaces) ──
+val Ice              = Color(0xFFE8F1FF)
+val Paper            = Color(0xFFF7F9FC)
 
 // ── Surfaces — Light Mode ──
-val SurfaceLight    = Color(0xFFFFFFFF)
-val BackgroundLight = Color(0xFFF8F9FA)
-val Surface2Light   = Color(0xFFF2F2F7)
-val BorderLight     = Color(0xFFE5E5EA)
+val SurfaceLight     = Color(0xFFFFFFFF)
+val BackgroundLight  = Paper
+val Surface2Light    = Ice
+val BorderLight      = Color(0xFFD0DAE8)
 
 // ── Surfaces — Dark Mode ──
-val SurfaceDark     = Color(0xFF1C1C1E)
-val BackgroundDark  = Color(0xFF111111)
-val Surface2Dark    = Color(0xFF2C2C2E)
-val BorderDark      = Color(0xFF3A3A3C)
+val SurfaceDark      = Color(0xFF0C1E3A)
+val BackgroundDark   = Navy950
+val Surface2Dark     = Color(0xFF112648)
+val BorderDark       = Color(0xFF1A3566)
 
 // ── Text — Light Mode ──
-val TextPrimaryLight   = Color(0xFF1A1A1A)
-val TextSecondaryLight = Color(0xFF6B7280)
-val TextMutedLight     = Color(0xFF9CA3AF)
+val TextPrimaryLight   = Navy950
+val TextSecondaryLight = Color(0xFF4A5568)
+val TextMutedLight     = Color(0xFF718096)
 
 // ── Text — Dark Mode ──
-val TextPrimaryDark    = Color(0xFFF5F5F7)
-val TextSecondaryDark  = Color(0xFF8E8E93)
-val TextMutedDark      = Color(0xFF636366)
+val TextPrimaryDark    = Ice
+val TextSecondaryDark  = Navy300
+val TextMutedDark      = Navy500
 
 // ── Semantic — Light ──
 val SuccessLight    = Color(0xFF34C759)
@@ -57,8 +60,8 @@ val WarningLight    = Color(0xFFFF9500)
 val WarningBgLight  = Color(0x1AFF9500)
 val ErrorLight      = Color(0xFFFF3B30)
 val ErrorBgLight    = Color(0x1AFF3B30)
-val InfoLight       = Color(0xFF007AFF)
-val InfoBgLight     = Color(0x1A007AFF)
+val InfoLight       = BrandBlue
+val InfoBgLight     = BrandBlueDim
 
 // ── Semantic — Dark ──
 val SuccessDark     = Color(0xFF30D158)
@@ -67,33 +70,40 @@ val WarningDark     = Color(0xFFFFD60A)
 val WarningBgDark   = Color(0x1AFFD60A)
 val ErrorDark       = Color(0xFFFF453A)
 val ErrorBgDark     = Color(0x1AFF453A)
-val InfoDark        = Color(0xFF0A84FF)
-val InfoBgDark      = Color(0x1A0A84FF)
+val InfoDark        = BrandBlueLight
+val InfoBgDark      = Color(0x1A5AA0FF)
 
 // ── Glassmorphism ──
-val GlassWhite      = Color(0xB3FFFFFF)  // 70% white
-val GlassDark       = Color(0x991C1C1E)  // 60% dark
-val GlassBorderLight = Color(0x80FFFFFF) // 50% white border
-val GlassBorderDark  = Color(0x33FFFFFF) // 20% white border on dark
+val GlassWhite      = Color(0xB3FFFFFF)
+val GlassDark       = Color(0x990C1E3A)
+val GlassBorderLight = Color(0x80FFFFFF)
+val GlassBorderDark  = Color(0x33FFFFFF)
 
 // ── Online/Offline ──
 val OnlineGreen     = Color(0xFF34C759)
-val OfflineGray     = Color(0xFF636366)
+val OfflineGray     = Navy500
 
 // ══ Legacy Aliases (backward compatibility during migration) ══
-// These will be removed once all screens are migrated
-val Amber           = AmberGold
-val AmberDark       = AmberGoldDark
-val AmberLight      = AmberGoldLight
-val AmberDim        = AmberGoldDim
-val Navy950         = Graphite950
-val Navy900         = Graphite900
-val Navy800         = Graphite800
-val Navy700         = Graphite700
-val Navy600         = Graphite600
-val Navy400         = Graphite500
-val Navy200         = Graphite300
-val Navy100         = Graphite100
+val Amber           = BrandBlue
+val AmberDark       = BrandBlueDark
+val AmberLight      = BrandBlueLight
+val AmberDim        = BrandBlueDim
+val AmberGold       = BrandBlue
+val AmberGoldDark   = BrandBlueDark
+val AmberGoldLight  = BrandBlueLight
+val AmberGoldDim    = BrandBlueDim
+val AmberGoldGlow   = BrandBlueGlow
+val Graphite950     = Navy950
+val Graphite900     = Navy900
+val Graphite800     = Navy800
+val Graphite700     = Navy700
+val Graphite600     = Navy600
+val Graphite500     = Navy500
+val Graphite400     = Navy400
+val Graphite300     = Navy300
+val Graphite200     = Navy200
+val Graphite100     = Navy100
+val Graphite50      = Navy100
 val Surface2Light_legacy = Surface2Light
 val Surface2Dark_legacy  = Surface2Dark
 val Success         = SuccessLight
@@ -106,8 +116,8 @@ val InfoBlue        = InfoLight
 val InfoBg          = InfoBgLight
 
 // Additional aliases for remaining unmigrated screens
-val PrimaryTurquoise = AmberGold
+val PrimaryTurquoise = BrandBlue
 val AppleWhite       = SurfaceLight
-val TextOfficial     = Graphite800
-val TextGray         = Graphite400
+val TextOfficial     = Navy800
+val TextGray         = Navy400
 val AppleGray        = Surface2Light

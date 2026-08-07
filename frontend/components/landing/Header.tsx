@@ -12,8 +12,7 @@ export function Header() {
         <header className={`fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center max-w-7xl mx-auto w-full backdrop-blur-sm ${isTransparent ? '' : 'bg-white/80 shadow-sm'}`}>
             <div className="flex items-center gap-2">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand">T</div>
-                    <span className={`text-2xl font-bold tracking-tighter ${isTransparent ? 'text-white' : 'text-slate-900'}`}>TZIR</span>
+                    <img src="/logo.png" alt="TZIR" className="h-10 w-auto" />
                 </Link>
             </div>
 

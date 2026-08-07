@@ -176,3 +176,93 @@ def generate_israeli_invoice(invoice, output_path):
 # Keep the original func for compatibility just in case
 def generate_earnings_report(courier_name, period, deliveries, total_amount, output_path):
     pass
+
+
+def generate_courier_receipt(receipt, courier, output_path):
+    """
+    Generate a PDF receipt (קבלה) issued by a freelance courier to a private client.
+    `receipt` is a CourierReceipt instance, `courier` is the issuing Courier.
+    """
+    doc = SimpleDocTemplate(output_path, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle('HebrewTitle', parent=styles['Heading1'], fontName=FONT_NAME,
+                                 fontSize=20, alignment=1, spaceAfter=10)
+    normal_right_style = ParagraphStyle('HebrewNormalRight', parent=styles['Normal'], fontName=FONT_NAME,
+                                        fontSize=12, alignment=2, spaceAfter=5)
+    info_style = ParagraphStyle('Info', parent=styles['Normal'], fontName=FONT_NAME,
+                                fontSize=10, alignment=2, textColor=colors.dimgrey, spaceAfter=2)
+
+    elements = []
+
+    # Issuer (the courier / freelancer)
+    elements.append(Paragraph(bidi_text(courier.full_name or "שליח"), title_style))
+    tax_id = getattr(courier, 'tax_id', None)
+    if tax_id:
+        elements.append(Paragraph(bidi_text(f"עוסק מורשה / ת.ז: {tax_id}"), info_style))
+    elements.append(Spacer(1, 20))
+
+    # Document title
+    elements.append(Paragraph(bidi_text(f"קבלה מס' {receipt.receipt_number}"), title_style))
+    elements.append(Paragraph(bidi_text(f"תאריך: {receipt.issue_date.strftime('%d/%m/%Y')}"), normal_right_style))
+
+    # Recipient
+    elements.append(Paragraph(bidi_text("לכבוד:"), normal_right_style))
+    elements.append(Paragraph(bidi_text(receipt.client_name), normal_right_style))
+    if receipt.client_tax_id:
+        elements.append(Paragraph(bidi_text(f"ע.מ / ח.פ / ת.ז: {receipt.client_tax_id}"), normal_right_style))
+    elements.append(Spacer(1, 20))
+
+    # Items table
+    th_total = bidi_text("סה\"כ (₪)")
+    th_vat = bidi_text("מע\"מ (₪)")
+    th_base = bidi_text("לפני מע\"מ (₪)")
+    th_desc = bidi_text("תיאור")
+    table_data = [[th_total, th_vat, th_base, th_desc]]
+    table_data.append([
+        f"{float(receipt.total_amount):.2f}",
+        f"{float(receipt.vat_amount):.2f}",
+        f"{float(receipt.base_amount):.2f}",
+        bidi_text(receipt.description or "שירותי משלוח"),
+    ])
+    items_table = Table(table_data, colWidths=[80, 80, 90, 250])
+    items_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, -1), FONT_NAME),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+    ]))
+    elements.append(items_table)
+    elements.append(Spacer(1, 20))
+
+    # Totals
+    summary_data = [
+        [f"{float(receipt.base_amount):.2f} ₪", bidi_text("סה\"כ לפני מע\"מ:")],
+        [f"{float(receipt.vat_amount):.2f} ₪", bidi_text("מע\"מ:")],
+        [f"{float(receipt.total_amount):.2f} ₪", bidi_text("סה\"כ שולם:")],
+    ]
+    summary_table = Table(summary_data, colWidths=[80, 120])
+    summary_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, -1), FONT_NAME),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
+    ]))
+    container_table = Table([[summary_table, ""]], colWidths=[200, 300])
+    container_table.setStyle(TableStyle([('ALIGN', (0, 0), (0, 0), 'LEFT')]))
+    elements.append(container_table)
+
+    if receipt.payment_method:
+        pm_map = {'cash': 'מזומן', 'bank_transfer': 'העברה בנקאית', 'credit_card': 'כרטיס אשראי', 'bit': 'ביט'}
+        pm = pm_map.get(receipt.payment_method, receipt.payment_method)
+        elements.append(Spacer(1, 10))
+        elements.append(Paragraph(bidi_text(f"אמצעי תשלום: {pm}"), normal_right_style))
+
+    elements.append(Spacer(1, 40))
+    elements.append(Paragraph(bidi_text("מסמך זה הופק באופן ממוחשב."), info_style))
+
+    doc.build(elements)
+    return output_path

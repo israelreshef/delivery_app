@@ -45,3 +45,35 @@ export interface CreatePayoutDTO {
     total_deliveries: number;
     total_amount: number;
 }
+
+export type TaxFormKind = 'auto' | 'blank';
+export type TaxFormPeriod = 'month' | 'year' | null;
+
+export interface TaxForm {
+    id: string;
+    title: string;
+    description: string;
+    kind: TaxFormKind;
+    period: TaxFormPeriod;
+    available: boolean;
+}
+
+export interface GenerateTaxFormDTO {
+    month?: number;
+    year: number;
+}
+
+export type ReportRefreshStatus = 'up_to_date' | 'needs_refresh';
+
+export interface CourierReportHistory {
+    id: number;
+    form_id: string;
+    title: string;
+    period: 'month' | 'year';
+    period_label: string;
+    period_year: number;
+    period_month: number | null;
+    status: ReportRefreshStatus;
+    filename: string;
+    created_at: string;
+}

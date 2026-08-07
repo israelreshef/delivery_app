@@ -26,6 +26,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.EmojiEvents
 import com.tzir.delivery.courier.model.User
 import com.tzir.delivery.courier.repository.CourierRepository
+import com.tzir.delivery.courier.repository.EarningsRepository
+import com.tzir.delivery.courier.repository.ExpenseRepository
+import com.tzir.delivery.courier.repository.VehicleRepository
 import com.tzir.delivery.courier.R
 import com.tzir.delivery.courier.ui.components.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +37,11 @@ import com.tzir.delivery.courier.ui.theme.*
 
 @Composable
 fun ProfileScreen(
+    user: User,
     repository: CourierRepository,
+    vehicleRepository: VehicleRepository? = null,
+    earningsRepository: EarningsRepository? = null,
+    expenseRepository: ExpenseRepository? = null,
     onLogout: () -> Unit,
     onWorkerRatingClick: () -> Unit,
     onLeaderboardClick: () -> Unit = {},
@@ -44,6 +51,10 @@ fun ProfileScreen(
     val context = LocalContext.current
     var documents by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
     val gamificationProfile by repository.gamificationProfile.collectAsState()
+    val stats by repository.stats.collectAsState()
+    val vehicles by (vehicleRepository?.vehicles?.collectAsState() ?: remember { mutableStateOf(emptyList()) })
+    val weeklyChartData by (earningsRepository?.weeklyChart?.collectAsState() ?: remember { mutableStateOf(com.tzir.delivery.courier.repository.WeeklyChartData()) })
+    val expenses by (expenseRepository?.expenses?.collectAsState() ?: remember { mutableStateOf(emptyList<com.tzir.delivery.courier.repository.Expense>()) })
     
     LaunchedEffect(Unit) {
         documents = repository.getDocuments()
@@ -91,25 +102,25 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.account_info), fontWeight = FontWeight.Bold, color = Color.Gray)
+                        Text(stringResource(R.string.account_info), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("ישראל ישראלי", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        Text("israel@example.com", color = Color.Gray)
-                        Text("050-1234567", color = Color.Gray)
+                        Text(user.fullName ?: user.username, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(user.email, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(user.phoneNumber, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     
                     // Worker Rating Button
                     Surface(
                         onClick = onWorkerRatingClick,
                         shape = RoundedCornerShape(12.dp),
-                        color = PrimaryTurquoise.copy(alpha = 0.1f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, PrimaryTurquoise)
+                        color = BrandBlue.copy(alpha = 0.1f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, BrandBlue)
                     ) {
                         Column(
                             modifier = Modifier.padding(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("⭐ 4.9", fontWeight = FontWeight.Black, fontSize = 18.sp, color = TextOfficial)
+                            Text("⭐ ${"%.1f".format(stats?.rating ?: 0.0)}", fontWeight = FontWeight.Black, fontSize = 18.sp, color = TextOfficial)
                             Text(stringResource(R.string.worker_rating), fontSize = 10.sp, color = TextOfficial)
                         }
                     }
@@ -137,8 +148,8 @@ fun ProfileScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("${stringResource(R.string.level_prefix)} $level", fontWeight = FontWeight.Black, fontSize = 20.sp, color = PrimaryTurquoise)
-                            Text("$xp / $nextLevelXp XP", color = Color.Gray, fontSize = 14.sp)
+                            Text("${stringResource(R.string.level_prefix)} $level", fontWeight = FontWeight.Black, fontSize = 20.sp, color = BrandBlue)
+                            Text("$xp / $nextLevelXp XP", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                         }
                         
                         Spacer(modifier = Modifier.height(12.dp))
@@ -156,7 +167,7 @@ fun ProfileScreen(
                                     .fillMaxWidth(fraction = progress.coerceIn(0f, 1f))
                                     .height(12.dp)
                                     .clip(RoundedCornerShape(6.dp))
-                                    .background(PrimaryTurquoise)
+                                    .background(BrandBlue)
                             )
                         }
                         
@@ -181,7 +192,7 @@ fun ProfileScreen(
                         Button(
                             onClick = onLeaderboardClick,
                             modifier = Modifier.fillMaxWidth().height(48.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryTurquoise),
+                            colors = ButtonDefaults.buttonColors(containerColor = BrandBlue),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Icon(Icons.Default.EmojiEvents, contentDescription = "גביע", tint = Color(0xFFFFD700))
@@ -212,8 +223,13 @@ fun ProfileScreen(
                     Text("🛵", fontSize = 24.sp)
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
-                        Text(stringResource(R.string.vehicle_type), color = Color.Gray, fontSize = 12.sp)
-                        Text("Scooter (Yamaha TMAX)", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.vehicle_type), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        val primary = vehicles.find { it.isPrimary }
+                        if (primary != null) {
+                            Text("${primary.type} (${primary.plate})", fontWeight = FontWeight.SemiBold)
+                        } else {
+                            Text(if (vehicles.isEmpty()) "לא הוגדר רכב" else vehicles.first().type, fontWeight = FontWeight.SemiBold)
+                        }
                     }
                 }
             }
@@ -298,12 +314,13 @@ fun ProfileScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text(stringResource(R.string.income), color = Color.White.copy(alpha=0.7f), fontSize = 12.sp)
-                            Text("₪12,450", color = Color.White, fontWeight = FontWeight.Black, fontSize = 20.sp)
+                            Text(stringResource(R.string.income), color = MaterialTheme.colorScheme.onSurface.copy(alpha=0.7f), fontSize = 12.sp)
+                            Text("₪${"%,.0f".format(stats?.weeklyEarnings ?: 0.0)}", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Black, fontSize = 20.sp)
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text(stringResource(R.string.expenses), color = Color.White.copy(alpha=0.7f), fontSize = 12.sp)
-                            Text("-₪1,200", color = Color(0xFFFF5252), fontWeight = FontWeight.Black, fontSize = 20.sp)
+                            Text(stringResource(R.string.expenses), color = MaterialTheme.colorScheme.onSurface.copy(alpha=0.7f), fontSize = 12.sp)
+                            val totalExpenses = expenses.sumOf { it.amount }
+                            Text("-₪${"%,.0f".format(totalExpenses)}", color = Color(0xFFFF5252), fontWeight = FontWeight.Black, fontSize = 20.sp)
                         }
                     }
                     
@@ -317,18 +334,20 @@ fun ProfileScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(R.string.net_profit), color = Color.White, fontWeight = FontWeight.Bold)
-                        Text("₪11,250", color = Color(0xFF00E676), fontWeight = FontWeight.Black, fontSize = 24.sp)
+                        Text(stringResource(R.string.net_profit), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                        val netProfit = (stats?.weeklyEarnings ?: 0.0) - expenses.sumOf { it.amount }
+                        Text("₪${"%,.0f".format(netProfit)}", color = Color(0xFF00E676), fontWeight = FontWeight.Black, fontSize = 24.sp)
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
                     
                     // Graph placeholder (reusing EarningsGraph if available or simple Canvas)
                     // Assuming EarningsGraph is available from EarningsScreen.kt (same package)
-                    Text(stringResource(R.string.monthly_trend), color = Color.White.copy(alpha=0.5f), fontSize = 10.sp)
+                    Text(stringResource(R.string.monthly_trend), color = MaterialTheme.colorScheme.onSurface.copy(alpha=0.5f), fontSize = 10.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    // Mock data for graph
-                    EarningsGraph(data = listOf(80f, 120f, 110f, 140f, 130f, 160f, 150f))
+                    if (weeklyChartData.values.isNotEmpty()) {
+                        EarningsGraph(data = weeklyChartData.values)
+                    }
                 }
             }
 
@@ -352,10 +371,11 @@ fun ProfileScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(stringResource(R.string.contact_support), fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
+                    val supportPhone = user.phoneNumber.takeIf { it.isNotBlank() } ?: "972502222222"
                     TzirButton(
                         text = stringResource(R.string.contact_support),
                         onClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/972502222222"))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$supportPhone"))
                             context.startActivity(intent)
                         }
                     )
@@ -436,7 +456,7 @@ fun ComplianceItem(
             }
             TextButton(
                 onClick = { launcher.launch("image/*") },
-                colors = ButtonDefaults.textButtonColors(contentColor = PrimaryTurquoise)
+                colors = ButtonDefaults.textButtonColors(contentColor = BrandBlue)
             ) {
                 Text(
                     if (status == "not_uploaded") stringResource(R.string.upload) else stringResource(R.string.update),

@@ -28,17 +28,17 @@ interface BrandingConfig {
 }
 
 const DEFAULTS: BrandingConfig = {
-    primaryColor: "#F5A623",
+    primaryColor: "#145DDB",
     primaryDark: "#C8821A",
     primaryLight: "#FEF3DC",
     navyDark: "#05101F",
     navyMid: "#0A1929",
     navyLight: "#122845",
-    accentColor: "#F5A623",
+    accentColor: "#145DDB",
     successColor: "#16A34A",
     destructiveColor: "#EF4444",
     borderRadius: "10",
-    fontFamily: "Inter",
+    fontFamily: "Heebo",
     logoUrl: "",
     faviconUrl: "",
     companyName: "TZIR",
@@ -134,11 +134,11 @@ export default function BrandingPage() {
     // ── Live preview — apply CSS vars in real-time ──
     const applyPreview = useCallback((c: BrandingConfig) => {
         const root = document.documentElement;
-        root.style.setProperty("--amber", c.primaryColor);
-        root.style.setProperty("--amber-dark", c.primaryDark);
-        root.style.setProperty("--amber-light", c.primaryLight);
-        root.style.setProperty("--amber-dim", c.primaryColor + "1a");
-        root.style.setProperty("--amber-glow", c.primaryColor + "33");
+        root.style.setProperty("--brand", c.primaryColor);
+        root.style.setProperty("--brand-dark", c.primaryDark);
+        root.style.setProperty("--brand-light", c.primaryLight);
+        root.style.setProperty("--brand-dim", c.primaryColor + "1a");
+        root.style.setProperty("--brand-glow", c.primaryColor + "33");
         root.style.setProperty("--primary", hexToHSL(c.primaryColor));
         root.style.setProperty("--accent", hexToHSL(c.accentColor));
         root.style.setProperty("--ring", hexToHSL(c.primaryColor));

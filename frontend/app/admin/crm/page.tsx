@@ -41,7 +41,7 @@ interface Lead {
 const STATUS_COLUMNS = [
     { key: 'new', label: 'חדש', color: 'bg-indigo-500/20 text-indigo-300' },
     { key: 'contacted', label: 'יצרנו קשר', color: 'bg-purple-500/20 text-purple-300' },
-    { key: 'negotiation', label: 'משא ומתן', color: 'bg-amber-500/20 text-amber-300' },
+    { key: 'negotiation', label: 'משא ומתן', color: 'bg-blue-500/20 text-blue-300' },
     { key: 'won', label: 'נסגר / לקוח', color: 'bg-emerald-500/20 text-emerald-400' },
     { key: 'lost', label: 'לא רלוונטי', color: 'bg-rose-500/20 text-rose-300' },
 ];
@@ -252,7 +252,7 @@ export default function CRMPage() {
                                         <div className={styles.leadCardSubtitle}>{lead.contact_name}</div>
 
                                         {lead.next_follow_up && (
-                                            <div className="flex items-center gap-1.5 text-xs text-amber-400 mt-2 font-medium bg-amber-400/10 w-fit px-2 py-1 rounded border border-amber-400/20">
+                                            <div className="flex items-center gap-1.5 text-xs text-blue-400 mt-2 font-medium bg-blue-400/10 w-fit px-2 py-1 rounded border border-blue-400/20">
                                                 <Clock className="w-3 h-3" />
                                                 לפולו-אפ: {format(parseISO(lead.next_follow_up), "dd/MM/yy")}
                                             </div>
@@ -343,8 +343,8 @@ export default function CRMPage() {
 
                                     {selectedLead.email && (
                                         <div className="flex items-center gap-3 bg-black/20 p-2.5 rounded-lg border border-white/5">
-                                            <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-                                                <Mail className="w-4 h-4 text-amber-500" />
+                                            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                                <Mail className="w-4 h-4 text-blue-500" />
                                             </div>
                                             <span className="text-sm font-medium">{selectedLead.email}</span>
                                         </div>

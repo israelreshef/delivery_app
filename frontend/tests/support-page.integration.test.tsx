@@ -40,12 +40,14 @@ describe("admin support page integration", () => {
     mockedGetTickets.mockResolvedValue([
       {
         id: 101,
-        subject: "Printer issue",
-        status: "open",
-        priority: "medium",
-        created_at: "2026-03-26T08:00:00Z",
-        user_id: 5,
-        user_name: "Alice",
+        ticket_number: "001",
+        subject: "Test Ticket",
+        category: "service" as const,
+        status: "open" as const,
+        priority: "medium" as const,
+        created_at: "2026-01-01 10:00",
+        user_id: 1,
+        user_name: "Test User",
         assigned_to_name: "Support 1",
       },
     ]);
@@ -69,7 +71,7 @@ describe("admin support page integration", () => {
     const user = userEvent.setup();
     render(<SupportPage />);
 
-    expect(await screen.findByText("Printer issue")).toBeInTheDocument();
+    expect(await screen.findByText("Test Ticket")).toBeInTheDocument();
 
     await user.click(screen.getByTestId("tasks-tab"));
 
@@ -77,17 +79,34 @@ describe("admin support page integration", () => {
     expect(mockedApiGet).toHaveBeenCalledWith("/tasks", { params: {} });
   });
 
+  it("filters tickets by customer category via tab", async () => {
+    const user = userEvent.setup();
+    render(<SupportPage />);
+
+    await screen.findByText("Test Ticket");
+    await user.click(screen.getByTestId("tab-customer"));
+
+    await waitFor(() => {
+      expect(mockedGetTickets).toHaveBeenLastCalledWith({
+        status: undefined,
+        assigned_to: undefined,
+        category: "customer",
+      });
+    });
+  });
+
   it("applies quick assigned filter and sends assigned_to=me to tickets API", async () => {
     const user = userEvent.setup();
     render(<SupportPage />);
 
-    await screen.findByText("Printer issue");
+    await screen.findByText("Test Ticket");
     await user.click(screen.getByTestId("quick-mine"));
 
     await waitFor(() => {
       expect(mockedGetTickets).toHaveBeenLastCalledWith({
         status: undefined,
         assigned_to: "me",
+        category: "all",
       });
     });
   });
@@ -96,7 +115,7 @@ describe("admin support page integration", () => {
     const user = userEvent.setup();
     render(<SupportPage />);
 
-    await screen.findByText("Printer issue");
+    await screen.findByText("Test Ticket");
     await user.click(screen.getByTestId("tasks-tab"));
 
     const sourceFilter = await screen.findByTestId("source-filter");

@@ -1,7 +1,7 @@
 .ticketContainer {
     display: flex;
     height: 100vh;
-    background-color: #0B0E14;
+    background-color: #07162C;
     color: #E2E8F0;
     overflow: hidden;
     font-family: 'Inter', system-ui, sans-serif;
@@ -36,7 +36,7 @@
 
 .headerSubtitle {
     font-size: 0.875rem;
-    color: #94A3B8;
+    color: #5A8AC0;
     margin-top: 0.25rem;
 }
 
@@ -76,14 +76,14 @@
 }
 
 .bubbleClient {
-    background: #1E293B;
+    background: #112648;
     color: #F8FAFC;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-top-right-radius: 4px;
 }
 
 .bubbleStaff {
-    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     color: #ffffff;
     border-top-left-radius: 4px;
 }
@@ -135,7 +135,7 @@
 .sidebarSectionTitle {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #94A3B8;
+    color: #5A8AC0;
     margin-bottom: 1rem;
 }
 
@@ -164,7 +164,7 @@
 
 .selectInput:focus {
     outline: none;
-    border-color: #3B82F6;
+    border-color: #145DDB;
 }
 
 /* Common UI */
@@ -172,7 +172,7 @@
     width: 100%;
     min-height: 100px;
     padding: 0.75rem 1rem;
-    background: #0F172A;
+    background: #07162C;
     border: 1px solid #334155;
     border-radius: 8px;
     color: #F8FAFC;
@@ -183,11 +183,11 @@
 
 .textarea:focus {
     outline: none;
-    border-color: #3B82F6;
+    border-color: #145DDB;
 }
 
 .btnPrimary {
-    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -211,7 +211,7 @@
 
 .btnGhost {
     background: transparent;
-    color: #94A3B8;
+    color: #5A8AC0;
     border: 1px solid transparent;
     border-radius: 8px;
     padding: 0.5rem;
@@ -243,7 +243,7 @@
 }
 
 .avatarStaff {
-    background: #3B82F6;
+    background: #145DDB;
     color: #fff;
 }
 
@@ -272,11 +272,11 @@
     padding: 0.75rem;
     border-radius: 8px;
     font-size: 0.875rem;
-    color: #94A3B8;
+    color: #5A8AC0;
 }
 
 .orderLink span {
     display: block;
-    color: #3B82F6;
+    color: #145DDB;
     font-weight: 500;
 }

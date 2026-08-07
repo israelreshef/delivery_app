@@ -1,6 +1,13 @@
 from gevent import monkey
 monkey.patch_all()
 
+import sys
+try:
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
+
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from flask_talisman import Talisman
@@ -20,10 +27,10 @@ def create_demo_users_logic():
     
     print("Creating Secure Demo Accounts...")
     demos = [
-        ('super_admin', 'admin@tzir.com', 'TzirSuper2026!$!', 'admin', 'super_admin', '0501111111'),
+        ('super_admin', 'admin@tzir.com', 'super_admin2026!', 'admin', 'super_admin', '0501111111'),
         ('finance_admin', 'finance@tzir.com', 'TzirFinance$$99', 'admin', 'finance_admin', '0504444444'),
-        ('demo_client', 'client@tzir.com', 'TzirClient2026!', 'customer', None, '0503333333'),
-        ('demo_courier', 'courier@tzir.com', 'TzirRiderSpeed!77', 'courier', None, '0502222222')
+        ('demo_client', 'client@tzir.com', 'demo_client2026!', 'customer', None, '0503333333'),
+        ('demo_courier', 'courier@tzir.com', 'demo_courier2026!', 'courier', None, '0502222222')
     ]
     
     for username, email, pwd, role, adm_role, phone in demos:
@@ -66,10 +73,17 @@ def create_app():
     app = Flask(__name__)
     
     # Configuration
+    is_production = os.environ.get('FLASK_ENV') == 'production'
     secret_key = os.environ.get('SECRET_KEY')
-    if not secret_key and os.environ.get('FLASK_ENV') == 'production':
-        raise ValueError("No SECRET_KEY set in environment variables (required for production).")
+    jwt_secret_key = os.environ.get('JWT_SECRET_KEY') or secret_key
+
+    if is_production and (not secret_key or not jwt_secret_key):
+        raise RuntimeError(
+            "SECRET_KEY and JWT_SECRET_KEY must be set in the environment for production."
+        )
+
     app.config['SECRET_KEY'] = secret_key or 'dev-secret-key-change-in-production'
+    app.config['JWT_SECRET_KEY'] = jwt_secret_key or app.config['SECRET_KEY']
     
     # Use PostgreSQL if available, otherwise fallback to local sqlite (though we prefer postgres now)
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -83,6 +97,7 @@ def create_app():
     
     # Security Configuration
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=60)
+    app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=180)
     
     # JWT Algorithm Confusion Protection:
     # Strictly enforce HS256. Reject alg=none and any RS256/ES256 etc.
@@ -95,6 +110,11 @@ def create_app():
     app.config['JWT_COOKIE_SAMESITE'] = 'None' if force_https else 'Lax'
     app.config['JWT_SESSION_COOKIE'] = False
     app.config['JWT_COOKIE_CSRF_PROTECT'] = False # Doing basic API protection without CSRF double submit for mobile compat
+
+    # Security Middleware Configuration (middleware/api_security.py)
+    app.config['SECURITY_HMAC_SECRET'] = os.environ.get('SECURITY_HMAC_SECRET', 'dev-device-hmac-key')
+    app.config['SECURITY_HMAC_ENFORCED'] = os.environ.get('SECURITY_HMAC_ENFORCED', 'false').lower() == 'true'
+    app.config['SECURITY_ANOMALY_ENABLED'] = os.environ.get('SECURITY_ANOMALY_ENABLED', 'false').lower() == 'true'
     
     # Logging Configuration
     import logging
@@ -102,6 +122,16 @@ def create_app():
     
     jwt.init_app(app)
     limiter.init_app(app)
+
+    # ─── Initialize WebSocket event handlers ─────────────────────────────────
+    init_sockets(socketio)
+
+    # ─── JWT blocklist — check TokenBlacklist on every @jwt_required() ────────
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        from models import TokenBlacklist
+        jti = jwt_payload.get("jti")
+        return TokenBlacklist.query.filter_by(jti=jti).first() is not None
 
     # ─── JWT error handlers — always return JSON, never HTML ─────────────────
     from flask_jwt_extended import JWTManager
@@ -149,6 +179,22 @@ def create_app():
     @app.errorhandler(429)
     def rate_limit_exceeded(e):
         return jsonify({'error': 'RATE_LIMIT', 'message': 'יותר מדי בקשות, נסה שוב מאוחר יותר'}), 429
+
+    @app.errorhandler(Exception)
+    def handle_unexpected_exception(e):
+        # Let Werkzeug HTTP errors (404, 405, etc.) use their own handlers/status.
+        from werkzeug.exceptions import HTTPException
+        if isinstance(e, HTTPException):
+            return e
+        import logging as _logging
+        import uuid as _uuid
+        error_id = _uuid.uuid4().hex[:12]
+        _logging.error(f"Unhandled exception [{error_id}]: {e}", exc_info=True)
+        # Never leak internal exception details to the client.
+        return jsonify({
+            'error': 'שגיאת שרת פנימית',
+            'error_id': error_id
+        }), 500
 
 
     
@@ -305,9 +351,33 @@ def create_app():
 
     from routes.tasks import tasks_bp
     app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
-    
+
+    from routes.courier_clients import courier_clients_bp
+    app.register_blueprint(courier_clients_bp, url_prefix='/api/courier')
+
+    from routes.courier_vehicles import courier_vehicles_bp
+    app.register_blueprint(courier_vehicles_bp, url_prefix='/api/courier')
+
+    from routes.courier_ratings import courier_ratings_bp
+    app.register_blueprint(courier_ratings_bp, url_prefix='/api/courier')
+
+    from routes.courier_wallet import courier_wallet_bp
+    app.register_blueprint(courier_wallet_bp, url_prefix='/api/courier')
+
+    from routes.courier_notifications import courier_notifications_bp
+    app.register_blueprint(courier_notifications_bp, url_prefix='/api/courier')
+
+    from routes.courier_business import courier_business_bp
+    app.register_blueprint(courier_business_bp, url_prefix='/api/courier')
+
+    from routes.courier_forms import courier_forms_bp
+    app.register_blueprint(courier_forms_bp, url_prefix='/api/courier/forms')
+
     from routes.google_auth import google_bp
     app.register_blueprint(google_bp, url_prefix='/api')
+
+    from routes.chat import chat_bp
+    app.register_blueprint(chat_bp, url_prefix='/api/chat')
     
     # Missing blueprints
     try:
@@ -333,6 +403,41 @@ def create_app():
         db.create_all()
         print("Database tables initialized!")
         
+        # Auto-migrate: add missing columns for existing tables
+        try:
+            from sqlalchemy import inspect, text as sa_text
+            inspector = inspect(db.engine)
+            
+            # Add ticket_number to support_tickets if missing
+            st_cols = {c['name'] for c in inspector.get_columns('support_tickets')}
+            if 'ticket_number' not in st_cols:
+                with db.engine.connect() as conn:
+                    conn.execute(sa_text("ALTER TABLE support_tickets ADD COLUMN ticket_number VARCHAR(10)"))
+                    conn.commit()
+                print("Auto-migrated: added ticket_number to support_tickets")
+            
+            # Add attachments to ticket_messages if missing
+            tm_cols = {c['name'] for c in inspector.get_columns('ticket_messages')}
+            if 'attachments' not in tm_cols:
+                with db.engine.connect() as conn:
+                    dialect = db.engine.dialect.name
+                    if dialect == 'sqlite':
+                        conn.execute(sa_text("ALTER TABLE ticket_messages ADD COLUMN attachments TEXT DEFAULT '[]'"))
+                    else:
+                        conn.execute(sa_text("ALTER TABLE ticket_messages ADD COLUMN attachments JSONB DEFAULT '[]'::jsonb"))
+                    conn.commit()
+                print("Auto-migrated: added attachments to ticket_messages")
+            
+            # Add read_at to ticket_messages if missing
+            tm_cols2 = {c['name'] for c in inspector.get_columns('ticket_messages')}
+            if 'read_at' not in tm_cols2:
+                with db.engine.connect() as conn:
+                    conn.execute(sa_text("ALTER TABLE ticket_messages ADD COLUMN read_at DATETIME"))
+                    conn.commit()
+                print("Auto-migrated: added read_at to ticket_messages")
+        except Exception as auto_mig_err:
+            print(f"Auto-migration note (non-fatal): {auto_mig_err}")
+        
         # Register the global audit trail event listeners
         register_audit_listeners(db)
         print("Database tables checked/created.")
@@ -349,7 +454,7 @@ def create_app():
     @app.route('/admin.html')
     def admin_page():
         return render_template('admin.html')
-    
+
     # Health check endpoint for Docker and load balancers
     @app.route('/api/health')
     def health_check():
@@ -383,19 +488,30 @@ def create_app():
 
                 if identity and 'postgresql' in str(db.engine.url):
                     # Fetch user to check role (adds 1 query overhead but ensures security)
-                    from models import User 
-                    user = User.query.get(int(identity))
-                    
-                    if user and user.user_type == 'admin':
-                        db.session.execute(text("SET LOCAL app.is_admin = 'true'"))
-                    else:
-                        db.session.execute(text("SET LOCAL app.is_admin = 'false'"))
+                    from models import User
+                    # Coerce identity to int; invalid values fall through to anonymous.
+                    user_id = int(identity)
+                    user = User.query.get(user_id)
 
-                    db.session.execute(text(f"SET LOCAL app.current_user_id = '{identity}'"))
+                    is_admin = 'true' if (user and user.user_type == 'admin') else 'false'
+                    # Use set_config() with bound parameters to prevent SQL injection
+                    # via the JWT identity claim (SET LOCAL cannot take bind params).
+                    db.session.execute(
+                        text("SELECT set_config('app.is_admin', :is_admin, true)"),
+                        {"is_admin": is_admin},
+                    )
+                    db.session.execute(
+                        text("SELECT set_config('app.current_user_id', :uid, true)"),
+                        {"uid": str(user_id)},
+                    )
                 elif 'postgresql' in str(db.engine.url):
                     # Anonymous
-                    db.session.execute(text("SET LOCAL app.current_user_id = '-1'"))
-                    db.session.execute(text("SET LOCAL app.is_admin = 'false'"))
+                    db.session.execute(
+                        text("SELECT set_config('app.current_user_id', '-1', true)")
+                    )
+                    db.session.execute(
+                        text("SELECT set_config('app.is_admin', 'false', true)")
+                    )
                     
             except Exception as e:
                 db.session.rollback()
@@ -404,6 +520,12 @@ def create_app():
 
     from utils.ip_blocker import check_ip_block
     app.before_request(check_ip_block)
+
+    # Consolidated API security guard (threat-intel + anomaly + optional HMAC).
+    # Non-breaking in local dev: HMAC is only enforced when SECURITY_HMAC_ENFORCED
+    # is set or when a client actually sends signature headers.
+    from middleware.api_security import security_guard
+    app.before_request(security_guard)
     
     # Create database tables & Auto-Seed
     with app.app_context():

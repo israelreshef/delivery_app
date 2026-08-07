@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from extensions import limiter
 from models import Address, db
 from utils.decorators import token_required
+from utils.geocoding import GeocodingService
 import requests as http_requests
 import os
 from routes.expenses import track_api_call
@@ -164,65 +165,45 @@ def _nominatim_autocomplete(query):
 @addresses_bp.route('/geocode', methods=['GET'])
 @limiter.limit("30 per minute")
 def geocode_address():
-    """Convert address or place_id to coordinates."""
+    """Convert address or place_id to coordinates.
+
+    Uses the hybrid GeocodingService (DB cache -> Google -> local Nominatim)
+    so we never pay Google twice for the same address and stay resilient
+    when the paid API is unavailable.
+    """
     query = request.args.get('q', '').strip()
     place_id = request.args.get('place_id', '').strip()
-    
+    city = request.args.get('city', '').strip() or None
+
     if not query and not place_id:
         return jsonify({'error': 'Query or Place ID required'}), 400
 
-    # Try Google Geocoding first
-    if GOOGLE_PLACES_API_KEY:
-        url = "https://maps.googleapis.com/maps/api/geocode/json"
-        params = {
-            'key': GOOGLE_PLACES_API_KEY,
-            'language': 'he'
-        }
-        # Only use place_id for Google if it appears to be a real Google Place ID (not our 'nom_' mock prefix)
-        if place_id and not place_id.startswith('nom_') and not place_id.startswith('local_'):
-            params['place_id'] = place_id
-        else:
-            params['address'] = query
-            
-        try:
-            resp = http_requests.get(url, params=params, timeout=5)
-            data = resp.json()
-            if data.get('status') == 'OK' and data.get('results'):
-                loc = data['results'][0]['geometry']['location']
-                track_api_call('google_places')
-                return jsonify({
-                    'lat': loc['lat'],
-                    'lng': loc['lng'],
-                    'formatted_address': data['results'][0].get('formatted_address', ''),
-                    'source': 'google',
-                    'is_verified': True
-                }), 200
-        except Exception as e:
-            print(f"Google Geocode error: {e}")
-
-    # Fallback to Nominatim
-    try:
-        url = "https://nominatim.openstreetmap.org/search"
-        params = {
-            'q': query,
-            'format': 'json',
-            'limit': 1,
-            'countrycodes': 'il'
-        }
-        headers = {'User-Agent': 'TzirDeliveryApp/1.0'}
-        resp = http_requests.get(url, params=params, headers=headers, timeout=5)
-        data = resp.json()
-        if data:
-            track_api_call('nominatim')
+    # A real Google Place ID (not our 'nom_' / 'local_' mock prefixes) is
+    # passed straight to Google via the service (not cacheable by text).
+    if place_id and not place_id.startswith('nom_') and not place_id.startswith('local_'):
+        from utils.google_maps import GoogleMapsService
+        result = GoogleMapsService.get_directions_by_place_id(place_id) if hasattr(
+            GoogleMapsService, 'get_directions_by_place_id'
+        ) else None
+        if result:
+            loc = result[0]['geometry']['location']
             return jsonify({
-                'lat': float(data[0]['lat']),
-                'lng': float(data[0]['lon']),
-                'formatted_address': data[0].get('display_name', ''),
-                'source': 'nominatim',
-                'is_verified': False
+                'lat': loc['lat'], 'lng': loc['lng'],
+                'formatted_address': result[0].get('formatted_address', ''),
+                'source': 'google', 'is_verified': True
             }), 200
-    except Exception as e:
-        print(f"Nominatim Geocode error: {e}")
+
+    coords = GeocodingService.geocode(query, city=city, raw_query=query)
+    if coords:
+        lat, lng, score = coords
+        return jsonify({
+            'lat': lat,
+            'lng': lng,
+            'formatted_address': query,
+            'source': 'cache' if score >= 1.0 else 'geocoded',
+            'score': score,
+            'is_verified': score >= 0.8
+        }), 200
 
     return jsonify({'error': 'Coordinates not found'}), 404
 

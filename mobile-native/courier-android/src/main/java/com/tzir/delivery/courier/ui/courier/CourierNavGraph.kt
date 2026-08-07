@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,8 +21,17 @@ import com.tzir.delivery.courier.NavItem
 import com.tzir.delivery.courier.ui.theme.*
 import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.model.User
+import com.tzir.delivery.courier.model.CourierContact
 import com.tzir.delivery.courier.repository.AuthRepository
+import com.tzir.delivery.courier.repository.CalendarRepository
+import com.tzir.delivery.courier.repository.ContactRepository
 import com.tzir.delivery.courier.repository.CourierRepository
+import com.tzir.delivery.courier.repository.EarningsRepository
+import com.tzir.delivery.courier.repository.ExpenseRepository
+import com.tzir.delivery.courier.repository.PaymentRepository
+import com.tzir.delivery.courier.repository.RatingRepository
+import com.tzir.delivery.courier.repository.VehicleRepository
+import com.tzir.delivery.courier.repository.NotificationRepository
 import com.tzir.delivery.courier.location.LocationManager
 
 /**
@@ -35,7 +46,16 @@ fun CourierNavGraph(
     currentUser: User,
     authRepository: AuthRepository,
     courierRepository: CourierRepository,
-    locationManager: LocationManager
+    locationManager: LocationManager,
+    contactRepository: ContactRepository? = null,
+    vehicleRepository: VehicleRepository? = null,
+    ratingRepository: RatingRepository? = null,
+    earningsRepository: EarningsRepository? = null,
+    expenseRepository: ExpenseRepository? = null,
+    businessRepository: com.tzir.delivery.courier.repository.BusinessRepository? = null,
+    calendarRepository: CalendarRepository? = null,
+    paymentRepository: PaymentRepository? = null,
+    notificationRepository: NotificationRepository? = null
 ) {
     // ── Navigation State ──
     var currentNav by remember { mutableStateOf(NavItem.CONTROL) }
@@ -50,18 +70,23 @@ fun CourierNavGraph(
     var showAcademy by remember { mutableStateOf(false) }
     var showProfile by remember { mutableStateOf(false) }
     var showEarnings by remember { mutableStateOf(false) }
+    var showExpenses by remember { mutableStateOf(false) }
+    var showBalance by remember { mutableStateOf(false) }
+    var showPaymentMethods by remember { mutableStateOf(false) }
     var showVehicles by remember { mutableStateOf(false) }
     var showLeaderboard by remember { mutableStateOf(false) }
     var selectedCourseId by remember { mutableStateOf<Int?>(null) }
     var selectedProtocolCourseId by remember { mutableStateOf<Int?>(null) }
     var selectedProtocolMissionId by remember { mutableStateOf<Int?>(null) }
+    var selectedClient by remember { mutableStateOf<CourierContact?>(null) }
 
     val isAnyModalOpen = selectedMissionId != null || selectedCourseId != null ||
             showHistory || showNotifications || showSupport || showDocuments ||
             showClients || showWorkerRating ||
-            showAcademy || showProfile || showEarnings || showRouteOptimization ||
+            showAcademy || showProfile || showEarnings || showExpenses ||
+            showRouteOptimization ||
             showVehicles || showLeaderboard || selectedProtocolMissionId != null ||
-            selectedProtocolCourseId != null
+            selectedProtocolCourseId != null || selectedClient != null || showPaymentMethods
 
     Scaffold(
         topBar = {
@@ -109,11 +134,11 @@ fun CourierNavGraph(
                                 )
                             },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = AmberGold,
-                                selectedTextColor = AmberGold,
+                                selectedIconColor = BrandBlue,
+                                selectedTextColor = BrandBlue,
                                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                indicatorColor = AmberGoldDim
+                                indicatorColor = BrandBlueDim
                             )
                         )
                     }
@@ -142,6 +167,17 @@ fun CourierNavGraph(
                         selectedProtocolMissionId = null
                     }
                 )
+            } else if (showBalance) {
+                BalanceScreen(
+                    onBack = { showBalance = false },
+                    paymentRepository = paymentRepository,
+                    onPaymentMethodsClick = { showBalance = false; showPaymentMethods = true }
+                )
+            } else if (showPaymentMethods) {
+                PaymentMethodsScreen(
+                    onBack = { showPaymentMethods = false },
+                    paymentRepository = paymentRepository
+                )
             } else if (showLeaderboard) {
                 LeaderboardScreen(
                     repository = courierRepository,
@@ -149,7 +185,11 @@ fun CourierNavGraph(
                 )
             } else if (showProfile) {
                 ProfileScreen(
+                    user = currentUser,
                     repository = courierRepository,
+                    vehicleRepository = vehicleRepository,
+                    earningsRepository = earningsRepository,
+                    expenseRepository = expenseRepository,
                     onLogout = {
                         authRepository.logout()
                         showProfile = false
@@ -162,11 +202,17 @@ fun CourierNavGraph(
                 EarningsScreen(
                     user = currentUser,
                     repository = courierRepository,
+                    earningsRepository = earningsRepository,
+                    paymentRepository = paymentRepository,
                     onShowHistory = {
                         showEarnings = false
                         showHistory = true
                     },
-                    onBack = { showEarnings = false }
+                    onBack = { showEarnings = false },
+                    onBalanceClick = {
+                        showEarnings = false
+                        showBalance = true
+                    }
                 )
             } else if (showHistory) {
                 MissionHistoryScreen(
@@ -175,15 +221,19 @@ fun CourierNavGraph(
                 )
             } else if (showNotifications) {
                 NotificationCenterScreen(
-                    onBack = { showNotifications = false }
+                    onBack = { showNotifications = false },
+                    notificationRepository = notificationRepository
                 )
             } else if (showSupport) {
                 SupportChatScreen(
-                    onBack = { showSupport = false }
+                    onBack = { showSupport = false },
+                    repository = courierRepository,
+                    userId = currentUser.id
                 )
             } else if (showDocuments) {
                 DocumentsScreen(
-                    onBack = { showDocuments = false }
+                    onBack = { showDocuments = false },
+                    repository = courierRepository
                 )
             } else if (selectedCourseId != null) {
                 CourseDetailScreen(
@@ -210,17 +260,32 @@ fun CourierNavGraph(
                         }
                     }
                 )
+            } else if (selectedClient != null) {
+                ClientDetailScreen(
+                    client = selectedClient!!,
+                    contactRepository = contactRepository,
+                    onBack = { selectedClient = null }
+                )
             } else if (showClients) {
                 ClientsScreen(
-                    onBack = { showClients = false }
+                    onBack = { showClients = false },
+                    onClientClick = { client -> selectedClient = client },
+                    contactRepository = contactRepository
                 )
             } else if (showVehicles) {
                 VehicleScreen(
-                    onBack = { showVehicles = false }
+                    onBack = { showVehicles = false },
+                    vehicleRepository = vehicleRepository
+                )
+            } else if (showExpenses) {
+                ExpenseScreen(
+                    onBack = { showExpenses = false },
+                    expenseRepository = expenseRepository
                 )
             } else if (showWorkerRating) {
                 WorkerRatingScreen(
-                    onBack = { showWorkerRating = false }
+                    onBack = { showWorkerRating = false },
+                    ratingRepository = ratingRepository
                 )
             } else if (showRouteOptimization) {
                 RouteOptimizationScreen(
@@ -233,11 +298,15 @@ fun CourierNavGraph(
             } else {
                 // ── Tab Screens ──
                 when (currentNav) {
-                    NavItem.CONTROL -> DashboardScreen(
-                        user = currentUser,
-                        repository = courierRepository,
-                        locationManager = locationManager,
-                        onMenuClick = { },
+                    NavItem.CONTROL -> {
+                        val dashboardViewModel: DashboardViewModel = hiltViewModel()
+                        DashboardScreen(
+                            user = currentUser,
+                            viewModel = dashboardViewModel,
+                            repository = courierRepository,
+                            locationManager = locationManager,
+                            notificationRepository = notificationRepository,
+                            onMenuClick = { },
                         onMissionClick = { id -> selectedMissionId = id },
                         onNotificationClick = { showNotifications = true },
                         onLogout = { authRepository.logout() },
@@ -249,13 +318,20 @@ fun CourierNavGraph(
                         onDocumentsClick = { showDocuments = true },
                         onClientsClick = { showClients = true },
                         onAcademyClick = { showAcademy = true }
-                    )
+                        )
+                    }
                     NavItem.CALENDAR -> CalendarScreen(
-                        onBack = { currentNav = NavItem.CONTROL }
+                        onBack = { currentNav = NavItem.CONTROL },
+                        calendarRepository = calendarRepository
                     )
-                    NavItem.BUSINESS -> BusinessScreen()
+                    NavItem.BUSINESS -> BusinessScreen(
+                        businessRepository = businessRepository,
+                        expenseRepository = expenseRepository
+                    )
                     NavItem.SETTINGS -> SettingsScreen(
                         onBack = { currentNav = NavItem.CONTROL },
+                        user = currentUser,
+                        courierRepository = courierRepository,
                         onVehicleSettings = { showVehicles = true },
                         onRouteClick = { currentNav = NavItem.CONTROL },
                         onCalendarClick = { currentNav = NavItem.CALENDAR },

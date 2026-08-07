@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models import db, Delivery, Customer, DeliveryProtocolConfig, PickupPoint, DeliveryPoint
 from utils.decorators import token_required, role_required
+from utils.tax import VAT_RATE_FLOAT
 import logging
 from datetime import datetime
 import uuid
@@ -20,7 +21,7 @@ def calculate_order_price(protocol_slug, distance_km, is_urgent=False):
     if is_urgent:
         subtotal *= 1.5  # 50% urgent surcharge
     
-    vat = subtotal * 0.17  # 17% VAT
+    vat = subtotal * VAT_RATE_FLOAT  # standard Israeli VAT
     total = subtotal + vat
     
     return {

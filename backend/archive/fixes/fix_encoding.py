@@ -1,6 +1,5 @@
 import os
-
-path = r'c:\Users\Israel\Desktop\delivery_app\frontend\app\admin\customers\page.tsx'
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'frontend', 'app', 'admin', 'customers', 'page.tsx')
 with open(path, 'rb') as f:
     content = f.read()
 

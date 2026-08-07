@@ -1,0 +1,40 @@
+C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\requests\__init__.py:109: RequestsDependencyWarning: urllib3 (2.7.0) or chardet (7.4.3)/charset_normalizer (3.4.9) doesn't match a supported version!
+  warnings.warn(
+Server initialized for gevent.
+INFO:engineio.server:Server initialized for gevent.
+INFO:utils.audit_trail: Global Audit Trail registered on all database models.
+WARNING:app:WebSocket transport not available. Install gevent-websocket for improved performance.
+Database tables initialized!
+Database tables checked/created.
+Database tables checked/created.
+Database empty. Auto-seeding demo users...
+Creating Secure Demo Accounts...
+   Creating super_admin (admin@tzir.com)
+   Creating finance_admin (finance@tzir.com)
+   Creating demo_client (client@tzir.com)
+   Creating demo_courier (courier@tzir.com)
+Service Accounts Secured.
+Warning: backup scheduler disabled due to error: No module named 'apscheduler'
+Traceback (most recent call last):
+  File "C:\Users\israe\delivery_app\backend\app.py", line 523, in <module>
+    socketio.run(app, debug=debug, use_reloader=debug, host='0.0.0.0', port=port)
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\flask_socketio\__init__.py", line 718, in run
+    self.wsgi_server.serve_forever()
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\baseserver.py", line 398, in serve_forever
+    self.start()
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\baseserver.py", line 336, in start
+    self.init_socket()
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\pywsgi.py", line 1668, in init_socket
+    StreamServer.init_socket(self)
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\server.py", line 173, in init_socket
+    self.socket = self.get_listener(self.address, self.backlog, self.family)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\server.py", line 185, in get_listener
+    return _tcp_listener(address, backlog=backlog, reuse_addr=cls.reuse_addr, family=family)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\server.py", line 264, in _tcp_listener
+    sock.bind(address)
+  File "C:\Users\israe\delivery_app\backend\venv\Lib\site-packages\gevent\_socketcommon.py", line 547, in bind
+    return self._sock.bind(address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted: ('0.0.0.0', 5000)

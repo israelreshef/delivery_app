@@ -2,12 +2,8 @@ package com.tzir.delivery.courier.ui.courier
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,56 +21,76 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tzir.delivery.courier.ui.theme.AppleGray
-import com.tzir.delivery.courier.ui.theme.AppleWhite
-import com.tzir.delivery.courier.ui.theme.Amber
-import com.tzir.delivery.courier.ui.theme.Navy950
+import com.tzir.delivery.courier.ui.UiState
 import com.tzir.delivery.courier.ui.theme.*
 import com.tzir.delivery.courier.ui.components.PremiumBackground
+import com.tzir.delivery.courier.model.CourierContact
+import com.tzir.delivery.courier.model.DeliveryClient
+import com.tzir.delivery.courier.repository.ContactRepository
+import kotlinx.coroutines.launch
 
-// ─── Data Model ──────────────────────────────────────────────────────────────
-data class Client(
-    val id: Int,
-    val name: String,
-    val company: String,
-    val phone: String,
-    val addresses: List<String>,
-    val isVIP: Boolean = false,
-    val isBusiness: Boolean = false,
-    val totalDeliveries: Int = 0,
-    val totalRevenue: Double = 0.0,
-    val lastInteraction: String = "",
-    val notes: String = ""
-)
-
-val sampleClients = mutableStateListOf(
-    Client(1, "דני כהן", "טכנולוגיות דן", "050-1234567", listOf("תל אביב, רחוב דיזנגוף 45"), isVIP = true, isBusiness = true, totalDeliveries = 38, totalRevenue = 4200.0, lastInteraction = "היום, 10:30", notes = "מסמכים משפטיים בלבד"),
-    Client(2, "מיכל לוי", "סטודיו מיכל", "052-9876543", listOf("הרצליה, שד׳ בן גוריון 12"), totalDeliveries = 14, totalRevenue = 980.0, lastInteraction = "אתמול", notes = ""),
-    Client(3, "יוסי מזרחי", "מזרחי שילוח", "054-5556667", listOf("רמת גן, ביאליק 7", "גבעתיים, סוקולוב 3"), isBusiness = true, totalDeliveries = 61, totalRevenue = 8750.0, lastInteraction = "לפני יומיים")
-)
-
-// ─── Main Screen ─────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientsScreen(onBack: () -> Unit) {
+fun ClientsScreen(
+    onBack: () -> Unit,
+    onClientClick: ((CourierContact) -> Unit)? = null,
+    contactRepository: ContactRepository? = null
+) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
-    var expandedClientId by remember { mutableStateOf<Int?>(null) }
-    var showQuoteDialog by remember { mutableStateOf<Client?>(null) }
+    var showQuoteDialog by remember { mutableStateOf<CourierContact?>(null) }
+    var filterVIP by remember { mutableStateOf(false) }
+    var filterBusiness by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
-    val filtered = sampleClients.filter {
-        searchQuery.isBlank() || it.name.contains(searchQuery) || it.company.contains(searchQuery) || it.phone.contains(searchQuery)
+    val clients by contactRepository?.myClients?.collectAsState() ?: remember { mutableStateOf(emptyList()) }
+    val deliveryClients by contactRepository?.deliveryClients?.collectAsState() ?: remember { mutableStateOf(emptyList()) }
+    val isOffline by contactRepository?.isOffline?.collectAsState() ?: remember { mutableStateOf(false) }
+
+    val clientsState: UiState<List<CourierContact>> by remember {
+        derivedStateOf {
+            when {
+                isOffline && clients.isNotEmpty() -> UiState.Success(clients)
+                clients.isEmpty() && !isOffline -> UiState.Loading
+                else -> UiState.Success(clients)
+            }
+        }
+    }
+
+    val deliveryState: UiState<List<DeliveryClient>> by remember {
+        derivedStateOf {
+            when {
+                isOffline && deliveryClients.isNotEmpty() -> UiState.Success(deliveryClients)
+                deliveryClients.isEmpty() && !isOffline -> UiState.Loading
+                else -> UiState.Success(deliveryClients)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        contactRepository?.refreshMyClients()
+        contactRepository?.refreshDeliveryClients()
+    }
+
+    val filtered = clients.filter { c ->
+        val matchesSearch = searchQuery.isBlank() ||
+            c.name.contains(searchQuery, ignoreCase = true) ||
+            c.company.contains(searchQuery, ignoreCase = true) ||
+            c.phone.contains(searchQuery, ignoreCase = true)
+        val matchesVIP = !filterVIP || c.isVIP
+        val matchesBusiness = !filterBusiness || c.isBusiness
+        matchesSearch && matchesVIP && matchesBusiness
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("ניהול לקוחות אישיים", fontWeight = FontWeight.Black, color = Amber) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = Amber),
+                title = { Text("ניהול לקוחות אישיים", fontWeight = FontWeight.Black, color = BrandBlue) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = BrandBlue),
                 actions = {
                     IconButton(onClick = onBack) {
-                        Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Amber)
+                        Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = BrandBlue)
                     }
                 }
             )
@@ -82,7 +98,7 @@ fun ClientsScreen(onBack: () -> Unit) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = Amber,
+                containerColor = BrandBlue,
                 contentColor = Navy950,
                 shape = RoundedCornerShape(16.dp)
             ) { Icon(Icons.Default.Add, contentDescription = "הוסף לקוח") }
@@ -92,109 +108,250 @@ fun ClientsScreen(onBack: () -> Unit) {
         PremiumBackground {
             Column(modifier = Modifier.padding(padding).fillMaxSize()) {
 
-            // Tabs
             Row(
                 modifier = Modifier.fillMaxWidth().background(Navy950).padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 ClientTab("הרשימה שלי", selectedTab == 0, { selectedTab = 0 }, Modifier.weight(1f))
-                ClientTab("סטטיסטיקה", selectedTab == 1, { selectedTab = 1 }, Modifier.weight(1f))
+                ClientTab("משלוחים", selectedTab == 1, { selectedTab = 1 }, Modifier.weight(1f))
+                ClientTab("סטטיסטיקה", selectedTab == 2, { selectedTab = 2 }, Modifier.weight(1f))
             }
 
-            // Search
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 placeholder = { Text("חיפוש לפי שם, חברה, טלפון...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = AppleWhite,
                     focusedContainerColor = AppleWhite,
                     unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Amber
+                    focusedBorderColor = BrandBlue
                 ),
                 singleLine = true
             )
 
             if (selectedTab == 0) {
-                // ─── Client List ───────────────────────────────────────────
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(filtered, key = { it.id }) { client ->
-                        FullClientCard(
-                            client = client,
-                            expanded = expandedClientId == client.id,
-                            onExpand = { expandedClientId = if (expandedClientId == client.id) null else client.id },
-                            onSendQuote = { showQuoteDialog = client }
+                    FilterChip(
+                        selected = filterVIP,
+                        onClick = { filterVIP = !filterVIP },
+                        label = { Text("VIP ⭐", fontSize = 12.sp) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFFF59E0B).copy(alpha = 0.2f),
+                            selectedLabelColor = Color(0xFFF59E0B)
                         )
+                    )
+                    FilterChip(
+                        selected = filterBusiness,
+                        onClick = { filterBusiness = !filterBusiness },
+                        label = { Text("עסק 💼", fontSize = 12.sp) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF3B82F6).copy(alpha = 0.15f),
+                            selectedLabelColor = Color(0xFF3B82F6)
+                        )
+                    )
+                    if (filterVIP || filterBusiness) {
+                        TextButton(
+                            onClick = { filterVIP = false; filterBusiness = false },
+                            modifier = Modifier.height(32.dp)
+                        ) {
+                            Text("נקה סינון", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text("${filtered.size} לקוחות", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.CenterVertically))
+                }
+
+                when (val state = clientsState) {
+                    is UiState.Loading -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = BrandBlue)
+                        }
+                    }
+                    is UiState.Error -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(Icons.Default.ErrorOutline, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(48.dp))
+                                Spacer(Modifier.height(8.dp))
+                                Text(state.message, color = Color(0xFFEF4444), fontSize = 14.sp)
+                            }
+                        }
+                    }
+                    else -> {
+                        if (isOffline && clients.isNotEmpty()) {
+                            Text(
+                                "מצב לא מקוון — מציג נתונים שמורים",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
+
+                if (filtered.isEmpty() && clientsState !is UiState.Loading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Default.People, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(64.dp))
+                            Spacer(Modifier.height(12.dp))
+                            Text("לא נמצאו לקוחות", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                            if (searchQuery.isNotBlank() || filterVIP || filterBusiness) {
+                                Text("נסה לשנות את הסינון", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            } else {
+                                Text("הוסף לקוח חדש עם כפתור ה+ למטה", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(filtered, key = { it.id }) { client ->
+                            FullClientCard(
+                                client = client,
+                                onClientClick = { onClientClick?.invoke(client) },
+                                onSendQuote = { showQuoteDialog = client },
+                                onLogInteraction = { msg ->
+                                        contactRepository?.let { repo ->
+                                            scope.launch { repo.logInteraction(client.id, msg) }
+                                        }
+                                    }
+                            )
+                        }
+                    }
+                }
+            } else if (selectedTab == 1) {
+                DeliveryClientsTab(deliveryClients)
             } else {
-                // ─── Stats Tab ─────────────────────────────────────────────
-                ClientStatsTab(clients = sampleClients.toList())
+                ClientStatsTab(clients = clients)
             }
         }
         }
     }
 
-    // Add Client Dialog
     if (showAddDialog) {
         AddClientDialog(
             onDismiss = { showAddDialog = false },
             onSave = { name, company, phone, address, isVIP, isBusiness ->
-                sampleClients.add(
-                    Client(
-                        id = sampleClients.size + 100,
-                        name = name, company = company, phone = phone,
-                        addresses = listOf(address), isVIP = isVIP, isBusiness = isBusiness
-                    )
-                )
+                contactRepository?.let { repo ->
+                    scope.launch { repo.createClient(name, company, phone, addresses = listOf(address), isVIP = isVIP, isBusiness = isBusiness) }
+                }
                 showAddDialog = false
             }
         )
     }
 
-    // Quote Dialog
     showQuoteDialog?.let { client ->
-        QuoteDialog(client = client, onDismiss = { showQuoteDialog = null })
+        QuoteDialog(client = client, onDismiss = { showQuoteDialog = null }, onSend = { desc, price ->
+            contactRepository?.let { repo ->
+                scope.launch { repo.sendQuote(client.id, desc, price) }
+            }
+            showQuoteDialog = null
+        })
     }
 }
 
-// ─── Full Client Card ──────────────────────────────────────────────────────
 @Composable
-fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSendQuote: () -> Unit) {
+fun DeliveryClientsTab(clients: List<DeliveryClient>) {
+    if (clients.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(Icons.Default.LocalShipping, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(64.dp))
+                Spacer(Modifier.height(12.dp))
+                Text("אין לקוחות ממשלוחים", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("לקוחות יופיעו כאן לאחר שתבצע משלוחים", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        return
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(clients, key = { it.orderId }) { dc ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = AppleWhite),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(dc.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Navy950)
+                    Text(dc.phone, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color(0xFF10B981), modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("איסוף: ${dc.pickupAddress}", fontSize = 12.sp, color = Color.DarkGray)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color(0xFF3B82F6), modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("מסירה: ${dc.dropoffAddress}", fontSize = 12.sp, color = Color.DarkGray)
+                    }
+                    if (dc.deliveryDate.isNotBlank()) {
+                        Text("תאריך: ${dc.deliveryDate}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FullClientCard(
+    client: CourierContact,
+    onClientClick: () -> Unit = {},
+    onSendQuote: () -> Unit = {},
+    onLogInteraction: (String) -> Unit = {}
+) {
     val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+    var showLogField by remember { mutableStateOf(false) }
+    var logMessage by remember { mutableStateOf("") }
     val borderMod = if (client.isVIP) Modifier.border(2.dp, Color(0xFFF59E0B), RoundedCornerShape(18.dp)) else Modifier
 
     Card(
-        modifier = Modifier.fillMaxWidth().then(borderMod).clickable { onExpand() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(borderMod)
+            .clickable { expanded = !expanded },
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = if (client.isVIP) Color(0xFFFFFBEB) else AppleWhite),
         elevation = CardDefaults.cardElevation(3.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Avatar
                 Box(
-                    modifier = Modifier.size(52.dp).background(Navy950, CircleShape),
+                    modifier = Modifier
+                        .size(52.dp)
+                        .background(Navy950, CircleShape)
+                        .clickable { onClientClick() },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(client.name.first().toString(), color = Amber, fontWeight = FontWeight.Black, fontSize = 22.sp)
+                    Text(client.name.first().toString(), color = BrandBlue, fontWeight = FontWeight.Black, fontSize = 22.sp)
                 }
 
                 Spacer(Modifier.width(14.dp))
 
-                Column(Modifier.weight(1f)) {
+                Column(Modifier.weight(1f).clickable { onClientClick() }) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(client.name, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Navy950)
                         if (client.isVIP) {
                             Surface(color = Color(0xFFF59E0B), shape = RoundedCornerShape(6.dp)) {
-                                Text("VIP", modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp), fontSize = 10.sp, fontWeight = FontWeight.Black, color = Color.White)
+                                Text("VIP", modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp), fontSize = 10.sp, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
                         if (client.isBusiness) {
@@ -203,8 +360,8 @@ fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSe
                             }
                         }
                     }
-                    if (client.company.isNotBlank()) Text(client.company, fontSize = 13.sp, color = Color.Gray)
-                    Text("אינטראקציה: ${client.lastInteraction}", fontSize = 11.sp, color = Amber)
+                    if (client.company.isNotBlank()) Text(client.company, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("אינטראקציה: ${client.lastInteraction}", fontSize = 11.sp, color = BrandBlue)
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -219,13 +376,11 @@ fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSe
                 }
             }
 
-            // Expandable details
             AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
                 Column(modifier = Modifier.padding(top = 14.dp)) {
-                    HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
                     Spacer(Modifier.height(12.dp))
 
-                    // Stats row
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         MiniStat("משלוחים", "${client.totalDeliveries}", Color(0xFF3B82F6))
                         MiniStat("הכנסה", "₪${String.format("%.0f", client.totalRevenue)}", Color(0xFF10B981))
@@ -234,10 +389,9 @@ fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSe
 
                     Spacer(Modifier.height(12.dp))
 
-                    // Addresses
                     client.addresses.forEach { addr ->
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
-                            Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
+                            Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
                             Spacer(Modifier.width(6.dp))
                             Text(addr, fontSize = 13.sp, color = Color.DarkGray)
                         }
@@ -246,12 +400,22 @@ fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSe
                     if (client.notes.isNotBlank()) {
                         Spacer(Modifier.height(8.dp))
                         Surface(color = Color(0xFFFFF9C4), shape = RoundedCornerShape(8.dp)) {
-                            Text("📝 ${client.notes}", modifier = Modifier.padding(8.dp), fontSize = 12.sp, color = Color(0xFF795548))
+                            Text(client.notes, modifier = Modifier.padding(8.dp), fontSize = 12.sp, color = Color(0xFF795548))
                         }
                     }
 
                     Spacer(Modifier.height(14.dp))
+
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        OutlinedButton(
+                            onClick = { onClientClick() },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("פרטים מלאים", fontSize = 13.sp)
+                        }
                         OutlinedButton(
                             onClick = onSendQuote,
                             modifier = Modifier.weight(1f),
@@ -260,17 +424,47 @@ fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSe
                         ) {
                             Icon(Icons.Default.RequestQuote, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("שלח הצעת מחיר", fontSize = 13.sp)
+                            Text("הצעת מחיר", fontSize = 13.sp)
                         }
-                        Button(
-                            onClick = { /* Create mission for this client */ },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Navy950)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(Modifier.width(6.dp))
-                            Text("משלוח חדש", fontSize = 13.sp)
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        if (showLogField) {
+                            OutlinedTextField(
+                                value = logMessage,
+                                onValueChange = { logMessage = it },
+                                modifier = Modifier.weight(1f),
+                                placeholder = { Text("תעוד שיחה...", fontSize = 12.sp) },
+                                singleLine = true,
+                                shape = RoundedCornerShape(10.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedContainerColor = Color(0xFFEDE9FE),
+                                    focusedContainerColor = Color(0xFFEDE9FE),
+                                    unfocusedBorderColor = Color.Transparent
+                                )
+                            )
+                            IconButton(
+                                onClick = {
+                                    if (logMessage.isNotBlank()) {
+                                        onLogInteraction(logMessage)
+                                        logMessage = ""
+                                        showLogField = false
+                                    }
+                                },
+                                modifier = Modifier.size(38.dp).background(Color(0xFF7C3AED), CircleShape)
+                            ) { Icon(Icons.Default.Send, contentDescription = "שמור", tint = Color.White, modifier = Modifier.size(18.dp)) }
+                        } else {
+                            OutlinedButton(
+                                onClick = { showLogField = true },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Icon(Icons.Default.EditNote, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("תעוד אינטראקציה", fontSize = 13.sp)
+                            }
                         }
                     }
                 }
@@ -283,17 +477,28 @@ fun FullClientCard(client: Client, expanded: Boolean, onExpand: () -> Unit, onSe
 fun MiniStat(label: String, value: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(value, fontWeight = FontWeight.Black, fontSize = 18.sp, color = color)
-        Text(label, fontSize = 11.sp, color = Color.Gray)
+        Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
-// ─── Stats Tab ─────────────────────────────────────────────────────────────
 @Composable
-fun ClientStatsTab(clients: List<Client>) {
+fun ClientStatsTab(clients: List<CourierContact>) {
     val totalRevenue = clients.sumOf { it.totalRevenue }
     val totalDeliveries = clients.sumOf { it.totalDeliveries }
     val vipCount = clients.count { it.isVIP }
     val topClient = clients.maxByOrNull { it.totalRevenue }
+
+    if (clients.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(Icons.Default.BarChart, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(64.dp))
+                Spacer(Modifier.height(12.dp))
+                Text("אין נתונים להצגה", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("הוסף לקוחות כדי לראות סטטיסטיקות", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        return
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -314,7 +519,7 @@ fun ClientStatsTab(clients: List<Client>) {
                         Text("🏆", fontSize = 32.sp)
                         Spacer(Modifier.width(12.dp))
                         Column {
-                            Text("לקוח מוביל", fontSize = 12.sp, color = Color.Gray)
+                            Text("לקוח מוביל", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(top.name, fontWeight = FontWeight.Black, fontSize = 17.sp, color = Navy950)
                             Text("₪${String.format("%.0f", top.totalRevenue)} · ${top.totalDeliveries} משלוחים", fontSize = 13.sp, color = Color(0xFFF59E0B))
                         }
@@ -328,12 +533,12 @@ fun ClientStatsTab(clients: List<Client>) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.size(38.dp).background(Navy950, CircleShape), contentAlignment = Alignment.Center) {
-                    Text(client.name.first().toString(), color = Amber, fontWeight = FontWeight.Black, fontSize = 16.sp)
+                    Text(client.name.first().toString(), color = BrandBlue, fontWeight = FontWeight.Black, fontSize = 16.sp)
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(client.name, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Navy950)
-                    Text("${client.totalDeliveries} משלוחים", fontSize = 12.sp, color = Color.Gray)
+                    Text("${client.totalDeliveries} משלוחים", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text("₪${String.format("%.0f", client.totalRevenue)}", fontWeight = FontWeight.Black, fontSize = 15.sp, color = Color(0xFF10B981))
             }
@@ -341,7 +546,6 @@ fun ClientStatsTab(clients: List<Client>) {
     }
 }
 
-// ─── Add Client Dialog ─────────────────────────────────────────────────────
 @Composable
 fun AddClientDialog(onDismiss: () -> Unit, onSave: (String, String, String, String, Boolean, Boolean) -> Unit) {
     var name by remember { mutableStateOf("") }
@@ -363,7 +567,7 @@ fun AddClientDialog(onDismiss: () -> Unit, onSave: (String, String, String, Stri
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = isVIP, onCheckedChange = { isVIP = it })
                     Spacer(Modifier.width(8.dp))
-                    Text("לקוח VIP ⭐", fontSize = 14.sp)
+                    Text("VIP ⭐", fontSize = 14.sp)
                     Spacer(Modifier.weight(1f))
                     Switch(checked = isBusiness, onCheckedChange = { isBusiness = it })
                     Spacer(Modifier.width(8.dp))
@@ -373,16 +577,15 @@ fun AddClientDialog(onDismiss: () -> Unit, onSave: (String, String, String, Stri
         },
         confirmButton = {
             Button(onClick = { if (name.isNotBlank() && phone.isNotBlank()) onSave(name, company, phone, address, isVIP, isBusiness) }, colors = ButtonDefaults.buttonColors(containerColor = Navy950)) {
-                Text("שמור", color = Amber)
+                Text("שמור", color = BrandBlue)
             }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("ביטול") } }
     )
 }
 
-// ─── Quote Dialog ──────────────────────────────────────────────────────────
 @Composable
-fun QuoteDialog(client: Client, onDismiss: () -> Unit) {
+fun QuoteDialog(client: CourierContact, onDismiss: () -> Unit, onSend: (String, Double) -> Unit = { _, _ -> }) {
     var description by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
 
@@ -396,7 +599,7 @@ fun QuoteDialog(client: Client, onDismiss: () -> Unit) {
                 if (price.isNotBlank() && description.isNotBlank()) {
                     Surface(color = Color(0xFFE8F5E9), shape = RoundedCornerShape(10.dp)) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text("תצוגה מקדימה", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
+                            Text("תצוגה מקדימה", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                             Text("שירות: $description", fontSize = 13.sp)
                             Text("מחיר: ₪$price", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
                         }
@@ -405,23 +608,26 @@ fun QuoteDialog(client: Client, onDismiss: () -> Unit) {
             }
         },
         confirmButton = {
-            Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = Navy950)) {
-                Text("שלח ללקוח", color = Amber)
+            Button(onClick = {
+                val p = price.toDoubleOrNull()
+                if (description.isNotBlank() && p != null) onSend(description, p)
+                onDismiss()
+            }, colors = ButtonDefaults.buttonColors(containerColor = Navy950)) {
+                Text("שלח ללקוח", color = BrandBlue)
             }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("ביטול") } }
     )
 }
 
-// ─── ClientTab ─────────────────────────────────────────────────────────────
 @Composable
 fun ClientTab(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.clip(RoundedCornerShape(8.dp))
-            .background(if (selected) Amber.copy(alpha = 0.2f) else Color.Transparent)
+            .background(if (selected) BrandBlue.copy(alpha = 0.2f) else Color.Transparent)
             .clickable(onClick = onClick).padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text, color = if (selected) Amber else Color.Gray, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Text(text, color = if (selected) BrandBlue else MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold, fontSize = 14.sp)
     }
 }

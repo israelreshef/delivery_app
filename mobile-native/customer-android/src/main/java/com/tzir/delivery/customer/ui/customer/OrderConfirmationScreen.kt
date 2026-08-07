@@ -64,7 +64,7 @@ fun OrderConfirmationScreen(
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = AmberGold,
+                            tint = BrandBlue,
                             modifier = Modifier.size(96.dp)
                         )
                     }
@@ -153,7 +153,7 @@ private fun ConfirmationRow(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = AmberGold, modifier = Modifier.size(20.dp))
+        Icon(icon, contentDescription = null, tint = BrandBlue, modifier = Modifier.size(20.dp))
         Spacer(Modifier.width(12.dp))
         Column {
             Text(label, color = Graphite400, fontSize = 11.sp)

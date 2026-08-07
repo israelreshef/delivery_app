@@ -1,11 +1,13 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { LifeBuoy, Search, Loader2, Plus, ListChecks, Filter } from "lucide-react";
+import { LifeBuoy, Search, Loader2, Plus, ListChecks, Filter, MessageCircle, Users, Bike, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import { supportApi } from "@/lib/api/support";
 import { api } from "@/lib/api";
-import { SupportTicket, TicketStatus, TicketPriority } from "@/types/support";
+import { useSocket } from "@/lib/socket";
+import { auth } from "@/lib/auth";
+import { SupportTicket, TicketStatus, TicketPriority, TicketCategory } from "@/types/support";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +23,7 @@ const ticketSchema = z.object({
 });
 
 type ViewMode = "tickets" | "tasks";
+type TicketTab = "all" | "service" | "courier" | "customer";
 type TaskStatus = "open" | "in_progress" | "completed" | "cancelled";
 type TaskSource = "all" | "support_ticket" | "requirements" | "manual";
 
@@ -42,12 +45,17 @@ export default function SupportPage() {
   const [tasks, setTasks] = useState<SupportTask[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const token = typeof window !== "undefined" ? auth.getToken() : null;
+  const user = typeof window !== "undefined" ? auth.getUser() : null;
+  const socket = useSocket(token, user?.user_type || user?.role || null);
+
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [assignedFilter, setAssignedFilter] = useState<string>("all");
   const [taskSourceFilter, setTaskSourceFilter] = useState<TaskSource>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("tickets");
+  const [ticketTab, setTicketTab] = useState<TicketTab>("all");
 
   const form = useForm<z.infer<typeof ticketSchema>>({
     resolver: zodResolver(ticketSchema),
@@ -64,6 +72,7 @@ export default function SupportPage() {
       const data = await supportApi.getTickets({
         status: statusFilter === "all" ? undefined : statusFilter,
         assigned_to: assignedFilter === "all" ? undefined : assignedFilter,
+        category: ticketTab,
       });
       setTickets(data);
     } catch (error) {
@@ -99,7 +108,29 @@ export default function SupportPage() {
       fetchTasks();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, assignedFilter, taskSourceFilter, viewMode]);
+  }, [statusFilter, assignedFilter, taskSourceFilter, viewMode, ticketTab]);
+
+  // Realtime updates: refresh the list whenever a ticket is created/updated
+  // or a new message arrives (from a mobile app or another agent).
+  useEffect(() => {
+    if (!socket) return;
+    const handleTicketEvent = () => {
+      if (viewMode === "tickets") {
+        fetchTickets();
+      } else {
+        fetchTasks();
+      }
+    };
+    socket.on("ticket_created", handleTicketEvent);
+    socket.on("ticket_updated", handleTicketEvent);
+    socket.on("ticket_message_added", handleTicketEvent);
+    return () => {
+      socket.off("ticket_created", handleTicketEvent);
+      socket.off("ticket_updated", handleTicketEvent);
+      socket.off("ticket_message_added", handleTicketEvent);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, viewMode]);
 
   async function onCreateTicket(values: z.infer<typeof ticketSchema>) {
     try {
@@ -188,6 +219,21 @@ export default function SupportPage() {
       urgent: "דחופה",
     };
     return <span className={`${styles.badge} ${map[priority]}`}>{labels[priority]}</span>;
+  };
+
+  const getCategoryBadge = (category?: TicketCategory) => {
+    const labels: Record<TicketCategory, string> = {
+      service: "שירות",
+      courier: "שליחים",
+      customer: "לקוחות",
+    };
+    const map: Record<TicketCategory, string> = {
+      service: styles.catService,
+      courier: styles.catCourier,
+      customer: styles.catCustomer,
+    };
+    if (!category) return <>-</>;
+    return <span className={`${styles.badge} ${map[category]}`}>{labels[category]}</span>;
   };
 
   const resetFilters = () => {
@@ -286,17 +332,62 @@ export default function SupportPage() {
 
       <div className={styles.panelCard}>
         <div className={styles.panelHeader}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
             <button
               type="button"
-              data-testid="tickets-tab"
-              className={viewMode === "tickets" ? styles.btnTabActive : styles.btnTab}
+              data-testid="tab-all"
+              className={viewMode === "tickets" && ticketTab === "all" ? styles.btnTabActive : styles.btnTab}
               onClick={() => {
                 setViewMode("tickets");
-                resetFilters();
+                setTicketTab("all");
               }}
             >
-              קריאות שירות
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                <Filter size={14} />
+                הכל
+              </span>
+            </button>
+            <button
+              type="button"
+              data-testid="tab-service"
+              className={viewMode === "tickets" && ticketTab === "service" ? styles.btnTabActive : styles.btnTab}
+              onClick={() => {
+                setViewMode("tickets");
+                setTicketTab("service");
+              }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                <PhoneCall size={14} />
+                שירות
+              </span>
+            </button>
+            <button
+              type="button"
+              data-testid="tab-courier"
+              className={viewMode === "tickets" && ticketTab === "courier" ? styles.btnTabActive : styles.btnTab}
+              onClick={() => {
+                setViewMode("tickets");
+                setTicketTab("courier");
+              }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                <Bike size={14} />
+                שליחים
+              </span>
+            </button>
+            <button
+              type="button"
+              data-testid="tab-customer"
+              className={viewMode === "tickets" && ticketTab === "customer" ? styles.btnTabActive : styles.btnTab}
+              onClick={() => {
+                setViewMode("tickets");
+                setTicketTab("customer");
+              }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                <Users size={14} />
+                לקוחות
+              </span>
             </button>
             <button
               type="button"
@@ -400,37 +491,46 @@ export default function SupportPage() {
 
         <div className={styles.panelContent} style={{ padding: 0, overflowX: "auto" }}>
           {viewMode === "tickets" ? (
-            <table className={styles.customTable}>
+                <table className={styles.customTable}>
               <thead>
                 <tr>
                   <th>מס' קריאה</th>
-                  <th style={{ textAlign: "center" }}>נושא</th>
+                  <th style={{ textAlign: "center" }}>נושא / הודעה ראשונה</th>
+                  <th style={{ textAlign: "center" }}>מקור</th>
                   <th style={{ textAlign: "center" }}>לקוח</th>
                   <th style={{ textAlign: "center" }}>מוטב</th>
                   <th style={{ textAlign: "center" }}>סטטוס</th>
                   <th style={{ textAlign: "center" }}>דחיפות</th>
                   <th style={{ textAlign: "center" }}>תאריך פתיחה</th>
-                  <th style={{ textAlign: "center" }}>פעולות</th>
+                  <th style={{ textAlign: "center" }}>צאט</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={8} style={{ height: "6rem", textAlign: "center" }}>
+                    <td colSpan={9} style={{ height: "6rem", textAlign: "center" }}>
                       <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-500" />
                     </td>
                   </tr>
                 ) : filteredTickets.length === 0 ? (
                   <tr>
-                    <td colSpan={8} style={{ height: "6rem", textAlign: "center", color: "#94A3B8" }}>
+                    <td colSpan={9} style={{ height: "6rem", textAlign: "center", color: "#94A3B8" }}>
                       לא נמצאו קריאות שירות
                     </td>
                   </tr>
                 ) : (
                   filteredTickets.map((ticket) => (
                     <tr key={ticket.id}>
-                      <td className={styles.cellId}>#{ticket.id}</td>
-                      <td style={{ fontWeight: 500, textAlign: "center" }}>{ticket.subject}</td>
+                      <td className={styles.cellId}>#{ticket.ticket_number || ticket.id}</td>
+                      <td style={{ textAlign: "center" }}>
+                        <div style={{ fontWeight: 500, marginBottom: "0.2rem" }}>{ticket.subject}</div>
+                        {ticket.first_message && (
+                          <div style={{ fontSize: "0.75rem", color: "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "200px" }}>
+                            "{ticket.first_message}{ticket.first_message && ticket.first_message.length >= 100 ? '...' : ''}"
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ textAlign: "center" }}>{getCategoryBadge(ticket.category)}</td>
                       <td style={{ textAlign: "center" }}>{ticket.user_name}</td>
                       <td style={{ textAlign: "center" }}>{ticket.assigned_to_name ?? "-"}</td>
                       <td style={{ textAlign: "center" }}>{getStatusBadge(ticket.status)}</td>
@@ -438,7 +538,9 @@ export default function SupportPage() {
                       <td dir="ltr" style={{ textAlign: "center", color: "#94A3B8", fontSize: "0.875rem" }}>{ticket.created_at}</td>
                       <td style={{ textAlign: "center" }}>
                         <Link href={`/admin/support/${ticket.id}`} style={{ textDecoration: "none" }}>
-                          <button className={styles.btnGhost}>צפה בפרטים</button>
+                          <button className={styles.btnGhost} title="פתח צאט">
+                            <MessageCircle size={18} />
+                          </button>
                         </Link>
                       </td>
                     </tr>

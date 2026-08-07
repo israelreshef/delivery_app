@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import styles from "./wms-dashboard.module.css";
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+const COLORS = ['#3b82f6', '#10b981', '#145DDB', '#ef4444', '#8b5cf6', '#06b6d4'];
 
 export default function WmsDashboard() {
     const [inventory, setInventory] = useState<InventoryItem[]>([]);

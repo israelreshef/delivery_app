@@ -1,5 +1,5 @@
 .settingsContainer {
-    background-color: #0B0E14;
+    background-color: #07162C;
     color: #E2E8F0;
     min-height: 100vh;
     padding: 2rem;
@@ -15,10 +15,10 @@
 }
 
 .headerIconWrapper {
-    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     padding: 0.75rem;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(20, 93, 219, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,7 +33,7 @@
 }
 
 .subtitle {
-    color: #94A3B8;
+    color: #5A8AC0;
     font-size: 1rem;
     margin-top: 0.25rem;
 }
@@ -74,7 +74,7 @@
 }
 
 .settingsCard:hover {
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(20, 93, 219, 0.4);
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
@@ -109,12 +109,12 @@
 }
 
 .settingsCard:hover .cardTitle {
-    color: #60A5FA;
+    color: #5AA0FF;
 }
 
 .cardDescription {
     font-size: 0.875rem;
-    color: #94A3B8;
+    color: #5A8AC0;
     line-height: 1.5;
     margin-bottom: 1.5rem;
 }
@@ -124,7 +124,7 @@
     width: 100%;
     padding: 0.75rem;
     background: transparent;
-    color: #94A3B8;
+    color: #5A8AC0;
     border: none;
     border-radius: 8px;
     font-size: 0.875rem;
@@ -134,14 +134,14 @@
 }
 
 .settingsCard:hover .cardAction {
-    background: rgba(59, 130, 246, 0.1);
-    color: #60A5FA;
+    background: rgba(20, 93, 219, 0.1);
+    color: #5AA0FF;
 }
 
 /* Quick Actions Card */
 .quickActionsCard {
     background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(20, 93, 219, 0.2);
     border-radius: 16px;
     padding: 1.5rem;
     -webkit-backdrop-filter: blur(12px);
@@ -174,7 +174,7 @@
 }
 
 .actionBtn:hover {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-    color: #60A5FA;
+    background: rgba(20, 93, 219, 0.1);
+    border-color: rgba(20, 93, 219, 0.3);
+    color: #5AA0FF;
 }

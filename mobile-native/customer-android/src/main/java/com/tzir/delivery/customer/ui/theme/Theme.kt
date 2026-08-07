@@ -91,15 +91,15 @@ val LocalTZIRColors = staticCompositionLocalOf { LightExtendedColors }
 // ════════════════════════════════════════
 
 private val TZIRLightColorScheme = lightColorScheme(
-    primary          = AmberGold,
-    onPrimary        = Graphite950,
-    primaryContainer = AmberGoldLight,
-    onPrimaryContainer = Graphite700,
+    primary          = BrandBlue,
+    onPrimary        = Paper,
+    primaryContainer = BrandBlueLight,
+    onPrimaryContainer = Navy950,
 
-    secondary        = Graphite600,
-    onSecondary      = Color.White,
-    secondaryContainer = Graphite50,
-    onSecondaryContainer = Graphite900,
+    secondary        = Navy600,
+    onSecondary      = Paper,
+    secondaryContainer = Ice,
+    onSecondaryContainer = Navy950,
 
     background       = BackgroundLight,
     onBackground     = TextPrimaryLight,
@@ -110,7 +110,7 @@ private val TZIRLightColorScheme = lightColorScheme(
     onSurfaceVariant = TextSecondaryLight,
 
     outline          = BorderLight,
-    outlineVariant   = Graphite50,
+    outlineVariant   = Ice,
 
     error            = ErrorLight,
     onError          = Color.White,
@@ -119,15 +119,15 @@ private val TZIRLightColorScheme = lightColorScheme(
 )
 
 private val TZIRDarkColorScheme = darkColorScheme(
-    primary          = AmberGold,
-    onPrimary        = Graphite950,
-    primaryContainer = Color(0xFF3D2800),
-    onPrimaryContainer = AmberGoldLight,
+    primary          = BrandBlue,
+    onPrimary        = Paper,
+    primaryContainer = BrandBlueDark,
+    onPrimaryContainer = BrandBlueLight,
 
-    secondary        = Graphite300,
-    onSecondary      = Graphite950,
-    secondaryContainer = Graphite700,
-    onSecondaryContainer = Graphite100,
+    secondary        = Navy400,
+    onSecondary      = Navy950,
+    secondaryContainer = Navy700,
+    onSecondaryContainer = Navy200,
 
     background       = BackgroundDark,
     onBackground     = TextPrimaryDark,
@@ -138,7 +138,7 @@ private val TZIRDarkColorScheme = darkColorScheme(
     onSurfaceVariant = TextSecondaryDark,
 
     outline          = BorderDark,
-    outlineVariant   = Graphite700,
+    outlineVariant   = Navy700,
 
     error            = ErrorDark,
     onError          = Color.White,

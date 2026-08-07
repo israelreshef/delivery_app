@@ -1,105 +1,101 @@
 @echo off
-chcp 65001 >nul 2>&1
-title Delivery App Launcher
+setlocal enabledelayedexpansion
+title TZIR Delivery - Launcher (Full Stack)
 echo ============================================
-echo    TZIR Delivery - Project Launcher
+echo    TZIR Delivery - Full Stack Launcher
+echo    Backend + Frontend + Courier Emulator
+echo    + Customer Emulator
 echo ============================================
 echo.
 
-set ADB_PATH=C:\Users\Israel\AppData\Local\Android\Sdk\platform-tools\adb.exe
-set EMULATOR_PATH=C:\Users\Israel\AppData\Local\Android\Sdk\emulator\emulator.exe
+set ADB=%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe
+set EMULATOR=%LOCALAPPDATA%\Android\Sdk\emulator\emulator.exe
+set ROOT=%~dp0
+set "SCRIPTS=!ROOT!scripts\"
 
-:: Step 0: Kill old processes that might be occupying ports
-echo [0/4] Cleaning up old processes...
-taskkill /F /IM "qemu-system-x86_64.exe" >nul 2>&1
-"%ADB_PATH%" kill-server >nul 2>&1
-timeout /t 2 /nobreak >nul
+set COURIER_AVD=Pixel_7
+set COURIER_SERIAL=emulator-5554
+set CUSTOMER_AVD=Pixel_7_Customer
+set CUSTOMER_SERIAL=emulator-5556
+
+:: ---- Step 1: Services (Database + Backend + Frontend) ----
+echo.
+echo [1/5] Starting Database, Backend and Frontend...
+call "!SCRIPTS!start-services.bat"
+
+:: ---- Step 2: Launch emulators (two windows will open on screen) ----
+:launch_emulators
+echo.
+echo [2/5] Launching emulators (two windows will open on screen)...
+echo     Courier  : !COURIER_AVD!  ->  !COURIER_SERIAL!
+echo     Customer : !CUSTOMER_AVD!  ->  !CUSTOMER_SERIAL!
+call "!SCRIPTS!start-emulator.bat" "!ADB!" "!EMULATOR!" !COURIER_AVD! 5554
+call "!SCRIPTS!start-emulator.bat" "!ADB!" "!EMULATOR!" !CUSTOMER_AVD! 5556
+
+:: ---- Step 3: Build both mobile apps (parallel to emulator boot) ----
+echo.
+echo [3/5] Building mobile apps (emulators boot in parallel)...
+if not exist "!ROOT!mobile-native\gradlew.bat" (
+    echo     WARNING: Gradle wrapper not found. Skipping mobile build.
+    goto :deploy_apps
+)
+cd /d "!ROOT!mobile-native"
+set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr
+call gradlew.bat :courierApp:assembleDebug :customerApp:assembleDebug --quiet
+if !ERRORLEVEL! EQU 0 (
+    echo     Mobile build OK.
+) else (
+    echo     WARNING: Mobile build failed - emulators will start but APKs may be stale.
+)
+cd /d "!ROOT!"
+
+:: ---- Step 4: Deploy apps ----
+:deploy_apps
+echo.
+echo [4/5] Deploying apps (waiting for devices to boot)...
+if exist "!ROOT!mobile-native\courier-android\build\outputs\apk\debug\courierApp-debug.apk" (
+    python "!SCRIPTS!mobile_deploy.py" !COURIER_SERIAL! "!ROOT!mobile-native\courier-android\build\outputs\apk\debug\courierApp-debug.apk" com.tzir.delivery.courier .MainActivity --launch --adb "!ADB!" --label courier
+) else (
+    echo     WARNING: Courier APK not found - skipping deploy.
+)
+
+if exist "!ROOT!mobile-native\customer-android\build\outputs\apk\debug\customerApp-debug.apk" (
+    python "!SCRIPTS!mobile_deploy.py" !CUSTOMER_SERIAL! "!ROOT!mobile-native\customer-android\build\outputs\apk\debug\customerApp-debug.apk" com.tzir.delivery.customer .MainActivity --launch --adb "!ADB!" --label customer
+) else (
+    echo     WARNING: Customer APK not found - skipping deploy.
+)
+
+:: ---- Step 5: Summary ----
+:summary
+echo.
+echo ============================================
+echo    All services started!
+echo ============================================
+echo.
+echo    Backend:        http://localhost:5000
+echo    Frontend/admin: http://localhost:3000
+echo    Courier app:    !COURIER_SERIAL!  (AVD !COURIER_AVD!)
+echo    Customer app:   !CUSTOMER_SERIAL!  (AVD !CUSTOMER_AVD!)
+echo.
+echo    Testing flow:
+echo      1. Place an order inside the Customer emulator.
+echo      2. Accept/fulfill it inside the Courier emulator.
+echo      3. Confirm the whole process in the admin UI on localhost:3000.
+echo.
+echo    Close this window to stop everything.
+echo    Or press a key for a clean shutdown.
+echo ============================================
+echo.
+echo Press any key to stop all services...
+pause >nul
+echo.
+echo Shutting down...
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5000 ^| findstr LISTENING 2^>nul') do (
     taskkill /PID %%a /F >nul 2>&1
 )
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr LISTENING 2^>nul') do (
     taskkill /PID %%a /F >nul 2>&1
 )
-:: Restart ADB fresh
-"%ADB_PATH%" start-server >nul 2>&1
+echo     Released ports 5000 and 3000.
+echo All services stopped.
 timeout /t 2 /nobreak >nul
-echo     Old processes cleaned.
-echo.
-
-:: Step 1: Android Emulator (Cold Boot to avoid snapshot issues)
-echo [1/4] Starting Android Emulator: Pixel_6a (Cold Boot)...
-start "" "%EMULATOR_PATH%" -avd Pixel_6a -netdelay none -netspeed full -no-snapshot-load
-echo     Emulator starting...
-echo.
-
-:: Step 2: Wait for emulator to be online via ADB
-echo [2/4] Waiting for emulator to boot...
-
-:: Wait up to 120 seconds for device to come online
-set /a WAIT_COUNT=0
-set /a MAX_WAIT=40
-:wait_device
-if %WAIT_COUNT% GEQ %MAX_WAIT% (
-    echo     WARNING: Emulator did not come online after 120 seconds.
-    echo     Continuing anyway - you may need to restart the emulator.
-    goto :emulator_done
-)
-"%ADB_PATH%" devices 2>nul | findstr "emulator" | findstr /V "offline" | findstr "device" >nul 2>&1
-if %ERRORLEVEL% EQU 0 (
-    echo     Emulator connected to ADB!
-    goto :wait_boot
-)
-timeout /t 3 /nobreak >nul
-set /a WAIT_COUNT+=1
-echo     Waiting for device... (%WAIT_COUNT%/%MAX_WAIT%)
-goto :wait_device
-
-:wait_boot
-echo     Waiting for Android system to finish booting...
-set /a BOOT_COUNT=0
-:boot_loop
-if %BOOT_COUNT% GEQ 30 (
-    echo     WARNING: Boot did not complete in time. Continuing...
-    goto :emulator_done
-)
-for /f "tokens=*" %%b in ('"%ADB_PATH%" -s emulator-5554 shell getprop sys.boot_completed 2^>nul') do (
-    set BOOT_VAL=%%b
-)
-if "%BOOT_VAL%"=="1" (
-    echo     Android system boot completed!
-    goto :emulator_done
-)
-timeout /t 3 /nobreak >nul
-set /a BOOT_COUNT+=1
-goto :boot_loop
-
-:emulator_done
-echo.
-
-:: Step 3: Backend - Python (with venv)
-echo [3/4] Starting Backend (Flask + Python)...
-start "Backend - Python" cmd /k "cd /d c:\Users\Israel\Desktop\delivery_app && call venv\Scripts\activate && cd backend && python app.py"
-:: Give backend a moment to start
-timeout /t 5 /nobreak >nul
-echo     Backend started on http://localhost:5000
-echo.
-
-:: Step 4: Frontend - Node.js
-echo [4/4] Starting Frontend (Next.js)...
-start "Frontend - Node.js" cmd /k "cd /d c:\Users\Israel\Desktop\delivery_app\frontend && npm run dev"
-echo     Frontend started on http://localhost:3000
-echo.
-
-echo ============================================
-echo    All services started successfully!
-echo ============================================
-echo.
-echo    Backend:  http://localhost:5000
-echo    Frontend: http://localhost:3000
-echo    Emulator: Pixel_6a
-echo.
-echo    Close this window anytime.
-echo    To stop all services, close the CMD windows
-echo    and the emulator.
-echo ============================================
-pause

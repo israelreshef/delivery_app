@@ -1,120 +1,138 @@
 ---
-description: How to run the courier mobile application on Android emulator
+description: How to run the courier and customer mobile apps on Android emulators
 ---
 
-# הרצת אפליקציית השליחים על אמולטור Android
+# הרצת אפליקציות הניידות על אמולטורי Android
+
+הפרויקט מכיל **שתי אפליקציות אנדרואיד** (Native, Gradle) תחת `mobile-native`:
+
+| אפליקציה | חבילה | מודול Gradle | AVD |
+|-----------|--------|--------------|-----|
+| שליחים (Courier) | `com.tzir.delivery.courier` | `:courierApp` | `Pixel_7` |
+| לקוחות (Customer) | `com.tzir.delivery.customer` | `:customerApp` | `Pixel_7_Customer` |
+
+## ✅ הדרך המומלצת – סקריפטי ההרצה (Launchers)
+
+אין צורך להריץ שרת/מסד/מוליד ידנית. הסקריפטים בשורש הפרויקט עושים הכל
+(DB + Backend + Frontend + בניית APK + השקת אימולטור + התקנה + הפעלת האפליקציה).
+
+### `run.bat` – הרצה מלאה (שני האימולטורים)
+
+מריץ את כל הסטאק ואת **שני האימולטורים במקביל**, ופותח כל אפליקציה על האימולטור שלה:
+
+- `emulator-5554` (AVD `Pixel_7`) → **אפליקציית השליחים**
+- `emulator-5556` (AVD `Pixel_7_Customer`) → **אפליקציית הלקוחות**
+
+### `run-courier.bat` – שליחים בלבד
+
+מריץ Backend + Frontend + אימולטור **שליחים** בלבד (`emulator-5554`), בונה ומתקין ומשיק את אפליקציית השליחים.
+
+### `run-customer.bat` – לקוחות בלבד
+
+מריץ Backend + Frontend + אימולטור **לקוחות** בלבד (`emulator-5556`), בונה ומתקין ומשיק את אפליקציית הלקוחות.
+
+> כל סקריפט מזהה אם אימולטור כבר ריצה (`adb devices`) ומדלג על השקה כפולה. ניתן להריץ שניים מהם במקביל (למשל
+> `run-courier.bat` בענן אחד ו-`run-customer.bat` באחר) כדי לדמות תהליך של הזמנה→מסירה.
+
+---
+
+## תשתית הסקריפטים
+
+| קובץ | תפקיד |
+|------|-------|
+| `scripts/start-services.bat` | DB + Backend (`localhost:5000`) + Frontend (`localhost:3000`) – משותף |
+| `scripts/start-emulator.bat` | השקת אמולטור עם פורט קבוע, עם הגנה מפני הפעלה כפולה |
+| `scripts/mobile_deploy.py` | המתנה ל-boot, התקנת `adb install -r` והפעלת האפליקציה (`am start`) |
+
+---
+
+## זרימת טסט המומלצת (הזמנה → מסירה → אישור)
+
+1. הפעל את `run.bat` (מעלה הכל כולל שני האימולטורים).
+2. **אפליקציית לקוחות** (`emulator-5556`) – בצע הזמנה.
+3. **אפליקציית שליחים** (`emulator-5554`) – אשר/מבצע את המשלוח.
+4. **ממשק ניהול** ב-`http://localhost:3000` – עקוב אחרי התהליך ואשר אותו.
+
+---
 
 ## דרישות מקדימות
 
-1. **Backend צריך לרוץ** - וודא שהשרת פועל על `localhost:5000`
-2. **Android Emulator** - וודא שיש לך אמולטור מותקן ופועל
-3. **Java 17** - נדרש עבור React Native
+1. **פרויקט Gradle** – `mobile-native` עם שני המודולים `:courierApp` ו-`:customerApp`.
+2. **Android SDK** – ברירת מחדל ב-`%LOCALAPPDATA%\Android\Sdk`.
+3. **AVDs** – שניים נדרשים: `Pixel_7` (שליחים) ו-`Pixel_7_Customer` (לקוחות).
+4. **Java (JBR)** – משמש את ה-build (`C:\Program Files\Android\Android Studio\jbr`).
 
-## שלב 1: הפעל את ה-Backend
+---
 
-```powershell
-# פתח טרמינל חדש
-cd c:\Users\Israel\Desktop\delivery_app
-.\venv\Scripts\Activate.ps1
-python backend/app.py
-```
-
-השרת צריך לרוץ על: `http://localhost:5000`
-
-## שלב 2: התקן Dependencies (פעם ראשונה בלבד)
+## גישה ידנית (ללא הסקריפטים)
 
 ```powershell
-cd c:\Users\Israel\Desktop\delivery_app\mobile-monorepo
-npm install
+# בניית APK לשליחים
+cd mobile-native
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+.\gradlew.bat :courierApp:assembleDebug
+
+# בניית APK ללקוחות
+.\gradlew.bat :customerApp:assembleDebug
+
+# הפעלת אימולטור עם פורט קבוע
+& "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe" -avd Pixel_7 -port 5554
+
+# התקנה והפעלה אצל השליח
+adb -s emulator-5554 install -r mobile-native\courier-android\build\outputs\apk\debug\courierApp-debug.apk
+adb -s emulator-5554 shell am start -n com.tzir.delivery.courier/.MainActivity
 ```
 
-## שלב 3: הרץ את האפליקציה
+## שרתים מקומיים
 
-### אופציה א': הרצה מהירה (מומלץ)
-
-```powershell
-cd c:\Users\Israel\Desktop\delivery_app\mobile-monorepo
-npx nx run courier-app:run-android
-```
-
-### אופציה ב': דרך Android Studio
-
-```powershell
-cd c:\Users\Israel\Desktop\delivery_app\mobile-monorepo\apps\courier-app
-npx react-native run-android
-```
+- Backend: `http://localhost:5000`
+- Frontend/Admin: `http://localhost:3000`
+- האפליקציות באמולטור משתמשות ב-`http://10.0.2.2:5000` (מקביל ל-localhost מתוך האמולטור).
 
 ## בעיות נפוצות ופתרונות
 
-### 1. שגיאת "Unable to connect to development server"
+### 1. "מכשיר לא נתמך" (Device Not Supported)
+שתי האפליקציות מפעילות בדיקת חומרה (`SecurityEnforcer`). באמולטור הבדיקה מדולגת (debug). ראה `docs/KNOWN_ISSUES_AND_WORKAROUNDS.md` #1.
 
-**פתרון:**
-```powershell
-# הפעל את Metro Bundler ידנית
-cd c:\Users\Israel\Desktop\delivery_app\mobile-monorepo
-npx nx run courier-app:start
-```
-
-### 2. שגיאת "SDK location not found"
-
-**פתרון:**
-צור קובץ `local.properties` ב-`apps/courier-app/android/`:
-```
-sdk.dir=C:\\Users\\Israel\\AppData\\Local\\Android\\Sdk
-```
-
-### 3. האפליקציה לא מתחברת לשרת
-
-**בדיקה:**
-- וודא שה-Backend רץ על `http://localhost:5000`
+### 2. האפליקציה לא מתחברת לשרת
+- ודא שה-Backend רץ על `http://localhost:5000`
 - האפליקציה משתמשת ב-`http://10.0.2.2:5000` (כתובת מיוחדת לאמולטור)
-- בדוק את ה-logs ב-Metro Bundler
 
-### 4. מסך לבן / Crash
+### 3. אימולטור לא מושק / לא online
+- ודא שהפורט לא תפוס: `adb devices` מציג `emulator-5554` / `emulator-5556`.
+- אם אימולטור תופס פורט אחר, סגור אותו קודם: `adb -s <serial> emu kill`.
 
-**פתרון:**
-```powershell
-# נקה cache ובנה מחדש
-cd c:\Users\Israel\Desktop\delivery_app\mobile-monorepo
-npx nx run courier-app:clean
-npx nx run courier-app:run-android
-```
-
-## בדיקת קישוריות
-
-אחרי שהאפליקציה עולה, בדוק ב-Metro Bundler logs:
-- ✅ `🌐 API Client initialized with BASE_URL: http://10.0.2.2:5000/api`
-- ✅ `🚀 Courier App starting in DEVELOPMENT mode`
-- ✅ `✅ CourierApp registered successfully`
-
-## תכונות שתוקנו
-
-✅ **חיבור API מתוקן** - עם retry logic ו-error handling משופר
-✅ **מניעת מסך לבן** - Error boundaries ו-loading states
-✅ **חיבור אינטרנט** - Timeout מוגדל ל-15 שניות
-✅ **Logging משופר** - כל בקשה מתועדת ב-console
-✅ **הרשאות** - בקשת הרשאות אוטומטית בהפעלה
-
-## מבנה האפליקציה
-
-האפליקציה כוללת 5 מסכים:
-- 📊 **Dashboard** - סטטיסטיקות ומשמרות
-- 📦 **Tasks** - משימות ומשלוחים
-- 💰 **Financial** - דוחות כספיים
-- 📄 **Documents** - חתימות ותמונות
-- 🗺️ **Route Planner** - תכנון מסלולים
+### 4. APK לא נמצא
+רכזי build בהתאם: `mobile-native\<courier|customer>-android\build\outputs\apk\debug\*-debug.apk`. בנה קודם עם `.gradlew.bat :courierApp:assembleDebug` / `:customerApp:assembleDebug`.
 
 ## פקודות שימושיות
 
 ```powershell
-# הצג logs בזמן אמת
-npx nx run courier-app:log-android
+# צפייה ב-logs בזמן אמת
+adb -s emulator-5554 logcat | Select-String "TzirCourierApp|LocationService"
 
-# בנה APK לבדיקה
-npx nx run courier-app:build-android
-
-# נקה הכל והתחל מחדש
-npx nx reset
-npm install
-npx nx run courier-app:run-android
+# ניקוי אפליקציה והפעלה מחדש
+adb -s emulator-5554 shell pm clear com.tzir.delivery.courier
+adb -s emulator-5554 shell am start -n com.tzir.delivery.courier/.MainActivity
 ```
+
+## תכונות שתוקנו
+
+✅ **חיבור API** – Base URL `10.0.2.2:5000` + retry logic ו-error handling  
+✅ **מניעת מסך לבן** – Error boundaries ו-loading states  
+✅ **הרשאות** – בקשת הרשאות אוטומטית בהפעלה  
+✅ **הרצה דטרמיניסטית** – פורט קבוע לכל אפליקציה + הגנה מפני השקה כפולה
+
+## מבנה האפליקציות
+
+**אפליקציית השליחים (Courier), `mobile-native/courier-android`:**
+- 📊 Dashboard – סטטיסטיקות ומשמרות
+- 📦 Missions/Tasks – משימות ומשלוחים
+- 💰 Earnings – דוחות כספיים
+- 📄 Documents – חתימות ותמונות
+- 🗺️ Route Optimization – תכנון מסלולים
+
+**אפליקציית הלקוחות (Customer), `mobile-native/customer-android`:**
+- 🛒 הזמנות וסל לקוחות
+- 📦 מעקב אחר משלוח
+- 👤 פרופיל והגדרות

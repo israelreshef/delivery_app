@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, DollarSign, User, Pause, Play, LogOut, MapPin, Package, AlertCircle } from "lucide-react";
+import { LayoutDashboard, DollarSign, User, MessageSquare, Pause, Play, LogOut, MapPin, Package, AlertCircle } from "lucide-react";
 import ConsentModal from "../auth/ConsentModal";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -59,6 +59,7 @@ export default function CourierLayout({ children }: { children: React.ReactNode 
 
     const navItems = [
         { href: "/courier/dashboard", label: "דשבורד", icon: LayoutDashboard },
+        { href: "/courier/support", label: "צאט ותמיכה", icon: MessageSquare },
         { href: "/courier/stats", label: "רווחים", icon: DollarSign },
         { href: "/courier/profile", label: "פרופיל", icon: User },
     ];

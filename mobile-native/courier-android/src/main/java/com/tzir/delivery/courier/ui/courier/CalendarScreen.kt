@@ -30,8 +30,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.tzir.delivery.courier.repository.CalendarRepository
 import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.ui.theme.*
+import com.tzir.delivery.courier.util.PricingCalculator
+import kotlinx.coroutines.launch
 import java.util.*
 
 // ─── View modes ───────────────────────────────────────────────────────────────
@@ -41,57 +44,28 @@ enum class CalendarViewMode { DAY, WEEK, MONTH, YEAR }
 data class CalendarDelivery(
     val id: Int,
     val address: String,
+    val pickupAddress: String = "",
+    val dropoffAddress: String = "",
     val hour: Int,
     val minute: Int = 0,
     val durationMin: Int = 45,
-    val status: String = "completed" // completed | planned
-)
-
-// ─── Fake data source (dates → deliveries) ────────────────────────────────────
-private fun fakeMonthlySummary(): Map<Int, List<CalendarDelivery>> = buildMap {
-    put(7, listOf(
-        CalendarDelivery(1, "רח' הרצל 12, תל אביב", 9),
-        CalendarDelivery(2, "שד' רוטשילד 45, תל אביב", 11)
-    ))
-    put(8, listOf(CalendarDelivery(3, "רח' דיזנגוף 77, תל אביב", 10)))
-    put(10, listOf(
-        CalendarDelivery(4, "רח' אלנבי 5, תל אביב", 8),
-        CalendarDelivery(5, "רח' בן יהודה 22, תל אביב", 14),
-        CalendarDelivery(6, "רח' ארלוזורוב 3, תל אביב", 16)
-    ))
-    put(14, listOf(CalendarDelivery(7, "רח' הצנחנים 8, פתח תקווה", 9, durationMin = 30)))
-    put(15, listOf(
-        CalendarDelivery(8, "רח' ויצמן 3, רמת גן", 10),
-        CalendarDelivery(9, "רח' החשמונאים 35, תל אביב", 13)
-    ))
-    put(16, listOf(
-        CalendarDelivery(10, "שד' בן גוריון 12, תל אביב", 9),
-        CalendarDelivery(11, "רח' הנביאים 6, ירושלים", 13),
-        CalendarDelivery(12, "רח' קינג ג'ורג' 22, ירושלים", 15)
-    ))
-    put(17, listOf(
-        CalendarDelivery(13, "רח' ז'בוטינסקי 15, בני ברק", 8),
-        CalendarDelivery(14, "רח' כצנלסון 7, גבעתיים", 10, durationMin = 30),
-        CalendarDelivery(15, "שד' רוטשילד 100, תל אביב", 14),
-        CalendarDelivery(16, "רח' יהודה הלוי 2, תל אביב", 16)
-    ))
-    put(21, listOf(CalendarDelivery(17, "רח' ביאליק 8, רמת גן", 11)))
-    put(22, listOf(
-        CalendarDelivery(18, "רח' שינקין 14, תל אביב", 9),
-        CalendarDelivery(19, "רח' פלורנטין 5, תל אביב", 12)
-    ))
-}
+    val status: String = "completed"
+) 
 
 // ─── Main CalendarScreen ──────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarScreen(onBack: () -> Unit) {
+fun CalendarScreen(
+    onBack: () -> Unit,
+    calendarRepository: CalendarRepository? = null
+) {
     val context = LocalContext.current
     var viewMode by remember { mutableStateOf(CalendarViewMode.MONTH) }
-    var deliveries by remember { mutableStateOf(fakeMonthlySummary()) }
+    val deliveries by (calendarRepository?.deliveries?.collectAsState() ?: remember { mutableStateOf(emptyMap<Int, List<CalendarDelivery>>()) })
     val today = remember { Calendar.getInstance() }
 
     LaunchedEffect(Unit) {
+        calendarRepository?.refresh()
         val prefs = context.getSharedPreferences("TzirCalendar", Context.MODE_PRIVATE)
         val plannedJson = prefs.getString("planned_routes_today", null)
         if (plannedJson != null) {
@@ -110,9 +84,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                     ))
                 }
                 if (todStops.isNotEmpty()) {
-                    val newMap = deliveries.toMutableMap()
-                    newMap[today.get(Calendar.DAY_OF_MONTH)] = todStops
-                    deliveries = newMap
+                    calendarRepository?.setDayDeliveries(today.get(Calendar.DAY_OF_MONTH), todStops)
                 }
             } catch (e: Exception) {
                 android.util.Log.e("CalendarScreen", "Error loading local plans", e)
@@ -124,14 +96,21 @@ fun CalendarScreen(onBack: () -> Unit) {
     var currentMonth by remember { mutableStateOf(today.get(Calendar.MONTH)) } // 0-based
     var currentYear by remember { mutableStateOf(today.get(Calendar.YEAR)) }
 
+    LaunchedEffect(currentMonth, currentYear) {
+        calendarRepository?.refresh(
+            year = currentYear,
+            month = currentMonth + 1
+        )
+    }
+
     var calendarSynced by remember { mutableStateOf(false) }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted -> if (granted) calendarSynced = true }
 
-    val darkBg = Color(0xFF0A0A0A)
-    val cardBg = Color(0xFF1C1C1E)
-    val separator = Color.White.copy(alpha = 0.08f)
+    val darkBg = MaterialTheme.colorScheme.background
+    val cardBg = MaterialTheme.colorScheme.surface
+    val separator = MaterialTheme.colorScheme.outlineVariant
 
     val monthNames = listOf("ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר")
     val dayLetters  = listOf("א","ב","ג","ד","ה","ו","ש") // Sun–Sat
@@ -151,12 +130,12 @@ fun CalendarScreen(onBack: () -> Unit) {
                     if (currentMonth == 0) { currentMonth = 11; currentYear-- }
                     else currentMonth--
                 }) {
-                    Icon(Icons.Default.ChevronLeft, null, tint = Color.White, modifier = Modifier.size(22.dp))
+                    Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(22.dp))
                 }
 
                 Text(
                     "${monthNames[currentMonth]} $currentYear",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Black,
                     fontSize = 20.sp,
                     modifier = Modifier.weight(1f),
@@ -167,7 +146,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                     if (currentMonth == 11) { currentMonth = 0; currentYear++ }
                     else currentMonth++
                 }) {
-                    Icon(Icons.Default.ChevronRight, null, tint = Color.White, modifier = Modifier.size(22.dp))
+                    Icon(Icons.Default.ChevronRight, null, tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(22.dp))
                 }
 
                 // Sync button
@@ -179,7 +158,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                     Icon(
                         if (calendarSynced) Icons.Default.Sync else Icons.Default.CalendarMonth,
                         null,
-                        tint = if (calendarSynced) Color(0xFF34C759) else AmberGold,
+                        tint = if (calendarSynced) Color(0xFF34C759) else BrandBlue,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -202,7 +181,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                 ).forEach { (mode, label) ->
                     val selected = viewMode == mode
                     val bg by animateColorAsState(
-                        if (selected) AmberGold else Color.Transparent,
+                        if (selected) BrandBlue else Color.Transparent,
                         animationSpec = tween(200), label = "tab_$label"
                     )
                     Box(
@@ -217,7 +196,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                     ) {
                         Text(
                             label,
-                            color = if (selected) Color.Black else Color.Gray,
+                            color = if (selected) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = if (selected) FontWeight.Black else FontWeight.Normal,
                             fontSize = 14.sp
                         )
@@ -247,6 +226,7 @@ fun CalendarScreen(onBack: () -> Unit) {
                 CalendarViewMode.DAY -> DayView(
                     day = selectedDay, month = currentMonth, year = currentYear,
                     deliveries = deliveries[selectedDay] ?: emptyList(),
+                    calendarRepository = calendarRepository,
                     cardBg = cardBg, separator = separator, monthNames = monthNames
                 )
                 CalendarViewMode.YEAR -> YearView(
@@ -297,7 +277,7 @@ fun MonthView(
                     Row(modifier = Modifier.fillMaxWidth()) {
                         listOf("ש","ו","ה","ד","ג","ב","א").forEach { d ->
                             Text(d, modifier = Modifier.weight(1f), textAlign = TextAlign.Center,
-                                color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                     Spacer(Modifier.height(8.dp))
@@ -327,15 +307,15 @@ fun MonthView(
                                             .clip(CircleShape)
                                             .background(
                                                 when {
-                                                    isSelected && hasWork -> AmberGold
+                                                    isSelected && hasWork -> BrandBlue
                                                     isToday -> Color.White
-                                                    hasWork -> AmberGold.copy(alpha = 0.25f)
+                                                    hasWork -> BrandBlue.copy(alpha = 0.25f)
                                                     else -> Color.Transparent
                                                 }
                                             )
                                             .border(
                                                 width = if (isSelected && !hasWork) 1.5.dp else 0.dp,
-                                                color = if (isSelected) AmberGold else Color.Transparent,
+                                                color = if (isSelected) BrandBlue else Color.Transparent,
                                                 shape = CircleShape
                                             )
                                             .clickable { onDayClick(d) },
@@ -346,8 +326,8 @@ fun MonthView(
                                             color = when {
                                                 isSelected && hasWork -> Color.Black
                                                 isToday -> Color.Black
-                                                hasWork -> AmberGold
-                                                else -> Color.Gray
+                                                hasWork -> BrandBlue
+                                                else -> MaterialTheme.colorScheme.onSurfaceVariant
                                             },
                                             fontSize = 13.sp,
                                             fontWeight = if (isToday || isSelected) FontWeight.Black else FontWeight.Normal
@@ -367,7 +347,7 @@ fun MonthView(
             // Selected day deliveries
             val dayDeliveries = deliveries[selectedDay] ?: emptyList()
             if (dayDeliveries.isNotEmpty()) {
-                Text("משלוחים ב-$selectedDay", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("משלוחים ב-$selectedDay", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Spacer(Modifier.height(10.dp))
                 dayDeliveries.forEach { delivery ->
                     DeliveryListCard(delivery = delivery, separator = separator)
@@ -378,7 +358,7 @@ fun MonthView(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("אין משלוחים ביום זה", color = Color.Gray, fontSize = 14.sp)
+                    Text("אין משלוחים ביום זה", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             }
             Spacer(Modifier.navigationBarsPadding())
@@ -447,7 +427,7 @@ fun WeekView(
                         ) {
                             // Day letter (ש ו ה ד ג ב א)
                             val hebrewLetters = listOf("ש","ו","ה","ד","ג","ב","א")
-                            Text(hebrewLetters[dowIdx], color = Color.Gray, fontSize = 10.sp)
+                            Text(hebrewLetters[dowIdx], color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             Spacer(Modifier.height(4.dp))
                             // Day number circle
                             Box(
@@ -456,15 +436,15 @@ fun WeekView(
                                     .clip(CircleShape)
                                     .background(
                                         when {
-                                            isSelected && hasWork -> AmberGold
+                                            isSelected && hasWork -> BrandBlue
                                             isToday -> Color.White
-                                            hasWork -> AmberGold.copy(alpha = 0.2f)
+                                            hasWork -> BrandBlue.copy(alpha = 0.2f)
                                             else -> Color.Transparent
                                         }
                                     )
                                     .border(
                                         width = if (isSelected && !hasWork) 1.5.dp else 0.dp,
-                                        color = if (isSelected) AmberGold else Color.Transparent,
+                                        color = if (isSelected) BrandBlue else Color.Transparent,
                                         shape = CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
@@ -474,8 +454,8 @@ fun WeekView(
                                     color = when {
                                         isSelected && hasWork -> Color.Black
                                         isToday -> Color.Black
-                                        hasWork -> AmberGold
-                                        else -> Color.Gray
+                                        hasWork -> BrandBlue
+                                        else -> MaterialTheme.colorScheme.onSurfaceVariant
                                     },
                                     fontSize = 13.sp,
                                     fontWeight = if (isToday || isSelected) FontWeight.Black else FontWeight.Normal
@@ -484,7 +464,7 @@ fun WeekView(
                             // Work dot
                             if (hasWork && m == month) {
                                 Spacer(Modifier.height(3.dp))
-                                Box(modifier = Modifier.size(4.dp).clip(CircleShape).background(AmberGold))
+                                Box(modifier = Modifier.size(4.dp).clip(CircleShape).background(BrandBlue))
                             } else {
                                 Spacer(Modifier.height(7.dp))
                             }
@@ -501,7 +481,7 @@ fun WeekView(
             val selDow = selCal.get(Calendar.DAY_OF_WEEK) - 1
             Text(
                 "יום ${hebrewDayNames[selDow]}, $selectedDay ב${monthNames[month]}",
-                color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp
+                color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp
             )
             Spacer(Modifier.height(10.dp))
 
@@ -512,7 +492,7 @@ fun WeekView(
                 }
             } else {
                 Box(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp), contentAlignment = Alignment.Center) {
-                    Text("אין משלוחים ביום זה", color = Color.Gray, fontSize = 14.sp)
+                    Text("אין משלוחים ביום זה", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             }
             Spacer(Modifier.navigationBarsPadding())
@@ -527,11 +507,19 @@ fun WeekView(
 fun DayView(
     day: Int, month: Int, year: Int,
     deliveries: List<CalendarDelivery>,
+    calendarRepository: CalendarRepository? = null,
     cardBg: Color, separator: Color, monthNames: List<String>
 ) {
     val totalDeliveries = deliveries.size
-    val totalEarnings = deliveries.size * 82  // mock ₪82 per delivery
+    val totalEarnings = deliveries.sumOf {
+        PricingCalculator.estimateEarnings(
+            distanceKm = 5.0, weightKg = 2.0, waitMinutes = 5.0, hour = it.hour
+        )
+    }.toInt()
     val totalMinutes = deliveries.sumOf { it.durationMin }
+
+    val scope = rememberCoroutineScope()
+    var editingHour by remember { mutableStateOf<Int?>(null) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Stats strip
@@ -539,7 +527,7 @@ fun DayView(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            StatChip("$totalDeliveries משלוחים", AmberGold, Modifier.weight(1f))
+            StatChip("$totalDeliveries משלוחים", BrandBlue, Modifier.weight(1f))
             StatChip("₪$totalEarnings", Color(0xFF34C759), Modifier.weight(1f))
             StatChip("${totalMinutes / 60}ש ${totalMinutes % 60}ד", Color(0xFF60A5FA), Modifier.weight(1f))
         }
@@ -554,13 +542,16 @@ fun DayView(
             items((7..19).toList()) { hour ->
                 val delivery = deliveries.find { it.hour == hour }
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(if (delivery != null) 72.dp else 40.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(if (delivery != null) 72.dp else 40.dp)
+                        .clickable { editingHour = hour },
                     verticalAlignment = Alignment.Top
                 ) {
                     // Hour label
                     Text(
                         "${hour.toString().padStart(2,'0')}:00",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         modifier = Modifier.width(44.dp).padding(top = 6.dp),
                         textAlign = TextAlign.End
@@ -568,7 +559,7 @@ fun DayView(
                     Spacer(Modifier.width(10.dp))
                     // Timeline line + block
                     Column(modifier = Modifier.weight(1f)) {
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.06f), thickness = 0.5.dp)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
                         if (delivery != null) {
                             Spacer(Modifier.height(3.dp))
                             Row(
@@ -576,21 +567,22 @@ fun DayView(
                                     .fillMaxWidth()
                                     .height(60.dp)
                                     .clip(RoundedCornerShape(10.dp))
-                                    .background(AmberGold.copy(alpha = 0.12f))
-                                    .border(1.dp, AmberGold.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
+                                    .background(BrandBlue.copy(alpha = 0.12f))
+                                    .border(1.dp, BrandBlue.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
                                     .padding(horizontal = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Box(
                                     modifier = Modifier.width(3.dp).fillMaxHeight(0.7f)
-                                        .clip(RoundedCornerShape(2.dp)).background(AmberGold)
+                                        .clip(RoundedCornerShape(2.dp)).background(BrandBlue)
                                 )
                                 Spacer(Modifier.width(10.dp))
                                 Column {
-                                    Text("🚚  ${delivery.address}", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                    val displayAddress = delivery.dropoffAddress.ifBlank { delivery.address }
+                                    Text("🚚  $displayAddress", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
                                     Text(
                                         "${hour.toString().padStart(2,'0')}:00 — ${delivery.durationMin} דק'",
-                                        color = Color.Gray, fontSize = 11.sp
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp
                                     )
                                 }
                             }
@@ -601,6 +593,101 @@ fun DayView(
             item { Spacer(Modifier.navigationBarsPadding().height(16.dp)) }
         }
     }
+
+    editingHour?.let { hour ->
+        AddScheduleDialog(
+            title = "הוספת משלוח בשעה ${hour.toString().padStart(2, '0')}:00",
+            onDismiss = { editingHour = null },
+            onConfirm = { entryTitle, pickup, dropoff, endTime ->
+                val dateStr = "%04d-%02d-%02d".format(year, month + 1, day)
+                val startStr = "${hour.toString().padStart(2, '0')}:00"
+                scope.launch {
+                    calendarRepository?.createScheduleEntry(
+                        title = entryTitle,
+                        date = dateStr,
+                        start = startStr,
+                        end = endTime,
+                        pickupAddress = pickup,
+                        dropoffAddress = dropoff,
+                    )
+                }
+                editingHour = null
+            }
+        )
+    }
+}
+
+@Composable
+private fun AddScheduleDialog(
+    title: String,
+    onDismiss: () -> Unit,
+    onConfirm: (title: String, pickup: String, dropoff: String, end: String?) -> Unit
+) {
+    var entryTitle by remember { mutableStateOf("") }
+    var pickup by remember { mutableStateOf("") }
+    var dropoff by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title, color = MaterialTheme.colorScheme.onSurface) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedTextField(
+                    value = entryTitle,
+                    onValueChange = { entryTitle = it; error = false },
+                    label = { Text("כותרת") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = pickup,
+                    onValueChange = { pickup = it },
+                    label = { Text("כתובת איסוף") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = dropoff,
+                    onValueChange = { dropoff = it },
+                    label = { Text("כתובת יעד") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = endTime,
+                    onValueChange = { endTime = it },
+                    label = { Text("שעת סיום (HH:MM)") },
+                    placeholder = { Text("אופציונלי") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (error) {
+                    Text("נדרשת כותרת", color = Color(0xFFFF6B6B), fontSize = 12.sp)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (entryTitle.isBlank()) {
+                    error = true
+                } else {
+                    onConfirm(entryTitle.trim(), pickup.trim(), dropoff.trim(), endTime.trim().ifBlank { null })
+                }
+            }) {
+                Text("שמירה", color = BrandBlue)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("ביטול", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurface
+    )
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -615,15 +702,21 @@ fun YearView(
     cardBg: Color, dayLetters: List<String>, monthNames: List<String>
 ) {
     val totalDeliveries = deliveries.values.sumOf { it.size }
-    val totalEarnings = totalDeliveries * 82
+    val totalEarnings = deliveries.values.flatten().sumOf {
+        PricingCalculator.estimateEarnings(
+            distanceKm = 5.0, weightKg = 2.0, waitMinutes = 5.0, hour = it.hour
+        )
+    }.toInt()
+    val completedDeliveries = deliveries.values.flatten().count { it.status == "completed" || it.status == "delivered" }
+    val completionRate = if (totalDeliveries > 0) (completedDeliveries * 100 / totalDeliveries) else 0
 
     LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         item {
             // Annual stats
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatChip("$totalDeliveries משלוחים", AmberGold, Modifier.weight(1f))
+                StatChip("$totalDeliveries משלוחים", BrandBlue, Modifier.weight(1f))
                 StatChip("₪$totalEarnings", Color(0xFF34C759), Modifier.weight(1f))
-                StatChip("94% ביצוע", Color(0xFF60A5FA), Modifier.weight(1f))
+                StatChip("${completionRate}פ ביצוע", Color(0xFF60A5FA), Modifier.weight(1f))
             }
             Spacer(Modifier.height(16.dp))
 
@@ -675,14 +768,14 @@ fun MiniMonthCard(
             .background(cardBg)
             .border(
                 width = if (isCurrentMonth) 1.5.dp else 0.dp,
-                color = if (isCurrentMonth) AmberGold else Color.Transparent,
+                color = if (isCurrentMonth) BrandBlue else Color.Transparent,
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable { onClick() }
             .padding(8.dp)
     ) {
         Column {
-            Text(monthName, color = if (isCurrentMonth) AmberGold else Color.White,
+            Text(monthName, color = if (isCurrentMonth) BrandBlue else MaterialTheme.colorScheme.onSurface,
                 fontSize = 11.sp, fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             Spacer(Modifier.height(4.dp))
@@ -702,11 +795,11 @@ fun MiniMonthCard(
                                 if (hasWork) {
                                     Box(
                                         modifier = Modifier.size(5.dp).clip(CircleShape)
-                                            .background(AmberGold)
+                                            .background(BrandBlue)
                                     )
                                 } else {
                                     Box(modifier = Modifier.size(3.dp).clip(CircleShape)
-                                        .background(Color.Gray.copy(alpha = 0.3f)))
+                                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)))
                                 }
                             }
                         }
@@ -725,22 +818,22 @@ fun DeliveryListCard(delivery: CalendarDelivery, separator: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFF1C1C1E))
-            .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
     ) {
-        // Amber left accent bar
-        Box(modifier = Modifier.width(4.dp).fillMaxHeight().background(AmberGold))
+        // BrandBlue left accent bar
+        Box(modifier = Modifier.width(4.dp).fillMaxHeight().background(BrandBlue))
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("🚚  ${delivery.address}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium, maxLines = 1)
-                Text(timeStr, color = Color.Gray, fontSize = 12.sp)
+                Text("🚚  ${delivery.address}", color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.Medium, maxLines = 1)
+                Text(timeStr, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             }
             Box(
                 modifier = Modifier.size(8.dp).clip(CircleShape)
-                    .background(if (delivery.status == "completed") Color(0xFF34C759) else AmberGold)
+                    .background(if (delivery.status == "completed") Color(0xFF34C759) else BrandBlue)
             )
         }
     }

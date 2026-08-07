@@ -82,7 +82,7 @@ fun MissionsScreen(
                 text = stringResource(R.string.missions),
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Black,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
 
@@ -91,7 +91,7 @@ fun MissionsScreen(
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.Transparent,
-                contentColor = AmberGold,
+                contentColor = BrandBlue,
                 divider = {},
                 indicator = { tabPositions ->
                     Box(
@@ -99,7 +99,7 @@ fun MissionsScreen(
                             .tabIndicatorOffset(tabPositions[selectedTab])
                             .height(3.dp)
                             .padding(horizontal = 24.dp)
-                            .background(AmberGold, RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
+                            .background(BrandBlue, RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
                     )
                 }
             ) {
@@ -110,7 +110,7 @@ fun MissionsScreen(
                         text = { 
                             Text(
                                 text = stringResource(titleRes),
-                                color = if (selectedTab == index) Color.White else Color.Gray,
+                                color = if (selectedTab == index) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Medium,
                                 fontSize = 15.sp
                             )
@@ -161,7 +161,7 @@ fun MissionsScreen(
                                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                     Text(
                                         text = if (selectedTab == 0) stringResource(R.string.no_available_missions) else stringResource(R.string.no_active_missions),
-                                        color = Color.Gray
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             } else {
@@ -230,7 +230,7 @@ fun MissionCard(
                             text = "${stringResource(R.string.order_prefix)}${mission.orderNumber}",
                             fontWeight = FontWeight.Black,
                             fontSize = 18.sp,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         if (isUrgent) {
                             Surface(color = Color.Red.copy(alpha = 0.2f), shape = RoundedCornerShape(6.dp)) {
@@ -246,15 +246,15 @@ fun MissionCard(
                 Text(
                     text = "₪${mission.estimatedPrice}",
                     fontWeight = FontWeight.Black,
-                    color = AmberGold,
+                    color = BrandBlue,
                     fontSize = 22.sp
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            AddressItem(label = stringResource(R.string.pickup), address = mission.pickupAddress, icon = "📍", iconColor = AmberGold)
+            AddressItem(label = stringResource(R.string.pickup), address = mission.pickupAddress, icon = "📍", iconColor = BrandBlue)
             Spacer(modifier = Modifier.height(12.dp))
-            AddressItem(label = stringResource(R.string.deliver), address = mission.deliveryAddress, icon = "🏁", iconColor = Color.White)
+            AddressItem(label = stringResource(R.string.deliver), address = mission.deliveryAddress, icon = "🏁", iconColor = MaterialTheme.colorScheme.onSurface)
 
             if (!showAcceptButton) {
                 Spacer(modifier = Modifier.height(20.dp))
@@ -270,7 +270,7 @@ fun MissionCard(
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.05f))
                     ) {
-                        Text("דחה", color = Color.Gray, fontWeight = FontWeight.Bold)
+                        Text("דחה", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                     }
                     TzirButton(text = stringResource(R.string.accept_mission), onClick = onAccept, modifier = Modifier.weight(1f).height(52.dp))
                 }
@@ -297,8 +297,8 @@ fun AddressItem(label: String, address: String, icon: String, iconColor: Color) 
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(label, fontSize = 10.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
-            Text(address, fontSize = 15.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text(label, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+            Text(address, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -306,12 +306,12 @@ fun AddressItem(label: String, address: String, icon: String, iconColor: Color) 
 @Composable
 fun StatusChip(status: String) {
     val (label, color) = when (status) {
-        "accepted" -> "🟠 אושר" to AmberGold
+        "accepted" -> "🟠 אושר" to BrandBlue
         "picked_up" -> "🔵 נאסף" to Color(0xFF3B82F6)
         "in_transit" -> "🟣 בדרך" to Color(0xFF8B5CF6)
         "arrived" -> "🟢 הגיע" to SuccessDark
         "delivered" -> "✅ נמסר" to SuccessDark
-        else -> status to Color.Gray
+        else -> status to MaterialTheme.colorScheme.onSurfaceVariant
     }
     Surface(color = color.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
         Text(label, modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), fontSize = 11.sp, fontWeight = FontWeight.Black, color = color)
@@ -325,14 +325,14 @@ fun MissionStepper(currentStep: Int, steps: List<String>) {
             val isCompleted = index <= currentStep
             val isCurrent = index == currentStep
             if (index > 0) {
-                Box(modifier = Modifier.weight(1f).height(2.dp).background(if (isCompleted) AmberGold else Color.Gray.copy(alpha = 0.3f)))
+                Box(modifier = Modifier.weight(1f).height(2.dp).background(if (isCompleted) BrandBlue else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)))
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
                     modifier = Modifier.size(if (isCurrent) 14.dp else 10.dp)
-                        .background(if (isCompleted) AmberGold else Color.Gray.copy(alpha = 0.3f), CircleShape)
+                        .background(if (isCompleted) BrandBlue else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f), CircleShape)
                 )
-                Text(label, fontSize = 9.sp, color = if (isCompleted) Color.White else Color.Gray, fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal, modifier = Modifier.padding(top = 4.dp))
+                Text(label, fontSize = 9.sp, color = if (isCompleted) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal, modifier = Modifier.padding(top = 4.dp))
             }
         }
     }
@@ -341,12 +341,15 @@ fun MissionStepper(currentStep: Int, steps: List<String>) {
 @Composable
 fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
     var selectedView by remember { mutableStateOf(DeliveriesViewType.HOURS_24) }
-    
+    val now = remember { java.util.Calendar.getInstance() }
+    val monthNames = listOf("ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ")
+    val headerText = "${monthNames[now.get(java.util.Calendar.MONTH)]} ${now.get(java.util.Calendar.YEAR)}"
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("פברואר 2026", color = Color.White, fontWeight = FontWeight.Black, fontSize = 20.sp)
+            Text(headerText, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Black, fontSize = 20.sp)
             Spacer(Modifier.weight(1f))
-            Button(onClick = onSyncClick, colors = ButtonDefaults.buttonColors(containerColor = AmberGold.copy(alpha = 0.15f), contentColor = AmberGold), shape = RoundedCornerShape(12.dp)) {
+            Button(onClick = onSyncClick, colors = ButtonDefaults.buttonColors(containerColor = BrandBlue.copy(alpha = 0.15f), contentColor = BrandBlue), shape = RoundedCornerShape(12.dp)) {
                 Text("סנכרן ליומן", fontWeight = FontWeight.Bold, fontSize = 13.sp)
             }
         }
@@ -370,8 +373,8 @@ fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
                     onClick  = { selectedView = type },
                     label    = { Text(label, fontSize = 12.sp) },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = AmberGold.copy(alpha = 0.2f),
-                        selectedLabelColor = AmberGold
+                        selectedContainerColor = BrandBlue.copy(alpha = 0.2f),
+                        selectedLabelColor = BrandBlue
                     )
                 )
             }
@@ -389,15 +392,30 @@ fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
                         }
                         
                         items(hours) { time ->
+                            val hourNum = if (use24h) {
+                                time.substring(0, 2).toIntOrNull() ?: -1
+                            } else {
+                                when {
+                                    time.contains("AM") -> time.replace(" AM", "").toIntOrNull()?.let { if (it == 12) 0 else it } ?: -1
+                                    time.contains("PM") -> time.replace(" PM", "").toIntOrNull()?.let { if (it == 12) 12 else it + 12 } ?: -1
+                                    else -> -1
+                                }
+                            }
+                            val missionsAtHour = if (hourNum >= 0) missions.filter { m -> m.scheduledAt?.let { s -> s.contains("${if (hourNum < 10) "0$hourNum" else "$hourNum"}:") } ?: false } else emptyList()
                             Row(modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp)) {
-                                Text(time, color = Color.Gray, fontSize = 12.sp, modifier = Modifier.width(60.dp))
+                                Text(time, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.width(60.dp))
                                 Box(
-                                    modifier = Modifier.weight(1f).height(60.dp)
+                                    modifier = Modifier.weight(1f).height((missionsAtHour.size * 30 + 30).coerceAtLeast(60).dp)
                                         .background(Color.White.copy(alpha = 0.03f), RoundedCornerShape(12.dp))
                                         .padding(12.dp)
                                 ) {
-                                    if (time.contains("10:00") || time.contains("10 AM")) Text("נאסף משלוח #1284", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                    else if (time.contains("14:00") || time.contains("2 PM")) Text("מסירה #1290", color = Color.White, fontWeight = FontWeight.Medium, fontSize = 13.sp)
+                                    if (missionsAtHour.isNotEmpty()) {
+                                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            missionsAtHour.forEach { m ->
+                                                Text("#${m.orderNumber}", color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -405,7 +423,7 @@ fun CalendarView(missions: List<Mission>, onSyncClick: () -> Unit) {
                 }
                 else -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("תצוגת ${selectedView.name} בקרוב...", color = Color.Gray)
+                        Text("תצוגת ${selectedView.name} בקרוב...", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }

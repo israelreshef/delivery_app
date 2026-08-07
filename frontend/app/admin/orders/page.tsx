@@ -206,7 +206,7 @@ export default function AdminOrders() {
                             style={{ background: 'transparent', border: 'none', cursor: 'pointer', position: 'relative' }}
                             title="התראות"
                         >
-                            <Bell size={22} color={unreadNotifications > 0 ? '#f59e0b' : '#9ca3af'} />
+                            <Bell size={22} color={unreadNotifications > 0 ? '#145DDB' : '#9ca3af'} />
                             {unreadNotifications > 0 && (
                                 <span style={{
                                     position: 'absolute', top: -4, right: -4,
@@ -348,7 +348,7 @@ export default function AdminOrders() {
                                             {order.status !== 'pending' && order.status !== 'cancelled' && (
                                                 <button
                                                     onClick={() => handleGenerateInvoice(order.id)}
-                                                    className={`${styles.btnAction} text-amber-500 hover:text-amber-600`}
+                                                    className={`${styles.btnAction} text-brand hover:text-brand-dark`}
                                                     title="הפק חשבונית"
                                                 >
                                                     <FileText size={16} />

@@ -32,13 +32,16 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import com.tzir.delivery.courier.R
 import com.tzir.delivery.courier.ui.components.*
-import com.tzir.delivery.courier.ui.theme.Amber
+import com.tzir.delivery.courier.ui.theme.BrandBlue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import kotlinx.coroutines.launch
 import com.tzir.delivery.courier.ui.theme.*
 import com.tzir.delivery.courier.model.User
 import com.tzir.delivery.courier.repository.CourierRepository
+import com.tzir.delivery.courier.repository.EarningsRepository
+import com.tzir.delivery.courier.repository.PaymentRepository
+import com.tzir.delivery.courier.repository.PeakHourData
 
 /**
  * Saves a CSV ByteArray to the device Downloads folder.
@@ -72,11 +75,18 @@ fun saveEarningsCsv(context: Context, bytes: ByteArray, filename: String): Uri? 
 fun EarningsScreen(
     user: User,
     repository: CourierRepository,
+    earningsRepository: EarningsRepository? = null,
+    paymentRepository: PaymentRepository? = null,
     onShowHistory: () -> Unit,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onBalanceClick: (() -> Unit)? = null
 ) {
     val stats by repository.stats.collectAsState()
     val isOffline by repository.isOffline.collectAsState()
+    val weeklyChartData by (earningsRepository?.weeklyChart?.collectAsState() ?: remember { mutableStateOf(com.tzir.delivery.courier.repository.WeeklyChartData()) })
+    val peakHoursState = earningsRepository?.peakHours?.collectAsState() ?: remember { mutableStateOf(emptyList<PeakHourData>()) }
+    val peakHoursData = peakHoursState.value
+    val walletBalance by (paymentRepository?.walletBalance?.collectAsState() ?: remember { mutableStateOf(com.tzir.delivery.courier.repository.WalletBalance(0.0, "ILS")) })
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -90,6 +100,12 @@ fun EarningsScreen(
         } else {
             repository.refreshStats(user.id)
         }
+    }
+    LaunchedEffect(stats) {
+        stats?.let { earningsRepository?.calculateFromStats(it) }
+    }
+    LaunchedEffect(paymentRepository) {
+        paymentRepository?.refresh()
     }
 
     Scaffold(
@@ -166,25 +182,46 @@ fun EarningsScreen(
                         ) {
                             Column {
                                 Text(
-                                    stringResource(com.tzir.delivery.courier.R.string.total_balance), 
-                                    color = Color.White.copy(alpha = 0.6f), 
+                                    stringResource(com.tzir.delivery.courier.R.string.total_balance),
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
-                                    "₪${stats?.balance ?: "0.0"}", 
-                                    color = Color.White, 
-                                    fontSize = 48.sp, 
+                                    "₪${"%,.0f".format(walletBalance.balance)}",
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontSize = 48.sp,
                                     fontWeight = FontWeight.Black,
                                     letterSpacing = (-1).sp
                                 )
-                                
+
+                                if (walletBalance.pendingWithdrawals.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Surface(color = BrandBlue.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
+                                        val pendingTotal = walletBalance.pendingWithdrawals.sumOf { it.amount }
+                                        Text("₪${"%,.0f".format(pendingTotal)} בהמתנה לאישור", modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = BrandBlue)
+                                    }
+                                }
+
                                 Spacer(modifier = Modifier.weight(1f))
-                                
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     StatMiniItem(stringResource(com.tzir.delivery.courier.R.string.total_deliveries), "${stats?.totalDeliveries ?: 0}")
                                     StatMiniItem(stringResource(com.tzir.delivery.courier.R.string.avg_rating), "⭐ ${stats?.rating ?: 5.0}")
+                                }
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Button(
+                                    onClick = { onBalanceClick?.invoke() },
+                                    modifier = Modifier.fillMaxWidth().height(44.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = BrandBlue),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text("💰", fontSize = 16.sp)
+                                    Spacer(Modifier.width(8.dp))
+                                    Text("משוך כספים", fontWeight = FontWeight.Black, color = Navy950, fontSize = 14.sp)
                                 }
                             }
                         }
@@ -193,7 +230,7 @@ fun EarningsScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        EarningsSectionCard(stringResource(com.tzir.delivery.courier.R.string.today), "₪${stats?.todayEarnings ?: 0.0}", PrimaryTurquoise.copy(alpha = 0.1f), Modifier.weight(1f))
+                        EarningsSectionCard(stringResource(com.tzir.delivery.courier.R.string.today), "₪${stats?.todayEarnings ?: 0.0}", BrandBlue.copy(alpha = 0.1f), Modifier.weight(1f))
                         EarningsSectionCard(stringResource(com.tzir.delivery.courier.R.string.this_week), "₪${stats?.weeklyEarnings ?: 0.0}", TextOfficial.copy(alpha = 0.1f), Modifier.weight(1f))
                     }
                     
@@ -207,7 +244,9 @@ fun EarningsScreen(
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
-                    EarningsGraph(data = listOf(150f, 320f, 210f, 450f, 380f, 520f, 480f))
+                    if (weeklyChartData.values.isNotEmpty()) {
+                        EarningsGraph(data = weeklyChartData.values)
+                    }
 
                     Spacer(modifier = Modifier.height(32.dp))
                     TzirButton(
@@ -224,8 +263,8 @@ fun EarningsScreen(
 @Composable
 fun StatMiniItem(label: String, value: String) {
     Column {
-        Text(label, color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-        Text(value, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Black)
+        Text(label, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(value, color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Black)
     }
 }
 
@@ -276,7 +315,7 @@ fun EarningsGraph(data: List<Float>) {
                 drawPath(
                     path = path,
                     brush = Brush.verticalGradient(
-                        colors = listOf(PrimaryTurquoise, TextOfficial)
+                        colors = listOf(BrandBlue, TextOfficial)
                     ),
                     style = Stroke(width = 4.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round)
                 )
@@ -291,7 +330,7 @@ fun EarningsGraph(data: List<Float>) {
                         center = androidx.compose.ui.geometry.Offset(x, y)
                     )
                     drawCircle(
-                        PrimaryTurquoise, 
+                        BrandBlue, 
                         radius = 3.dp.toPx(), 
                         center = androidx.compose.ui.geometry.Offset(x, y),
                         style = Stroke(width = 2.dp.toPx())
@@ -332,11 +371,11 @@ fun ForecastCard(forecast: Double, progress: Float, daysLeft: Int) {
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text("נותרו ימים", fontSize = 12.sp, color = TextGray)
-                    Text("$daysLeft", fontSize = 28.sp, fontWeight = FontWeight.Black, color = com.tzir.delivery.courier.ui.theme.Amber)
+                    Text("$daysLeft", fontSize = 28.sp, fontWeight = FontWeight.Black, color = com.tzir.delivery.courier.ui.theme.BrandBlue)
                 }
             }
             Spacer(Modifier.height(12.dp))
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(8.dp), progress = { progress }, color = com.tzir.delivery.courier.ui.theme.Amber, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(8.dp), progress = { progress }, color = com.tzir.delivery.courier.ui.theme.BrandBlue, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
             Spacer(Modifier.height(6.dp))
             Text("${(progress * 100).toInt()}פ מהחודש עבר", fontSize = 11.sp, color = TextGray)
         }
@@ -379,11 +418,11 @@ fun PersonalGoalCard(currentEarnings: Double) {
                 }
                 Row {
                     IconButton(onClick = { if (goalTarget > 1000) goalTarget -= 500 }, modifier = Modifier.size(32.dp)) { Text("-", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextGray) }
-                    IconButton(onClick = { goalTarget += 500 }, modifier = Modifier.size(32.dp)) { Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = PrimaryTurquoise) }
+                    IconButton(onClick = { goalTarget += 500 }, modifier = Modifier.size(32.dp)) { Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = BrandBlue) }
                 }
             }
             Spacer(Modifier.height(12.dp))
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(10.dp), progress = { progress }, color = if (progress >= 1f) Color(0xFF10B981) else PrimaryTurquoise, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(10.dp), progress = { progress }, color = if (progress >= 1f) Color(0xFF10B981) else BrandBlue, trackColor = Color.LightGray, strokeCap = androidx.compose.ui.graphics.StrokeCap.Round)
             Spacer(Modifier.height(6.dp))
             Text(if (progress >= 1f) "🎉 הגעת ליעד!" else "${(progress * 100).toInt()}פ מהיעד", fontSize = 12.sp, color = if (progress >= 1f) Color(0xFF10B981) else TextGray)
         }

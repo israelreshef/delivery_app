@@ -36,14 +36,14 @@ fun ErrorState(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = com.tzir.delivery.courier.ui.theme.Amber)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
         ) {
-            Text(stringResource(R.string.try_again), color = Color.White, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.try_again), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold)
         }
     }
 }

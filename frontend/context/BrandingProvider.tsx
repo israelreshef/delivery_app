@@ -69,11 +69,11 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
                     root.style.setProperty("--ring", hexToHSL(b.primaryColor));
 
                     // Raw hex values used by custom Tailwind classes
-                    root.style.setProperty("--amber", b.primaryColor);
-                    root.style.setProperty("--amber-dark", b.primaryDark || darkenHex(b.primaryColor, 20));
-                    root.style.setProperty("--amber-light", b.primaryLight || lightenHex(b.primaryColor, 85));
-                    root.style.setProperty("--amber-dim", b.primaryColor + "1a"); // 10% opacity
-                    root.style.setProperty("--amber-glow", b.primaryColor + "33"); // 20% opacity
+                    root.style.setProperty("--brand", b.primaryColor);
+                    root.style.setProperty("--brand-dark", b.primaryDark || darkenHex(b.primaryColor, 20));
+                    root.style.setProperty("--brand-light", b.primaryLight || lightenHex(b.primaryColor, 85));
+                    root.style.setProperty("--brand-dim", b.primaryColor + "1a"); // 10% opacity
+                    root.style.setProperty("--brand-glow", b.primaryColor + "33"); // 20% opacity
                 }
 
                 // ── Navy scale (dark backgrounds / sidebar) ──

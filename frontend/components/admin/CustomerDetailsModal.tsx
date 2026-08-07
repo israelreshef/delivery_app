@@ -437,7 +437,7 @@ export function CustomerDetailsModal({ customer, isOpen, onClose, onUpdate }: Cu
 
                     <TabsContent value="info" className="space-y-4 pt-4">
                         {!hasAccount && (
-                            <Card className="border border-amber-200 bg-amber-50/50">
+                            <Card className="border border-brand-light bg-ice/50">
                                 <CardContent className="pt-4 space-y-3">
                                     <div className="text-sm font-medium">אין חשבון כניסה ללקוח הזה</div>
                                     <div className="text-xs text-muted-foreground">

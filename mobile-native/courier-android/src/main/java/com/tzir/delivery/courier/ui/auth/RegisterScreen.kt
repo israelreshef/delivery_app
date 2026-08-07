@@ -171,7 +171,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.weight(1f))
             
             TextButton(onClick = onBackToLogin) {
-                Text(stringResource(R.string.register_footer), color = PrimaryTurquoise)
+                Text(stringResource(R.string.register_footer), color = BrandBlue)
             }
         }
     }
@@ -279,7 +279,7 @@ fun StepIndicator(step: Int, currentStep: Int, label: String) {
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .background(if (isActive) PrimaryTurquoise else AppleGray),
+                .background(if (isActive) BrandBlue else AppleGray),
             contentAlignment = Alignment.Center
         ) {
             Text(step.toString(), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
@@ -287,7 +287,7 @@ fun StepIndicator(step: Int, currentStep: Int, label: String) {
         Text(
             label,
             fontSize = 12.sp,
-            color = if (isActive) PrimaryTurquoise else TextGray,
+            color = if (isActive) BrandBlue else TextGray,
             modifier = Modifier.padding(top = 4.dp)
         )
     }
@@ -301,12 +301,12 @@ fun RoleCard(title: String, subtitle: String, isSelected: Boolean, onClick: () -
             .fillMaxWidth()
             .selectable(selected = isSelected, onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(2.dp, if (isSelected) PrimaryTurquoise else Color.Transparent),
-        colors = CardDefaults.cardColors(containerColor = if (isSelected) PrimaryTurquoise.copy(alpha = 0.05f) else AppleWhite),
+        border = BorderStroke(2.dp, if (isSelected) BrandBlue else Color.Transparent),
+        colors = CardDefaults.cardColors(containerColor = if (isSelected) BrandBlue.copy(alpha = 0.05f) else AppleWhite),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = if (isSelected) PrimaryTurquoise else TextOfficial)
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = if (isSelected) BrandBlue else TextOfficial)
             Text(subtitle, fontSize = 14.sp, color = TextGray)
         }
     }

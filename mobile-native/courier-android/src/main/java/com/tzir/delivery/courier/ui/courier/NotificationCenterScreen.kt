@@ -1,4 +1,3 @@
-
 package com.tzir.delivery.courier.ui.courier
 
 import androidx.compose.foundation.background
@@ -17,26 +16,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.tzir.delivery.courier.R
+import com.tzir.delivery.courier.model.CourierNotification
+import com.tzir.delivery.courier.repository.NotificationRepository
 import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.ui.theme.*
 
-data class AppNotification(
-    val id: String,
-    val title: String,
-    val message: String,
-    val timestamp: String,
-    val type: String = "info" // info, order, warning
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationCenterScreen(onBack: () -> Unit) {
-    val notifications = remember {
-        mutableStateListOf(
-            AppNotification("1", "משלוח חדש בקרבתך", "ישנה הזמנה חדשה במרחק 1.2 ק\"מ. לחץ לצפייה.", "10:30"),
-            AppNotification("2", "עדכון מסמכים", "רישיון הנהיגה שלך עודכן בהצלחה במערכת.", "אתמול"),
-            AppNotification("3", "טיפ חדש!", "קיבלת טיפ בסך ₪15 מהמשלוח האחרון.", "אתמול")
-        )
+fun NotificationCenterScreen(
+    onBack: () -> Unit,
+    notificationRepository: NotificationRepository? = null
+) {
+    val notifications by (notificationRepository?.notifications?.collectAsState()
+        ?: remember { mutableStateOf(emptyList()) })
+    val loading by (notificationRepository?.loading?.collectAsState()
+        ?: remember { mutableStateOf(false) })
+
+    LaunchedEffect(Unit) {
+        notificationRepository?.refresh()
     }
 
     Scaffold(
@@ -48,6 +45,13 @@ fun NotificationCenterScreen(onBack: () -> Unit) {
                         Text("✕", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextOfficial)
                     }
                 },
+                actions = {
+                    if (notifications.any { !it.isRead }) {
+                        TextButton(onClick = { notificationRepository?.markAllRead() }) {
+                            Text("הכל נקרא", color = BrandBlue, fontSize = 14.sp)
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onBackground)
             )
         },
@@ -55,14 +59,21 @@ fun NotificationCenterScreen(onBack: () -> Unit) {
     ) { padding ->
         PremiumBackground {
             Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            if (notifications.isEmpty()) {
+            if (loading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.no_notifications), color = Color.Gray)
+                    CircularProgressIndicator(color = BrandBlue)
+                }
+            } else if (notifications.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("אין התראות", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(notifications) { notification ->
-                        NotificationItem(notification)
+                        NotificationItem(
+                            notification = notification,
+                            onClick = { notificationRepository?.markRead(notification.id) }
+                        )
                         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = AppleGray)
                     }
                 }
@@ -73,17 +84,25 @@ fun NotificationCenterScreen(onBack: () -> Unit) {
 }
 
 @Composable
-fun NotificationItem(notification: AppNotification) {
+fun NotificationItem(
+    notification: CourierNotification,
+    onClick: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .then(
+                if (!notification.isRead) Modifier.background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                else Modifier
+            )
+            .let { mod -> if (!notification.isRead) mod.padding(8.dp) else mod },
         verticalAlignment = Alignment.CenterVertically
     ) {
         val iconColor = when(notification.type) {
             "order" -> Color(0xFF2E7D32)
             "warning" -> Color(0xFFD32F2F)
-            else -> PrimaryTurquoise
+            else -> BrandBlue
         }
 
         Box(
@@ -106,11 +125,25 @@ fun NotificationItem(notification: AppNotification) {
 
         Column(modifier = Modifier.weight(1f)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(notification.title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextOfficial)
-                Text(notification.timestamp, color = TextGray, fontSize = 12.sp)
+                Text(
+                    notification.title,
+                    fontWeight = if (!notification.isRead) FontWeight.Bold else FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = TextOfficial
+                )
+                Text(
+                    notification.sentAt?.take(16)?.replace("T", " ") ?: "",
+                    color = TextGray,
+                    fontSize = 12.sp
+                )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(notification.message, color = TextGray, fontSize = 14.sp)
+        }
+
+        if (!notification.isRead) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(modifier = Modifier.size(8.dp).background(BrandBlue, CircleShape))
         }
     }
 }

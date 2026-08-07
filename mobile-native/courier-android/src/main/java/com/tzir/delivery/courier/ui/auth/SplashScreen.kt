@@ -54,14 +54,14 @@ fun SplashScreen(onAnimationFinish: () -> Unit) {
             .background(Graphite900),
         contentAlignment = Alignment.Center
     ) {
-        // Subtle amber radial glow
+        // Subtle BrandBlue radial glow
         Box(
             modifier = Modifier
                 .size(400.dp)
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            AmberGold.copy(alpha = 0.06f),
+                            BrandBlue.copy(alpha = 0.06f),
                             Color.Transparent
                         )
                     )
@@ -84,8 +84,8 @@ fun SplashScreen(onAnimationFinish: () -> Unit) {
                     .shadow(
                         elevation = 24.dp,
                         shape = CircleShape,
-                        ambientColor = AmberGold.copy(alpha = 0.15f),
-                        spotColor = AmberGold.copy(alpha = 0.2f)
+                        ambientColor = BrandBlue.copy(alpha = 0.15f),
+                        spotColor = BrandBlue.copy(alpha = 0.2f)
                     )
                     .background(Graphite800, CircleShape),
                 contentAlignment = Alignment.Center
@@ -94,7 +94,7 @@ fun SplashScreen(onAnimationFinish: () -> Unit) {
                     "TZIR",
                     style = androidx.compose.ui.text.TextStyle(
                         brush = Brush.linearGradient(
-                            colors = listOf(AmberGold, AmberGoldDark)
+                            colors = listOf(BrandBlue, BrandBlueDark)
                         ),
                         fontWeight = FontWeight.Black,
                         fontSize = 38.sp,
@@ -140,7 +140,7 @@ fun SplashScreen(onAnimationFinish: () -> Unit) {
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(22.dp),
-                color = AmberGold,
+                color = BrandBlue,
                 strokeWidth = 2.dp
             )
         }

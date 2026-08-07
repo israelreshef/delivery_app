@@ -412,13 +412,13 @@ export default function AdminCouriersPage() {
                     onClick={() => handleToggleLocationVerification(!locationVerificationEnabled)}
                     style={{
                       width: '44px', height: '24px', borderRadius: '12px',
-                      backgroundColor: locationVerificationEnabled ? '#f59e0b' : '#475569',
+                      backgroundColor: locationVerificationEnabled ? '#145DDB' : '#475569',
                       border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', flexShrink: 0,
                     }}
                   />
                   <span className="text-slate-200 font-medium">פרוטוקול אימות מיקום</span>
                   <div className="relative group">
-                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-amber-400 hover:text-amber-400 transition-colors">?</div>
+                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-brand hover:text-brand transition-colors">?</div>
                     <div className="absolute z-50 hidden group-hover:block bg-slate-900 border border-slate-600 text-slate-300 text-sm rounded-lg p-3 shadow-xl text-right leading-relaxed" style={{ width: '280px', left: '24px', top: '0' }}>
                       כאשר פעיל, השליח חייב להיות בטווח של 300 מטר מכתובת המסירה כדי לאשר סיום משימה. המיקום נבדק בזמן אמת מול ה-GPS של השליח.
                     </div>
@@ -431,13 +431,13 @@ export default function AdminCouriersPage() {
                     onClick={() => handleToggleSms(!smsProtocolEnabled)}
                     style={{
                       width: '44px', height: '24px', borderRadius: '12px',
-                      backgroundColor: smsProtocolEnabled ? '#f59e0b' : '#475569',
+                      backgroundColor: smsProtocolEnabled ? '#145DDB' : '#475569',
                       border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', flexShrink: 0,
                     }}
                   />
                   <span className="text-slate-200 font-medium">פרוטוקול SMS</span>
                   <div className="relative group">
-                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-amber-400 hover:text-amber-400 transition-colors">?</div>
+                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-brand hover:text-brand transition-colors">?</div>
                     <div className="absolute z-50 hidden group-hover:block bg-slate-900 border border-slate-600 text-slate-300 text-sm rounded-lg p-3 shadow-xl text-right leading-relaxed" style={{ width: '280px', left: '24px', top: '0' }}>
                       כאשר פעיל, נשלחת הודעת SMS אוטומטית ללקוח עם אישור המסירה ושם השליח. דורש הגדרת ספק SMS בהגדרות המערכת.
                     </div>
@@ -450,13 +450,13 @@ export default function AdminCouriersPage() {
                     onClick={() => handleTogglePhoto(!photoProtocolEnabled)}
                     style={{
                       width: '44px', height: '24px', borderRadius: '12px',
-                      backgroundColor: photoProtocolEnabled ? '#f59e0b' : '#475569',
+                      backgroundColor: photoProtocolEnabled ? '#145DDB' : '#475569',
                       border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', flexShrink: 0,
                     }}
                   />
                   <span className="text-slate-200 font-medium">פרוטוקול תמונה</span>
                   <div className="relative group">
-                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-amber-400 hover:text-amber-400 transition-colors">?</div>
+                    <div className="w-5 h-5 rounded-full border border-slate-400 text-slate-400 flex items-center justify-center text-xs cursor-help hover:border-brand hover:text-brand transition-colors">?</div>
                     <div className="absolute z-50 hidden group-hover:block bg-slate-900 border border-slate-600 text-slate-300 text-sm rounded-lg p-3 shadow-xl text-right leading-relaxed" style={{ width: '280px', left: '24px', top: '0' }}>
                       כאשר פעיל, השליח נדרש לצלם תמונת הוכחת מסירה (חבילה בדלת / חתימה) לפני שיוכל לאשר את סיום המשימה.
                     </div>

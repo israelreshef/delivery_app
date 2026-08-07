@@ -636,3 +636,1484 @@
 [2026-04-20T20:44:55.566141]  Client authenticated: User 4 (SID: LiMPuEB7jsMQypOGAABB)
 [2026-04-20T20:44:55.666027]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
 [2026-04-20T20:44:55.666537]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-05-08T11:00:41.086034] ⏳ Client connecting: Kq0BHkfJkcAp467oAAAD
+[2026-05-08T11:00:41.088036]  Client authenticated: User 1 (SID: Kq0BHkfJkcAp467oAAAD)
+[2026-05-08T11:00:41.206682] ⏳ Client connecting: g4s0sFqfriuzasZ1AAAE
+[2026-05-08T11:00:41.207683]  Client authenticated: User 1 (SID: g4s0sFqfriuzasZ1AAAE)
+[2026-05-08T11:00:41.274781] ⏳ Client connecting: PoJ0lc1qe_NkNjhkAAAF
+[2026-05-08T11:00:41.277782]  Client authenticated: User 1 (SID: PoJ0lc1qe_NkNjhkAAAF)
+[2026-05-08T11:00:41.432022] ⏳ Client connecting: H7kMX8_71LD9gkqYAAAH
+[2026-05-08T11:00:41.434043]  Client authenticated: User 1 (SID: H7kMX8_71LD9gkqYAAAH)
+[2026-05-08T11:01:01.303766] ⏳ Client connecting: UawRxRjGLMzDeMeUAAAJ
+[2026-05-08T11:01:01.304763]  Client authenticated: User 1 (SID: UawRxRjGLMzDeMeUAAAJ)
+[2026-05-08T11:09:11.851253] ⏳ Client connecting: Ty7Q6QoOaJx_uOMAAAAL
+[2026-05-08T11:09:11.852261]  Client authenticated: User 1 (SID: Ty7Q6QoOaJx_uOMAAAAL)
+[2026-05-08T11:27:14.131428] ⏳ Client connecting: vPC6Vfy_lUWJ1YozAAAP
+[2026-05-08T11:27:14.132428]  Client authenticated: User 1 (SID: vPC6Vfy_lUWJ1YozAAAP)
+[2026-05-08T11:27:14.138537] ⏳ Client connecting: Nt3_6v-fOf5uYGPzAAAQ
+[2026-05-08T11:27:14.139907]  Client authenticated: User 1 (SID: Nt3_6v-fOf5uYGPzAAAQ)
+[2026-05-08T11:27:14.146089] ⏳ Client connecting: rsKAYqRAGbv3AY1KAAAR
+[2026-05-08T11:27:14.146595]  Client authenticated: User 1 (SID: rsKAYqRAGbv3AY1KAAAR)
+[2026-05-08T11:27:14.425077] ⏳ Client connecting: f8idGiH90kyUU35IAAAT
+[2026-05-08T11:27:14.426592]  Client authenticated: User 1 (SID: f8idGiH90kyUU35IAAAT)
+[2026-05-08T11:27:24.197117] ⏳ Client connecting: GQP_RhXabfC-swfcAAAY
+[2026-05-08T11:27:24.199118]  Client authenticated: User 1 (SID: GQP_RhXabfC-swfcAAAY)
+[2026-05-08T11:27:24.220413] ⏳ Client connecting: SrXXpkWoy6xJBbunAAAZ
+[2026-05-08T11:27:24.221412]  Client authenticated: User 1 (SID: SrXXpkWoy6xJBbunAAAZ)
+[2026-05-08T11:27:24.225434] ⏳ Client connecting: QOIAh8QdhT0qcgusAAAa
+[2026-05-08T11:27:24.226442]  Client authenticated: User 1 (SID: QOIAh8QdhT0qcgusAAAa)
+[2026-05-08T11:27:24.230960] ⏳ Client connecting: 5N7TTxAuOh_h1luJAAAb
+[2026-05-08T11:27:24.230960]  Client authenticated: User 1 (SID: 5N7TTxAuOh_h1luJAAAb)
+[2026-05-08T11:38:01.053456] ⏳ Client connecting: sMCllx91gk4NlxPyAAAf
+[2026-05-08T11:38:01.053965]  Client authenticated: User 1 (SID: sMCllx91gk4NlxPyAAAf)
+[2026-05-08T11:38:01.059725] ⏳ Client connecting: HtiJ-pCxBjl7tm4TAAAg
+[2026-05-08T11:38:01.060235]  Client authenticated: User 1 (SID: HtiJ-pCxBjl7tm4TAAAg)
+[2026-05-08T11:38:01.065262] ⏳ Client connecting: zX7Hn69oq0tST6tfAAAh
+[2026-05-08T11:38:01.065785]  Client authenticated: User 1 (SID: zX7Hn69oq0tST6tfAAAh)
+[2026-05-08T11:38:01.337329] ⏳ Client connecting: AfkoAKL_6sExnNqiAAAj
+[2026-05-08T11:38:01.337329]  Client authenticated: User 1 (SID: AfkoAKL_6sExnNqiAAAj)
+[2026-07-13T09:41:15.586080] ⏳ Client connecting: QLfxXIZFV8pGY28EAAAD
+[2026-07-13T09:41:15.587587]  Client authenticated: User 1 (SID: QLfxXIZFV8pGY28EAAAD)
+[2026-07-13T09:41:15.596120] ⏳ Client connecting: 4Ntbi62eGxCHY4ZLAAAE
+[2026-07-13T09:41:15.598641]  Client authenticated: User 1 (SID: 4Ntbi62eGxCHY4ZLAAAE)
+[2026-07-13T09:41:15.603156] ⏳ Client connecting: SEcEJoJhghlXVMAaAAAF
+[2026-07-13T09:41:15.606156]  Client authenticated: User 1 (SID: SEcEJoJhghlXVMAaAAAF)
+[2026-07-13T09:41:15.890432] ⏳ Client connecting: lJfYRbgN37__aOVxAAAH
+[2026-07-13T09:41:15.892433]  Client authenticated: User 1 (SID: lJfYRbgN37__aOVxAAAH)
+[2026-07-13T09:41:44.646531] ⏳ Client connecting: Xmny-3-n6Y9pmeoaAAAJ
+[2026-07-13T09:41:44.648529]  Client authenticated: User 1 (SID: Xmny-3-n6Y9pmeoaAAAJ)
+[2026-07-13T09:49:49.807885] ⏳ Client connecting: hPr1buXThv7aFZZFAAAO
+[2026-07-13T09:49:49.808894]  Client authenticated: User 1 (SID: hPr1buXThv7aFZZFAAAO)
+[2026-07-13T09:49:49.812892] ⏳ Client connecting: UdI1BJdWjvxDcEeNAAAP
+[2026-07-13T09:49:49.812892]  Client authenticated: User 1 (SID: UdI1BJdWjvxDcEeNAAAP)
+[2026-07-13T09:49:49.814944] ⏳ Client connecting: y6E69bmZb19_2oBXAAAQ
+[2026-07-13T09:49:49.815945]  Client authenticated: User 1 (SID: y6E69bmZb19_2oBXAAAQ)
+[2026-07-13T09:49:49.818944] ⏳ Client connecting: mslvwTDPAv9w934XAAAR
+[2026-07-13T09:49:49.819945]  Client authenticated: User 1 (SID: mslvwTDPAv9w934XAAAR)
+[2026-07-13T09:54:13.773090] ⏳ Client connecting: C81P4InwSJ3K61SLAAAT
+[2026-07-13T09:54:13.774096]  Client authenticated: User 1 (SID: C81P4InwSJ3K61SLAAAT)
+[2026-07-13T09:55:33.989558] ⏳ Client connecting: OcPxRdR4zPXrSuQKAAAV
+[2026-07-13T09:55:33.990559]  Client authenticated: User 1 (SID: OcPxRdR4zPXrSuQKAAAV)
+[2026-07-15T15:52:45.154876] ⏳ Client connecting: 7w-hKmNUfPl3dKqrAAAD
+[2026-07-15T15:52:45.156174]  Client authenticated: User 1 (SID: 7w-hKmNUfPl3dKqrAAAD)
+[2026-07-15T15:52:45.201799] ⏳ Client connecting: X2vwLia9DwZj81A4AAAE
+[2026-07-15T15:52:45.202799]  Client authenticated: User 1 (SID: X2vwLia9DwZj81A4AAAE)
+[2026-07-15T15:52:45.205916] ⏳ Client connecting: ZHuWit-rumzLbZJYAAAF
+[2026-07-15T15:52:45.206915]  Client authenticated: User 1 (SID: ZHuWit-rumzLbZJYAAAF)
+[2026-07-15T15:52:45.306099] ⏳ Client connecting: dE9EHnkoAB7wwcRmAAAH
+[2026-07-15T15:52:45.306099]  Client authenticated: User 1 (SID: dE9EHnkoAB7wwcRmAAAH)
+[2026-07-15T15:52:53.432164] ⏳ Client connecting: K0SPrvcosNk38oE3AAAJ
+[2026-07-15T15:52:53.434164]  Client authenticated: User 1 (SID: K0SPrvcosNk38oE3AAAJ)
+[2026-07-15T15:53:23.143672] ⏳ Client connecting: jHUoF9Ci8Zv4Anc4AAAO
+[2026-07-15T15:53:23.144672]  Client authenticated: User 1 (SID: jHUoF9Ci8Zv4Anc4AAAO)
+[2026-07-15T15:53:23.148188] ⏳ Client connecting: kYQ-zXUszd7JpFuuAAAP
+[2026-07-15T15:53:23.150197]  Client authenticated: User 1 (SID: kYQ-zXUszd7JpFuuAAAP)
+[2026-07-15T15:53:23.163717] ⏳ Client connecting: hlbGh2uNiBlanY2OAAAQ
+[2026-07-15T15:53:23.164720]  Client authenticated: User 1 (SID: hlbGh2uNiBlanY2OAAAQ)
+[2026-07-15T15:53:23.169235] ⏳ Client connecting: qW3z8vn-8BOaA6jNAAAR
+[2026-07-15T15:53:23.170234]  Client authenticated: User 1 (SID: qW3z8vn-8BOaA6jNAAAR)
+[2026-07-15T17:04:48.077372] ⏳ Client connecting: gmM8pevyI-lt_m-YAAAE
+[2026-07-15T17:04:48.078371]  Client authenticated: User 1 (SID: gmM8pevyI-lt_m-YAAAE)
+[2026-07-15T17:04:48.082888] ⏳ Client connecting: QcqpCH7ep7_69VNJAAAF
+[2026-07-15T17:04:48.084887]  Client authenticated: User 1 (SID: QcqpCH7ep7_69VNJAAAF)
+[2026-07-15T17:04:48.087888] ⏳ Client connecting: ClyHhk2EOEl7L4gFAAAG
+[2026-07-15T17:04:48.088889]  Client authenticated: User 1 (SID: ClyHhk2EOEl7L4gFAAAG)
+[2026-07-15T17:04:48.093927] ⏳ Client connecting: Uw5IG68Zt4-CYajOAAAH
+[2026-07-15T17:04:48.094927]  Client authenticated: User 1 (SID: Uw5IG68Zt4-CYajOAAAH)
+[2026-07-15T17:05:42.135521] ⏳ Client connecting: ZVw-HaxrO4WjJPfYAAAM
+[2026-07-15T17:05:42.136525]  Client authenticated: User 1 (SID: ZVw-HaxrO4WjJPfYAAAM)
+[2026-07-15T17:05:42.140042] ⏳ Client connecting: w5W2Trne7bqo5psRAAAN
+[2026-07-15T17:05:42.141236]  Client authenticated: User 1 (SID: w5W2Trne7bqo5psRAAAN)
+[2026-07-15T17:05:42.156927] ⏳ Client connecting: VYFlcWv9LJ5i3EjIAAAO
+[2026-07-15T17:05:42.157927]  Client authenticated: User 1 (SID: VYFlcWv9LJ5i3EjIAAAO)
+[2026-07-15T17:05:42.162926] ⏳ Client connecting: LfYyydOxbS21Kbm2AAAP
+[2026-07-15T17:05:42.163926]  Client authenticated: User 1 (SID: LfYyydOxbS21Kbm2AAAP)
+[2026-07-15T17:06:10.486942] ⏳ Client connecting: Ldt8c1E2cQzCDb1eAAAU
+[2026-07-15T17:06:10.488189]  Client authenticated: User 1 (SID: Ldt8c1E2cQzCDb1eAAAU)
+[2026-07-15T17:06:10.494694] ⏳ Client connecting: KWXYSbbWLEPhAPFDAAAV
+[2026-07-15T17:06:10.495701]  Client authenticated: User 1 (SID: KWXYSbbWLEPhAPFDAAAV)
+[2026-07-15T17:06:10.518873] ⏳ Client connecting: tUHySctwvNg-q9ffAAAW
+[2026-07-15T17:06:10.520379]  Client authenticated: User 1 (SID: tUHySctwvNg-q9ffAAAW)
+[2026-07-15T17:06:10.523387] ⏳ Client connecting: 6BdpqHxBGd0mZOJeAAAX
+[2026-07-15T17:06:10.524891]  Client authenticated: User 1 (SID: 6BdpqHxBGd0mZOJeAAAX)
+[2026-07-15T17:06:24.357182] ⏳ Client connecting: Y1fbBZhxZnO77YZ3AAAZ
+[2026-07-15T17:06:24.358189]  Client authenticated: User 1 (SID: Y1fbBZhxZnO77YZ3AAAZ)
+[2026-07-15T18:50:41.979001] ⏳ Client connecting: rYFgVhODD4DFur09AAAA
+[2026-07-15T18:50:41.980000]  Client authenticated: User 4 (SID: rYFgVhODD4DFur09AAAA)
+[2026-07-15T18:50:41.988291] ⏳ Client connecting: EuObzjOxgbv9E7bzAAAB
+[2026-07-15T18:50:41.989291]  Client authenticated: User 4 (SID: EuObzjOxgbv9E7bzAAAB)
+[2026-07-15T18:50:41.990289]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-15T18:50:41.995286] ⏳ Client connecting: PHZSbRMKSFMCcDBKAAAC
+[2026-07-15T18:50:41.995286]  Client authenticated: User 4 (SID: PHZSbRMKSFMCcDBKAAAC)
+[2026-07-15T18:50:42.001354]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-15T18:50:42.006358] ⏳ Client connecting: l-bsz9bQYPMowzYwAAAD
+[2026-07-15T18:50:42.006358]  Client authenticated: User 4 (SID: l-bsz9bQYPMowzYwAAAD)
+[2026-07-15T18:51:00.034114] ⏳ Client connecting: M_PRu87uUS5vJH_HAAAA
+[2026-07-15T18:51:00.035112]  Client authenticated: User 4 (SID: M_PRu87uUS5vJH_HAAAA)
+[2026-07-15T18:51:00.040115] ⏳ Client connecting: e7kLV81iU1vBdb7WAAAB
+[2026-07-15T18:51:00.040115]  Client authenticated: User 4 (SID: e7kLV81iU1vBdb7WAAAB)
+[2026-07-15T18:51:00.042117]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-15T18:51:00.046111] ⏳ Client connecting: Y_6IHlmpZqrwyAtdAAAC
+[2026-07-15T18:51:00.046111]  Client authenticated: User 4 (SID: Y_6IHlmpZqrwyAtdAAAC)
+[2026-07-15T18:51:00.050111]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-15T18:51:00.054112] ⏳ Client connecting: pPfVyM3fmFfuQESKAAAD
+[2026-07-15T18:51:00.055113]  Client authenticated: User 4 (SID: pPfVyM3fmFfuQESKAAAD)
+[2026-07-15T19:37:13.416392] ⏳ Client connecting: hly9XUAGpcUUPN8jAAAA
+[2026-07-15T19:37:13.417391]  Client authenticated: User 4 (SID: hly9XUAGpcUUPN8jAAAA)
+[2026-07-15T19:37:13.424393] ⏳ Client connecting: uGTJr_fjyxviw1V-AAAB
+[2026-07-15T19:37:13.425392]  Client authenticated: User 4 (SID: uGTJr_fjyxviw1V-AAAB)
+[2026-07-15T19:37:13.427390]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-15T19:37:13.432390] ⏳ Client connecting: sd3AXIupxZcRHtI3AAAC
+[2026-07-15T19:37:13.433389]  Client authenticated: User 4 (SID: sd3AXIupxZcRHtI3AAAC)
+[2026-07-15T19:37:13.437389]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-15T19:37:13.443390] ⏳ Client connecting: odGNITwjH9J8LEbfAAAD
+[2026-07-15T19:37:13.444390]  Client authenticated: User 4 (SID: odGNITwjH9J8LEbfAAAD)
+[2026-07-16T04:38:37.088234] ⏳ Client connecting: stfGRj6wRgCA2Ur6AAAD
+[2026-07-16T04:38:37.089246]  Client authenticated: User 1 (SID: stfGRj6wRgCA2Ur6AAAD)
+[2026-07-16T04:38:37.095251] ⏳ Client connecting: fmQWSMBruFnXXN5jAAAE
+[2026-07-16T04:38:37.097358]  Client authenticated: User 1 (SID: fmQWSMBruFnXXN5jAAAE)
+[2026-07-16T04:38:37.104359] ⏳ Client connecting: UK2kRxJxkNTnM2kxAAAF
+[2026-07-16T04:38:37.105419]  Client authenticated: User 1 (SID: UK2kRxJxkNTnM2kxAAAF)
+[2026-07-16T04:38:37.400583] ⏳ Client connecting: wREPZHuClxoS6lf2AAAH
+[2026-07-16T04:38:37.401580]  Client authenticated: User 1 (SID: wREPZHuClxoS6lf2AAAH)
+[2026-07-16T04:39:58.405058] ⏳ Client connecting: ADfZpwfBXOdXSE64AAAJ
+[2026-07-16T04:39:58.407051]  Client authenticated: User 1 (SID: ADfZpwfBXOdXSE64AAAJ)
+[2026-07-16T05:10:40.101944] ⏳ Client connecting: mzWj03jHSCeMixDAAAAA
+[2026-07-16T05:10:40.102944]  Client authenticated: User 4 (SID: mzWj03jHSCeMixDAAAAA)
+[2026-07-16T05:10:40.110466] ⏳ Client connecting: DeyEy2kAlVmRS_9fAAAB
+[2026-07-16T05:10:40.111626]  Client authenticated: User 4 (SID: DeyEy2kAlVmRS_9fAAAB)
+[2026-07-16T05:10:40.112626]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T05:10:40.121665] ⏳ Client connecting: hnDyyTWKJsSNJAafAAAC
+[2026-07-16T05:10:40.122664]  Client authenticated: User 4 (SID: hnDyyTWKJsSNJAafAAAC)
+[2026-07-16T05:10:40.126667]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T05:10:40.134708] ⏳ Client connecting: 954RrS34JnlUz1oOAAAD
+[2026-07-16T05:10:40.135707]  Client authenticated: User 4 (SID: 954RrS34JnlUz1oOAAAD)
+[2026-07-16T05:21:17.923518] ⏳ Client connecting: 07MS7AD0og7mmGtDAAAA
+[2026-07-16T05:21:17.924517]  Client authenticated: User 4 (SID: 07MS7AD0og7mmGtDAAAA)
+[2026-07-16T05:21:17.933034] ⏳ Client connecting: Ecq6ZJ5DbT6Y9s7OAAAB
+[2026-07-16T05:21:17.934033]  Client authenticated: User 4 (SID: Ecq6ZJ5DbT6Y9s7OAAAB)
+[2026-07-16T05:21:17.935034]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T05:21:17.942553] ⏳ Client connecting: xJfxB7xHSzJ9ILb5AAAC
+[2026-07-16T05:21:17.944553]  Client authenticated: User 4 (SID: xJfxB7xHSzJ9ILb5AAAC)
+[2026-07-16T05:21:17.950072]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T05:21:17.956078] ⏳ Client connecting: yrHTyQa4z7zbITMxAAAD
+[2026-07-16T05:21:17.958078]  Client authenticated: User 4 (SID: yrHTyQa4z7zbITMxAAAD)
+[2026-07-16T05:39:04.263723] ⏳ Client connecting: 9UAQ99bIyBHTheHwAAAA
+[2026-07-16T05:39:04.264722]  Transport accepted: User 4 (SID: 9UAQ99bIyBHTheHwAAAA)
+[2026-07-16T05:39:04.269721] ⏳ Client connecting: vb6E5RZeD_RG62v7AAAB
+[2026-07-16T05:39:04.269721]  Transport accepted: User 4 (SID: vb6E5RZeD_RG62v7AAAB)
+[2026-07-16T05:39:04.270721]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T05:39:04.278749] ⏳ Client connecting: 6x8GHhugDNsRWDvZAAAC
+[2026-07-16T05:39:04.278749]  Transport accepted: User 4 (SID: 6x8GHhugDNsRWDvZAAAC)
+[2026-07-16T05:39:04.282849]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T05:39:04.286847] ⏳ Client connecting: Utu4CK2eTYv6bDU7AAAD
+[2026-07-16T05:39:04.287845]  Transport accepted: User 4 (SID: Utu4CK2eTYv6bDU7AAAD)
+[2026-07-16T06:22:23.440823] ⏳ Client connecting: puZcTpl4DHChseBPAAAA
+[2026-07-16T06:22:23.441823]  Transport accepted: User 4 (SID: puZcTpl4DHChseBPAAAA)
+[2026-07-16T06:22:23.446824] ⏳ Client connecting: zWIbMHkj4dZ3bXF0AAAB
+[2026-07-16T06:22:23.446824]  Transport accepted: User 4 (SID: zWIbMHkj4dZ3bXF0AAAB)
+[2026-07-16T06:22:23.447823]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T06:22:23.451823] ⏳ Client connecting: xU-yzDQ65CxpYNfnAAAC
+[2026-07-16T06:22:23.451823]  Transport accepted: User 4 (SID: xU-yzDQ65CxpYNfnAAAC)
+[2026-07-16T06:22:23.456823]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:22:23.461825] ⏳ Client connecting: __EMw_pl_JBAeIFaAAAD
+[2026-07-16T06:22:23.462823]  Transport accepted: User 4 (SID: __EMw_pl_JBAeIFaAAAD)
+[2026-07-16T06:22:23.466824] ⏳ Client connecting: oD9vMiwi56IQsPFfAAAE
+[2026-07-16T06:22:23.467823]  Transport accepted: User 4 (SID: oD9vMiwi56IQsPFfAAAE)
+[2026-07-16T06:22:23.468824]  Courier join rejected: Signature has expired
+[2026-07-16T06:22:23.471823]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:22:23.477824] ⏳ Client connecting: UFzQ1ARDL-viLNnmAAAF
+[2026-07-16T06:23:18.153828] ⏳ Client connecting: T-kk7X2HjPKcTcLBAAAA
+[2026-07-16T06:23:18.153828]  Transport accepted: User 4 (SID: T-kk7X2HjPKcTcLBAAAA)
+[2026-07-16T06:23:18.160828] ⏳ Client connecting: 2pyvB2DXArH0A8XaAAAB
+[2026-07-16T06:23:18.160828]  Transport accepted: User 4 (SID: 2pyvB2DXArH0A8XaAAAB)
+[2026-07-16T06:23:18.161828]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T06:23:18.165829] ⏳ Client connecting: H9nobK0QwKoP_dBrAAAC
+[2026-07-16T06:23:18.165829]  Transport accepted: User 4 (SID: H9nobK0QwKoP_dBrAAAC)
+[2026-07-16T06:23:18.169828]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:23:18.174826] ⏳ Client connecting: KgubAVhHGWbpzIBsAAAD
+[2026-07-16T06:23:18.175829]  Transport accepted: User 4 (SID: KgubAVhHGWbpzIBsAAAD)
+[2026-07-16T06:23:18.180828] ⏳ Client connecting: TD2I_WxWJiUGrYVHAAAE
+[2026-07-16T06:23:18.181823]  Transport accepted: User 4 (SID: TD2I_WxWJiUGrYVHAAAE)
+[2026-07-16T06:23:18.182823]  Courier join rejected: Signature has expired
+[2026-07-16T06:23:18.185822]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:23:18.189824] ⏳ Client connecting: C0MqKfA8FesTPelXAAAF
+[2026-07-16T06:23:41.488986] ⏳ Client connecting: J9OJMPh3ou7rohrHAAAA
+[2026-07-16T06:23:41.489988]  Transport accepted: User 4 (SID: J9OJMPh3ou7rohrHAAAA)
+[2026-07-16T06:23:41.496988] ⏳ Client connecting: MdBisqSNaWATXqDPAAAB
+[2026-07-16T06:23:41.496988]  Transport accepted: User 4 (SID: MdBisqSNaWATXqDPAAAB)
+[2026-07-16T06:23:41.497987]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T06:23:41.501988] ⏳ Client connecting: wYsM-4ALCNEezM_VAAAC
+[2026-07-16T06:23:41.501988]  Transport accepted: User 4 (SID: wYsM-4ALCNEezM_VAAAC)
+[2026-07-16T06:23:41.506987]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:23:41.511988] ⏳ Client connecting: H_HnMvqxcDKH_pEcAAAD
+[2026-07-16T06:23:41.511988]  Transport accepted: User 4 (SID: H_HnMvqxcDKH_pEcAAAD)
+[2026-07-16T06:23:41.518987] ⏳ Client connecting: ltef_SaYeeuBK-j-AAAE
+[2026-07-16T06:23:41.518987]  Transport accepted: User 4 (SID: ltef_SaYeeuBK-j-AAAE)
+[2026-07-16T06:23:41.519987]  Courier join rejected: Signature has expired
+[2026-07-16T06:23:41.524988]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:23:41.531987] ⏳ Client connecting: oiAgmuLViTHIkjwCAAAF
+[2026-07-16T06:24:56.576271] ⏳ Client connecting: xNft16eBx1-e6zzJAAAA
+[2026-07-16T06:24:56.577270]  Transport accepted: User 4 (SID: xNft16eBx1-e6zzJAAAA)
+[2026-07-16T06:24:56.581270] ⏳ Client connecting: _7tzikfnJUwww3kwAAAB
+[2026-07-16T06:24:56.582269]  Transport accepted: User 4 (SID: _7tzikfnJUwww3kwAAAB)
+[2026-07-16T06:24:56.583270]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T06:24:56.586270] ⏳ Client connecting: SUTgtpvc0GGzDQeGAAAC
+[2026-07-16T06:24:56.586270]  Transport accepted: User 4 (SID: SUTgtpvc0GGzDQeGAAAC)
+[2026-07-16T06:24:56.590270]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:24:56.594270] ⏳ Client connecting: hnApCAWdcx-ivA59AAAD
+[2026-07-16T06:24:56.595270]  Transport accepted: User 4 (SID: hnApCAWdcx-ivA59AAAD)
+[2026-07-16T06:24:56.599270] ⏳ Client connecting: InHoAKp0a-mSfCnvAAAE
+[2026-07-16T06:24:56.600269]  Transport accepted: User 4 (SID: InHoAKp0a-mSfCnvAAAE)
+[2026-07-16T06:24:56.601270]  Courier join rejected: Signature has expired
+[2026-07-16T06:24:56.604270]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:24:56.608272] ⏳ Client connecting: HfRacp306l9mpZsCAAAF
+[2026-07-16T06:25:52.288441] ⏳ Client connecting: cCsXiuAVMV9t_woyAAAA
+[2026-07-16T06:25:52.288441]  Transport accepted: User 4 (SID: cCsXiuAVMV9t_woyAAAA)
+[2026-07-16T06:25:52.293442] ⏳ Client connecting: -qn9BVhLiEuWPTuyAAAB
+[2026-07-16T06:25:52.294441]  Transport accepted: User 4 (SID: -qn9BVhLiEuWPTuyAAAB)
+[2026-07-16T06:25:52.295441]  Courier join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+[2026-07-16T06:25:52.298441] ⏳ Client connecting: PTi6ZiRj8Sksu4A_AAAC
+[2026-07-16T06:25:52.299441]  Transport accepted: User 4 (SID: PTi6ZiRj8Sksu4A_AAAC)
+[2026-07-16T06:25:52.302441]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:25:52.306443] ⏳ Client connecting: p2mwMIS83I2rQUiRAAAD
+[2026-07-16T06:25:52.306443]  Transport accepted: User 4 (SID: p2mwMIS83I2rQUiRAAAD)
+[2026-07-16T06:25:52.311441] ⏳ Client connecting: zbll2SozsqmsEl6JAAAE
+[2026-07-16T06:25:52.312441]  Transport accepted: User 4 (SID: zbll2SozsqmsEl6JAAAE)
+[2026-07-16T06:25:52.313441]  Courier join rejected: Signature has expired
+[2026-07-16T06:25:52.317441]  ✅ Courier 1 (User 4) joined rooms: courier_room, courier_1
+[2026-07-16T06:25:52.321441] ⏳ Client connecting: T_h9YwAikTWRzJqJAAAF
+[2026-07-19T11:31:12.952236] ⏳ Client connecting: 5qdDDZeV4Z9_oCdXAAAD
+[2026-07-19T11:31:12.953239]  Transport accepted: User 1 (SID: 5qdDDZeV4Z9_oCdXAAAD)
+[2026-07-19T11:31:12.959787] ⏳ Client connecting: 84Md2iaDnMqsCq1UAAAE
+[2026-07-19T11:31:12.961296]  Transport accepted: User 1 (SID: 84Md2iaDnMqsCq1UAAAE)
+[2026-07-19T11:31:12.969365] ⏳ Client connecting: 9k98RWCi13cHtZmGAAAF
+[2026-07-19T11:31:12.971378]  Transport accepted: User 1 (SID: 9k98RWCi13cHtZmGAAAF)
+[2026-07-19T11:31:13.238770]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:31:13.252828]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:31:13.267431]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:31:13.308689] ⏳ Client connecting: 0tjB0iMcXhTk3YqBAAAH
+[2026-07-19T11:31:13.308689]  Transport accepted: User 1 (SID: 0tjB0iMcXhTk3YqBAAAH)
+[2026-07-19T11:31:13.356791]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:33:23.807147] ⏳ Client connecting: TUFLwTwpYioVYhCWAAAJ
+[2026-07-19T11:33:23.808144]  Transport accepted: User 1 (SID: TUFLwTwpYioVYhCWAAAJ)
+[2026-07-19T11:33:23.868471]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:34:12.536649] ⏳ Client connecting: 2KO3kUMPUcPwcpnvAAAO
+[2026-07-19T11:34:12.538168]  Transport accepted: User 1 (SID: 2KO3kUMPUcPwcpnvAAAO)
+[2026-07-19T11:34:12.542716] ⏳ Client connecting: 5TJh6BgbADaxLV_AAAAP
+[2026-07-19T11:34:12.543223]  Transport accepted: User 1 (SID: 5TJh6BgbADaxLV_AAAAP)
+[2026-07-19T11:34:12.595627] ⏳ Client connecting: c3Gz8NTs89aOv6IyAAAQ
+[2026-07-19T11:34:12.595627]  Transport accepted: User 1 (SID: c3Gz8NTs89aOv6IyAAAQ)
+[2026-07-19T11:34:12.600207] ⏳ Client connecting: WA87pZvq_bPrF4QRAAAR
+[2026-07-19T11:34:12.600207]  Transport accepted: User 1 (SID: WA87pZvq_bPrF4QRAAAR)
+[2026-07-19T11:34:12.610713]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:34:12.647541]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:34:12.653577]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:34:12.658578]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-19T11:34:18.048934] ⏳ Client connecting: Th5-E2v-9IRKPSn5AAAT
+[2026-07-19T11:34:18.049933]  Transport accepted: User 1 (SID: Th5-E2v-9IRKPSn5AAAT)
+[2026-07-19T11:34:18.064522]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-20T11:55:18.900084] ⏳ Client connecting: x2OMuYlWDWXIZovfAAAD
+[2026-07-20T11:55:18.901974]  Transport accepted: User 1 (SID: x2OMuYlWDWXIZovfAAAD)
+[2026-07-20T11:55:18.906515] ⏳ Client connecting: sANuRMevEsCQD4N1AAAE
+[2026-07-20T11:55:18.907096]  Transport accepted: User 1 (SID: sANuRMevEsCQD4N1AAAE)
+[2026-07-20T11:55:18.910225] ⏳ Client connecting: PPa4ZZ7Nkh7qgjWiAAAF
+[2026-07-20T11:55:18.911965]  Transport accepted: User 1 (SID: PPa4ZZ7Nkh7qgjWiAAAF)
+[2026-07-20T11:55:19.003644]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-20T11:55:19.010152]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-20T11:55:19.017185]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-20T11:55:19.190986] ⏳ Client connecting: ZcvVLmSmndFy1PKBAAAH
+[2026-07-20T11:55:19.192497]  Transport accepted: User 1 (SID: ZcvVLmSmndFy1PKBAAAH)
+[2026-07-20T11:55:19.235992]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T09:29:10.036750] ⏳ Client connecting: K20zY8WTYEbrAIczAAAD
+[2026-07-22T09:29:10.037751]  Transport accepted: User 1 (SID: K20zY8WTYEbrAIczAAAD)
+[2026-07-22T09:29:10.043265] ⏳ Client connecting: nDeBLJLtKWMNyMWmAAAE
+[2026-07-22T09:29:10.043265]  Transport accepted: User 1 (SID: nDeBLJLtKWMNyMWmAAAE)
+[2026-07-22T09:29:10.046779] ⏳ Client connecting: 2D7xR4kRinH-v_VXAAAF
+[2026-07-22T09:29:10.047779]  Transport accepted: User 1 (SID: 2D7xR4kRinH-v_VXAAAF)
+[2026-07-22T09:29:10.137051]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T09:29:10.145597]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T09:29:10.152605]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T09:29:10.384472] ⏳ Client connecting: wo-Qd9R15NnNH5gUAAAH
+[2026-07-22T09:29:10.384976]  Transport accepted: User 1 (SID: wo-Qd9R15NnNH5gUAAAH)
+[2026-07-22T09:29:10.417782]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T12:55:23.586464] ⏳ Client connecting: 1dC1mQZW5h-AZNxnAAAL
+[2026-07-22T12:55:23.587970]  Transport accepted: User 1 (SID: 1dC1mQZW5h-AZNxnAAAL)
+[2026-07-22T12:55:23.589979] ⏳ Client connecting: jDPPaTp4pMBfgM4dAAAM
+[2026-07-22T12:55:23.591483]  Transport accepted: User 1 (SID: jDPPaTp4pMBfgM4dAAAM)
+[2026-07-22T12:55:23.593489] ⏳ Client connecting: rnMpIHGDyBYHSjIzAAAN
+[2026-07-22T12:55:23.593489]  Transport accepted: User 1 (SID: rnMpIHGDyBYHSjIzAAAN)
+[2026-07-22T12:55:23.643813]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T12:55:23.671366]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T12:55:23.679494]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T12:55:23.908055] ⏳ Client connecting: kR7oRdhaOaZuj-J5AAAP
+[2026-07-22T12:55:23.909056]  Transport accepted: User 1 (SID: kR7oRdhaOaZuj-J5AAAP)
+[2026-07-22T12:55:23.947912]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T12:56:01.698343] ⏳ Client connecting: ZbVabe5oUCPbcBUmAAAR
+[2026-07-22T12:56:01.699342]  Transport accepted: User 1 (SID: ZbVabe5oUCPbcBUmAAAR)
+[2026-07-22T12:56:01.764477]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:31:35.059013] ⏳ Client connecting: w8W61aZJs_X8ewQBAAAV
+[2026-07-22T17:31:35.060009]  Transport accepted: User 1 (SID: w8W61aZJs_X8ewQBAAAV)
+[2026-07-22T17:31:35.065091] ⏳ Client connecting: -T9JeHDeOpnfHHMpAAAW
+[2026-07-22T17:31:35.066142]  Transport accepted: User 1 (SID: -T9JeHDeOpnfHHMpAAAW)
+[2026-07-22T17:31:35.068656] ⏳ Client connecting: DWThe8gkoaHR7cZkAAAX
+[2026-07-22T17:31:35.069655]  Transport accepted: User 1 (SID: DWThe8gkoaHR7cZkAAAX)
+[2026-07-22T17:31:35.120529]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:31:35.145072]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:31:35.154107]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:31:35.368919] ⏳ Client connecting: z2E-orEhRjImSA64AAAZ
+[2026-07-22T17:31:35.369925]  Transport accepted: User 1 (SID: z2E-orEhRjImSA64AAAZ)
+[2026-07-22T17:31:35.388618]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:31:44.503543] ⏳ Client connecting: UorFbdw625DxJsL-AAAb
+[2026-07-22T17:31:44.503543]  Transport accepted: User 1 (SID: UorFbdw625DxJsL-AAAb)
+[2026-07-22T17:31:44.566345]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:32:03.842308] ⏳ Client connecting: 4ef-aJTGwX06LkkpAAAd
+[2026-07-22T17:32:03.842308]  Transport accepted: User 1 (SID: 4ef-aJTGwX06LkkpAAAd)
+[2026-07-22T17:32:03.853488]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:32:23.367915] ⏳ Client connecting: HZdBQOVJ2vPzui67AAAf
+[2026-07-22T17:32:23.369424]  Transport accepted: User 1 (SID: HZdBQOVJ2vPzui67AAAf)
+[2026-07-22T17:32:23.428671]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:32:29.151550] ⏳ Client connecting: IY-xrWxd1zvfmO4DAAAj
+[2026-07-22T17:32:29.153555]  Transport accepted: User 1 (SID: IY-xrWxd1zvfmO4DAAAj)
+[2026-07-22T17:32:29.156069] ⏳ Client connecting: Ni-EYi1-s9X4SM3_AAAk
+[2026-07-22T17:32:29.157069]  Transport accepted: User 1 (SID: Ni-EYi1-s9X4SM3_AAAk)
+[2026-07-22T17:32:29.160069] ⏳ Client connecting: A_n-RIUGMjWHaRNvAAAl
+[2026-07-22T17:32:29.160069]  Transport accepted: User 1 (SID: A_n-RIUGMjWHaRNvAAAl)
+[2026-07-22T17:32:29.188158]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:32:29.211289]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:32:29.215935]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:32:29.250356] ⏳ Client connecting: A1BeK1utDulY1Xl6AAAn
+[2026-07-22T17:32:29.251354]  Transport accepted: User 1 (SID: A1BeK1utDulY1Xl6AAAn)
+[2026-07-22T17:32:29.273412]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:34:53.041949] ⏳ Client connecting: eDtd9xXEpH2myhoAAAAp
+[2026-07-22T17:34:53.042949]  Transport accepted: User 1 (SID: eDtd9xXEpH2myhoAAAAp)
+[2026-07-22T17:34:53.056468]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T17:35:47.442212] ⏳ Client connecting: BAMr0B3ZXN8f2fqsAAAr
+[2026-07-22T17:35:47.443218]  Transport accepted: User 1 (SID: BAMr0B3ZXN8f2fqsAAAr)
+[2026-07-22T17:35:47.478834]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:11:13.029750] ⏳ Client connecting: p_aWF7z9pUnnmt_TAAAv
+[2026-07-22T18:11:13.030748]  Transport accepted: User 1 (SID: p_aWF7z9pUnnmt_TAAAv)
+[2026-07-22T18:11:13.033923] ⏳ Client connecting: XrmBQJPQr5KUfoCsAAAw
+[2026-07-22T18:11:13.033923]  Transport accepted: User 1 (SID: XrmBQJPQr5KUfoCsAAAw)
+[2026-07-22T18:11:13.040021] ⏳ Client connecting: TLfgeiTfss2FNI-1AAAx
+[2026-07-22T18:11:13.041019]  Transport accepted: User 1 (SID: TLfgeiTfss2FNI-1AAAx)
+[2026-07-22T18:11:13.083412]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:11:13.091004]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:11:13.097521]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:11:13.368695] ⏳ Client connecting: hsb2H55QEBFJQTrdAAAz
+[2026-07-22T18:11:13.370200]  Transport accepted: User 1 (SID: hsb2H55QEBFJQTrdAAAz)
+[2026-07-22T18:11:13.391743]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:15:24.424792] ⏳ Client connecting: J7CE8ddLJPzTFRZDAAAD
+[2026-07-22T18:15:24.424792]  Transport accepted: User 1 (SID: J7CE8ddLJPzTFRZDAAAD)
+[2026-07-22T18:15:24.558631] ⏳ Client connecting: 8J9ndCSo3GUF5keXAAAE
+[2026-07-22T18:15:24.559632]  Transport accepted: User 1 (SID: 8J9ndCSo3GUF5keXAAAE)
+[2026-07-22T18:15:24.562639] ⏳ Client connecting: mNDl9qzq2GiRItL2AAAF
+[2026-07-22T18:15:24.563638]  Transport accepted: User 1 (SID: mNDl9qzq2GiRItL2AAAF)
+[2026-07-22T18:15:24.609856]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:15:24.616379]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:15:24.639974]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:15:24.643971] ⏳ Client connecting: OQcDnHDwxBXfzgCtAAAH
+[2026-07-22T18:15:24.643971]  Transport accepted: User 1 (SID: OQcDnHDwxBXfzgCtAAAH)
+[2026-07-22T18:15:24.708783]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:49:35.069203] ⏳ Client connecting: AsnROdaAn6AJrf0HAAAD
+[2026-07-22T18:49:35.070218]  Transport accepted: User 1 (SID: AsnROdaAn6AJrf0HAAAD)
+[2026-07-22T18:49:35.117470] ⏳ Client connecting: qE1zl7cjEzkfrPfPAAAE
+[2026-07-22T18:49:35.118520]  Transport accepted: User 1 (SID: qE1zl7cjEzkfrPfPAAAE)
+[2026-07-22T18:49:35.121132] ⏳ Client connecting: QnJWvBjgwmElxyJeAAAF
+[2026-07-22T18:49:35.121132]  Transport accepted: User 1 (SID: QnJWvBjgwmElxyJeAAAF)
+[2026-07-22T18:49:35.163752]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:49:35.169262]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:49:35.178790]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-22T18:49:35.371461] ⏳ Client connecting: 03_mLUAFvUlINIwQAAAH
+[2026-07-22T18:49:35.371461]  Transport accepted: User 1 (SID: 03_mLUAFvUlINIwQAAAH)
+[2026-07-22T18:49:35.384486]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-27T12:42:43.358594] ⏳ Client connecting: sm1g0xBcSCFekx3tAAAD
+[2026-07-27T12:42:43.359101]  Transport accepted: User 1 (SID: sm1g0xBcSCFekx3tAAAD)
+[2026-07-27T12:42:43.394712] ⏳ Client connecting: D2yBZPPaOEB-8yvrAAAE
+[2026-07-27T12:42:43.395711]  Transport accepted: User 1 (SID: D2yBZPPaOEB-8yvrAAAE)
+[2026-07-27T12:42:43.405237] ⏳ Client connecting: 5fnnpOaehauFqg7DAAAF
+[2026-07-27T12:42:43.406237]  Transport accepted: User 1 (SID: 5fnnpOaehauFqg7DAAAF)
+[2026-07-27T12:42:43.529636]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-27T12:42:43.539162]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-27T12:42:43.550687]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-27T12:42:43.663113] ⏳ Client connecting: _Ta2DIlHWt4qAWgiAAAH
+[2026-07-27T12:42:43.664122]  Transport accepted: User 1 (SID: _Ta2DIlHWt4qAWgiAAAH)
+[2026-07-27T12:42:43.712281]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-30T17:11:43.612036] ⏳ Client connecting: Qoe0Z9lTYhLiby9JAAAD
+[2026-07-30T17:11:43.613164]  Transport accepted: User 1 (SID: Qoe0Z9lTYhLiby9JAAAD)
+[2026-07-30T17:11:43.785194] ⏳ Client connecting: HupkQBsTLV769tWhAAAE
+[2026-07-30T17:11:43.786195]  Transport accepted: User 1 (SID: HupkQBsTLV769tWhAAAE)
+[2026-07-30T17:11:43.789195] ⏳ Client connecting: kvV6WqolmNz8X9CnAAAF
+[2026-07-30T17:11:43.790705]  Transport accepted: User 1 (SID: kvV6WqolmNz8X9CnAAAF)
+[2026-07-30T17:11:43.799230]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-30T17:11:43.838954]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-30T17:11:43.844984]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-30T17:11:43.875717] ⏳ Client connecting: KnfDb2-f40L4xGBVAAAH
+[2026-07-30T17:11:43.876712]  Transport accepted: User 1 (SID: KnfDb2-f40L4xGBVAAAH)
+[2026-07-30T17:11:43.920360]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-30T17:15:30.262669] ⏳ Client connecting: YdDNPBqZwPIDSw3rAAAJ
+[2026-07-30T17:15:30.263667]  Transport accepted: User 1 (SID: YdDNPBqZwPIDSw3rAAAJ)
+[2026-07-30T17:15:30.298232]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T08:49:01.744289] ⏳ Client connecting: 4JLynlPEjdX-wVITAAAD
+[2026-07-31T08:49:01.745296]  Transport accepted: User 1 (SID: 4JLynlPEjdX-wVITAAAD)
+[2026-07-31T08:49:01.748303] ⏳ Client connecting: Zn8QKSiWt0U2wqGaAAAE
+[2026-07-31T08:49:01.749304]  Transport accepted: User 1 (SID: Zn8QKSiWt0U2wqGaAAAE)
+[2026-07-31T08:49:01.751814] ⏳ Client connecting: M-51xU7M4TUwEFrNAAAF
+[2026-07-31T08:49:01.752823]  Transport accepted: User 1 (SID: M-51xU7M4TUwEFrNAAAF)
+[2026-07-31T08:49:01.802411]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T08:49:01.814661]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T08:49:01.819169]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T08:49:02.050050] ⏳ Client connecting: Y5yfPyuq4bSKRYV5AAAH
+[2026-07-31T08:49:02.051051]  Transport accepted: User 1 (SID: Y5yfPyuq4bSKRYV5AAAH)
+[2026-07-31T08:49:02.090846]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T08:49:12.547294] ⏳ Client connecting: i92FAP4YqefIGsLLAAAJ
+[2026-07-31T08:49:12.548296]  Transport accepted: User 1 (SID: i92FAP4YqefIGsLLAAAJ)
+[2026-07-31T08:49:12.572094]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T10:08:59.616016] ⏳ Client connecting: jrnyc9ZRl_PnXCTqAAAD
+[2026-07-31T10:08:59.617015]  Transport accepted: User 1 (SID: jrnyc9ZRl_PnXCTqAAAD)
+[2026-07-31T10:08:59.620534] ⏳ Client connecting: sgQsDDp3h3SfrdTQAAAE
+[2026-07-31T10:08:59.623051]  Transport accepted: User 1 (SID: sgQsDDp3h3SfrdTQAAAE)
+[2026-07-31T10:08:59.634579] ⏳ Client connecting: 4hNqmKkhb5lRC56mAAAF
+[2026-07-31T10:08:59.634579]  Transport accepted: User 1 (SID: 4hNqmKkhb5lRC56mAAAF)
+[2026-07-31T10:08:59.719532]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T10:08:59.725045]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T10:08:59.731568]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T10:08:59.916889] ⏳ Client connecting: -2JllLWpAPECVkEIAAAH
+[2026-07-31T10:08:59.918399]  Transport accepted: User 1 (SID: -2JllLWpAPECVkEIAAAH)
+[2026-07-31T10:08:59.934584]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T12:35:49.009809] ⏳ Client connecting: BeBZJWxSF9GNmK5UAAAD
+[2026-07-31T12:35:49.010808]  Transport accepted: User 1 (SID: BeBZJWxSF9GNmK5UAAAD)
+[2026-07-31T12:35:49.017330] ⏳ Client connecting: To9Wy7M2yt3Qerv8AAAE
+[2026-07-31T12:35:49.018331]  Transport accepted: User 1 (SID: To9Wy7M2yt3Qerv8AAAE)
+[2026-07-31T12:35:49.038388] ⏳ Client connecting: kEK0df6PZOeH5FoOAAAF
+[2026-07-31T12:35:49.040387]  Transport accepted: User 1 (SID: kEK0df6PZOeH5FoOAAAF)
+[2026-07-31T12:35:49.110065]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T12:35:49.123913]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T12:35:49.135115]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T12:35:49.333215] ⏳ Client connecting: qqO6QvTIuTolCyi1AAAH
+[2026-07-31T12:35:49.334216]  Transport accepted: User 1 (SID: qqO6QvTIuTolCyi1AAAH)
+[2026-07-31T12:35:49.359610]  ✅ Admin 1 joined admin_room, admin_1
+[2026-07-31T13:00:59.951764] ⏳ Client connecting: 3mQ1zSnVBQQXGt0FAAAA
+[2026-07-31T13:00:59.951764] ⏳ Client connecting: nuI75b9mMQ461K-gAAAB
+[2026-07-31T13:01:50.032011] ⏳ Client connecting: 9TuNBEKNPYQwB4S2AAAA
+[2026-07-31T13:01:50.033008] ⏳ Client connecting: iUiiCO0-xcTZm0XIAAAB
+[2026-07-31T13:01:50.034012]  Transport accepted: User 1 (SID: iUiiCO0-xcTZm0XIAAAB)
+[2026-07-31T13:02:00.267159] ⏳ Client connecting: YvITmoeywvr75-DBAAAA
+[2026-07-31T13:02:00.267159] ⏳ Client connecting: V5XAkNAU1cN9AaxLAAAB
+[2026-07-31T13:02:00.268158]  Transport accepted: User 1 (SID: V5XAkNAU1cN9AaxLAAAB)
+[2026-07-31T13:02:01.279338] ⏳ Client connecting: dZKqhv04YEHbRD3NAAAC
+[2026-07-31T13:02:01.280338] ⏳ Client connecting: 1tmfF1-Nbc3Wo1m_AAAD
+[2026-07-31T13:02:01.280338]  Transport accepted: User 4 (SID: 1tmfF1-Nbc3Wo1m_AAAD)
+[2026-08-02T12:25:09.353293] ⏳ Client connecting: cpqDSzD16bs759w3AAAD
+[2026-08-02T12:25:09.354292]  Transport accepted: User 1 (SID: cpqDSzD16bs759w3AAAD)
+[2026-08-02T12:25:09.366816] ⏳ Client connecting: y_dnNgD8BH0aCikOAAAE
+[2026-08-02T12:25:09.368323]  Transport accepted: User 1 (SID: y_dnNgD8BH0aCikOAAAE)
+[2026-08-02T12:25:09.373855] ⏳ Client connecting: rrvJFgNsRSRMgzg2AAAF
+[2026-08-02T12:25:09.374855]  Transport accepted: User 1 (SID: rrvJFgNsRSRMgzg2AAAF)
+[2026-08-02T12:25:09.471220]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:25:09.479237]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:25:09.490783]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:25:09.607142] ⏳ Client connecting: aC3AOb2Xgn7kfJo7AAAH
+[2026-08-02T12:25:09.607142]  Transport accepted: User 1 (SID: aC3AOb2Xgn7kfJo7AAAH)
+[2026-08-02T12:25:09.660812]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:25:25.769201] ⏳ Client connecting: ubVBTohB6b-SLMkYAAAJ
+[2026-08-02T12:25:25.770201]  Transport accepted: User 1 (SID: ubVBTohB6b-SLMkYAAAJ)
+[2026-08-02T12:25:25.791268]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:27:15.146265] ⏳ Client connecting: FfPfe2Ii4EGQCP-EAAAL
+[2026-08-02T12:27:15.147272]  Transport accepted: User 1 (SID: FfPfe2Ii4EGQCP-EAAAL)
+[2026-08-02T12:27:15.201411]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:28:40.727676] ⏳ Client connecting: 1JnEm0yRQV7nMjOgAAAN
+[2026-08-02T12:28:40.728686]  Transport accepted: User 1 (SID: 1JnEm0yRQV7nMjOgAAAN)
+[2026-08-02T12:28:40.740919]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:41.840570] ⏳ Client connecting: ksghG_gvopMbl2HpAAAS
+[2026-08-02T12:33:41.841566]  Transport accepted: User 1 (SID: ksghG_gvopMbl2HpAAAS)
+[2026-08-02T12:33:41.845565] ⏳ Client connecting: e4bA4gSFd57R4tzLAAAT
+[2026-08-02T12:33:41.845565]  Transport accepted: User 1 (SID: e4bA4gSFd57R4tzLAAAT)
+[2026-08-02T12:33:41.849602] ⏳ Client connecting: R7otIlA6dsfeZfYyAAAU
+[2026-08-02T12:33:41.850602]  Transport accepted: User 1 (SID: R7otIlA6dsfeZfYyAAAU)
+[2026-08-02T12:33:41.853599] ⏳ Client connecting: JzUgHY7wR-AmZ5hYAAAV
+[2026-08-02T12:33:41.854599]  Transport accepted: User 1 (SID: JzUgHY7wR-AmZ5hYAAAV)
+[2026-08-02T12:33:41.870659]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:41.873661]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:41.878176]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:41.893210]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:52.374558] ⏳ Client connecting: vYXnZhmwbprrf8gxAAAZ
+[2026-08-02T12:33:52.375553]  Transport accepted: User 1 (SID: vYXnZhmwbprrf8gxAAAZ)
+[2026-08-02T12:33:52.378917] ⏳ Client connecting: wwZQB5nT8gauW2DBAAAa
+[2026-08-02T12:33:52.378917]  Transport accepted: User 1 (SID: wwZQB5nT8gauW2DBAAAa)
+[2026-08-02T12:33:52.383430] ⏳ Client connecting: No4t0LvhRRxJa3QmAAAb
+[2026-08-02T12:33:52.383430]  Transport accepted: User 1 (SID: No4t0LvhRRxJa3QmAAAb)
+[2026-08-02T12:33:52.419208]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:52.423203]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:52.425203]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T12:33:52.497342] ⏳ Client connecting: 6XeeD4u-KxJ66m8oAAAd
+[2026-08-02T12:33:52.497847]  Transport accepted: User 1 (SID: 6XeeD4u-KxJ66m8oAAAd)
+[2026-08-02T12:33:52.542510]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:55:35.022574] ⏳ Client connecting: 3gtspBEVl2YjmU7oAAAh
+[2026-08-02T17:55:35.024571]  Transport accepted: User 1 (SID: 3gtspBEVl2YjmU7oAAAh)
+[2026-08-02T17:55:35.028084] ⏳ Client connecting: GRI2iQYc7amWomAhAAAi
+[2026-08-02T17:55:35.028084]  Transport accepted: User 1 (SID: GRI2iQYc7amWomAhAAAi)
+[2026-08-02T17:55:35.049244] ⏳ Client connecting: YEhSMnZjcgzSgI7rAAAj
+[2026-08-02T17:55:35.049244]  Transport accepted: User 1 (SID: YEhSMnZjcgzSgI7rAAAj)
+[2026-08-02T17:55:35.096265]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:55:35.104297]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:55:35.109700]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:55:35.325659] ⏳ Client connecting: MNutw9sWU7JqYDycAAAl
+[2026-08-02T17:55:35.325659]  Transport accepted: User 1 (SID: MNutw9sWU7JqYDycAAAl)
+[2026-08-02T17:55:35.361822]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:55:38.243174] ⏳ Client connecting: RYTpwyPkV4y1V06JAAAn
+[2026-08-02T17:55:38.245699]  Transport accepted: User 1 (SID: RYTpwyPkV4y1V06JAAAn)
+[2026-08-02T17:55:38.264310]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:56:00.790154] ⏳ Client connecting: Ziaj5WMJT5DkLqAOAAAp
+[2026-08-02T17:56:00.791162]  Transport accepted: User 1 (SID: Ziaj5WMJT5DkLqAOAAAp)
+[2026-08-02T17:56:00.803678]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:57:01.819852] ⏳ Client connecting: 6SJIbRdp1q-ZBYxjAAAu
+[2026-08-02T17:57:01.819852]  Transport accepted: User 1 (SID: 6SJIbRdp1q-ZBYxjAAAu)
+[2026-08-02T17:57:01.824362] ⏳ Client connecting: bB8cBAUPB7rpgvjXAAAv
+[2026-08-02T17:57:01.825362]  Transport accepted: User 1 (SID: bB8cBAUPB7rpgvjXAAAv)
+[2026-08-02T17:57:01.849445] ⏳ Client connecting: UFOQ6aHVp2bEt4-5AAAw
+[2026-08-02T17:57:01.850449]  Transport accepted: User 1 (SID: UFOQ6aHVp2bEt4-5AAAw)
+[2026-08-02T17:57:01.853452] ⏳ Client connecting: 7kJ1AuKd1QyqwhUuAAAx
+[2026-08-02T17:57:01.854450]  Transport accepted: User 1 (SID: 7kJ1AuKd1QyqwhUuAAAx)
+[2026-08-02T17:57:01.869347]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:57:01.876385]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:57:01.899463]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:57:01.909495]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:58:26.122938] ⏳ Client connecting: cVPvZB3_7ekVh3uhAAAz
+[2026-08-02T17:58:26.123945]  Transport accepted: User 1 (SID: cVPvZB3_7ekVh3uhAAAz)
+[2026-08-02T17:58:26.138655]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-02T17:58:49.092526] ⏳ Client connecting: KQwfBj9hdcj4sCO6AAAA
+[2026-08-02T20:00:52.481496] ⏳ Client connecting: jWyCot7XJi1MKPlkAAAA
+[2026-08-02T20:11:02.239343] ⏳ Client connecting: YVvJmkIpYCBaqb_dAAAA
+[2026-08-02T20:11:02.240342]  Transport accepted: User 4 (SID: YVvJmkIpYCBaqb_dAAAA)
+[2026-08-02T20:11:02.242342] ⏳ Client connecting: KQpqq08heoE4ITIKAAAB
+[2026-08-02T20:11:02.243342]  Transport accepted: User 4 (SID: KQpqq08heoE4ITIKAAAB)
+[2026-08-02T20:11:02.243848]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: KQpqq08heoE4ITIKAAAB)
+[2026-08-02T20:11:02.246856] ⏳ Client connecting: 4sVcDzGUJc_S0HjqAAAC
+[2026-08-02T20:11:02.246856]  Transport accepted: User 4 (SID: 4sVcDzGUJc_S0HjqAAAC)
+[2026-08-02T20:11:02.249855]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T20:11:02.252039] ⏳ Client connecting: dOeJ4OnflK44YcMqAAAD
+[2026-08-02T20:11:02.253543]  Transport accepted: User 4 (SID: dOeJ4OnflK44YcMqAAAD)
+[2026-08-02T20:11:02.589678] ⏳ Client connecting: 1wMa-DggeJLaeV1VAAAE
+[2026-08-02T20:11:02.589678]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: 1wMa-DggeJLaeV1VAAAE)
+[2026-08-02T20:11:02.596190] ⏳ Client connecting: 6JUCbJL-3j3k1WSvAAAF
+[2026-08-02T20:11:15.698061] ⏳ Client connecting: 1tO3_xJCCEF4oEeSAAAA
+[2026-08-02T20:11:15.699063]  Transport accepted: User 4 (SID: 1tO3_xJCCEF4oEeSAAAA)
+[2026-08-02T20:11:16.027534] ⏳ Client connecting: VsyCkGZZmXttmWXLAAAB
+[2026-08-02T20:11:16.027534]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: VsyCkGZZmXttmWXLAAAB)
+[2026-08-02T20:11:37.686034] ⏳ Client connecting: vGlqQkg2Hl264N48AAAA
+[2026-08-02T20:11:37.687034]  Transport accepted: User 4 (SID: vGlqQkg2Hl264N48AAAA)
+[2026-08-02T20:11:37.692032] ⏳ Client connecting: tw2XDl-kLWpR4kABAAAB
+[2026-08-02T20:11:37.693030]  Transport accepted: User 4 (SID: tw2XDl-kLWpR4kABAAAB)
+[2026-08-02T20:11:37.694541]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: tw2XDl-kLWpR4kABAAAB)
+[2026-08-02T20:11:37.696551] ⏳ Client connecting: fu1ZcNl5GMLqWYmRAAAC
+[2026-08-02T20:11:37.698060]  Transport accepted: User 4 (SID: fu1ZcNl5GMLqWYmRAAAC)
+[2026-08-02T20:11:37.702070]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T20:11:37.703071] ⏳ Client connecting: tlsah6KjY755vCpmAAAD
+[2026-08-02T20:11:37.704580]  Transport accepted: User 4 (SID: tlsah6KjY755vCpmAAAD)
+[2026-08-02T20:11:38.040841] ⏳ Client connecting: Rmy5BuN_YRZyvwHEAAAE
+[2026-08-02T20:11:38.041850]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: Rmy5BuN_YRZyvwHEAAAE)
+[2026-08-02T20:11:38.048861] ⏳ Client connecting: bFyDl6vgnAqCKFTaAAAF
+[2026-08-02T21:05:08.297821] ⏳ Client connecting: lz7XdrdCPKgAak0pAAAA
+[2026-08-02T21:05:08.298827]  Transport accepted: User 4 (SID: lz7XdrdCPKgAak0pAAAA)
+[2026-08-02T21:05:08.303335] ⏳ Client connecting: XZthKoWGxpm0lyAwAAAB
+[2026-08-02T21:05:08.303335]  Transport accepted: User 4 (SID: XZthKoWGxpm0lyAwAAAB)
+[2026-08-02T21:05:08.304346]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: XZthKoWGxpm0lyAwAAAB)
+[2026-08-02T21:05:08.306343] ⏳ Client connecting: zD9eSTBqVD_6OI-YAAAC
+[2026-08-02T21:05:08.307346]  Transport accepted: User 4 (SID: zD9eSTBqVD_6OI-YAAAC)
+[2026-08-02T21:05:08.311862]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:05:08.314862] ⏳ Client connecting: PilbbQAqmzNtAdbiAAAD
+[2026-08-02T21:05:08.314862]  Transport accepted: User 4 (SID: PilbbQAqmzNtAdbiAAAD)
+[2026-08-02T21:05:08.637487] ⏳ Client connecting: hUl50wGu1Xom_NP-AAAE
+[2026-08-02T21:05:08.637487]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: hUl50wGu1Xom_NP-AAAE)
+[2026-08-02T21:05:08.638497] ⏳ Client connecting: PYvxBaj02kyDSoGKAAAF
+[2026-08-02T21:05:08.638497]  Transport accepted: User 4 (SID: PYvxBaj02kyDSoGKAAAF)
+[2026-08-02T21:05:08.641497]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:05:08.643495] ⏳ Client connecting: 1r6MMNIZp5b45UBSAAAG
+[2026-08-02T21:05:20.927848] ⏳ Client connecting: ynGibQ7-AgPEZISLAAAA
+[2026-08-02T21:05:20.928858]  Transport accepted: User 4 (SID: ynGibQ7-AgPEZISLAAAA)
+[2026-08-02T21:05:57.226310] ⏳ Client connecting: JzCviF8CPHUHCx4hAAAA
+[2026-08-02T21:05:57.226310]  Transport accepted: User 4 (SID: JzCviF8CPHUHCx4hAAAA)
+[2026-08-02T21:06:55.438499] ⏳ Client connecting: 4y62ZCPP5i1leoqRAAAA
+[2026-08-02T21:06:55.439498]  Transport accepted: User 4 (SID: 4y62ZCPP5i1leoqRAAAA)
+[2026-08-02T21:06:55.444014] ⏳ Client connecting: B9xL8GSidh6VZ98oAAAB
+[2026-08-02T21:06:55.445014]  Transport accepted: User 4 (SID: B9xL8GSidh6VZ98oAAAB)
+[2026-08-02T21:06:55.446014]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: B9xL8GSidh6VZ98oAAAB)
+[2026-08-02T21:06:55.448014] ⏳ Client connecting: z2WDs3i36jdB_gaYAAAC
+[2026-08-02T21:06:55.448014]  Transport accepted: User 4 (SID: z2WDs3i36jdB_gaYAAAC)
+[2026-08-02T21:06:55.453079]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:06:55.456079] ⏳ Client connecting: jC5ttW15rAn-GNVUAAAD
+[2026-08-02T21:06:55.457080]  Transport accepted: User 4 (SID: jC5ttW15rAn-GNVUAAAD)
+[2026-08-02T21:06:55.460080] ⏳ Client connecting: 2crHPw0kILoIDhNDAAAE
+[2026-08-02T21:06:55.461080]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: 2crHPw0kILoIDhNDAAAE)
+[2026-08-02T21:06:55.461080] ⏳ Client connecting: WzNadb8uLkqi13sAAAAF
+[2026-08-02T21:06:55.461080]  Transport accepted: User 4 (SID: WzNadb8uLkqi13sAAAAF)
+[2026-08-02T21:06:55.464402]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:06:55.465910] ⏳ Client connecting: mUICivTTph4rOWkOAAAG
+[2026-08-02T21:07:12.267470] ⏳ Client connecting: 6FTdGG5f_yNWTtgTAAAA
+[2026-08-02T21:07:12.268470]  Transport accepted: User 4 (SID: 6FTdGG5f_yNWTtgTAAAA)
+[2026-08-02T21:07:12.271470] ⏳ Client connecting: 2FboW64KU61MnKIBAAAB
+[2026-08-02T21:07:12.271975]  Transport accepted: User 4 (SID: 2FboW64KU61MnKIBAAAB)
+[2026-08-02T21:07:12.271975]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: 2FboW64KU61MnKIBAAAB)
+[2026-08-02T21:07:12.273988] ⏳ Client connecting: udbwsoIyYwwLbt8VAAAC
+[2026-08-02T21:07:12.274987]  Transport accepted: User 4 (SID: udbwsoIyYwwLbt8VAAAC)
+[2026-08-02T21:07:12.276988]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:07:12.279987] ⏳ Client connecting: Ax7D14K0fyLzD1jIAAAD
+[2026-08-02T21:07:12.279987]  Transport accepted: User 4 (SID: Ax7D14K0fyLzD1jIAAAD)
+[2026-08-02T21:07:12.285507] ⏳ Client connecting: znJBku519kez39P-AAAE
+[2026-08-02T21:07:12.285507]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: znJBku519kez39P-AAAE)
+[2026-08-02T21:07:12.286505] ⏳ Client connecting: 4x8pA2PvpO6v7yEjAAAF
+[2026-08-02T21:07:12.286505]  Transport accepted: User 4 (SID: 4x8pA2PvpO6v7yEjAAAF)
+[2026-08-02T21:07:12.289505]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:07:12.291505] ⏳ Client connecting: XmDWgC6xmckzK8eBAAAG
+[2026-08-02T21:12:12.594906] ⏳ Client connecting: 8agXGGgv2xTFtdTHAAAA
+[2026-08-02T21:12:12.594906]  Transport accepted: User 4 (SID: 8agXGGgv2xTFtdTHAAAA)
+[2026-08-02T21:12:12.597907] ⏳ Client connecting: wuTCyD3RNxLVmayfAAAB
+[2026-08-02T21:12:12.597907]  Transport accepted: User 4 (SID: wuTCyD3RNxLVmayfAAAB)
+[2026-08-02T21:12:12.598907]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: wuTCyD3RNxLVmayfAAAB)
+[2026-08-02T21:12:12.600905] ⏳ Client connecting: UvVlhjbcsKppjG7uAAAC
+[2026-08-02T21:12:12.601410]  Transport accepted: User 4 (SID: UvVlhjbcsKppjG7uAAAC)
+[2026-08-02T21:12:12.603923]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:12:12.605428] ⏳ Client connecting: 94tCr8lp4v32DRwbAAAD
+[2026-08-02T21:12:12.606435]  Transport accepted: User 4 (SID: 94tCr8lp4v32DRwbAAAD)
+[2026-08-02T21:12:12.610943] ⏳ Client connecting: kCOre7m_GH-4V3TkAAAE
+[2026-08-02T21:12:12.610943]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: kCOre7m_GH-4V3TkAAAE)
+[2026-08-02T21:12:12.611950] ⏳ Client connecting: IsNoXqhU6Xv2JQZNAAAF
+[2026-08-02T21:12:12.611950]  Transport accepted: User 4 (SID: IsNoXqhU6Xv2JQZNAAAF)
+[2026-08-02T21:12:12.613950]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-02T21:12:12.616948] ⏳ Client connecting: 2XmZguyB7tlMCqOCAAAG
+[2026-08-03T09:55:53.656990] ⏳ Client connecting: ZXAy-uRUPpd4njbzAAAA
+[2026-08-03T09:55:53.656990]  Transport accepted: User 4 (SID: ZXAy-uRUPpd4njbzAAAA)
+[2026-08-03T09:55:53.661993] ⏳ Client connecting: UcZrV4w4-__SpplDAAAB
+[2026-08-03T09:55:53.662993]  Transport accepted: User 4 (SID: UcZrV4w4-__SpplDAAAB)
+[2026-08-03T09:55:53.663993]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: UcZrV4w4-__SpplDAAAB)
+[2026-08-03T09:55:53.667992] ⏳ Client connecting: I5mnzXvJFnXObb4gAAAC
+[2026-08-03T09:55:53.668993]  Transport accepted: User 4 (SID: I5mnzXvJFnXObb4gAAAC)
+[2026-08-03T09:55:53.672993]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-03T09:55:53.676993] ⏳ Client connecting: CrEk-4YwT5ErQeK8AAAD
+[2026-08-03T09:55:53.676993]  Transport accepted: User 4 (SID: CrEk-4YwT5ErQeK8AAAD)
+[2026-08-03T09:55:53.683992] ⏳ Client connecting: 0Dcd1KMsrzq5oqoRAAAE
+[2026-08-03T09:55:53.684995]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: 0Dcd1KMsrzq5oqoRAAAE)
+[2026-08-03T09:55:53.685993] ⏳ Client connecting: VDhigN_My9KJ4m5uAAAF
+[2026-08-03T09:55:53.685993]  Transport accepted: User 4 (SID: VDhigN_My9KJ4m5uAAAF)
+[2026-08-03T09:55:53.689992]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-03T09:55:53.693993] ⏳ Client connecting: 5IZROplGaRDujP6dAAAG
+[2026-08-03T10:11:26.186704] ⏳ Client connecting: IzqfBeR5gCfWsTW_AAAA
+[2026-08-03T10:11:26.187704]  Transport accepted: User 4 (SID: IzqfBeR5gCfWsTW_AAAA)
+[2026-08-03T10:11:26.191704] ⏳ Client connecting: s4PRWZamWO7DiPrrAAAB
+[2026-08-03T10:11:26.192704]  Transport accepted: User 4 (SID: s4PRWZamWO7DiPrrAAAB)
+[2026-08-03T10:11:26.192704]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: s4PRWZamWO7DiPrrAAAB)
+[2026-08-03T10:11:26.196705] ⏳ Client connecting: ZyWZK5nvFPCIW8S3AAAC
+[2026-08-03T10:11:26.197704]  Transport accepted: User 4 (SID: ZyWZK5nvFPCIW8S3AAAC)
+[2026-08-03T10:11:26.202705]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-03T10:11:26.207705] ⏳ Client connecting: LR1fGfZHoH0yv4ZbAAAD
+[2026-08-03T10:11:26.207705]  Transport accepted: User 4 (SID: LR1fGfZHoH0yv4ZbAAAD)
+[2026-08-03T10:11:26.216705] ⏳ Client connecting: KSOQtZuaLjYcq3hAAAAE
+[2026-08-03T10:11:26.217704]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: KSOQtZuaLjYcq3hAAAAE)
+[2026-08-03T10:11:26.218705] ⏳ Client connecting: cZfkUSPSXKSMtaXUAAAF
+[2026-08-03T10:11:26.218705]  Transport accepted: User 4 (SID: cZfkUSPSXKSMtaXUAAAF)
+[2026-08-03T10:11:26.222704]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-03T10:11:26.225704] ⏳ Client connecting: LDwLWOGl7I35ypMTAAAG
+[2026-08-04T16:22:06.914728] ⏳ Client connecting: _IvHQM14-b9NgcM6AAAA
+[2026-08-04T16:22:06.915728]  Transport accepted: User 4 (SID: _IvHQM14-b9NgcM6AAAA)
+[2026-08-04T16:22:06.927726] ⏳ Client connecting: GKdTL46B7vFyvw6IAAAB
+[2026-08-04T16:22:06.928728]  Transport accepted: User 4 (SID: GKdTL46B7vFyvw6IAAAB)
+[2026-08-04T16:22:06.932727]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: GKdTL46B7vFyvw6IAAAB)
+[2026-08-04T16:22:06.939727] ⏳ Client connecting: JpjaZawclWQ5QDtcAAAC
+[2026-08-04T16:22:06.940727]  Transport accepted: User 4 (SID: JpjaZawclWQ5QDtcAAAC)
+[2026-08-04T16:22:06.948729]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T16:22:06.956727] ⏳ Client connecting: pMDX2pBUtb8d5sdnAAAD
+[2026-08-04T16:22:06.957729]  Transport accepted: User 4 (SID: pMDX2pBUtb8d5sdnAAAD)
+[2026-08-04T16:22:06.970734] ⏳ Client connecting: 0vYMcNQb81UBsHNzAAAE
+[2026-08-04T16:22:06.971734]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: 0vYMcNQb81UBsHNzAAAE)
+[2026-08-04T16:22:06.974734] ⏳ Client connecting: G04y8pt64UgpvkWlAAAF
+[2026-08-04T16:22:06.975733]  Transport accepted: User 4 (SID: G04y8pt64UgpvkWlAAAF)
+[2026-08-04T16:22:06.981243]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T16:22:06.988251] ⏳ Client connecting: 3ytG5gvPRfazMxLwAAAG
+[2026-08-04T16:33:40.766767] ⏳ Client connecting: RNYTnYO5_mVJx-aKAAAA
+[2026-08-04T16:33:40.766767]  Transport accepted: User 4 (SID: RNYTnYO5_mVJx-aKAAAA)
+[2026-08-04T16:33:40.771767] ⏳ Client connecting: OawJmrHm-mrJVd2xAAAB
+[2026-08-04T16:33:40.772767]  Transport accepted: User 4 (SID: OawJmrHm-mrJVd2xAAAB)
+[2026-08-04T16:33:40.773768]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: OawJmrHm-mrJVd2xAAAB)
+[2026-08-04T16:33:40.777767] ⏳ Client connecting: cmQN8vHEtjNkfG0lAAAC
+[2026-08-04T16:33:40.778767]  Transport accepted: User 4 (SID: cmQN8vHEtjNkfG0lAAAC)
+[2026-08-04T16:33:40.783764]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T16:33:40.787763] ⏳ Client connecting: aKh3RI5vGjybniDwAAAD
+[2026-08-04T16:33:40.787763]  Transport accepted: User 4 (SID: aKh3RI5vGjybniDwAAAD)
+[2026-08-04T16:33:40.794768] ⏳ Client connecting: kfl0mkkAsYQn1wSOAAAE
+[2026-08-04T16:33:40.795765]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: kfl0mkkAsYQn1wSOAAAE)
+[2026-08-04T16:33:40.796765] ⏳ Client connecting: p2clcX-N4JAGJ3-zAAAF
+[2026-08-04T16:33:40.796765]  Transport accepted: User 4 (SID: p2clcX-N4JAGJ3-zAAAF)
+[2026-08-04T16:33:40.800763]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T16:33:40.804765] ⏳ Client connecting: 0IzBxsDb2vm_U_nnAAAG
+[2026-08-04T16:52:56.470974] ⏳ Client connecting: ZAVV_WAmZYqV8ZOUAAAA
+[2026-08-04T16:52:56.470974]  Transport accepted: User 4 (SID: ZAVV_WAmZYqV8ZOUAAAA)
+[2026-08-04T16:52:56.475487] ⏳ Client connecting: nE-RQrcDppt_EFs8AAAB
+[2026-08-04T16:52:56.476487]  Transport accepted: User 4 (SID: nE-RQrcDppt_EFs8AAAB)
+[2026-08-04T16:52:56.477487]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: nE-RQrcDppt_EFs8AAAB)
+[2026-08-04T16:52:56.480487] ⏳ Client connecting: Dq3FzFS-fOo819tLAAAC
+[2026-08-04T16:52:56.480487]  Transport accepted: User 4 (SID: Dq3FzFS-fOo819tLAAAC)
+[2026-08-04T16:52:56.483487]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T16:52:56.487487] ⏳ Client connecting: 3k37RlU1Umgz-D-kAAAD
+[2026-08-04T16:52:56.488487]  Transport accepted: User 4 (SID: 3k37RlU1Umgz-D-kAAAD)
+[2026-08-04T16:52:56.493487] ⏳ Client connecting: 00ddMs8ImW-0UYtXAAAE
+[2026-08-04T16:52:56.494487]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: 00ddMs8ImW-0UYtXAAAE)
+[2026-08-04T16:52:56.495487] ⏳ Client connecting: eBY3gtDoVJShkMWjAAAF
+[2026-08-04T16:52:56.495487]  Transport accepted: User 4 (SID: eBY3gtDoVJShkMWjAAAF)
+[2026-08-04T16:52:56.498487]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T16:52:56.501493] ⏳ Client connecting: EjDOup8iIDaQqJjKAAAG
+[2026-08-04T17:12:48.400208] ⏳ Client connecting: 4jIuh_KpEBikzlVPAAAA
+[2026-08-04T17:12:48.400208]  Transport accepted: User 4 (SID: 4jIuh_KpEBikzlVPAAAA)
+[2026-08-04T17:12:48.404716] ⏳ Client connecting: -eNFgm7lGgkVSThGAAAB
+[2026-08-04T17:12:48.404716]  Transport accepted: User 4 (SID: -eNFgm7lGgkVSThGAAAB)
+[2026-08-04T17:12:48.405715]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: -eNFgm7lGgkVSThGAAAB)
+[2026-08-04T17:12:48.409714] ⏳ Client connecting: zqq-9pAzM3MStik9AAAC
+[2026-08-04T17:12:48.409714]  Transport accepted: User 4 (SID: zqq-9pAzM3MStik9AAAC)
+[2026-08-04T17:12:48.413223]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T17:12:48.416223] ⏳ Client connecting: qs3W_iQYqVVWtxuiAAAD
+[2026-08-04T17:12:48.417224]  Transport accepted: User 4 (SID: qs3W_iQYqVVWtxuiAAAD)
+[2026-08-04T17:12:48.423729] ⏳ Client connecting: VMRqHnUvmOjUU-J5AAAE
+[2026-08-04T17:12:48.423729]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: VMRqHnUvmOjUU-J5AAAE)
+[2026-08-04T17:12:48.424730] ⏳ Client connecting: RkwyG9tm18eO4ROMAAAF
+[2026-08-04T17:12:48.425729]  Transport accepted: User 4 (SID: RkwyG9tm18eO4ROMAAAF)
+[2026-08-04T17:12:48.428732]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T17:12:48.432232] ⏳ Client connecting: xoPRX7UQ-zfXIvy0AAAG
+[2026-08-04T17:27:42.500719] ⏳ Client connecting: tycqmO3ATXCgH3CVAAAA
+[2026-08-04T17:27:42.501246]  Transport accepted: User 4 (SID: tycqmO3ATXCgH3CVAAAA)
+[2026-08-04T17:27:42.505980] ⏳ Client connecting: LIuq-3wm7hYT1WMUAAAB
+[2026-08-04T17:27:42.506523]  Transport accepted: User 4 (SID: LIuq-3wm7hYT1WMUAAAB)
+[2026-08-04T17:27:42.507576]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: LIuq-3wm7hYT1WMUAAAB)
+[2026-08-04T17:27:42.511127] ⏳ Client connecting: mE-GsxAQQXD6Fh_uAAAC
+[2026-08-04T17:27:42.512125]  Transport accepted: User 4 (SID: mE-GsxAQQXD6Fh_uAAAC)
+[2026-08-04T17:27:42.516128]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T17:27:42.520649] ⏳ Client connecting: ofqP0khK_th90ABDAAAD
+[2026-08-04T17:27:42.520649]  Transport accepted: User 4 (SID: ofqP0khK_th90ABDAAAD)
+[2026-08-04T17:27:42.527649] ⏳ Client connecting: 842IiCmptuDBP-YFAAAE
+[2026-08-04T17:27:42.528651]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: 842IiCmptuDBP-YFAAAE)
+[2026-08-04T17:27:42.530702] ⏳ Client connecting: Lf_PJEjIDXhtzgQRAAAF
+[2026-08-04T17:27:42.530702]  Transport accepted: User 4 (SID: Lf_PJEjIDXhtzgQRAAAF)
+[2026-08-04T17:27:42.534702]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-04T17:27:42.537702] ⏳ Client connecting: Ba-I87uNO-bic25-AAAG
+[2026-08-05T10:40:21.419258] ⏳ Client connecting: WUn_DriM5XxHqIHmAAAA
+[2026-08-05T10:40:21.419258]  Transport accepted: User 4 (SID: WUn_DriM5XxHqIHmAAAA)
+[2026-08-05T10:40:21.426511] ⏳ Client connecting: Y6kaYUT6B04YzaJ6AAAB
+[2026-08-05T10:40:21.426511]  Transport accepted: User 4 (SID: Y6kaYUT6B04YzaJ6AAAB)
+[2026-08-05T10:40:21.426511]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: Y6kaYUT6B04YzaJ6AAAB)
+[2026-08-05T10:40:21.435683] ⏳ Client connecting: vo0CKs5BGt2cDOUrAAAC
+[2026-08-05T10:40:21.435683]  Transport accepted: User 4 (SID: vo0CKs5BGt2cDOUrAAAC)
+[2026-08-05T10:40:21.435683]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T10:40:21.435683] ⏳ Client connecting: _p-a0TDHIPtkoeZwAAAD
+[2026-08-05T10:40:21.435683]  Transport accepted: User 4 (SID: _p-a0TDHIPtkoeZwAAAD)
+[2026-08-05T10:40:21.435683] ⏳ Client connecting: wl-A3as3D4kZMfYZAAAE
+[2026-08-05T10:40:21.435683]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: wl-A3as3D4kZMfYZAAAE)
+[2026-08-05T10:40:21.435683] ⏳ Client connecting: WOP4Bg1Lk5v_XsurAAAF
+[2026-08-05T10:40:21.450988]  Transport accepted: User 4 (SID: WOP4Bg1Lk5v_XsurAAAF)
+[2026-08-05T10:40:21.452225]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T10:40:21.452225] ⏳ Client connecting: f1rM6lZ-eIPvhae3AAAG
+[2026-08-05T12:52:56.254905] ⏳ Client connecting: obi46Y107e_Dd6mGAAAD
+[2026-08-05T12:52:56.256907]  Transport accepted: User 1 (SID: obi46Y107e_Dd6mGAAAD)
+[2026-08-05T12:52:56.260960] ⏳ Client connecting: f-Gk-f8w-hI4zG6IAAAE
+[2026-08-05T12:52:56.261969]  Transport accepted: User 1 (SID: f-Gk-f8w-hI4zG6IAAAE)
+[2026-08-05T12:52:56.422216] ⏳ Client connecting: mxg__sLFjFpaHL6nAAAF
+[2026-08-05T12:52:56.423222]  Transport accepted: User 1 (SID: mxg__sLFjFpaHL6nAAAF)
+[2026-08-05T12:52:56.458850]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T12:52:56.464921] ⏳ Client connecting: PRuEcIiDr-x7MiAsAAAH
+[2026-08-05T12:52:56.465918]  Transport accepted: User 1 (SID: PRuEcIiDr-x7MiAsAAAH)
+[2026-08-05T12:52:56.483295]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T12:52:56.489294]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T12:52:56.513909]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:11:00.375201] ⏳ Client connecting: xBfuuoyu1G_L3uGrAAAJ
+[2026-08-05T13:11:00.376202]  Transport accepted: User 4 (SID: xBfuuoyu1G_L3uGrAAAJ)
+[2026-08-05T13:11:00.480448] ⏳ Client connecting: oJLzt6AbeCCF5CnaAAAL
+[2026-08-05T13:11:00.481447]  Transport accepted: User 4 (SID: oJLzt6AbeCCF5CnaAAAL)
+[2026-08-05T13:11:00.534621]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T13:11:00.536622]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T13:11:00.678082]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T13:11:00.680191]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T13:11:01.072054] ⏳ Client connecting: tCwJIWHtKNijwXXPAAAN
+[2026-08-05T13:11:01.073053]  Transport accepted: User 4 (SID: tCwJIWHtKNijwXXPAAAN)
+[2026-08-05T13:11:01.100176]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T13:11:01.101183]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T13:13:27.834796] ⏳ Client connecting: uj8TE2c7MQS7KzZ2AAAP
+[2026-08-05T13:13:27.835795]  Transport accepted: User 3 (SID: uj8TE2c7MQS7KzZ2AAAP)
+[2026-08-05T13:13:27.872933]  ✅ Customer 3 joined customer_room, customer_3
+[2026-08-05T13:14:02.242469] ⏳ Client connecting: kQs766s213hf3oXaAAAR
+[2026-08-05T13:14:02.242990]  Transport accepted: User 1 (SID: kQs766s213hf3oXaAAAR)
+[2026-08-05T13:14:02.252520]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:28:20.001963] ⏳ Client connecting: miTJ6lftbNVTNqfAAAAT
+[2026-08-05T13:28:20.001963]  Transport accepted: User 1 (SID: miTJ6lftbNVTNqfAAAAT)
+[2026-08-05T13:28:20.023038]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:29:48.383382] ⏳ Client connecting: 7BGcx8s3C4dh0n2WAAAV
+[2026-08-05T13:29:48.384379]  Transport accepted: User 1 (SID: 7BGcx8s3C4dh0n2WAAAV)
+[2026-08-05T13:29:48.393173]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:29:53.326985] ⏳ Client connecting: TRJo_aMk_s6a2E1bAAAX
+[2026-08-05T13:29:53.327994]  Transport accepted: User 1 (SID: TRJo_aMk_s6a2E1bAAAX)
+[2026-08-05T13:29:53.338053]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:29:59.648960] ⏳ Client connecting: JuSDUISa0nyJ9kpeAAAZ
+[2026-08-05T13:29:59.648960]  Transport accepted: User 1 (SID: JuSDUISa0nyJ9kpeAAAZ)
+[2026-08-05T13:29:59.657988]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:30:07.607742] ⏳ Client connecting: SSI5WaEmCtERfzOtAAAb
+[2026-08-05T13:30:07.608738]  Transport accepted: User 1 (SID: SSI5WaEmCtERfzOtAAAb)
+[2026-08-05T13:30:07.617855]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:31:16.247350] ⏳ Client connecting: Y9dDJdyLVZpU1cbeAAAd
+[2026-08-05T13:31:16.248349]  Transport accepted: User 1 (SID: Y9dDJdyLVZpU1cbeAAAd)
+[2026-08-05T13:31:16.257688]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:31:27.902123] ⏳ Client connecting: EwyessSYuKzOVAXjAAAf
+[2026-08-05T13:31:27.903123]  Transport accepted: User 1 (SID: EwyessSYuKzOVAXjAAAf)
+[2026-08-05T13:31:27.913643]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:31:43.658461] ⏳ Client connecting: T4UUQmg-QLRP0mw9AAAh
+[2026-08-05T13:31:43.658461]  Transport accepted: User 1 (SID: T4UUQmg-QLRP0mw9AAAh)
+[2026-08-05T13:31:43.668495]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:31:55.721008] ⏳ Client connecting: 0QYlHByX9k3LwV4TAAAj
+[2026-08-05T13:31:55.722016]  Transport accepted: User 1 (SID: 0QYlHByX9k3LwV4TAAAj)
+[2026-08-05T13:31:55.733045]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:32:07.670111] ⏳ Client connecting: g7gqUA8t9d2_SPEUAAAl
+[2026-08-05T13:32:07.671111]  Transport accepted: User 1 (SID: g7gqUA8t9d2_SPEUAAAl)
+[2026-08-05T13:32:07.679390]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:32:29.233037] ⏳ Client connecting: LXrz_HlQ9D2We29JAAAn
+[2026-08-05T13:32:29.234045]  Transport accepted: User 1 (SID: LXrz_HlQ9D2We29JAAAn)
+[2026-08-05T13:32:29.243558]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:33:17.838941] ⏳ Client connecting: KDlcmEq9Vq8ZNd6fAAAp
+[2026-08-05T13:33:17.839941]  Transport accepted: User 1 (SID: KDlcmEq9Vq8ZNd6fAAAp)
+[2026-08-05T13:33:17.853515]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:39:19.787818] ⏳ Client connecting: 4RbqUa1WGdr-CwLEAAAr
+[2026-08-05T13:39:19.787818]  Transport accepted: User 1 (SID: 4RbqUa1WGdr-CwLEAAAr)
+[2026-08-05T13:39:19.847589]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T13:53:23.913431] ⏳ Client connecting: nVeEf1--M0fBCwKUAAAt
+[2026-08-05T13:53:23.914963]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: nVeEf1--M0fBCwKUAAAt)
+[2026-08-05T14:11:27.475917]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T14:11:27.475917]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:23:53.695303]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:23:53.696303]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:23:53.702421]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:23:53.702421]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:23:54.157650]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:23:54.157650]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:00.205598]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:00.206597]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:00.211601]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:00.211601]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:00.497639]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:00.497639]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:34.021942]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:34.022944]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:34.027000]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:34.027000]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:34.252874]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:34.253882]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:45.180825]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:45.180825]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:53.286006]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:53.287006]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:53.294521]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:53.295520]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:24:54.203467]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:24:54.204474]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:25:33.484799]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:25:33.485805]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:26:10.998089]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:26:10.999088]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:26:26.886989]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:26:26.886989]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:26:26.893182]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:26:26.894190]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:26:27.184078]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:26:27.184078]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:26:29.485855]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:26:29.486855]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:26:29.492379]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:26:29.492885]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:27:03.853953] ⏳ Client connecting: Lej7JmITWhQ0sypAAAAv
+[2026-08-05T18:27:03.853953]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: Lej7JmITWhQ0sypAAAAv)
+[2026-08-05T18:27:09.845050]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:27:09.846049]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:34:05.872985] ⏳ Client connecting: GjXvEc1_-dlWaP1lAAAB
+[2026-08-05T18:34:05.874377]  Transport accepted: User 4 (SID: GjXvEc1_-dlWaP1lAAAB)
+[2026-08-05T18:34:05.899054]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-05T18:34:05.900051]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-05T18:38:47.973674] ⏳ Client connecting: iHXnxkwXiuww1NALAAAF
+[2026-08-05T18:38:47.974673]  Transport accepted: User 1 (SID: iHXnxkwXiuww1NALAAAF)
+[2026-08-05T18:38:48.053540] ⏳ Client connecting: ZLHXCIFt5FEMIddnAAAG
+[2026-08-05T18:38:48.054539]  Transport accepted: User 1 (SID: ZLHXCIFt5FEMIddnAAAG)
+[2026-08-05T18:38:48.069176] ⏳ Client connecting: JQyw9TaRAF-eCDSoAAAH
+[2026-08-05T18:38:48.070177]  Transport accepted: User 1 (SID: JQyw9TaRAF-eCDSoAAAH)
+[2026-08-05T18:38:48.165020]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:38:48.174585]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:38:48.180582]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:38:48.279521] ⏳ Client connecting: IEqY8N3lOHukr56_AAAJ
+[2026-08-05T18:38:48.281523]  Transport accepted: User 1 (SID: IEqY8N3lOHukr56_AAAJ)
+[2026-08-05T18:38:48.374238]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:38:56.930103] ⏳ Client connecting: -1HfOXyLRw9m11l8AAAL
+[2026-08-05T18:38:56.930103]  Transport accepted: User 1 (SID: -1HfOXyLRw9m11l8AAAL)
+[2026-08-05T18:38:56.941753]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:39:06.178018] ⏳ Client connecting: STJTVUm6x2NxJww6AAAN
+[2026-08-05T18:39:06.179017]  Transport accepted: User 1 (SID: STJTVUm6x2NxJww6AAAN)
+[2026-08-05T18:39:06.191074]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:44:05.588434] ⏳ Client connecting: YJzuD4yvWsvIbjNcAAAP
+[2026-08-05T18:44:05.670278]  Transport accepted: User 3 (SID: YJzuD4yvWsvIbjNcAAAP)
+[2026-08-05T18:44:06.220378]  ✅ Customer 3 joined customer_room, customer_3
+[2026-08-05T18:45:45.205574] ⏳ Client connecting: zs-RD1x1ubmbHzqDAAAR
+[2026-08-05T18:45:45.206571]  Transport accepted: User 3 (SID: zs-RD1x1ubmbHzqDAAAR)
+[2026-08-05T18:45:46.233444]  ✅ Customer 3 joined customer_room, customer_3
+[2026-08-05T18:46:07.946221] ⏳ Client connecting: z9VknFxMGqvAt9BpAAAT
+[2026-08-05T18:46:07.947222]  Transport accepted: User 1 (SID: z9VknFxMGqvAt9BpAAAT)
+[2026-08-05T18:46:07.964500]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-05T18:50:15.273964] ⏳ Client connecting: ONO7oYJYHqPZqEIuAAAV
+[2026-08-05T18:50:15.274981]  Transport accepted: User 1 (SID: ONO7oYJYHqPZqEIuAAAV)
+[2026-08-05T18:50:25.874113] ⏳ Client connecting: _XG2-uknySiAzxPOAAAX
+[2026-08-05T18:50:25.875117]  ❌ Connection Rejected: Invalid or expired token - Not enough segments (SID: _XG2-uknySiAzxPOAAAX)
+[2026-08-05T18:51:24.137833] ⏳ Client connecting: _s5jE0e0b5rv4KvpAAAZ
+[2026-08-05T18:51:24.137833]  Transport accepted: User 1 (SID: _s5jE0e0b5rv4KvpAAAZ)
+[2026-08-05T18:51:48.786865] ⏳ Client connecting: LHCAeauAm0yMtX5NAAAb
+[2026-08-05T18:51:48.787870]  Transport accepted: User 1 (SID: LHCAeauAm0yMtX5NAAAb)
+[2026-08-06T06:12:04.131999] ⏳ Client connecting: LOGEm1FmpcBzKFQ1AAAA
+[2026-08-06T06:12:04.132324]  Transport accepted: User 4 (SID: LOGEm1FmpcBzKFQ1AAAA)
+[2026-08-06T06:12:04.135328] ⏳ Client connecting: RA0NhfBcer-nMuLxAAAB
+[2026-08-06T06:12:04.135328]  Transport accepted: User 4 (SID: RA0NhfBcer-nMuLxAAAB)
+[2026-08-06T06:12:04.135328]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: RA0NhfBcer-nMuLxAAAB)
+[2026-08-06T06:12:04.137335] ⏳ Client connecting: ece-o0-N21WTGEa_AAAC
+[2026-08-06T06:12:04.138333]  Transport accepted: User 4 (SID: ece-o0-N21WTGEa_AAAC)
+[2026-08-06T06:12:04.141331]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T06:12:04.143331] ⏳ Client connecting: rBu0RVLu9vfDE16UAAAD
+[2026-08-06T06:12:04.144331]  Transport accepted: User 4 (SID: rBu0RVLu9vfDE16UAAAD)
+[2026-08-06T06:12:04.147331] ⏳ Client connecting: PsRBl9Oj2-iTbAb1AAAE
+[2026-08-06T06:12:04.148331]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: PsRBl9Oj2-iTbAb1AAAE)
+[2026-08-06T06:12:04.148331] ⏳ Client connecting: gDUTHpKOGwdaT5j1AAAF
+[2026-08-06T06:12:04.149331]  Transport accepted: User 4 (SID: gDUTHpKOGwdaT5j1AAAF)
+[2026-08-06T06:12:04.151333]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T06:12:04.153329] ⏳ Client connecting: oDpjAj5jXg-X1X0lAAAG
+[2026-08-06T06:15:49.105438] ⏳ Client connecting: OqMxBoTjSRaSjVqoAAAA
+[2026-08-06T06:15:49.106438]  Transport accepted: User 4 (SID: OqMxBoTjSRaSjVqoAAAA)
+[2026-08-06T06:15:49.108439] ⏳ Client connecting: wPVUAv0SKMvwaK_fAAAB
+[2026-08-06T06:15:49.109439]  Transport accepted: User 4 (SID: wPVUAv0SKMvwaK_fAAAB)
+[2026-08-06T06:15:49.109439]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: wPVUAv0SKMvwaK_fAAAB)
+[2026-08-06T06:15:49.111438] ⏳ Client connecting: LAJpYUvR02F6MXsQAAAC
+[2026-08-06T06:15:49.112438]  Transport accepted: User 4 (SID: LAJpYUvR02F6MXsQAAAC)
+[2026-08-06T06:15:49.115438]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T06:15:49.118439] ⏳ Client connecting: PUShR_1fibvB8nTCAAAD
+[2026-08-06T06:15:49.119438]  Transport accepted: User 4 (SID: PUShR_1fibvB8nTCAAAD)
+[2026-08-06T06:15:49.123439] ⏳ Client connecting: kUyRjgNKJxqBoL77AAAE
+[2026-08-06T06:15:49.124439]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: kUyRjgNKJxqBoL77AAAE)
+[2026-08-06T06:15:49.124439] ⏳ Client connecting: wuXGriXgaKLnswmPAAAF
+[2026-08-06T06:15:49.125439]  Transport accepted: User 4 (SID: wuXGriXgaKLnswmPAAAF)
+[2026-08-06T06:15:49.127438]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T06:15:49.129438] ⏳ Client connecting: FT3AHvEVMC0bOFiNAAAG
+[2026-08-06T07:17:17.676124] ⏳ Client connecting: RaiZrOjcfBCvmE8gAAAB
+[2026-08-06T07:17:17.677125]  Transport accepted: User 3 (SID: RaiZrOjcfBCvmE8gAAAB)
+[2026-08-06T07:17:17.762199]  ✅ Customer 3 joined customer_room, customer_3
+[2026-08-06T07:32:51.406491] ⏳ Client connecting: vvHYOO8R7XJF9pQ9AAAA
+[2026-08-06T07:32:51.406491]  Transport accepted: User 4 (SID: vvHYOO8R7XJF9pQ9AAAA)
+[2026-08-06T07:32:51.410490] ⏳ Client connecting: TYuWs9p-COmOmSFjAAAB
+[2026-08-06T07:32:51.410490]  Transport accepted: User 4 (SID: TYuWs9p-COmOmSFjAAAB)
+[2026-08-06T07:32:51.411997]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: TYuWs9p-COmOmSFjAAAB)
+[2026-08-06T07:32:51.415061] ⏳ Client connecting: tvsASzI1vf6pp3pZAAAC
+[2026-08-06T07:32:51.415061]  Transport accepted: User 4 (SID: tvsASzI1vf6pp3pZAAAC)
+[2026-08-06T07:32:51.417067]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T07:32:51.420068] ⏳ Client connecting: 1mJSGcp5u7Q5tu7BAAAD
+[2026-08-06T07:32:51.420068]  Transport accepted: User 4 (SID: 1mJSGcp5u7Q5tu7BAAAD)
+[2026-08-06T07:32:51.426586] ⏳ Client connecting: t_Rz8cq4z7pWobjvAAAE
+[2026-08-06T07:32:51.426586]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: t_Rz8cq4z7pWobjvAAAE)
+[2026-08-06T07:32:51.427586] ⏳ Client connecting: zzyvROf3Fk_JdcobAAAF
+[2026-08-06T07:32:51.427586]  Transport accepted: User 4 (SID: zzyvROf3Fk_JdcobAAAF)
+[2026-08-06T07:32:51.430098]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T07:32:51.432098] ⏳ Client connecting: NCfriAw9-kJ0hyjPAAAG
+[2026-08-06T12:15:27.280604] ⏳ Client connecting: pxlCiya1iObTgaJ3AAAD
+[2026-08-06T12:15:27.282616]  Transport accepted: User 1 (SID: pxlCiya1iObTgaJ3AAAD)
+[2026-08-06T12:15:27.300184] ⏳ Client connecting: R81W6v2eDNpVXV6pAAAE
+[2026-08-06T12:15:27.301196]  Transport accepted: User 1 (SID: R81W6v2eDNpVXV6pAAAE)
+[2026-08-06T12:15:27.327286] ⏳ Client connecting: gdfZbmGNoGFjfETNAAAF
+[2026-08-06T12:15:27.330803]  Transport accepted: User 1 (SID: gdfZbmGNoGFjfETNAAAF)
+[2026-08-06T12:15:27.383971]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T12:15:27.660981]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T12:15:27.680038]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T12:15:27.773622] ⏳ Client connecting: 3lzky7rOcLjP-k1OAAAH
+[2026-08-06T12:15:27.775624]  Transport accepted: User 1 (SID: 3lzky7rOcLjP-k1OAAAH)
+[2026-08-06T12:15:27.837863]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T12:15:34.204490] ⏳ Client connecting: mrvn6xG_TPbMvrGkAAAJ
+[2026-08-06T12:15:34.205490]  Transport accepted: User 1 (SID: mrvn6xG_TPbMvrGkAAAJ)
+[2026-08-06T12:15:34.219028]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T12:15:44.276865] ⏳ Client connecting: G9V5uDsYiMDQZa0uAAAL
+[2026-08-06T12:15:44.277869]  Transport accepted: User 3 (SID: G9V5uDsYiMDQZa0uAAAL)
+[2026-08-06T12:15:44.527974]  ✅ Customer 3 joined customer_room, customer_3
+[2026-08-06T12:35:59.197895] ⏳ Client connecting: QiCzJfyvpyiNiaX5AAAP
+[2026-08-06T12:35:59.198896]  Transport accepted: User 4 (SID: QiCzJfyvpyiNiaX5AAAP)
+[2026-08-06T15:31:47.027011] ⏳ Client connecting: E5DW2EhkTR-Zdk0kAAAR
+[2026-08-06T15:31:47.027011]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: E5DW2EhkTR-Zdk0kAAAR)
+[2026-08-06T15:33:18.973054] ⏳ Client connecting: TyJGaMR11FtdIeejAAAT
+[2026-08-06T15:33:18.974053]  Transport accepted: User 4 (SID: TyJGaMR11FtdIeejAAAT)
+[2026-08-06T15:33:19.003894]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T15:33:19.003894]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T15:48:17.936042] ⏳ Client connecting: BZY2657UZKVciK-MAAAW
+[2026-08-06T15:48:17.936042]  Transport accepted: User 4 (SID: BZY2657UZKVciK-MAAAW)
+[2026-08-06T15:48:17.939553] ⏳ Client connecting: PesZ2gIeTIiJXnRYAAAX
+[2026-08-06T15:48:17.939553]  Transport accepted: User 4 (SID: PesZ2gIeTIiJXnRYAAAX)
+[2026-08-06T15:48:17.992816]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T15:48:17.994023]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T15:48:18.006056]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T15:48:18.007065]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T15:51:46.150144] ⏳ Client connecting: Ym7MU7Hu-DHq6QNwAAAa
+[2026-08-06T15:51:46.151148]  Transport accepted: User 4 (SID: Ym7MU7Hu-DHq6QNwAAAa)
+[2026-08-06T15:51:46.153664] ⏳ Client connecting: yVnkyCDjUxn9oK5jAAAb
+[2026-08-06T15:51:46.154664]  Transport accepted: User 4 (SID: yVnkyCDjUxn9oK5jAAAb)
+[2026-08-06T15:51:46.181841]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T15:51:46.181841]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T15:51:46.210532]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T15:51:46.210532]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T15:53:02.048385] ⏳ Client connecting: FxjBdIWYxI9Y_CqTAAAg
+[2026-08-06T15:53:02.050386]  Transport accepted: User 1 (SID: FxjBdIWYxI9Y_CqTAAAg)
+[2026-08-06T15:53:02.054387] ⏳ Client connecting: wtz4Ogdf_NhGhGoFAAAh
+[2026-08-06T15:53:02.055892]  Transport accepted: User 1 (SID: wtz4Ogdf_NhGhGoFAAAh)
+[2026-08-06T15:53:02.059911] ⏳ Client connecting: 53M_k9RAqln7VripAAAi
+[2026-08-06T15:53:02.061414]  Transport accepted: User 1 (SID: 53M_k9RAqln7VripAAAi)
+[2026-08-06T15:53:02.065422] ⏳ Client connecting: eMVDtS_gWLZ3hNlgAAAj
+[2026-08-06T15:53:02.066590]  Transport accepted: User 1 (SID: eMVDtS_gWLZ3hNlgAAAj)
+[2026-08-06T15:53:02.105505]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:02.112671]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:02.118187]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:02.127246]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:24.676436] ⏳ Client connecting: 0V-I4LCXza4jw2F5AAAo
+[2026-08-06T15:53:24.677442]  Transport accepted: User 1 (SID: 0V-I4LCXza4jw2F5AAAo)
+[2026-08-06T15:53:24.682451] ⏳ Client connecting: rAtdV2yB7P6ZbEaqAAAp
+[2026-08-06T15:53:24.683451]  Transport accepted: User 1 (SID: rAtdV2yB7P6ZbEaqAAAp)
+[2026-08-06T15:53:24.704549] ⏳ Client connecting: lJfjCATV2098BzXnAAAq
+[2026-08-06T15:53:24.704549]  Transport accepted: User 1 (SID: lJfjCATV2098BzXnAAAq)
+[2026-08-06T15:53:24.707065] ⏳ Client connecting: hdQZ2q65O8ZZqQZkAAAr
+[2026-08-06T15:53:24.708069]  Transport accepted: User 1 (SID: hdQZ2q65O8ZZqQZkAAAr)
+[2026-08-06T15:53:24.718098]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:24.740247]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:24.744758]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T15:53:24.752280]  ✅ Admin 1 joined admin_room, admin_1
+[2026-08-06T16:51:51.229532]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:51:51.231538]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:52:28.182881]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:52:28.185386]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:53:05.691269]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:53:05.693273]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:53:43.207003]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:53:43.208001]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:54:20.714483]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:54:20.715488]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:54:58.223327]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:54:58.223327]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:55:35.736419]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:55:35.737419]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:56:13.250985]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:56:13.251987]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:56:50.763672]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:56:50.764670]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:57:28.270259]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:57:28.271254]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:58:05.775132]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:58:05.776132]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:58:43.285208]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:58:43.286209]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:59:20.791797]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:59:20.793304]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T16:59:58.303688]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T16:59:58.304688]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:00:35.821370]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:00:35.822371]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:01:13.321323]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:01:13.322325]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:01:50.829904]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:01:50.830914]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:02:28.347567]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:02:28.347567]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:03:05.851990]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:03:05.852990]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:03:43.355082]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:03:43.356083]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:04:20.871625]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:04:20.871625]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:04:58.383146]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:04:58.383146]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:05:35.884209]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:05:35.885206]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:06:13.393679]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:06:13.394676]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:06:50.909886]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:06:50.910893]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:07:28.423045]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:07:28.424044]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:08:05.930285]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:08:05.930285]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:08:43.435527]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:08:43.436529]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:09:20.952457]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:09:20.952457]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:09:58.452206]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:09:58.453204]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:10:35.970992]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:10:35.971987]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:11:13.476834]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:11:13.477830]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:11:50.991095]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:11:50.992097]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:12:28.497775]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:12:28.498774]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:13:06.005423]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:13:06.006424]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:13:43.515166]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:13:43.516165]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:14:21.019164]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:14:21.020165]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:14:58.536704]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:14:58.537710]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:15:36.040028]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:15:36.041025]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:16:13.556839]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:16:13.558344]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:16:51.063217]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:16:51.064217]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:17:28.571920]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:17:28.572920]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:18:06.079750]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:18:06.079750]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:18:43.593489]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:18:43.594893]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:19:21.100851]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:19:21.101849]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:19:58.606912]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:19:58.607908]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:20:36.120763]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:20:36.121763]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:21:13.631083]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:21:13.632080]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:21:51.149992]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:21:51.151001]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:22:28.654589]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:22:28.655591]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:23:06.155794]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:23:06.155794]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:23:43.668149]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:23:43.669157]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:24:21.190270]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:24:21.191268]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:24:58.687819]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:24:58.688819]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:25:36.198486]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:25:36.199486]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:26:13.717225]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:26:13.717225]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:26:51.224131]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:26:51.224131]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:27:28.731500]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:27:28.732004]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:28:06.248917]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:28:06.248917]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:28:43.759008]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:28:43.760010]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:29:21.267327]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:29:21.268327]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:29:58.771430]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:29:58.772430]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:30:36.286184]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:30:36.287228]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:31:13.792213]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:31:13.793220]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:31:51.307752]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:31:51.307752]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:32:28.816940]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:32:28.817946]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:33:06.328313]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:33:06.329314]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:33:43.837183]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:33:43.838190]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:34:21.357238]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:34:21.358238]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:34:58.859940]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:34:58.860938]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:35:36.367393]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:35:36.368397]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:36:13.892658]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:36:13.893660]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:36:51.397510]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:36:51.398512]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:37:28.901187]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:37:28.902188]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:38:06.411421]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:38:06.411421]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:38:43.932934]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:38:43.933932]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:39:21.439617]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:39:21.440624]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:39:58.948383]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:39:58.949388]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:40:36.451868]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:40:36.453374]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:41:13.962499]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:41:13.963499]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:41:51.472478]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:41:51.473479]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:42:28.987707]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:42:28.987707]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:43:06.490863]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:43:06.491862]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:43:44.004043]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:43:44.005039]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:44:21.507683]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:44:21.508679]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:44:59.022988]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:44:59.022988]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:45:36.533120]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:45:36.534118]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:46:14.043525]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:46:14.044525]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:46:51.557580]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:46:51.558579]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:47:29.058481]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:47:29.059481]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:48:06.569595]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:48:06.570595]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:48:44.077319]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:48:44.078319]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:49:21.588022]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:49:21.589023]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:49:59.104989]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:49:59.105989]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:50:36.613316]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:50:36.614323]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:51:14.126635]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:51:14.126635]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:51:52.166229]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:51:52.167230]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:52:29.138223]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:52:29.139222]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:53:06.646857]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:53:06.647856]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:53:44.156766]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:53:44.157767]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:54:21.676214]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:54:21.677212]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:54:59.185793]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:54:59.186798]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:55:36.690420]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:55:36.691423]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:56:14.201974]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:56:14.202970]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:56:51.701442]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:56:51.702445]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:57:29.214495]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:57:29.215497]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:58:06.729841]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:58:06.730839]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:58:44.236797]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:58:44.237799]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:59:21.751652]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:59:21.752652]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T17:59:59.264782]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T17:59:59.264782]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:00:36.771683]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:00:36.771683]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:01:14.285817]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:01:14.287323]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:01:51.794801]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:01:51.795795]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:02:29.306770]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:02:29.307769]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:03:06.810820]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:03:06.811820]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:03:44.314249]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:03:44.314763]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:04:21.832499]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:04:21.833497]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:04:59.332452]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:04:59.333451]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:05:36.847137]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:05:36.848138]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:06:14.358349]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:06:14.359359]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:06:51.870284]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:06:51.871282]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:07:29.381584]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:07:29.382582]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:08:06.884530]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:08:06.884530]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:08:44.392701]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:08:44.393697]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:09:21.903889]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:09:21.904888]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:09:59.416515]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:09:59.417521]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:10:36.930999]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:10:36.932007]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:11:14.444315]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:11:14.445314]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:11:51.947161]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:11:51.947161]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:12:29.462514]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:12:29.463514]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:13:06.965817]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:13:06.967291]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:13:44.481174]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:13:44.482176]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:14:21.995294]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:14:21.996292]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:14:59.496041]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:14:59.497040]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:15:37.009563]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:15:37.011070]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:16:14.517521]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:16:14.518711]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:16:52.044550]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:16:52.045546]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:17:29.542059]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:17:29.543055]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:18:07.054058]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:18:07.055059]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:18:44.561749]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:18:44.562757]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:19:22.079795]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:19:22.080792]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:19:59.580131]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:19:59.580131]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:20:37.091679]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:20:37.092689]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:21:14.609937]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:21:14.610940]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:21:52.106544]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:21:52.107543]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:22:29.617255]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:22:29.618255]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:23:07.127633]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:23:07.128631]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:23:44.642700]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:23:44.643701]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:24:22.148005]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:24:22.149576]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:24:59.664072]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:24:59.665081]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:25:37.169114]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:25:37.170116]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:26:14.675184]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:26:14.676192]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:26:52.188448]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:26:52.189460]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:27:29.699096]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:27:29.700096]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:28:07.209588]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:28:07.210589]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:28:44.723364]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:28:44.724364]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:29:22.237350]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:29:22.238349]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:29:59.741342]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:29:59.742343]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:30:37.252036]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:30:37.253075]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:31:14.772360]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:31:14.773358]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:31:52.274952]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:31:52.276239]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:32:29.795251]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:32:29.796260]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:33:07.305663]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:33:07.307174]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:33:44.818606]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:33:44.819614]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:34:22.321969]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:34:22.322969]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:34:59.838324]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:34:59.838852]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:35:37.351498]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:35:37.352494]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:36:14.856463]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:36:14.857466]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:36:52.364999]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:36:52.366006]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:37:29.871915]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:37:29.871915]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:38:07.393781]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:38:07.393781]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:38:44.899058]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:38:44.900068]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:39:22.404179]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:39:22.405177]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:39:59.914786]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:39:59.914786]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:40:37.429662]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:40:37.430662]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:41:14.937503]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:41:14.938563]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:41:52.454667]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:41:52.456175]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:42:29.965126]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:42:29.965126]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:43:07.472812]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:43:07.473811]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:43:44.983560]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:43:44.983560]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:44:22.502781]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:44:22.503315]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:45:00.010334]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:45:00.010334]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:45:37.516919]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:45:37.517920]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:46:15.026653]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:46:15.027653]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:46:52.545985]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:46:52.546992]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:47:30.049772]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:47:30.049772]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:48:07.559142]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:48:07.560149]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:48:45.075994]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:48:45.076994]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:49:22.591928]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:49:22.592926]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:50:00.101590]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:50:00.102592]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:50:37.605761]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:50:37.605761]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:51:15.115033]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:51:15.116040]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-06T18:51:52.674400]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-06T18:51:52.675400]  📍 Proactive location broadcast for Courier 1 on connect
+[2026-08-07T10:30:44.686652] ⏳ Client connecting: ifCX90YBF7m03N9vAAAA
+[2026-08-07T10:30:44.687651]  Transport accepted: User 4 (SID: ifCX90YBF7m03N9vAAAA)
+[2026-08-07T10:30:44.691652] ⏳ Client connecting: 9BZDJnLwMGISE2s-AAAB
+[2026-08-07T10:30:44.692651]  Transport accepted: User 4 (SID: 9BZDJnLwMGISE2s-AAAB)
+[2026-08-07T10:30:44.693652]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: 9BZDJnLwMGISE2s-AAAB)
+[2026-08-07T10:30:44.696652] ⏳ Client connecting: EcpKu9Sk_8ALlDIWAAAC
+[2026-08-07T10:30:44.696652]  Transport accepted: User 4 (SID: EcpKu9Sk_8ALlDIWAAAC)
+[2026-08-07T10:30:44.700652]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-07T10:30:44.705652] ⏳ Client connecting: aV7cio4VFOC_FigOAAAD
+[2026-08-07T10:30:44.705652]  Transport accepted: User 4 (SID: aV7cio4VFOC_FigOAAAD)
+[2026-08-07T10:30:44.711652] ⏳ Client connecting: gD6avTkzcSsb1jgqAAAE
+[2026-08-07T10:30:44.712651]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: gD6avTkzcSsb1jgqAAAE)
+[2026-08-07T10:30:44.713651] ⏳ Client connecting: R8hBPRDpP5_lpIEyAAAF
+[2026-08-07T10:30:44.713651]  Transport accepted: User 4 (SID: R8hBPRDpP5_lpIEyAAAF)
+[2026-08-07T10:30:44.716652]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-07T10:30:44.721652] ⏳ Client connecting: l78g8xdaTgNkmbv4AAAG
+[2026-08-07T13:48:16.847107] ⏳ Client connecting: tE54MhYar1A6sQnZAAAA
+[2026-08-07T13:48:16.847107]  Transport accepted: User 4 (SID: tE54MhYar1A6sQnZAAAA)
+[2026-08-07T13:48:16.847107] ⏳ Client connecting: hrhXZQZonEMfO9y_AAAB
+[2026-08-07T13:48:16.847107]  Transport accepted: User 4 (SID: hrhXZQZonEMfO9y_AAAB)
+[2026-08-07T13:48:16.847107]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: hrhXZQZonEMfO9y_AAAB)
+[2026-08-07T13:48:16.862740] ⏳ Client connecting: Tt14LWzkjs6TSpd3AAAC
+[2026-08-07T13:48:16.862740]  Transport accepted: User 4 (SID: Tt14LWzkjs6TSpd3AAAC)
+[2026-08-07T13:48:16.863505]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-07T13:48:16.863505] ⏳ Client connecting: 5G8N6mqpVJaH8dkrAAAD
+[2026-08-07T13:48:16.863505]  Transport accepted: User 4 (SID: 5G8N6mqpVJaH8dkrAAAD)
+[2026-08-07T13:48:16.863505] ⏳ Client connecting: sQzG54Wmj1DMqr0wAAAE
+[2026-08-07T13:48:16.863505]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: sQzG54Wmj1DMqr0wAAAE)
+[2026-08-07T13:48:16.863505] ⏳ Client connecting: tOA4J0g6c3naND0KAAAF
+[2026-08-07T13:48:16.863505]  Transport accepted: User 4 (SID: tOA4J0g6c3naND0KAAAF)
+[2026-08-07T13:48:16.880069]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-07T13:48:16.880069] ⏳ Client connecting: ExZDT3TgdnP1pyO6AAAG
+[2026-08-07T13:59:18.970196] ⏳ Client connecting: HStpSVew88QTBMDMAAAA
+[2026-08-07T13:59:18.970196]  Transport accepted: User 4 (SID: HStpSVew88QTBMDMAAAA)
+[2026-08-07T13:59:18.974196] ⏳ Client connecting: c3xIZZ46EKNQ_a1lAAAB
+[2026-08-07T13:59:18.975196]  Transport accepted: User 4 (SID: c3xIZZ46EKNQ_a1lAAAB)
+[2026-08-07T13:59:18.975196]  Join rejected: Invalid header string: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte (SID: c3xIZZ46EKNQ_a1lAAAB)
+[2026-08-07T13:59:18.978196] ⏳ Client connecting: NeWjdhAf67kY4lVWAAAC
+[2026-08-07T13:59:18.979196]  Transport accepted: User 4 (SID: NeWjdhAf67kY4lVWAAAC)
+[2026-08-07T13:59:18.983197]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-07T13:59:18.986196] ⏳ Client connecting: -BicN9yogi4MlHlGAAAD
+[2026-08-07T13:59:18.987196]  Transport accepted: User 4 (SID: -BicN9yogi4MlHlGAAAD)
+[2026-08-07T13:59:18.992196] ⏳ Client connecting: iMuQJ0ViXdMZr2CEAAAE
+[2026-08-07T13:59:18.993196]  ❌ Connection Rejected: Invalid or expired token - Signature has expired (SID: iMuQJ0ViXdMZr2CEAAAE)
+[2026-08-07T13:59:18.993196] ⏳ Client connecting: qWVEEqBpalOWqZFRAAAF
+[2026-08-07T13:59:18.994196]  Transport accepted: User 4 (SID: qWVEEqBpalOWqZFRAAAF)
+[2026-08-07T13:59:18.997196]  ✅ Courier 1 (User 4) joined courier_room, courier_1
+[2026-08-07T13:59:19.001196] ⏳ Client connecting: yCj7Dcm4r7OcGadLAAAG

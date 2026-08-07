@@ -1,12 +1,13 @@
 import { getHeaders, API_URL } from '@/lib/auth';
-import { SupportTicket, TicketDetails, CreateTicketDTO, AddMessageDTO, UpdateTicketDTO } from '@/types/support';
+import { SupportTicket, TicketDetails, CreateTicketDTO, AddMessageDTO, UpdateTicketDTO, TicketCategory } from '@/types/support';
 
 export const supportApi = {
-    getTickets: async (filters?: { status?: string; priority?: string; assigned_to?: string; q?: string }): Promise<SupportTicket[]> => {
+    getTickets: async (filters?: { status?: string; priority?: string; assigned_to?: string; category?: TicketCategory | 'all'; q?: string }): Promise<SupportTicket[]> => {
         const queryParams = new URLSearchParams();
         if (filters?.status) queryParams.append('status', filters.status);
         if (filters?.priority) queryParams.append('priority', filters.priority);
         if (filters?.assigned_to) queryParams.append('assigned_to', filters.assigned_to);
+        if (filters?.category && filters.category !== 'all') queryParams.append('category', filters.category);
         if (filters?.q) queryParams.append('q', filters.q);
 
         const res = await fetch(`${API_URL}/api/support/tickets?${queryParams.toString()}`, {

@@ -170,7 +170,7 @@ export default function AdminDashboard() {
                         <div className={styles.metricValue}>{stats.active_couriers || 0}</div>
                         <p className="text-xs text-slate-400 mt-1">מחוברים כעת (לחץ לפירוט)</p>
                     </div>
-                    <div className={`${styles.metricIcon} ${styles.iconOrange}`}>
+                    <div className={`${styles.metricIcon} ${styles.iconBlue}`}>
                         <Truck size={24} />
                     </div>
                 </div>

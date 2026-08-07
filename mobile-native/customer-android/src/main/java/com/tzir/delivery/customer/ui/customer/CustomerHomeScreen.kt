@@ -69,7 +69,7 @@ fun CustomerHomeScreen(
                     Text(stringResource(R.string.where_to_today), color = Graphite400, fontSize = 14.sp)
                 }
                 IconButton(onClick = { navController.navigate(CustomerScreen.Profile.route) }) {
-                    Icon(Icons.Default.AccountCircle, contentDescription = null, tint = AmberGold, modifier = Modifier.size(32.dp))
+                    Icon(Icons.Default.AccountCircle, contentDescription = null, tint = BrandBlue, modifier = Modifier.size(32.dp))
                 }
             }
             
@@ -139,7 +139,7 @@ fun ActiveOrderCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Text(order.type.toHebrew(), fontWeight = FontWeight.Bold, color = Color.White)
-                Text(order.status.toHebrew(), color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                Text(order.status.toHebrew(), color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 12.sp)
             }
             Spacer(Modifier.height(8.dp))
             Text("${stringResource(R.string.from_prefix)} ${order.pickupLocation.addressString}", fontSize = 12.sp, color = Graphite400)
@@ -148,7 +148,7 @@ fun ActiveOrderCard(
             LinearProgressIndicator(
                 progress = { 0.5f },
                 modifier = Modifier.fillMaxWidth().height(4.dp),
-                color = AmberGold,
+                color = BrandBlue,
                 trackColor = Color.White.copy(alpha = 0.1f)
             )
 
@@ -185,14 +185,14 @@ fun ActiveOrderCard(
                     enabled = !isDownloadingInvoice,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AmberGold.copy(alpha = 0.15f),
-                        contentColor = AmberGold
+                        containerColor = BrandBlue.copy(alpha = 0.15f),
+                        contentColor = BrandBlue
                     )
                 ) {
                     if (isDownloadingInvoice) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(16.dp),
-                            color = AmberGold,
+                            color = BrandBlue,
                             strokeWidth = 2.dp
                         )
                         Spacer(Modifier.width(8.dp))

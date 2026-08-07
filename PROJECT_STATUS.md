@@ -1,343 +1,124 @@
-# 📊 COURIER APP - PROJECT STATUS SUMMARY
+# 📊 TZIR COURIER APP - PROJECT STATUS SUMMARY
 ## Quick Reference Guide
 
 ---
 
 ## 🎯 PROJECT STATE AT A GLANCE
 
-**Completion:** 75% UI + 70% Backend Integration = **~72% Overall**
+**Completion:** Features ~90% · Backend integration ~85% · **~80% Overall** (blocked primarily by external PSP + security/compliance hardening)
 
-| Component | Status | Files | Quality |
-|-----------|--------|-------|---------|
-| DashboardScreen | ✅ Done | 1 | Production |
-| MissionsScreen | ✅ Done | 1 | Production |
-| EarningsScreen | ✅ Done | 1 | Needs payment integration |
-| AcademyScreen | ✅ Done | 3 | Backend connected |
-| RouteOptimizationScreen | ✅ Done | 1 | API integrated |
-| Location Service | ✅ Done | 1 | Production |
-| Authentication | ✅ Done | 2 | Production |
-| API Layer | ✅ 33/33 endpoints (mobile interface) | 2 | Mostly live data |
-| WebSocket Service | ✅ Exists | 1 | Needs testing |
-| Database (Room) | ✅ Done | 5 | Production |
-| Payment System | ❌ Missing | 0 | Critical |
-| Testing Suite | ✅ Baseline + Integration + CI | 10 | Security/privacy/payments/websocket + coverage |
+| Component | Status | Notes |
+|-----------|--------|-------|
+| DashboardScreen | ✅ Done | Production |
+| MissionsScreen | ✅ Done | Production |
+| EarningsScreen | ✅ Done | Real balance backend-connected |
+| BalanceScreen / PaymentMethodsScreen | ✅ Done | Internal wallet connected; external PSP pending |
+| AcademyScreen (+ certs future tab) | ✅ Done | Backend connected |
+| RouteOptimizationScreen / RoutePlanner / ManualRoutePlanner | ✅ Done | OR-Tools custom engine + API |
+| Location Service | ✅ Done | ~10s heartbeat + WebSocket |
+| Authentication + Refresh | ✅ Done | SecureStorage(Keystore) + Bearer refresh |
+| MFA | 🟡 Partial | Backend + web WebAuthn done; **Mobile MFA missing** |
+| API Layer | ✅ Done | 33+ courier endpoints wired |
+| WebSocket Service | ✅ Done | Handlers + reconnection; unit tests missing |
+| Database (Room) | ✅ Done | v5, 8 entities, offline + SyncManager |
+| SyncManager / Offline Queue | ✅ Done | DI wired; SEND_LOCATION handler pending |
+| Tax Reports (Section 7) | ✅ Done | History/refresh/delete + web/mobile UI; 81 backend tests |
+| Clients CRM (My/Delivery + Detail) | ✅ Done | Room + quote + tasks + notes |
+| Support Chat Center | ✅ Done | 10 E2E pass; a few UI/admin items remain |
+| Brand Kit V5 (web + both apps) | ✅ Done | Colors, font, icons, logo |
+| Dark/Light Theme (courier) | ✅ Done | Global + toggle; visual verification pending |
+| Build: KSP / HTTPS+Pinning | ✅ Done | KSP migrated; TLS/Pinning (S1) done |
+| Testing Suite | ✅ Done | Backend baseline + integration + CI |
+| **Payment System (external PSP)** | 🔴 **Blocked** | Stripe/Razorpay not verified |
+| **Security/Compliance hardening** | 🟡 Open | S2–S8, R1–R7 items pending |
 
-**Code Quality:** B+ (Clean architecture, good separation of concerns, lacks testing)
-
-**Latest Verified Update (2026-03-25):** Route optimization, academy/gamification, courier documents, and mission protocol integrations were completed on the Android side, and the courier compile check passed.
-
-**Status Override:** `RouteOptimizationScreen` is now completed/integrated even if older audit rows below still mention pending API work.
-
-**Status Override:** `AcademyScreen`, course details, protocol quiz flow, and gamification leaderboard/profile are now backend-connected even if older audit rows below still mention pending backend calls.
-
-**Status Override:** `ProfileScreen` documents flow now reads real courier documents, and `MissionProtocolScreen` now uses backend-connected protocol steps/completion endpoints designed to stay extensible for future workflow storage.
-
-**Status Override:** Backend `Testing Suite` baseline is now implemented with pytest (API smoke, auth/RBAC, security headers, and privacy consent/export validations).
-
-**Status Override:** Testing now includes payments/websocket integration coverage, unified pytest+coverage config, and CI automation via GitHub Actions backend test workflow.
-
----
-
-## 📂 CRITICAL FILES TO MONITOR
-
-### Core Integration Points (Must Verify)
-1. **`mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/network/DeliveryApi.kt`**
-   - ✅ 33 API functions defined and wired
-   - 🔴 Some still use mock base URL (10.0.2.2:5000)
-   - 📝 Action: Move base URL to environment/build config for production
-
-2. **`mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/repository/CourierRepository.kt`**
-   - ✅ Core flows now call real API (academy, gamification, documents, protocol, optimization)
-   - 📝 Action: Add stricter response validation and integration tests
-
-3. **`mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/services/LocationService.kt`**
-   - ✅ Production-ready
-   - ✅ Sends location every ~10 seconds
-   - ✅ WebSocket integration present
-
-4. **`mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/services/SocketManager.kt`**
-   - ✅ Socket.IO client initialized
-   - ⚠️ Missing error recovery logic
-   - 🔴 Not integrated into all screens
-   - 📝 Action: Add event handlers and test against backend
-
-5. **`mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/MainActivity.kt`**
-   - ✅ Manual DI working
-   - ⚠️ No Hilt integration (recommended to add)
-   - ✅ Socket initialization on login
+**Latest Verified Updates:**
+- **2026-08-06** — Tax report history flow (Section 7) fully closed: model, migration, generate/save/delete endpoints, BOLA/IDOR protection, web+mobile UI, 81 backend tests passing; Support-chat send-failure UI fix.
+- **2026-08-05** — Safe Mobile upgrades completed (Kotlin 2.2.21, KSP 2.2.21-2.0.5, AGP 8.10.1, Compose 1.8.2, M3 1.3.2, Ktor 3.5.2, Firebase BOM 33.16.0, compileSdk 35). Frontend build green after duplicate-route cleanup.
+- **2026-08-04** — Vision/brand (phase A), calendar click-to-create, pension/study-fund lines, courier title, profile photo, and per-screen light/dark hardcoded-color removal completed.
 
 ---
 
-## 🚨 BLOCKING ISSUES (Fix to Launch)
+## 🧭 ACTIVE / OPEN WORK (Prioritized)
 
-### Issue #1: Payment System Missing
-**Impact:** Couriers cannot withdraw earnings (core business model broken)
-**Effort:** 3-4 days
-**Solution:** Add payment repository + Stripe/Razorpay integration
-```kotlin
-// Missing interface
-interface PaymentRepository {
-    suspend fun requestWithdrawal(amount: Double): Boolean
-    suspend fun getBalance(): Double
-}
-```
+### 🔴 Production-Blocking (must finish to launch)
 
-### Issue #2: Database Layer ✅ COMPLETED
-**Status:** ✅ Room database implemented with offline support
-**Files:** 5 database files + repository integration
-**Solution:** 
-- `MissionEntity`, `CourierStatsEntity`, `AcademyCourseEntity`, `GamificationProfileEntity`
-- `MissionDao`, `CourierStatsDao`, `AcademyCourseDao`, `GamificationProfileDao`
-- `TzirDatabase` with Room configuration
-- Repository fallback to cached data on network failure
-- Full offline support for missions, stats, academy courses, and gamification
+| # | Item | Where | Status |
+|---|------|-------|--------|
+| 1 | **External PSP (Stripe/Razorpay) integration & verification** | `backend/routes/courier_wallet.py`, mobile `PaymentRepository`, `BalanceScreen` | Internal wallet + withdrawals wired; real PSP unverified |
+| 2 | **Mobile MFA in login flow** (currently admin-opt-in only) | `AuthRepository`/`LoginScreen` | Missing |
+| 3 | **Activate `security_middleware` + remove hardcoded keys** | `backend/middleware/api_security.py`, `auth.py`, `secrets_manager.py` | Dead code; keys hardcoded (`dev-device-hmac-key`, fallback secret) |
+| 4 | **Global rate limiting** (not only auth/addresses/orders) | extensions.py/app.py | Partial |
+| 5 | **Mobile privacy consent flow** | mobile `Privacy` | Missing |
+| 6 | **Root/Jailbreak detection + Room encryption** | SecurityEnforcer, security-crypto | Missing |
 
-### Issue #3: Remaining Mocked UI Sections (Non-API)
-**Impact:** Some screens still show local/sample content and can confuse users in production
-**Current:** Core API/repository is mostly live; remaining mocks are UI-level (Clients, Vehicle, parts of Worker Rating/Profile visuals)
-**Solution:** Connect these screens to backend endpoints or hide behind feature flags until ready
+### 🟠 High-Value / Quality
 
-### Issue #4: WebSocket Not Tested
-**Impact:** Real-time features unreliable
-**Solution:** Test SocketManager against real backend (1 day)
+7. **Mobile unit tests** — websocket/payments/repositories/model serialization + endpoint verify script (GAP plan Priority 5)
+8. **Academy "My Certificates" tab** + missing cert endpoints on mobile (GAP plan Priority 4)
+9. **`SyncManager` handler for `SEND_LOCATION`** batch sync (note: `LocationUpdateDao/Entity` exist) (GAP 3)
+10. **Light/dark visual verification on device**, optional AMOLED mode, battery <10%/8h (reload goal)
+11. **Support-chat minor items**: admin image-upload, list pagination, mark-as-read, real-time E2E test, Postgres migration
+12. **Postgres migration parity** for SQLite-only fixtures & feature columns
+
+### 🟡 Operations / Compliance (open)
+
+13. **S1** TLS 1.3-only, AES-256 DB/backups · **S2** MFA mandatory + access-token 15m/rotation · **S3** WAF, BOLA/IDOR scan · **S4** secrets to Vault · **S7** SAST/DAST in CI, pentest, bug-bounty · **O3–O5** feature flags, API versioning, performance budgets · **G2** WORM audit log · **R7** online tax filing API · **E.2/E.4** report encryption + digital signature.
+
+### 🟡 Optional / Deferred
+
+14. **Frontend upgrades** — React 19, Next.js 15, Tailwind 4 (deferred, risky)
+15. **Go realtime-engine** Golang 1.21 → 1.24 (⚠️ not upgraded)
 
 ---
 
-## 🎬 NEXT STEPS (Priority Order)
+## ⚠️ HOUSEKEEPING / NOTES
 
-### THIS WEEK (Critical Path)
-1. **Payment System** (3 days)
-   - Choose processor (use Stripe/Razorpay)
-   - Add withdrawal endpoints to backend
-   - Build payment UI screens
-   
-2. **Replace Remaining UI Sample Data** (2-3 days)
-   - Clients screen sample list
-   - Vehicle screen sample list
-   - Worker rating/profile visual mock sections
-
-3. **WebSocket Full Integration** (2 days)
-   - Add event handlers
-   - Test against real backend
-   - Add reconnection logic
-
-### NEXT WEEK
-4. **WebSocket Full Integration** (2 days)
-   - Add event handlers
-   - Test against real backend
-   - Add reconnection logic
-
-5. **Payments E2E Integration** (2-3 days)
-   - Courier withdrawal flow
-   - Webhook validation + reconciliation
-   - Production provider finalization
-
-6. **Testing Setup** (2 days)
-   - Unit tests for repositories
-   - API mocking
-   - CI/CD pipeline
-
-### WEEK 3
-7. **Upgrade to Hilt DI** (1-2 days)
-8. **Error Handling & Logging** (1-2 days)
-9. **Performance Optimization** (1-2 days)
-10. **Final Testing & Polish** (2-3 days)
+- **Nested duplicate repo** `delivery_app/delivery_app/` exists — **do not touch**; work only on canonical `delivery_app/mobile-native/courier-android` (documented in `תוכנית_פעולה_השלמת_סעיף7.md`).
+- **Customer app** (`customer-android`) and `mobile/` (React Native) — no longer primary; brand touched.
+- Large **uncommitted** working-tree (backend `.db`/logs, `.idea`, tmp, screens) — recommend a checkpoint commit.
+- Base URL: mobile Ktor resolves to `https://` (KtorClientFactory) — keep consistent in release config.
 
 ---
 
-## 🔧 BUILD COMMANDS
-
-```bash
-# Navigate to project
-cd c:\Users\Israel\Desktop\delivery_app\mobile-native\courier-android
-
-# Install dependencies
-./gradlew build
-
-# Build debug APK
-./gradlew assembleDebug
-
-# Build release APK (after signing)
-./gradlew assembleRelease
-
-# Run tests
-./gradlew test
-
-# Deploy to emulator
-./gradlew installDebug
-
-# View live logs
-adb logcat | grep "CourierApp\|LocationService"
-```
-
----
-
-## 📋 ENDPOINT VERIFICATION CHECKLIST
-
-After implementing payment system, verify all active courier endpoints (mobile currently defines 33 API functions):
+## ✅ DEFINITION OF DONE for each new feature (from improvement plan)
 
 ```
-Authentication:
-[ ] POST /api/auth/login ← Test with real credentials
-[ ] POST /api/auth/register ← Create test account
-[ ] POST /api/auth/logout ← Verify token invalidation
-
-Orders:
-[ ] GET /api/orders/available ← Should return 5+ test orders
-[ ] POST /api/orders/{id}/accept ← Accept returns success=true
-[ ] GET /api/orders/{id} ← Full order details
-[ ] POST /api/orders/{id}/complete ← Mark delivered
-[ ] PUT /api/orders/{id}/status ← Update delivery status
-
-Location:
-[ ] POST /api/couriers/location ← Send location updates
-[ ] GET /api/couriers/me/location ← Retrieve current position
-
-Earnings:
-[ ] GET /api/earnings/balance ← Shows actual balance (not 0)
-[ ] GET /api/earnings/history ← Lists transactions
-[ ] GET /api/earnings/breakdown ← Daily/hourly breakdown
-
-Academy:
-[ ] GET /api/academy/courses ← Real course list
-[ ] POST /api/academy/courses/{id}/enroll ← Enrollment
-[ ] POST /api/academy/exams/{id}/submit ← Exam results
-[ ] GET /api/academy/progress ← User progress
-[ ] GET /api/academy/certificates ← Earned certs
-
-Gamification:
-[ ] GET /api/gamification/profile ← User level/XP
-[ ] GET /api/gamification/leaderboard ← Rankings
-
-Navigation/Routing:
-[ ] POST /api/nav/geocode ← Address → coordinates
-[ ] POST /api/nav/autocomplete ← Address suggestions
-[ ] POST /api/nav/optimize ← Route optimization
-[ ] POST /api/nav/manualOptimize ← Manual route
-
-Misc:
-[ ] POST /api/support/message ← Send support message
-[ ] POST /api/images/upload ← POD image upload
-[ ] POST /api/ratings/submit ← Rate delivery
-[ ] GET /api/contacts ← Saved customers (if exists)
-[ ] POST /api/payments/withdraw ← Request payout
+[ ] Threat Modeling (STRIDE)
+[ ] Security code review
+[ ] SAST/DAST in CI (0 Critical/High)
+[ ] Pen test if attack surface changed
+[ ] DPIA if PII processed
+[ ] Accessibility WCAG 2.1 AA (axe + manual)
+[ ] Audit trail for sensitive actions
+[ ] Data retention defined/implemented
+[ ] OpenAPI updated
+[ ] Runbook present
+[ ] Load test passed (2x expected)
+[ ] Rollback tested in practice
 ```
-
-**Success Criteria:** All endpoints return non-mock data with actual values from backend
-
----
-
-## 🏆 VERSION ROADMAP
-
-### v0.5 (Current - MVP)
-- ✅ User authentication
-- ✅ Order discovery
-- ✅ Location tracking
-- ✅ Basic delivery tracking
-- ✅ Offline support (Room database)
-- 🔄 Payment system (in progress)
-
-### v1.0 (Production Ready)
-- ✅ All v0.5 features
-- ✅ Full payment system
-- ✅ Academic courses working
-- ✅ Route optimization
-- ✅ Offline support
-- ✅ >80% test coverage
-- ✅ Crash monitoring
-
-### v1.1+ (Advanced)
-- Multi-language support
-- Advanced analytics
-- AI-powered routing
-- Voice commands
-- Accessibility features
-- Social features (ratings, leaderboards)
-
----
-
-## 💰 ESTIMATED COSTS
-
-### Development (5-6 weeks with 1 dev):
-- Payments + Database: 80 hours × $100/hr = $8,000
-- Backend integration: 60 hours × $100/hr = $6,000
-- Testing + QA: 40 hours × $100/hr = $4,000
-- **Total:** ~$18,000
-
-### Infrastructure (Monthly):
-- Backend server: $500-1,000
-- Database (PostgreSQL): $200-500
-- Redis (cache): $100-200
-- Analytics (Firebase): Free
-- Payment processor fee: 2-3% of transactions
-- **Total:** ~$1,000-2,000/month
-
-### Marketing (Launch):
-- App Store optimization: $500
-- User acquisition ads: $1,000-5,000
-- PR/outreach: $500-1,000
-- **Total:** $2,000-6,500
 
 ---
 
 ## 🎯 SUCCESS METRICS (v1.0 Launch)
 
 ```
-Technical:
-- Crash rate: <0.1%
-- API success rate: >99.5%
-- Avg response time: <500ms
-- Test coverage: >80%
-- App size: <100MB
-
-Business:
-- User acquisition cost: <$5 per courier
-- Daily active users: 100+ first week
-- Monthly retention: >30%
-- Average rating: >4.5 stars
-- Payment success rate: >95%
-
-Performance:
-- Cold start time: <2 seconds
-- Route calculation: <3 seconds
-- Location sync: <30 seconds
-- Battery drain: <10% per 8-hour shift
+Technical:  Crash rate <0.1% · API success >99.5% · P95 API <200ms · coverage >80% · bundle <100MB
+Business:   CAC <$5/courier · 100+ DAU wk1 · retention >30% · rating >4.5 · payment success >95%
+Performance: cold start <2s · route calc <3s · location sync <30s · battery <10%/8h
 ```
 
 ---
 
-## 📞 SUPPORT & ESCALATION
+## 🤝 LINKS / HOW TO RUN
 
-**Questions about architecture?**
-→ See: `COURIER_APP_REQUIREMENTS.md`
-
-**Need implementation steps?**
-→ See: `IMPLEMENTATION_ROADMAP.md`
-
-**Gap analysis of current code?**
-→ See: `COURIER_APP_GAP_ANALYSIS.md`
-
-**Backend integration?**
-→ Check: `backend/app.py`, `backend/routes/` folder
-
-**Frontend build issues?**
-→ Run: `./gradlew clean && ./gradlew build --stacktrace`
+- **Docs:** `COURIER_APP_REQUIREMENTS.md` (architecture) · `IMPLEMENTATION_ROADMAP.md` (steps) · `COURIER_APP_GAP_ANALYSIS.md` / `GAP_WORK_PLAN.md` (gaps) · `PRE_PRODUCTION_LAUNCH_PLAN.md` (operations) · `תוכנית_פעולה_שיפורים.md` (improvements/S-reports). 
+- **Launchers:** `run.bat` (all) · `run-courier.bat` (courier) · `run-customer.bat` (customer).
+- **Tests:** backend `cd backend; python -m pytest` · web `cd frontend; npm run lint && npm run build` · mobile `cd mobile-native; .\gradlew.bat :courierApp:test` + `:courierApp:assembleDebug`.
+- **Backend:** `backend/app.py`, `backend/routes/`.
 
 ---
 
-## 🚀 READY TO BUILD?
-
-**Immediate action items:**
-1. ✅ Read this summary
-2. ✅ Review `COURIER_APP_GAP_ANALYSIS.md` 
-3. ✅ Review `IMPLEMENTATION_ROADMAP.md`
-4. ✅ Choose payment processor  
-5. ✅ Start Week 1 implementation
-6. ✅ Daily progress tracking
-
-**Expected timeline:** Go-live in 6-8 weeks
-
----
-
-Generated: `{timestamp}`
-Last Updated: After complete code audit of mobile-native/courier-android/
+**Last updated:** 2026-08-07
+**Effective completion:** ~80% overall; production blocks = external PSP + security/compliance hardening + mobile unit/penetration coverage.
+Generated from aggregated project-plan / implementation / audit docs.

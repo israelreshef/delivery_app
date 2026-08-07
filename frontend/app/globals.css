@@ -7,48 +7,51 @@
 
 @layer base {
   :root {
-    /* ── Navy Scale ── */
-    --navy-950: #05101F;
-    --navy-900: #0A1929;
-    --navy-800: #0D2137;
-    --navy-700: #122845;
-    --navy-600: #1A3557;
-    --navy-400: #2E5480;
-    --navy-200: #5C8AB0;
-    --navy-100: #A8C8E0;
+    /* ── Navy Scale (Brand Kit V5) ── */
+    --navy-950: #07162C;
+    --navy-900: #0C1E3A;
+    --navy-800: #112648;
+    --navy-700: #1A3566;
+    --navy-600: #244A84;
+    --navy-500: #3D6DA8;
+    --navy-400: #5A8AC0;
+    --navy-300: #7BA3CC;
+    --navy-200: #B8CDE5;
+    --navy-100: #DCE8F5;
 
-    /* ── Amber (Primary Brand Accent) ── */
-    --amber: #F5A623;
-    --amber-dark: #C8821A;
-    --amber-light: #FEF3DC;
-    --amber-dim: rgba(245, 166, 35, 0.10);
-    --amber-glow: rgba(245, 166, 35, 0.20);
+    /* ── Brand Blue (Primary) ── */
+    --brand: #145DDB;
+    --brand-dark: #1048B0;
+    --brand-light: #5AA0FF;
+    --brand-dim: rgba(20, 93, 219, 0.10);
+    --brand-glow: rgba(20, 93, 219, 0.20);
 
     /* ── Light Mode Surfaces ── */
-    --background: 210 25% 95%;
-    /* #EEF3F8 */
-    --foreground: 214 80% 8%;
-    /* #05101F */
+    --background: 216 40% 98%;
+    /* #F7F9FC — Paper */
+    --foreground: 217 72% 10%;
+    /* #07162C — Navy */
 
     --card: 0 0% 100%;
-    --card-foreground: 214 80% 8%;
+    --card-foreground: 217 72% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 214 80% 8%;
+    --popover-foreground: 217 72% 10%;
 
-    --primary: 38 91% 55%;
-    /* #F5A623 — Amber */
-    --primary-foreground: 214 80% 8%;
-    /* Navy on Amber */
+    --primary: 218 83% 47%;
+    /* #145DDB — Blue */
+    --primary-foreground: 0 0% 100%;
+    /* White on Blue */
 
-    --secondary: 210 25% 95%;
-    --secondary-foreground: 214 50% 30%;
+    --secondary: 216 100% 95%;
+    /* #E8F1FF — Ice */
+    --secondary-foreground: 217 50% 30%;
 
-    --muted: 210 20% 94%;
-    --muted-foreground: 210 30% 50%;
+    --muted: 216 30% 95%;
+    --muted-foreground: 216 20% 50%;
 
-    --accent: 38 91% 55%;
-    --accent-foreground: 214 80% 8%;
+    --accent: 218 83% 47%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -56,48 +59,47 @@
     --success: 142 76% 36%;
     /* #16A34A */
 
-    --border: 210 25% 88%;
-    --input: 210 25% 88%;
-    --ring: 38 91% 55%;
-    /* Amber focus ring */
+    --border: 216 30% 90%;
+    --input: 216 30% 90%;
+    --ring: 218 83% 47%;
+    /* Blue focus ring */
 
     --radius: 0.625rem;
-    /* 10px — precise, not rounded */
+    /* 10px */
   }
 
   .dark {
-    --background: 214 80% 8%;
-    /* #05101F — Deep Navy */
-    --foreground: 210 40% 92%;
-    /* #E2EEF7 */
+    --background: 217 72% 10%;
+    /* #07162C — Navy */
+    --foreground: 216 40% 95%;
+    /* #E8F1FF — Ice */
 
-    --card: 212 70% 12%;
-    /* #0A1929 */
-    --card-foreground: 210 40% 92%;
+    --card: 217 60% 14%;
+    /* Slightly lighter navy */
+    --card-foreground: 216 40% 95%;
 
-    --popover: 212 70% 12%;
-    --popover-foreground: 210 40% 92%;
+    --popover: 217 60% 14%;
+    --popover-foreground: 216 40% 95%;
 
-    --primary: 38 91% 55%;
-    /* Amber stays the same */
-    --primary-foreground: 214 80% 8%;
+    --primary: 214 100% 68%;
+    /* #5AA0FF — Light Blue (brighter on dark) */
+    --primary-foreground: 217 72% 10%;
 
-    --secondary: 212 60% 16%;
-    /* #0D2137 */
-    --secondary-foreground: 210 30% 70%;
+    --secondary: 217 50% 18%;
+    --secondary-foreground: 216 30% 70%;
 
-    --muted: 212 60% 16%;
-    --muted-foreground: 210 25% 50%;
+    --muted: 217 50% 18%;
+    --muted-foreground: 216 20% 55%;
 
-    --accent: 38 91% 55%;
-    --accent-foreground: 214 80% 8%;
+    --accent: 214 100% 68%;
+    --accent-foreground: 217 72% 10%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 212 40% 22%;
-    --input: 212 40% 22%;
-    --ring: 38 91% 55%;
+    --border: 217 40% 22%;
+    --input: 217 40% 22%;
+    --ring: 214 100% 68%;
   }
 }
 
@@ -139,7 +141,7 @@
 
   /* Focus and Interactions */
   *:focus-visible {
-    outline: 2px solid #F5A623 !important;
+    outline: 2px solid #145DDB !important;
     outline-offset: 2px !important;
     border-radius: 6px;
   }
@@ -147,8 +149,8 @@
   input:focus,
   textarea:focus,
   select:focus {
-    border-color: #F5A623 !important;
-    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.12) !important;
+    border-color: #145DDB !important;
+    box-shadow: 0 0 0 3px rgba(20, 93, 219, 0.12) !important;
   }
 
   /* Custom Scrollbar for Webkit */
@@ -162,13 +164,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #2E5480;
+    background: #3D6DA8;
     /* Navy400 */
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #5C8AB0;
+    background: #7BA3CC;
     /* Navy200 */
   }
 }

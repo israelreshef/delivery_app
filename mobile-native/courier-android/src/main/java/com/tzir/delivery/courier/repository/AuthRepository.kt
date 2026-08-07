@@ -8,19 +8,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AuthRepository(private val api: DeliveryApi) {
-    
-    companion object {
-        var instance: AuthRepository? = null
-            private set
-        fun getInstance(api: DeliveryApi): AuthRepository {
-            return instance ?: synchronized(this) {
-                instance ?: AuthRepository(api).also { instance = it }
-            }
-        }
-    }
 
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
+
+    init {
+        if (TokenManager.sessionInvalidated) {
+            _currentUser.value = null
+            TokenManager.sessionInvalidated = false
+        }
+    }
 
     suspend fun login(username: String, password: String): AuthResponse {
         val request = LoginRequest(username = username, password = password)
@@ -29,6 +26,23 @@ class AuthRepository(private val api: DeliveryApi) {
         if (response.success && response.user != null) {
             _currentUser.value = response.user
             TokenManager.token = response.accessToken
+            response.refreshToken?.let { TokenManager.saveRefreshToken(it) }
+        } else if (response.requires2fa) {
+            // 2FA pending - no session stored until OTP is verified
+            TokenManager.token = null
+            _currentUser.value = null
+        }
+        
+        return response
+    }
+
+    suspend fun loginVerifyMfa(mfaToken: String, code: String): AuthResponse {
+        val response = api.loginVerifyMfa(mfaToken, code)
+        
+        if (response.success && response.user != null) {
+            _currentUser.value = response.user
+            TokenManager.token = response.accessToken
+            response.refreshToken?.let { TokenManager.saveRefreshToken(it) }
         }
         
         return response

@@ -2,9 +2,11 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, Send, ArrowRight, AlertCircle, User as UserIcon } from "lucide-react";
+import { Loader2, Send, ArrowRight, AlertCircle, User as UserIcon, Image as ImageIcon, Camera, CheckCheck } from "lucide-react";
 import { supportApi } from "@/lib/api/support";
 import { api } from "@/lib/api";
+import { useSocket } from "@/lib/socket";
+import { auth } from "@/lib/auth";
 import { TicketDetails, TicketStatus, TicketPriority } from "@/types/support";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -17,11 +19,18 @@ export default function TicketDetailsPage() {
     const ticketId = parseInt(params.id as string);
     const [data, setData] = useState<TicketDetails | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const token = typeof window !== "undefined" ? auth.getToken() : null;
+    const user = typeof window !== "undefined" ? auth.getUser() : null;
+    const socket = useSocket(token, user?.user_type || user?.role || null);
     const [newMessage, setNewMessage] = useState("");
     const [isInternal, setIsInternal] = useState(false);
     const [sending, setSending] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [couriers, setCouriers] = useState<Array<{id:number; full_name:string; user_id:number}>>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
 
     const fetchCouriers = async () => {
         try {
@@ -56,11 +65,65 @@ export default function TicketDetailsPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ticketId]);
 
+    // Realtime: when a new message arrives for THIS ticket (from the mobile app
+    // or another agent), reload so the conversation stays in sync.
+    useEffect(() => {
+        if (!socket) return;
+        const handleMessageAdded = (event: any) => {
+            if (Number(event.ticket_id) === ticketId) {
+                fetchTicket();
+            }
+        };
+        const handleTicketUpdated = (event: any) => {
+            if (Number(event.id) === ticketId) {
+                fetchTicket();
+            }
+        };
+        socket.on("ticket_message_added", handleMessageAdded);
+        socket.on("ticket_updated", handleTicketUpdated);
+        return () => {
+            socket.off("ticket_message_added", handleMessageAdded);
+            socket.off("ticket_updated", handleTicketUpdated);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket, ticketId]);
+
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [data?.messages]);
+
+    const handleImageUpload = async (file: File) => {
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+        setUploading(true);
+        try {
+            const res = await api.post("/support/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            const url = res.data.url;
+            await supportApi.addMessage(ticketId, {
+                message: "📷 תמונה",
+                is_internal: false,
+                attachments: [url]
+            });
+            setNewMessage("");
+            fetchTicket();
+            toast.success("התמונה נשלחה");
+        } catch (error) {
+            toast.error("שגיאה בהעלאת התמונה");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) handleImageUpload(file);
+        if (e.target) e.target.value = "";
+    };
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -73,7 +136,7 @@ export default function TicketDetailsPage() {
                 is_internal: isInternal
             });
             setNewMessage("");
-            fetchTicket(); // Refresh to show new message
+            fetchTicket();
         } catch (error) {
             toast.error("שגיאה בשליחת ההודעה");
         } finally {
@@ -82,7 +145,7 @@ export default function TicketDetailsPage() {
     };
 
     const handleAssignTo = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newAssignee = Number(e.target.value) || null;
+        const newAssignee = Number(e.target.value) || undefined;
 
         try {
             await supportApi.updateTicket(ticketId, { assigned_to: newAssignee });
@@ -136,7 +199,7 @@ export default function TicketDetailsPage() {
                     <div>
                         <div className={styles.headerTitle}>
                             {data.ticket.subject}
-                            <span className={styles.badge}>#{data.ticket.id}</span>
+                            <span className={styles.badge}>#{data.ticket.ticket_number || data.ticket.id}</span>
                         </div>
                         <div className={styles.headerSubtitle}>
                             נוצר על ידי {data.ticket.user_name} ב-{data.ticket.created_at}
@@ -170,6 +233,19 @@ export default function TicketDetailsPage() {
                                         msg.is_staff ? styles.bubbleStaff : styles.bubbleClient
                                     )}>
                                         {msg.message}
+                                        {msg.attachments && msg.attachments.length > 0 && (
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                                {msg.attachments.map((url: string, i: number) => (
+                                                    <img
+                                                        key={i}
+                                                        src={url}
+                                                        alt="קובץ מצורף"
+                                                        style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer' }}
+                                                        onClick={() => window.open(url, '_blank')}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 {msg.is_internal && (
@@ -184,6 +260,7 @@ export default function TicketDetailsPage() {
                                     </div>
                                 )}
                                 <div className={styles.messageTime}>
+                                    {msg.is_staff && msg.is_read && <CheckCheck size={12} style={{ marginLeft: '0.25rem', opacity: 0.7 }} />}
                                     {msg.created_at}
                                 </div>
                             </div>
@@ -194,6 +271,8 @@ export default function TicketDetailsPage() {
 
                 <div className={styles.replyBox}>
                     <form onSubmit={handleSendMessage}>
+                        <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleFileSelect} />
+                        <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileSelect} />
                         <textarea
                             placeholder="כתוב תגובה..."
                             value={newMessage}
@@ -201,14 +280,23 @@ export default function TicketDetailsPage() {
                             className={styles.textarea}
                         />
                         <div className={styles.replyActions}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#94A3B8' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={isInternal}
-                                    onChange={(e) => setIsInternal(e.target.checked)}
-                                />
-                                הערה פנימית (לא גלויה ללקוח)
-                            </label>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <button type="button" className={styles.btnGhost} onClick={() => fileInputRef.current?.click()} disabled={uploading} title="גלריה">
+                                    <ImageIcon size={18} />
+                                </button>
+                                <button type="button" className={styles.btnGhost} onClick={() => cameraInputRef.current?.click()} disabled={uploading} title="מצלמה">
+                                    <Camera size={18} />
+                                </button>
+                                {uploading && <Loader2 size={16} className="animate-spin" />}
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#94A3B8' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={isInternal}
+                                        onChange={(e) => setIsInternal(e.target.checked)}
+                                    />
+                                    הערה פנימית
+                                </label>
+                            </div>
                             <button type="submit" className={styles.btnPrimary} disabled={sending || !newMessage.trim()}>
                                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                                 שלח תגובה

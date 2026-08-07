@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ציר שליחויות</string>
+    <string name="app_name">TZIR Courier</string>
     <string name="dashboard">דשבורד</string>
     <string name="missions">משלוחים והצעות</string>
     <string name="earnings">הכנסות</string>
@@ -75,6 +75,11 @@
     <string name="login_btn">התחבר</string>
     <string name="err_invalid_creds">שם משתמש או סיסמה שגויים</string>
     <string name="err_inactive_user">החשבון אינו פעיל</string>
+    <string name="mfa_otp_title">אימות דו-שלבי</string>
+    <string name="mfa_otp_hint">קוד אימות (6 ספרות)</string>
+    <string name="mfa_verify_btn">אמת קוד</string>
+    <string name="mfa_back_to_login">חזרה להתחברות</string>
+    <string name="mfa_otp_invalid">קוד אימות לא תקין</string>
     <string name="err_generic_msg">שגיאה: %1$s</string>
     <string name="err_network">שגיאת תקשורת: %1$s</string>
     <string name="no_account">אין לך חשבון?</string>
@@ -128,4 +133,47 @@
     <string name="showing_cached_data">מציג נתונים מהמטמון</string>
     <string name="sync_pending">סנכרון נתונים ממתין...</string>
     <string name="reconnect_to_refresh">התחבר מחדש כדי לרענן את הנתונים</string>
+
+    <!-- Route Optimization Screen -->
+    <string name="route_optimization_title">אופטימיזציית מסלול</string>
+    <string name="route_optimization_desc">תכנן את המסלול האופטימלי למשלוחים הפעילים שלך</string>
+    <string name="route_optimization_area_hint">אזור מועדף</string>
+    <string name="route_optimization_time_hint">שעת הגעה מועדפת</string>
+    <string name="route_optimization_calc_btn">חשב מסלול מיטבי</string>
+    <string name="route_optimization_calculating">מחשב את המסלול המהיר ביותר…</string>
+    <string name="route_optimization_calculating_sub">בודק משלוחים פעילים וסדר המסלול</string>
+    <string name="route_optimization_result_title">תוצאת אופטימיזציית מסלול</string>
+    <string name="route_optimization_summary">סיכום</string>
+    <string name="route_optimization_estimated_distance">מרחק משוער: %1$s ק״מ</string>
+    <string name="route_optimization_estimated_duration">זמן משוער: %1$s דקות</string>
+    <string name="route_optimization_stops">עצירות</string>
+    <string name="route_optimization_no_deliveries">לא נמצאו משלוחים פעילים לאופטימיזציה</string>
+    <string name="route_optimization_connected_msg">תוצאה זו מחוברת למנוע האופטימיזציה של השרת</string>
+    <string name="route_optimization_approve_btn">אשר מסלול</string>
+    <string name="route_optimization_step_label">שלב %1$d</string>
+    <string name="route_optimization_type_pickup">איסוף</string>
+    <string name="route_optimization_type_current">מיקום נוכחי</string>
+    <string name="route_optimization_type_dropoff">מסירה</string>
+    <string name="route_optimization_order_prefix">הזמנה #%1$d</string>
+
+    <!-- Route Planner Screen -->
+    <string name="planner_current_location_desc">מיקום נוכחי</string>
+    <string name="planner_search_hint">חיפוש כתובת…</string>
+    <string name="planner_stops_count">%d עצירות</string>
+    <string name="planner_optimized_badge">מוטב</string>
+    <string name="planner_route_optimized">המסלול מוטב — %s קמ</string>
+    <string name="planner_optimization_error">שגיאה באופטימיזציה, נסה שוב</string>
+    <string name="planner_saved_to_calendar">המסלול נשמר ללוח השנה!</string>
+    <string name="planner_location_unavailable">לא ניתן לקבל מיקום נוכחי</string>
+    <string name="planner_address_verify_error">לא ניתן לאמת את הכתובת</string>
+    <string name="planner_stop_type_pickup">איסוף</string>
+    <string name="planner_stop_type_delivery">מסירה</string>
+    <string name="planner_notes_label">הערות</string>
+    <string name="planner_stop_type_label">סוג עצירה</string>
+    <string name="planner_time_window_label">חלון זמן הגעה (משוער)</string>
+    <string name="planner_date_label">תאריך</string>
+    <string name="planner_save_route">שמור מסלול</string>
+    <string name="planner_add_first_stops">הוסיפו את העצירות הראשונות שלכם</string>
+    <string name="planner_copy_from_previous">להעתיק עצירות ממסלול קודם</string>
+    <string name="planner_route_ready">🚀 מסלול עם %d עצירות מוכן!</string>
 </resources>

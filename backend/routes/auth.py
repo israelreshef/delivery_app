@@ -103,15 +103,19 @@ def login():
             db.session.commit()
         
         # בדיקה האם 2FA מופעל למשתמש זה
-        if getattr(user, 'mfa_enabled', False) and user.user_type == 'admin':
+        mfa_active = (
+            getattr(user, 'mfa_enabled', False)
+            or getattr(user, 'is_two_factor_enabled', False)
+            or getattr(user, 'two_factor_enforced_by_admin', False)
+        )
+        if mfa_active:
             # במקום להחזיר טוקן מלא, אנחנו מסמנים שהמשתמש עבר סיסמה וצריך קוד OTP
             import time
-            import os
             mfa_token = jwt.encode({
                 'user_id': user.id,
                 'mfa_pending': True,
                 'exp': int(time.time()) + 300
-            }, os.environ.get('SECRET_KEY', 'default-key'), algorithm="HS256")
+            }, SECRET_KEY, algorithm="HS256")
             
             return jsonify({
                 'requires_2fa': True,
@@ -163,6 +167,7 @@ def login():
         
         elif user.user_type == 'admin':
             user_data['full_name'] = user.username  # Admin doesn't have a separate profile
+            user_data['admin_role'] = getattr(user, 'admin_role', None)
         
         # AUDIT LOG
         from utils.audit import log_audit
@@ -424,6 +429,10 @@ def get_current_user():
                 user_data['company_name'] = customer.company_name
                 user_data['balance'] = float(customer.balance)
         
+        elif user.user_type == 'admin':
+            user_data['full_name'] = user.username
+            user_data['admin_role'] = getattr(user, 'admin_role', None)
+        
         return jsonify(user_data), 200
         
     except Exception as e:
@@ -463,32 +472,6 @@ def get_public_key():
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-@auth_bp.route('/setup-dev', methods=['GET'])
-def setup_dev():
-    """Temporary route to setup admin user for development"""
-    try:
-        from models import User
-        
-        if User.query.filter_by(username='admin').first():
-            user = User.query.filter_by(username='admin').first()
-            user.set_password('admin123')
-            db.session.commit()
-            return jsonify({'message': 'Admin user updated. Login with: admin / admin123'}), 200
-            
-        user = User(
-            username='admin',
-            email='admin@example.com',
-            phone='0500000000',
-            user_type='admin',
-            admin_role='super_admin'
-        )
-        user.set_password('admin123')
-        db.session.add(user)
-        db.session.commit()
-        return jsonify({'message': 'Admin user created. Login with: admin / admin123'}), 201
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 @auth_bp.route('/consent', methods=['POST'])
 @token_required
 def update_consent(current_user):
@@ -632,7 +615,7 @@ def verify_and_enable_2fa(current_user):
 def login_verify_2fa():
     """אימות קוד OTP במהלך ההתחברות"""
     from utils.two_factor import verify_totp_code
-    from flask_jwt_extended import create_access_token
+    from flask_jwt_extended import create_access_token, create_refresh_token
     
     data = request.json
     mfa_token = data.get('mfa_token')
@@ -650,35 +633,82 @@ def login_verify_2fa():
         user_id = payload.get('user_id')
         user = User.query.get(user_id)
         
-        if not user or not (user.is_two_factor_enabled or user.two_factor_enforced_by_admin):
+        mfa_active = user and (
+            getattr(user, 'mfa_enabled', False)
+            or getattr(user, 'is_two_factor_enabled', False)
+            or getattr(user, 'two_factor_enforced_by_admin', False)
+        )
+        if not mfa_active:
             return jsonify({'error': 'User not found or 2FA not required'}), 401
         
-        # אימות הקוד
-        if verify_totp_code(user.two_factor_secret, code):
-            # הכל תקין - שלח טוקן סופי
-            token = create_access_token(
-                identity=str(user.id),
-                additional_claims={
-                    'username': user.username,
-                    'user_type': user.user_type
-                },
-                expires_delta=datetime.timedelta(days=7)
-            )
-            
-            return jsonify({
-                'access_token': token,
-                'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'user_type': user.user_type
-                }
-            }), 200
-        else:
+        # אימות הקוד - תומך בשני מנגנוני 2FA הקיימים + קוד התאוששות
+        secret = getattr(user, 'two_factor_secret', None) or getattr(user, 'totp_secret', None)
+        code_valid = (secret and verify_totp_code(secret, code)) or (
+            getattr(user, 'mfa_recovery_code', None) and code == user.mfa_recovery_code
+        )
+        if not code_valid:
             return jsonify({'error': 'Invalid verification code'}), 401
+        
+        # הכל תקין - שלח טוקן סופי
+        token = create_access_token(
+            identity=str(user.id),
+            additional_claims={
+                'username': user.username,
+                'user_type': user.user_type
+            },
+            expires_delta=datetime.timedelta(minutes=60)
+        )
+        refresh_token = create_refresh_token(identity=str(user.id))
+        
+        # AUDIT LOG
+        from utils.audit import log_audit
+        log_audit(
+            action='LOGIN_2FA',
+            user_id=user.id,
+            details=f"User {user.username} completed 2FA verification"
+        )
+        
+        # קבל פרטים נוספים לפי סוג משתמש (מראה לזרימת login הרגילה)
+        user_data = {
+            'id': str(user.id),
+            'username': user.username,
+            'email': user.email,
+            'phone': user.phone,
+            'user_type': user.user_type
+        }
+        
+        if user.user_type == 'courier':
+            courier = Courier.query.filter_by(user_id=user.id).first()
+            if courier:
+                user_data['courier_id'] = str(courier.id)
+                user_data['full_name'] = courier.full_name
+                user_data['vehicle_type'] = courier.vehicle_type
+                user_data['is_available'] = courier.is_available
+        
+        elif user.user_type == 'customer':
+            customer = Customer.query.filter_by(user_id=user.id).first()
+            if customer:
+                user_data['customer_id'] = str(customer.id)
+                user_data['full_name'] = customer.full_name
+                user_data['company_name'] = customer.company_name
+        
+        elif user.user_type == 'admin':
+            user_data['full_name'] = user.username
+            user_data['admin_role'] = getattr(user, 'admin_role', None)
+        
+        return jsonify({
+            'success': True,
+            'message': '2FA verification successful',
+            'access_token': token,  #  Mobile app expects this field
+            'refresh_token': refresh_token,
+            'token': token,  # Keep for backward compatibility
+            'user': user_data
+        }), 200
             
     except jwt.ExpiredSignatureError:
         return jsonify({'error': 'MFA session expired, please login again'}), 401
     except Exception as e:
+        logging.error("2FA login verify error: %s", str(e), exc_info=True)
         return jsonify({'error': f'Auth failed: {str(e)}'}), 401
 
 @auth_bp.route('/google', methods=['POST'])

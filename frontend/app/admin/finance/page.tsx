@@ -306,7 +306,7 @@ export default function AdminFinancePage() {
 
     if (loading && !financeData) return <div className="flex h-screen items-center justify-center bg-[#0B0E14] text-white"><LoadingSpinner size="lg" text="טוען נתונים פיננסיים..." /></div>;
 
-    const COLORS = ['#10b981', '#ef4444', '#f59e0b', '#3b82f6'];
+    const COLORS = ['#10b981', '#ef4444', '#145DDB', '#3b82f6'];
 
     return (
         <div className={styles.financeContainer}>
@@ -387,7 +387,7 @@ export default function AdminFinancePage() {
                         </div>
                         <p className="text-xs text-slate-400 mt-1">צפי לדיווח {month}/{year}</p>
                     </div>
-                    <div className={`${styles.metricIcon} ${styles.iconOrange}`}>
+                    <div className={`${styles.metricIcon} ${styles.iconBlue}`}>
                         <ShieldCheck size={24} />
                     </div>
                 </div>
@@ -563,7 +563,7 @@ export default function AdminFinancePage() {
                                     <span className="font-semibold">{docFilterDue === 'overdue' ? alerts?.overdue_count : alerts?.overdue_count}</span>
                                     <span>באיחור</span>
                                 </div>
-                                <div className="flex items-center gap-2 bg-amber-500/10 text-amber-500 px-3 py-1 rounded-full border border-amber-500/20">
+                                <div className="flex items-center gap-2 bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full border border-blue-500/20">
                                     <span className="font-semibold">{alerts?.due_soon_count}</span>
                                     <span>ב־30 ימים הקרובים</span>
                                 </div>
@@ -833,7 +833,7 @@ export default function AdminFinancePage() {
                                 )}
                                 {alerts.due_soon.length > 0 && (
                                     <div className="mt-2">
-                                        <div className="text-xs text-amber-500 font-semibold">ב-30 ימים הקרובים</div>
+                                        <div className="text-xs text-blue-500 font-semibold">ב-30 ימים הקרובים</div>
                                         <div className="space-y-1 mt-1">
                                             {alerts.due_soon.slice(0, 5).map((a) => (
                                                 <div key={a.id} className="text-xs text-slate-400">

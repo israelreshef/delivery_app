@@ -44,7 +44,7 @@ def client(app):
 def courier_credentials():
     return {
         "username": "demo_courier",
-        "password": "TzirRiderSpeed!77",
+        "password": "demo_courier2026!",
     }
 
 
@@ -52,7 +52,7 @@ def courier_credentials():
 def admin_credentials():
     return {
         "username": "super_admin",
-        "password": "TzirSuper2026!$!",
+        "password": "super_admin2026!",
     }
 
 

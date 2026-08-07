@@ -37,7 +37,7 @@
 }
 
 .headerSubtitle {
-    color: #94a3b8;
+    color: #5A8AC0;
     font-size: 0.8125rem;
     margin-top: 0.25rem;
 }
@@ -75,12 +75,12 @@
 .headerIconBox {
     width: 2.25rem;
     height: 2.25rem;
-    background-color: #3B82F6;
+    background-color: #145DDB;
     border-radius: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+    box-shadow: 0 4px 14px 0 rgba(20, 93, 219, 0.39);
 }
 
 .tabList {
@@ -121,13 +121,13 @@
 
 .stopCardDelivery {
     background: rgba(16, 21, 32, 0.8);
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(20, 93, 219, 0.2);
     border-radius: 0.75rem;
     transition: all 0.2s;
 }
 
 .stopCardDelivery:hover {
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(20, 93, 219, 0.4);
 }
 
 .emptyStateContainer {

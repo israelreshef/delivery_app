@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Upload, FileText, CheckCircle2, XCircle, AlertCircle, Calendar } from "lucide-react";
+import { Loader2, Upload, FileText, CheckCircle2, XCircle, AlertCircle, Calendar, Download, FileSearch, History, Trash2, RefreshCw } from "lucide-react";
 import { freelanceApi } from "@/lib/api/freelance";
-import { CourierDocument, DocumentStatus } from "@/types/freelance";
+import { CourierDocument, DocumentStatus, TaxForm, CourierReportHistory } from "@/types/freelance";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -30,10 +30,17 @@ const REQUIRED_DOCUMENTS = [
 
 export default function CourierDocumentsPage() {
     const [documents, setDocuments] = useState<CourierDocument[]>([]);
+    const [taxForms, setTaxForms] = useState<TaxForm[]>([]);
+    const [reportHistory, setReportHistory] = useState<CourierReportHistory[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [generatingForm, setGeneratingForm] = useState<string | null>(null);
+    const [actionReportId, setActionReportId] = useState<number | null>(null);
     const [openUploadDialog, setOpenUploadDialog] = useState(false);
     const [selectedDocType, setSelectedDocType] = useState<string>("");
+    const [periodForm, setPeriodForm] = useState<TaxForm | null>(null);
+    const [periodMonth, setPeriodMonth] = useState(new Date().getMonth() + 1);
+    const [periodYear, setPeriodYear] = useState(new Date().getFullYear());
 
     // Form state
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,8 +48,14 @@ export default function CourierDocumentsPage() {
 
     const fetchDocuments = async () => {
         try {
-            const data = await freelanceApi.getDocuments();
-            setDocuments(data);
+            const [docsData, formsData, historyData] = await Promise.all([
+                freelanceApi.getDocuments(),
+                freelanceApi.getTaxForms(),
+                freelanceApi.getReportHistory().catch(() => [] as CourierReportHistory[])
+            ]);
+            setDocuments(docsData);
+            setTaxForms(formsData);
+            setReportHistory(historyData);
         } catch (error) {
             console.error("Failed to load documents", error);
         } finally {
@@ -53,6 +66,110 @@ export default function CourierDocumentsPage() {
     useEffect(() => {
         fetchDocuments();
     }, []);
+
+    const handleGenerateTaxForm = async (form: TaxForm) => {
+        if (!form) return;
+        
+        setGeneratingForm(form.id);
+        try {
+            const blob = await freelanceApi.generateTaxForm(form.id, {
+                month: form.period === 'month' ? periodMonth : undefined,
+                year: periodYear
+            });
+            
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${form.title}_${periodYear}${form.period === 'month' ? `_${periodMonth}` : ''}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+            
+            toast.success("הדוח נוצר בהצלחה");
+            setPeriodForm(null);
+            fetchDocuments();
+        } catch (error) {
+            console.error("Failed to generate tax form", error);
+            toast.error("שגיאה ביצירת הדוח");
+        } finally {
+            setGeneratingForm(null);
+        }
+    };
+
+    const identifyFormPeriod = (report: CourierReportHistory) => ({
+        month: report.period_month ?? undefined,
+        year: report.period_year,
+    });
+
+    const handleRefreshReport = async (report: CourierReportHistory) => {
+        setActionReportId(report.id);
+        try {
+            await freelanceApi.generateTaxForm(report.form_id, identifyFormPeriod(report));
+            toast.success("הדוח עודכן");
+            fetchDocuments();
+        } catch (error) {
+            toast.error("שגיאה ברענון הדוח");
+        } finally {
+            setActionReportId(null);
+        }
+    };
+
+    const handleDownloadReport = async (report: CourierReportHistory) => {
+        setActionReportId(report.id);
+        try {
+            const blob = await freelanceApi.downloadReport(report.id);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', report.filename || `${report.title}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            toast.error("שגיאה בהורדת הדוח");
+        } finally {
+            setActionReportId(null);
+        }
+    };
+
+    const handleDeleteReport = async (report: CourierReportHistory) => {
+        setActionReportId(report.id);
+        try {
+            await freelanceApi.deleteReport(report.id);
+            toast.success("הדוח נמחק");
+            fetchDocuments();
+        } catch (error) {
+            toast.error("שגיאה במחיקת הדוח");
+        } finally {
+            setActionReportId(null);
+        }
+    };
+
+    const handleDownloadBlank = async (form: TaxForm) => {
+        setGeneratingForm(form.id);
+        try {
+            const blob = await freelanceApi.downloadBlankForm(form.id);
+            
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${form.title}_ריק.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+            
+            toast.success("הטופס הריק הורד בהצלחה");
+        } catch (error) {
+            console.error("Failed to download blank form", error);
+            toast.error("שגיאה בהורדת הטופס הריק");
+        } finally {
+            setGeneratingForm(null);
+        }
+    };
 
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -134,9 +251,162 @@ export default function CourierDocumentsPage() {
                 <div>
                     <h1 className="text-3xl font-bold">המסמכים שלי</h1>
                     <p className="text-muted-foreground mt-1">
-                        ניהול מסמכים ורגולציה - נא לוודא שכל המסמכים בתוקף
+                        ניהול מסמכים, דוחות מס ורגולציה - נא לוודא שכל המסמכים בתוקף
                     </p>
                 </div>
+            </div>
+
+            <div className="mb-10">
+                <div className="flex items-center gap-2 mb-4">
+                    <FileSearch className="w-5 h-5 text-primary" />
+                    <h2 className="text-xl font-bold">דוחות מס</h2>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                    הדוחות מופקים אוטומטית מהפעילות העסקית שלך. הורד והגש לרשויות.
+                </p>
+
+                {loading ? (
+                    <div className="flex items-center justify-center py-8">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    </div>
+                ) : taxForms.length === 0 ? (
+                    <p className="text-muted-foreground">אין טפסי מס זמינים כעת.</p>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {taxForms.map((form) => (
+                            <Card key={form.id}>
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-base font-medium">
+                                        {form.title}
+                                    </CardTitle>
+                                    <CardDescription className="text-sm">
+                                        {form.description}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    {!form.available ? (
+                                        <span className="text-xs text-destructive">
+                                            לא זמין בעונת הדיווח הנוכחית
+                                        </span>
+                                    ) : (
+                                        <div className="flex flex-col gap-2">
+                                            {form.kind === "auto" && (
+                                                <Button
+                                                    variant="default"
+                                                    size="sm"
+                                                    disabled={generatingForm === form.id}
+                                                    onClick={() => setPeriodForm(form)}
+                                                >
+                                                    {generatingForm === form.id ? (
+                                                        <>
+                                                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                                                            מייצר...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <FileText className="w-3 h-3 mr-2" />
+                                                            צור דוח
+                                                        </>
+                                                    )}
+                                                </Button>
+                                            )}
+                                            {form.period === "year" && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    disabled={generatingForm === form.id}
+                                                    onClick={() => handleDownloadBlank(form)}
+                                                >
+                                                    <Download className="w-3 h-3 mr-2" />
+                                                    הורד טופס ריק
+                                                </Button>
+                                            )}
+                                            {form.kind === "blank" && (
+                                                <span className="text-xs text-muted-foreground">
+                                                    הטופס ממולא בפרטים שלך
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="mb-10">
+                <div className="flex items-center gap-2 mb-4">
+                    <History className="w-5 h-5 text-primary" />
+                    <h2 className="text-xl font-bold">דוחות שנוצרו</h2>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                    דוחות שהופקו נשמרים כאן. דוח שצריך רענון מצוין — הנתונים השתנו מאז היצירה.
+                </p>
+
+                {reportHistory.length === 0 ? (
+                    <p className="text-muted-foreground">
+                        עוד לא נוצר אף דוח. צור דוח מהרשימה למעלה.
+                    </p>
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        {reportHistory.map((report) => (
+                            <Card key={report.id}>
+                                <CardContent className="py-4">
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                                            <div className="min-w-0">
+                                                <div className="font-medium truncate">{report.title}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    תקופה: {report.period_label} · נוצר ב: {report.created_at ? new Date(report.created_at).toLocaleString('he-IL') : '—'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {report.status === "needs_refresh" ? (
+                                                <Badge variant="outline" className="gap-1 bg-yellow-100 text-yellow-800 border-yellow-200">
+                                                    <AlertCircle className="w-3 h-3" /> דורש רענון
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="outline" className="gap-1 bg-green-100 text-green-800 border-green-200">
+                                                    <CheckCircle2 className="w-3 h-3" /> עדכני
+                                                </Badge>
+                                            )}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={actionReportId === report.id}
+                                                onClick={() => handleDownloadReport(report)}
+                                            >
+                                                <Download className="w-3 h-3 mr-1" /> הורד
+                                            </Button>
+                                            {report.status === "needs_refresh" && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    disabled={actionReportId === report.id}
+                                                    onClick={() => handleRefreshReport(report)}
+                                                >
+                                                    <RefreshCw className="w-3 h-3 mr-1" /> רענן
+                                                </Button>
+                                            )}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-destructive"
+                                                disabled={actionReportId === report.id}
+                                                onClick={() => handleDeleteReport(report)}
+                                            >
+                                                <Trash2 className="w-3 h-3" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -255,6 +525,79 @@ export default function CourierDocumentsPage() {
                     );
                 })}
             </div>
+
+            {/* Period picker for generating auto tax forms */}
+            <Dialog open={periodForm !== null} onOpenChange={(open) => { if (!open) setPeriodForm(null); }}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>יצירת דוח - {periodForm?.title}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
+                        {periodForm?.period === "month" && (
+                            <div className="space-y-2">
+                                <Label>חודש</Label>
+                                <div className="flex gap-3">
+                                    <select
+                                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={periodMonth}
+                                        onChange={(e) => setPeriodMonth(Number(e.target.value))}
+                                    >
+                                        {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                                            <option key={m} value={m}>
+                                                {m}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={periodYear}
+                                        onChange={(e) => setPeriodYear(Number(e.target.value))}
+                                    >
+                                        {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                                            <option key={y} value={y}>
+                                                {y}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
+                        {periodForm?.period === "year" && (
+                            <div className="space-y-2">
+                                <Label>שנה</Label>
+                                <select
+                                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                    value={periodYear}
+                                    onChange={(e) => setPeriodYear(Number(e.target.value))}
+                                >
+                                    {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                                        <option key={y} value={y}>
+                                            {y}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                            הדוח יופק מהפעילות העסקית שלך בתקופה הנבחרת.
+                        </p>
+                        <Button
+                            className="w-full"
+                            onClick={() => periodForm && handleGenerateTaxForm(periodForm)}
+                            disabled={generatingForm !== null}
+                        >
+                            {generatingForm ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    מייצר...
+                                </>
+                            ) : (
+                                "צור דוח"
+                            )}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

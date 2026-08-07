@@ -1,4 +1,4 @@
-import { CourierDocument, Payout, PayoutCalculation, CreatePayoutDTO } from '@/types/freelance';
+import { CourierDocument, Payout, PayoutCalculation, CreatePayoutDTO, TaxForm, GenerateTaxFormDTO, CourierReportHistory } from '@/types/freelance';
 import { api } from "../api";
 
 export const freelanceApi = {
@@ -68,11 +68,48 @@ export const freelanceApi = {
         return res.data;
     },
 
-    approvePayout: async (payoutId: number): Promise<void> => {
+approvePayout: async (payoutId: number): Promise<void> => {
         try {
             await api.put(`/freelance/payouts/${payoutId}/approve`);
         } catch (error: any) {
             throw new Error(error.response?.data?.error || 'Failed to approve payout');
         }
-    }
+    },
+
+    // Tax Forms
+    getTaxForms: async (): Promise<TaxForm[]> => {
+        const res = await api.get('/courier/forms');
+        return res.data;
+    },
+
+    generateTaxForm: async (formId: string, data: GenerateTaxFormDTO): Promise<Blob> => {
+        const res = await api.post(`/courier/forms/${formId}/generate`, data, {
+            responseType: 'blob',
+        });
+        return res.data;
+    },
+
+    downloadBlankForm: async (formId: string): Promise<Blob> => {
+        const res = await api.get(`/courier/forms/${formId}/blank`, {
+            responseType: 'blob',
+        });
+        return res.data;
+    },
+
+    // Generated report history
+    getReportHistory: async (): Promise<CourierReportHistory[]> => {
+        const res = await api.get('/courier/forms/history');
+        return res.data;
+    },
+
+    downloadReport: async (reportId: number): Promise<Blob> => {
+        const res = await api.get(`/courier/forms/history/${reportId}/download`, {
+            responseType: 'blob',
+        });
+        return res.data;
+    },
+
+    deleteReport: async (reportId: number): Promise<void> => {
+        await api.delete(`/courier/forms/history/${reportId}`);
+    },
 };

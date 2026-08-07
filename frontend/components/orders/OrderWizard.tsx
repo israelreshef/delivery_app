@@ -621,34 +621,34 @@ export default function OrderWizard({ userType = 'customer' }: OrderWizardProps)
                             </div>
 
                             {/* Price Quote */}
-                            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5">
-                                <h3 className="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                            <div className="bg-gradient-to-br from-blue-50 to-orange-50 border border-brand-light rounded-xl p-5">
+                                <h3 className="font-bold text-brand-dark mb-3 flex items-center gap-2">
                                     <ShoppingCart className="w-5 h-5" />
                                     הצעת מחיר
                                 </h3>
                                 {quoteFetching ? (
-                                    <div className="flex items-center gap-2 text-amber-700">
+                                    <div className="flex items-center gap-2 text-brand-dark">
                                         <Loader2 className="w-4 h-4 animate-spin" />
                                         מחשב מחיר...
                                     </div>
                                 ) : priceQuote ? (
                                     <div className="space-y-2">
-                                        <div className="flex justify-between text-sm text-amber-700">
+                                        <div className="flex justify-between text-sm text-brand-dark">
                                             <span>מרחק משוער</span>
                                             <span className="font-medium">{priceQuote.distance_km.toFixed(1)} ק"מ</span>
                                         </div>
-                                        <div className="flex justify-between text-sm text-amber-700">
+                                        <div className="flex justify-between text-sm text-brand-dark">
                                             <span>זמן נסיעה משוער</span>
                                             <span className="font-medium">{Math.round(priceQuote.duration_mins)} דקות</span>
                                         </div>
-                                        <div className="border-t border-amber-200 pt-2 mt-2 flex justify-between items-baseline">
-                                            <span className="font-bold text-amber-900 text-lg">סה"כ לתשלום (כולל מע"מ)</span>
-                                            <span className="font-black text-2xl text-amber-600">₪{priceQuote.price.toFixed(2)}</span>
+                                        <div className="border-t border-brand-light pt-2 mt-2 flex justify-between items-baseline">
+                                            <span className="font-bold text-brand-dark text-lg">סה"כ לתשלום (כולל מע"מ)</span>
+                                            <span className="font-black text-2xl text-brand-dark">₪{priceQuote.price.toFixed(2)}</span>
                                         </div>
-                                        <p className="text-xs text-amber-600 mt-1">* המחיר הסופי עשוי להשתנות בהתאם לתנאי הדרך</p>
+                                        <p className="text-xs text-brand-dark mt-1">* המחיר הסופי עשוי להשתנות בהתאם לתנאי הדרך</p>
                                     </div>
                                 ) : (
-                                    <p className="text-sm text-amber-700">
+                                    <p className="text-sm text-brand-dark">
                                         {formData.pickup_lat && formData.delivery_lat
                                             ? "לא ניתן לחשב מחיר כרגע. המחיר יוצג לאחר שיוקצה שליח."
                                             : "לחישוב מחיר, בחר כתובות מרשימת ההצעות של גוגל. המחיר יוצג לאחר שיוקצה שליח."}

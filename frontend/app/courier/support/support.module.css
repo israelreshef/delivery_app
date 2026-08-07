@@ -1,0 +1,423 @@
+/* ============= MT-003 / CT-056 — Support Chat (Dark Theme) ============= */
+
+/* :root variables inherited from globals.css — navy-950 through navy-100, brand, brand-dark, brand-light */
+
+.container {
+    background-color: #07162C;
+    color: #DCE8F5;
+}
+
+/* ============= LIST VIEW ============= */
+.listScreen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #07162C;
+}
+
+/* ============= STATUSES ============= */
+.statusOpen {
+    background: rgba(20, 93, 219, 0.15);
+    color: #5AA0FF;
+    border: 1px solid rgba(20, 93, 219, 0.3);
+}
+
+.statusPending {
+    background: rgba(168, 85, 247, 0.15);
+    color: #A855F7;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.statusResolved {
+    background: rgba(52, 199, 89, 0.15);
+    color: #34C759;
+    border: 1px solid rgba(52, 199, 89, 0.3);
+}
+
+.statusClosed {
+    background: rgba(90, 138, 192, 0.15);
+    color: #5A8AC0;
+    border: 1px solid rgba(90, 138, 192, 0.3);
+}
+
+/* ============= CHAT VIEW ============= */
+.chatArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #0C1E3A;
+}
+
+.messagesArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.emptyChat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #5A8AC0;
+    gap: 0.5rem;
+}
+
+.msgRow {
+    display: flex;
+    max-width: 85%;
+}
+
+.msgMe { align-self: flex-start; }
+.msgStaff { align-self: flex-end; }
+
+.msgBubble {
+    padding: 0.7rem 1rem;
+    border-radius: 14px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.bubbleMe {
+    background: #145DDB;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.bubbleStaff {
+    background: #112648;
+    color: #DCE8F5;
+    border: 1px solid #1A3566;
+    border-bottom-left-radius: 4px;
+}
+
+.msgSender {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #5AA0FF;
+    margin-bottom: 0.2rem;
+}
+
+.msgText { white-space: pre-wrap; word-break: break-word; }
+
+.attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.attImg {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s;
+    border: 1px solid #1A3566;
+}
+.attImg:hover { transform: scale(1.04); }
+
+.msgTime {
+    font-size: 0.65rem;
+    opacity: 0.6;
+    margin-top: 0.2rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.readIcon {
+    display: inline;
+    opacity: 0.8;
+}
+
+/* ============= INPUT AREA ============= */
+.inputArea {
+    padding: 0.65rem 1rem;
+    background: #0C1E3A;
+    border-top: 1px solid #1A3566;
+}
+
+.inputRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+}
+
+.attachBtn {
+    background: none;
+    border: 1px solid #1A3566;
+    border-radius: 10px;
+    padding: 0.45rem;
+    cursor: pointer;
+    color: #5A8AC0;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.attachBtn:hover { background: #112648; color: #5AA0FF; border-color: #145DDB; }
+.attachBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.msgInput {
+    flex: 1;
+    border: 1px solid #1A3566;
+    border-radius: 12px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.875rem;
+    resize: none;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+    min-height: 40px;
+    max-height: 100px;
+    background: #07162C;
+    color: #DCE8F5;
+}
+.msgInput:focus { border-color: #145DDB; background: #0C1E3A; }
+
+.sendBtn {
+    background: #145DDB;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+.sendBtn:hover { background: #1048B0; }
+.sendBtn:disabled { background: #3D6DA8; cursor: not-allowed; }
+
+.sendBtnLarge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.25rem;
+    background: linear-gradient(135deg, #145DDB, #1048B0);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 120px;
+}
+.sendBtnLarge:hover { opacity: 0.95; transform: translateY(-1px); }
+.sendBtnLarge:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.closedNotice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    background: #112648;
+    color: #5A8AC0;
+    font-size: 0.85rem;
+    border-top: 1px solid #1A3566;
+}
+
+/* ============= MODAL ============= */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 22, 44, 0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.newTicketModal {
+    background: #0C1E3A;
+    border: 1px solid #1A3566;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 1.5rem 1.5rem 2rem;
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+.modalClose {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background: #112648;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #5A8AC0;
+    transition: all 0.15s;
+}
+.modalClose:hover { background: #1A3566; color: #DCE8F5; }
+
+.modalBody {
+    text-align: center;
+    padding-top: 0.5rem;
+}
+
+.modalIconWrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(20, 93, 219, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.modalIconWrapWarning {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 149, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: #FF9500;
+}
+
+.modalIconWrapError {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 59, 48, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: #FF3B30;
+}
+
+.modalIcon { color: #5AA0FF; }
+
+.modalTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #DCE8F5;
+    margin: 0 0 0.35rem;
+}
+
+.modalSub {
+    font-size: 0.85rem;
+    color: #5A8AC0;
+    margin: 0 0 1.25rem;
+}
+
+.modalInput {
+    width: 100%;
+    border: 1px solid #1A3566;
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 70px;
+    margin-bottom: 1rem;
+    background: #07162C;
+    color: #DCE8F5;
+}
+.modalInput:focus { border-color: #145DDB; box-shadow: 0 0 0 3px rgba(20, 93, 219, 0.15); background: #0C1E3A; }
+
+.modalActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.modalAttach {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modalProceedBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: #145DDB;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin: 0 auto;
+}
+.modalProceedBtn:hover { background: #1048B0; }
+
+/* ============= STATES ============= */
+.loadingState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #5A8AC0;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    color: #5A8AC0;
+    text-align: center;
+    gap: 0.3rem;
+}
+
+.emptySub { font-size: 0.8rem; color: #3D6DA8; }
+
+.hiddenInput { display: none; }
+
+/* ============= RESPONSIVE ============= */
+@media (max-width: 768px) {
+    .container {
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+    .msgRow { max-width: 92%; }
+    .newTicketModal { border-radius: 16px 16px 0 0; }
+}

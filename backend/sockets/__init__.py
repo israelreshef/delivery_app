@@ -4,6 +4,7 @@ from flask import request
 from flask_socketio import SocketIO
 from .delivery_events import register_socket_events
 from .chat_events import register_chat_events
+from .support_events import register_support_events
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,4 +21,5 @@ def init_sockets(socketio: SocketIO):
 
     # Register specialized event modules
     register_socket_events(socketio)
-    register_chat_events(socketio)
+    register_chat_events(socketio)
+    register_support_events(socketio)

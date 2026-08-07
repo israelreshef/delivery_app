@@ -1,10 +1,18 @@
 import type { Metadata } from 'next'
+import { Heebo } from 'next/font/google'
 import { Providers } from './providers'
 import './globals.css'
 import { Toaster } from 'sonner'
 import StructuredData from '@/components/seo/StructuredData'
 import ChatWindow from '@/components/chat/ChatWindow';
 import { CookieBanner } from '@/components/CookieBanner';
+
+const heebo = Heebo({
+    subsets: ['latin', 'hebrew'],
+    weight: ['300', '400', '500', '600', '700', '800', '900'],
+    variable: '--font-heebo',
+    display: 'swap',
+})
 
 export const metadata: Metadata = {
     title: {
@@ -23,7 +31,7 @@ export const metadata: Metadata = {
         siteName: 'TZIR Delivery',
         images: [
             {
-                url: '/og-image.jpg', // You should create this image later
+                url: '/og-image.jpg',
                 width: 1200,
                 height: 630,
                 alt: 'TZIR Delivery Platform',
@@ -42,8 +50,13 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="he" dir="rtl">
-            <body className="font-sans">
+        <html lang="he" dir="rtl" className={heebo.variable}>
+            <head>
+                <link rel="icon" href="/favicon.ico" sizes="any" />
+                <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+                <link rel="apple-touch-icon" href="/apple-touch-icon-180.png" />
+            </head>
+            <body className={`${heebo.className} font-sans`}>
                 <Providers>
                     <StructuredData />
                     <div className="flex h-screen w-full bg-background text-right font-sans">

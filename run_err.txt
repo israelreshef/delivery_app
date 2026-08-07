@@ -1,0 +1,2 @@
+ERROR: Input redirection is not supported, exiting the process immediately.
+... was unexpected at this time.

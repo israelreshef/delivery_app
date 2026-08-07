@@ -1,6 +1,10 @@
 package com.tzir.delivery.courier.ui.courier
 
 import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -24,9 +28,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.tzir.delivery.courier.R
+import com.tzir.delivery.courier.model.User
+import com.tzir.delivery.courier.network.KtorClientFactory
+import com.tzir.delivery.courier.repository.CourierRepository
 import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // Preference keys
 const val PREF_NAV_APP = "pref_nav_app"
@@ -52,6 +63,8 @@ enum class MapTheme(val labelRes: Int) {
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    user: User? = null,
+    courierRepository: CourierRepository? = null,
     onVehicleSettings: () -> Unit = {},
     onRouteClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
@@ -62,20 +75,59 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("tzir_prefs", Context.MODE_PRIVATE)
+    val scope = rememberCoroutineScope()
 
     var darkModeEnabled by remember {
-        mutableStateOf(prefs.getBoolean(PREF_DARK_MODE, true))
+        mutableStateOf(DarkModeState.isDarkTheme)
     }
     var showSettingsSheet by remember { mutableStateOf(false) }
 
-    val darkBg = Color(0xFF0A0A0A)
-    val cardBg = Color(0xFF1C1C1E)
-    val separatorColor = Color.White.copy(alpha = 0.08f)
+    // ── Profile photo (Feature #6) ──────────────────────────────
+    var photoUrl by remember { mutableStateOf(prefs.getString("pref_profile_photo", null)) }
+    var photoMenuOpen by remember { mutableStateOf(false) }
+    var uploadingPhoto by remember { mutableStateOf(false) }
+
+    fun savePhotoToPrefs(url: String?) {
+        prefs.edit().apply {
+            if (url == null) remove("pref_profile_photo") else putString("pref_profile_photo", url)
+        }.apply()
+        photoUrl = url
+    }
+
+    val photoPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            scope.launch {
+                uploadingPhoto = true
+                val bytes = withContext(Dispatchers.IO) {
+                    context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                }
+                if (bytes != null) {
+                    val uploaded = courierRepository?.uploadImage(bytes)
+                    val absolute = if (uploaded != null && uploaded.startsWith("/")) {
+                        KtorClientFactory.resolveBaseUrl() + uploaded
+                    } else uploaded
+                    savePhotoToPrefs(absolute)
+                }
+                uploadingPhoto = false
+            }
+        }
+        photoMenuOpen = false
+    }
+
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardBg = MaterialTheme.colorScheme.surface
+    val separatorColor = MaterialTheme.colorScheme.outlineVariant
+    val onBg = MaterialTheme.colorScheme.onBackground
+    val onSurfaceText = MaterialTheme.colorScheme.onSurface
+    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
+    val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkBg)
+            .background(backgroundColor)
     ) {
         Column(
             modifier = Modifier
@@ -89,7 +141,7 @@ fun SettingsScreen(
             // ── Title ──────────────────────────────────────────────────────
             Text(
                 "עוד",
-                color = Color.White,
+                color = onBg,
                 fontWeight = FontWeight.Black,
                 fontSize = 28.sp
             )
@@ -97,27 +149,69 @@ fun SettingsScreen(
             Spacer(Modifier.height(20.dp))
 
             // ── Avatar ─────────────────────────────────────────────────────
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .border(3.dp, AmberGold, CircleShape)
-                    .background(Color(0xFF2C2C2E)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null,
-                    tint = AmberGold,
-                    modifier = Modifier.size(44.dp)
-                )
+            Box {
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .border(3.dp, BrandBlue, CircleShape)
+                        .background(surfaceVariant)
+                        .clickable { photoMenuOpen = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (photoUrl != null) {
+                        AsyncImage(
+                            model = photoUrl,
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp).clip(CircleShape),
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = null,
+                            tint = BrandBlue,
+                            modifier = Modifier.size(44.dp)
+                        )
+                    }
+                    if (uploadingPhoto) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
+
+                DropdownMenu(
+                    expanded = photoMenuOpen,
+                    onDismissRequest = { photoMenuOpen = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("הוספת תמונה") },
+                        leadingIcon = { Icon(Icons.Default.AddPhotoAlternate, null) },
+                        onClick = {
+                            photoMenuOpen = false
+                            photoPicker.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("ללא תמונה") },
+                        leadingIcon = { Icon(Icons.Default.Delete, null) },
+                        onClick = {
+                            photoMenuOpen = false
+                            savePhotoToPrefs(null)
+                        }
+                    )
+                }
             }
 
             Spacer(Modifier.height(10.dp))
 
             Text(
-                "ישראל",
-                color = Color.White,
+                user?.fullName ?: user?.username ?: "ישראל",
+                color = onBg,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
@@ -132,21 +226,21 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF2C2C2E))
-                                .border(1.5.dp, AmberGold, CircleShape),
+                                .background(surfaceVariant)
+                                .border(1.5.dp, BrandBlue, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.Person, null, tint = AmberGold, modifier = Modifier.size(20.dp))
+                            Icon(Icons.Default.Person, null, tint = BrandBlue, modifier = Modifier.size(20.dp))
                         }
                     },
                     trailingContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Surface(
-                                color = AmberGold,
+                                color = BrandBlue,
                                 shape = RoundedCornerShape(6.dp)
                             ) {
                                 Text(
-                                    "שליח פריימיום",
+                                    "שליח מתחיל",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Black,
                                     color = Color.Black,
@@ -155,11 +249,11 @@ fun SettingsScreen(
                             }
                             Spacer(Modifier.width(10.dp))
                             Column(horizontalAlignment = Alignment.End) {
-                                Text("ישראל", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                                Text("#8E8E93", color = Color.Gray, fontSize = 11.sp)
+                                Text(user?.fullName ?: user?.username ?: "ישראל", color = onSurfaceText, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                                Text("מזהה: ${user?.id ?: ""}", color = onSurfaceVariant, fontSize = 11.sp)
                             }
                             Spacer(Modifier.width(10.dp))
-                            Icon(Icons.Default.ChevronRight, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.ChevronRight, null, tint = onSurfaceVariant, modifier = Modifier.size(18.dp))
                         }
                     },
                     onClick = {},
@@ -206,11 +300,11 @@ fun SettingsScreen(
 
             // ── Academy & Support Card ─────────────────────────────────────
             MoreCard(modifier = Modifier.padding(horizontal = 16.dp)) {
-                // Academy row — amber highlighted
+                // Academy row — BrandBlue highlighted
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFF2A2000))
+                        .background(BrandBlue.copy(alpha = 0.08f))
                         .clickable { onAcademyClick() }
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -218,7 +312,7 @@ fun SettingsScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
-                            color = AmberGold,
+                            color = BrandBlue,
                             shape = RoundedCornerShape(6.dp)
                         ) {
                             Text(
@@ -232,12 +326,12 @@ fun SettingsScreen(
                         Spacer(Modifier.width(10.dp))
                         Text(
                             "🎓  TZIR Academy",
-                            color = AmberGold,
+                            color = BrandBlue,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Icon(Icons.Default.ChevronRight, null, tint = AmberGold.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+                    Icon(Icons.Default.ChevronRight, null, tint = BrandBlue.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
                 }
 
                 HorizontalDivider(color = separatorColor, thickness = 0.5.dp)
@@ -274,16 +368,17 @@ fun SettingsScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("🌙", fontSize = 16.sp)
                         Spacer(Modifier.width(12.dp))
-                        Text("מצב לילה", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                        Text("מצב לילה", color = onSurfaceText, fontSize = 15.sp, fontWeight = FontWeight.Medium)
                     }
                     Switch(
                         checked = darkModeEnabled,
                         onCheckedChange = {
                             darkModeEnabled = it
                             prefs.edit().putBoolean(PREF_DARK_MODE, it).apply()
+                            DarkModeState.isDarkTheme = it
                         },
                         colors = SwitchDefaults.colors(
-                            checkedTrackColor = AmberGold,
+                            checkedTrackColor = BrandBlue,
                             checkedThumbColor = Color.White,
                             uncheckedTrackColor = Color(0xFF3A3A3C),
                             uncheckedThumbColor = Color.Gray
@@ -300,7 +395,7 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFF1C1C1E))
+                    .background(cardBg)
                     .clickable { onLogout() }
                     .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
@@ -358,9 +453,10 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
         mutableStateOf(prefs.getBoolean(PREF_NOTIFICATIONS, true))
     }
 
-    val cardBg = Color(0xFF1C1C1E)
-    val darkBg = Color(0xFF0A0A0A)
-    val separator = Color.White.copy(alpha = 0.08f)
+    val cardBg = MaterialTheme.colorScheme.surface
+    val darkBg = MaterialTheme.colorScheme.background
+    val separator = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+    val onSurfaceText = MaterialTheme.colorScheme.onSurface
 
     Box(
         modifier = Modifier
@@ -381,11 +477,11 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 IconButton(onClick = onDismiss, modifier = Modifier.align(Alignment.CenterEnd)) {
-                    Icon(Icons.Default.ArrowBack, null, tint = AmberGold)
+                    Icon(Icons.Default.ArrowBack, null, tint = BrandBlue)
                 }
                 Text(
                     "הגדרות",
-                    color = Color.White,
+                    color = onSurfaceText,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.align(Alignment.Center)
@@ -395,7 +491,7 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(12.dp))
 
             // Nav App
-            Text("🗺️  אפליקציית ניווט", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
+            Text("🗺️  אפליקציית ניווט", color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
             MoreCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 NavApp.entries.forEachIndexed { i, app ->
                     SettingsRadioRow(
@@ -414,7 +510,7 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(16.dp))
 
             // Map Theme
-            Text("🌙  ערכת מפה", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
+            Text("🌙  ערכת מפה", color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
             MoreCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 MapTheme.entries.forEachIndexed { i, theme ->
                     SettingsRadioRow(
@@ -433,7 +529,7 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(16.dp))
 
             // Notifications
-            Text("🔔  התראות", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
+            Text("🔔  התראות", color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
             MoreCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(
                     modifier = Modifier
@@ -443,7 +539,7 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("הצעות משלוח חדשות", color = Color.White, fontSize = 15.sp)
+                    Text("הצעות משלוח חדשות", color = onSurfaceText, fontSize = 15.sp)
                     Switch(
                         checked = notificationsEnabled,
                         onCheckedChange = {
@@ -451,7 +547,7 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
                             prefs.edit().putBoolean(PREF_NOTIFICATIONS, it).apply()
                         },
                         colors = SwitchDefaults.colors(
-                            checkedTrackColor = AmberGold,
+                            checkedTrackColor = BrandBlue,
                             checkedThumbColor = Color.White,
                             uncheckedTrackColor = Color(0xFF3A3A3C),
                             uncheckedThumbColor = Color.Gray
@@ -463,13 +559,13 @@ fun SettingsSubSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(16.dp))
 
             // App info
-            Text("ℹ️  אודות", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
+            Text("ℹ️  אודות", color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
             MoreCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 InfoRow("גרסת אפליקציה", "1.0.4", cardBg = cardBg)
                 HorizontalDivider(color = separator, thickness = 0.5.dp)
                 InfoRow("שרת Backend", "מחובר", valueColor = Color(0xFF34C759), cardBg = cardBg)
                 HorizontalDivider(color = separator, thickness = 0.5.dp)
-                InfoRow("מנוע Realtime", "פעיל ומאומת", valueColor = Color(0xFF34C759), showDivider = false, cardBg = cardBg)
+                InfoRow("מצב חיבור", "תקין", valueColor = Color(0xFF34C759), showDivider = false, cardBg = cardBg)
             }
 
             Spacer(Modifier.height(32.dp))
@@ -522,12 +618,12 @@ fun MoreRow(
                     Spacer(Modifier.width(12.dp))
                 }
                 leadingContent?.invoke()
-                Text(label, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontWeight = FontWeight.Medium)
             }
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = Color.Gray,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -544,7 +640,7 @@ fun SettingsRadioRow(
     showDivider: Boolean = true
 ) {
     val bgColor by animateColorAsState(
-        targetValue = if (selected) AmberGold.copy(alpha = 0.08f) else cardBg,
+        targetValue = if (selected) BrandBlue.copy(alpha = 0.08f) else cardBg,
         animationSpec = tween(200), label = "radio_bg"
     )
 
@@ -558,10 +654,10 @@ fun SettingsRadioRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(label, fontSize = 15.sp, color = if (selected) AmberGold else Color.White, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal)
+            Text(label, fontSize = 15.sp, color = if (selected) BrandBlue else MaterialTheme.colorScheme.onSurface, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal)
             if (selected) {
                 Box(
-                    modifier = Modifier.size(22.dp).clip(CircleShape).background(AmberGold),
+                    modifier = Modifier.size(22.dp).clip(CircleShape).background(BrandBlue),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Default.Check, null, tint = Color.Black, modifier = Modifier.size(13.dp))
@@ -570,7 +666,7 @@ fun SettingsRadioRow(
                 Box(modifier = Modifier.size(22.dp).clip(CircleShape).border(1.dp, Color.Gray.copy(0.4f), CircleShape))
             }
         }
-        if (showDivider) HorizontalDivider(color = Color.White.copy(0.08f), thickness = 0.5.dp)
+        if (showDivider) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
     }
 }
 
@@ -579,7 +675,7 @@ fun SettingsRadioRow(
 fun InfoRow(
     label: String,
     value: String,
-    valueColor: Color = AmberGold,
+    valueColor: Color = BrandBlue,
     cardBg: Color,
     showDivider: Boolean = true
 ) {
@@ -587,7 +683,7 @@ fun InfoRow(
         modifier = Modifier.fillMaxWidth().background(cardBg).padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 14.sp, color = Color.Gray)
+        Text(label, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(value, fontSize = 14.sp, color = valueColor, fontWeight = FontWeight.SemiBold)
     }
 }
@@ -600,9 +696,9 @@ fun PremiumSettingsSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = modifier) {
-        Text(title, fontWeight = FontWeight.Black, fontSize = 13.sp, color = AmberGold, letterSpacing = 0.5.sp, modifier = Modifier.padding(start = 4.dp, bottom = 10.dp))
+        Text(title, fontWeight = FontWeight.Black, fontSize = 13.sp, color = BrandBlue, letterSpacing = 0.5.sp, modifier = Modifier.padding(start = 4.dp, bottom = 10.dp))
         Box(
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Color(0xFF1A1A1A)).border(0.5.dp, Color.White.copy(0.1f), RoundedCornerShape(18.dp))
+            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(MaterialTheme.colorScheme.surface).border(0.5.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(18.dp))
         ) { Column(content = content) }
     }
 }
@@ -611,34 +707,34 @@ fun PremiumSettingsSection(
 fun PremiumActionRow(label: String, subtitle: String? = null, icon: androidx.compose.ui.graphics.vector.ImageVector? = null, onClick: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 14.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(label, fontSize = 15.sp, color = Color.White, fontWeight = FontWeight.Medium)
-            if (subtitle != null) Text(subtitle, fontSize = 12.sp, color = Color.Gray)
+            Text(label, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+            if (subtitle != null) Text(subtitle, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.width(8.dp))
-        Icon(Icons.Default.ChevronLeft, null, tint = AmberGold, modifier = Modifier.size(20.dp))
+        Icon(Icons.Default.ChevronLeft, null, tint = BrandBlue, modifier = Modifier.size(20.dp))
     }
 }
 
 @Composable
-fun PremiumInfoRow(label: String, value: String, valueColor: Color = AmberGold, showDivider: Boolean = true) {
+fun PremiumInfoRow(label: String, value: String, valueColor: Color = BrandBlue, showDivider: Boolean = true) {
     Column {
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text(label, fontSize = 14.sp, color = Color.Gray)
+            Text(label, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(value, fontSize = 14.sp, color = valueColor, fontWeight = FontWeight.SemiBold)
         }
-        if (showDivider) HorizontalDivider(color = Color.White.copy(0.07f), thickness = 0.5.dp)
+        if (showDivider) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
     }
 }
 
 @Composable
 fun PremiumRadioRow(label: String, selected: Boolean, onClick: () -> Unit, showDivider: Boolean = true) {
-    val bgColor by animateColorAsState(targetValue = if (selected) AmberGold.copy(0.08f) else Color.Transparent, animationSpec = tween(200), label = "bg")
+    val bgColor by animateColorAsState(targetValue = if (selected) BrandBlue.copy(0.08f) else Color.Transparent, animationSpec = tween(200), label = "bg")
     Column {
         Row(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).background(bgColor).padding(horizontal = 16.dp, vertical = 14.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text(label, fontSize = 15.sp, color = if (selected) AmberGold else Color.White, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal)
-            if (selected) Box(modifier = Modifier.size(22.dp).clip(CircleShape).background(AmberGold), contentAlignment = Alignment.Center) { Icon(Icons.Default.Check, null, tint = Color(0xFF080808), modifier = Modifier.size(13.dp)) }
+            Text(label, fontSize = 15.sp, color = if (selected) BrandBlue else MaterialTheme.colorScheme.onSurface, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal)
+            if (selected) Box(modifier = Modifier.size(22.dp).clip(CircleShape).background(BrandBlue), contentAlignment = Alignment.Center) { Icon(Icons.Default.Check, null, tint = Color(0xFF080808), modifier = Modifier.size(13.dp)) }
             else Box(modifier = Modifier.size(22.dp).clip(CircleShape).border(1.dp, Color.Gray.copy(0.4f), CircleShape))
         }
-        if (showDivider) HorizontalDivider(color = Color.White.copy(0.07f), thickness = 0.5.dp)
+        if (showDivider) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
     }
 }

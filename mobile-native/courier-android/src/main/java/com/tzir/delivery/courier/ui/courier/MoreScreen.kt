@@ -49,7 +49,7 @@ fun MoreScreen(
                 "עוד",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Black,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
@@ -61,14 +61,14 @@ fun MoreScreen(
                 Surface(
                     modifier = Modifier.size(80.dp),
                     shape = CircleShape,
-                    color = AmberGold.copy(alpha = 0.2f)
+                    color = BrandBlue.copy(alpha = 0.2f)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(userName.firstOrNull()?.uppercase() ?: "I", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = AmberGold)
+                        Text(userName.firstOrNull()?.uppercase() ?: "I", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = BrandBlue)
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                Text(userName, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Text(userName, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             }
 
             // --- 2. Premium Badge Item ---
@@ -80,18 +80,18 @@ fun MoreScreen(
                     modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Surface(modifier = Modifier.size(40.dp), shape = CircleShape, color = Color.Gray.copy(alpha = 0.2f)) {
-                        Box(contentAlignment = Alignment.Center) { Icon(Icons.Default.Person, null, tint = AmberGold) }
+                    Surface(modifier = Modifier.size(40.dp), shape = CircleShape, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)) {
+                        Box(contentAlignment = Alignment.Center) { Icon(Icons.Default.Person, null, tint = BrandBlue) }
                     }
                     Spacer(Modifier.width(16.dp))
                     Column(Modifier.weight(1f)) {
-                        Text(userName, fontWeight = FontWeight.Bold, color = Color.White)
-                        Text("#8E8E93", fontSize = 12.sp, color = Color.Gray)
+                        Text(userName, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                        Text("#8E8E93", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    Surface(color = AmberGold, shape = RoundedCornerShape(8.dp)) {
+                    Surface(color = BrandBlue, shape = RoundedCornerShape(8.dp)) {
                         Text("שליח פרימיום", modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp), fontSize = 11.sp, fontWeight = FontWeight.Black, color = Graphite950)
                     }
-                    Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.padding(start = 8.dp))
+                    Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 8.dp))
                 }
             }
 
@@ -144,20 +144,21 @@ fun MoreSection(items: List<MoreItem>) {
                     modifier = Modifier.fillMaxWidth().clickable { item.onClick() }.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(item.icon, null, tint = Color.Gray, modifier = Modifier.size(24.dp))
+                    Icon(item.icon, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(24.dp))
                     Spacer(Modifier.width(16.dp))
-                    Text(item.label, color = Color.White, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
+                    Text(item.label, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
                     
                     if (item.badge != null) {
-                        Surface(color = AmberGold.copy(alpha = 0.2f), shape = RoundedCornerShape(6.dp)) {
-                            Text(item.badge, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = AmberGold)
+                        Surface(color = BrandBlue.copy(alpha = 0.2f), shape = RoundedCornerShape(6.dp)) {
+                            Text(item.badge, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = BrandBlue)
                         }
                     }
                     
                     if (item.hasSwitch) {
-                        Switch(checked = true, onCheckedChange = {}, colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = AmberGold))
+                        var nightMode by remember { mutableStateOf(false) }
+                        Switch(checked = nightMode, onCheckedChange = { nightMode = it }, colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = BrandBlue))
                     } else {
-                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
                     }
                 }
                 if (i < items.lastIndex) {

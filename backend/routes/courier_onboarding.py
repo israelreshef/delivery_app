@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.decorators import token_required, role_required
+from utils.validation_helpers import is_valid_israeli_id
 from models import db, Courier, CourierDocument, User, EmploymentContract
 import logging
 
@@ -42,6 +43,8 @@ def update_onboarding_details(current_user):
             
         # Update fields
         if 'national_id' in data:
+            if not is_valid_israeli_id(data['national_id']):
+                return jsonify({'error': 'מספר תעודת זהות אינו תקין'}), 400
             courier.national_id = data['national_id']
         if 'drivers_license_number' in data:
             courier.drivers_license_number = data['drivers_license_number']

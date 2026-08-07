@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.types import TypeDecorator, String
-from utils.encryption import encrypt_data, decrypt_data
+from sqlalchemy.types import TypeDecorator, String, LargeBinary
+from utils.encryption import encrypt_data, decrypt_data, encrypt_bytes, decrypt_bytes
 from extensions import db
 
 class EncryptedString(TypeDecorator):
@@ -14,6 +14,23 @@ class EncryptedString(TypeDecorator):
 
     def process_result_value(self, value, dialect):
         return decrypt_data(value)
+
+
+class EncryptedLargeBinary(TypeDecorator):
+    """Transparent AES-256-GCM encryption for binary columns (e.g. PDF snapshots).
+
+    The underlying column stays ``LargeBinary`` so no schema migration is required;
+    encryption/decryption happens at the ORM layer. Store plaintext, read ciphertext
+    in the DB, and the ORM transparently decrypts on ``process_result_value``.
+    """
+    impl = LargeBinary
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        return encrypt_bytes(value)
+
+    def process_result_value(self, value, dialect):
+        return decrypt_bytes(value)
 
 # ============================================================================
 # Shared Enums
@@ -341,9 +358,8 @@ class Courier(db.Model):
     max_capacity = db.Column(db.Integer, default=10)  # מקסימום משלוחים בו-זמנית
     current_location_lat = db.Column(db.Float, nullable=True)
     current_location_lng = db.Column(db.Float, nullable=True)
-    # PostGIS Field: Point(lng, lat)
-    # location_geom = db.Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
-    # location_geom = db.Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
+    # PostGIS Point(lng, lat) SRID 4326 — maintained by DB trigger (see migrations/postgis_stage1.sql).
+    # Not declared here to avoid GeoAlchemy dependency; populated automatically on lat/lng write.
     is_available = db.Column(db.Boolean, default=True)
     
     # Compliance & Onboarding
@@ -386,6 +402,22 @@ class Courier(db.Model):
 
     def __repr__(self):
         return f'<Courier {self.full_name}>'
+
+
+class CourierScheduleEntry(db.Model):
+    __tablename__ = 'courier_schedule_entries'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    entry_date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    pickup_address = db.Column(db.String(255), nullable=False, default='')
+    dropoff_address = db.Column(db.String(255), nullable=False, default='')
+    status = db.Column(db.String(20), default='scheduled')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ============================================================================
 # Gamification, Shift & Milestone Models (TZIR Academy)
@@ -550,8 +582,7 @@ class Address(db.Model):
     entrance = db.Column(db.String(10), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
-    # PostGIS Field: Point(lng, lat)
-    # geom = db.Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
+    # PostGIS Point(lng, lat) SRID 4326 — maintained by DB trigger (see migrations/postgis_stage1.sql).
     notes = db.Column(db.Text, nullable=True)
     
     # Relationships
@@ -763,7 +794,7 @@ class Invoice(db.Model):
     due_date = db.Column(db.DateTime, nullable=True)
     
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
-    vat_rate = db.Column(db.Float, default=0.17, nullable=False) # 17% in Israel
+    vat_rate = db.Column(db.Float, default=0.18, nullable=False) # 18% standard VAT in Israel (since 2025)
     vat_amount = db.Column(db.Numeric(10, 2), nullable=False)
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
     
@@ -971,6 +1002,36 @@ class Payout(db.Model):
         return f'<Payout {self.id} for Courier {self.courier_id}>'
 
 
+class CourierReceipt(db.Model):
+    """
+    Receipts issued by a freelance courier to their own private clients.
+    Persisted in the DB so the courier can re-generate a PDF/DOCX at any time.
+    """
+    __tablename__ = 'courier_receipts'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False, index=True)
+
+    receipt_number = db.Column(db.String(50), nullable=False)
+    client_name = db.Column(db.String(150), nullable=False)
+    client_tax_id = db.Column(db.String(30), nullable=True)  # ע.מ / ח.פ / ת.ז
+    description = db.Column(db.String(255), nullable=True)
+
+    base_amount = db.Column(db.Numeric(10, 2), nullable=False, default=0)   # Without VAT
+    vat_amount = db.Column(db.Numeric(10, 2), nullable=False, default=0)
+    total_amount = db.Column(db.Numeric(10, 2), nullable=False, default=0)  # Amount paid (incl VAT)
+
+    payment_method = db.Column(db.String(50), nullable=True)  # cash, bank_transfer, credit_card, bit
+    issue_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    courier = db.relationship('Courier', backref=db.backref('receipts_issued', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<CourierReceipt {self.receipt_number} - {self.total_amount}>'
+
+
 # ============================================================================
 # Invitation Code Model
 # ============================================================================
@@ -1078,6 +1139,7 @@ class SupportTicket(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     status = db.Column(support_ticket_status_enum, default='open', nullable=False)
     priority = db.Column(ticket_priority_enum, default='medium', nullable=False)
+    ticket_number = db.Column(db.String(10), nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -1100,6 +1162,8 @@ class TicketMessage(db.Model):
 
     message = db.Column(db.Text, nullable=False)
     is_internal = db.Column(db.Boolean, default=False)
+    attachments = db.Column(db.JSON, nullable=True, default=list)
+    read_at = db.Column(db.DateTime, nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -1504,6 +1568,49 @@ class FinanceDocument(db.Model):
     def __repr__(self):
         return f'<FinanceDocument {self.id} {self.doc_type} {self.title}>'
 
+
+class CourierReportHistory(db.Model):
+    """Persisted record of an auto-generated tax form for a courier.
+
+    Enables the "generated reports" history + "needs refresh" staleness marking
+    (improvement plan, section 7). ``file_bytes`` holds a snapshot of the PDF so
+    the courier can re-download the exact report that was generated. Uniqueness is
+    per (courier, form, period) so re-generating the same period upserts instead of
+    duplicating.
+    """
+    __tablename__ = 'courier_report_history'
+    __table_args__ = (
+        db.UniqueConstraint(
+            'courier_id', 'form_id', 'period_type', 'period_year', 'period_month',
+            name='uq_courier_report_period'),
+        {'extend_existing': True},
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False, index=True)
+    form_id = db.Column(db.String(50), nullable=False)
+    period_type = db.Column(db.String(10), nullable=False)  # 'month' | 'year'
+    period_year = db.Column(db.Integer, nullable=False)
+    period_month = db.Column(db.Integer, nullable=True)    # 1-12 for month; NULL for year
+
+    filename = db.Column(db.String(255), nullable=False)
+    # PDF snapshot encrypted at rest (AES-256-GCM via EncryptedLargeBinary). The
+    # content_hash below is the sha256 of the *plaintext* PDF, kept for integrity
+    # verification; the stored bytes are ciphertext.
+    file_bytes = db.Column(EncryptedLargeBinary, nullable=False)
+    content_hash = db.Column(db.String(64), nullable=False)      # sha256 of file_bytes
+    source_fingerprint = db.Column(db.String(64), nullable=False)  # hash of underlying inputs
+    status = db.Column(db.String(20), nullable=False, default='up_to_date')  # up_to_date | needs_refresh
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    courier = db.relationship('Courier', backref=db.backref('report_history', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<CourierReportHistory {self.id} {self.form_id} {self.period_year}>'
+
+
 class TrafficScore(db.Model):
     __tablename__ = 'traffic_scores'
     __table_args__ = {'extend_existing': True}
@@ -1763,3 +1870,240 @@ class WalletTransaction(db.Model):
 
     def __repr__(self):
         return f'<WalletTransaction wallet={self.wallet_id} amount={self.amount} type={self.transaction_type}>'
+
+
+class CourierContact(db.Model):
+    __tablename__ = 'courier_contacts'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    company = db.Column(db.String(200), default='')
+    phone = db.Column(db.String(50), default='')
+    email = db.Column(db.String(200), default='')
+    addresses = db.Column(db.Text, default='[]')
+    is_vip = db.Column(db.Boolean, default=False)
+    is_business = db.Column(db.Boolean, default=False)
+    notes = db.Column(db.Text, default='')
+    tags = db.Column(db.Text, default='[]')
+    total_deliveries = db.Column(db.Integer, default=0)
+    total_revenue = db.Column(db.Float, default=0.0)
+    last_interaction = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    courier = db.relationship('Courier', backref=db.backref('courier_contacts', lazy='dynamic', cascade='all, delete-orphan'))
+
+    def to_dict(self):
+        import json
+        return {
+            'id': self.id,
+            'courier_id': self.courier_id,
+            'name': self.name,
+            'company': self.company or '',
+            'phone': self.phone or '',
+            'email': self.email or '',
+            'addresses': json.loads(self.addresses) if self.addresses else [],
+            'is_vip': self.is_vip,
+            'is_business': self.is_business,
+            'notes': self.notes or '',
+            'tags': json.loads(self.tags) if self.tags else [],
+            'total_deliveries': self.total_deliveries or 0,
+            'total_revenue': float(self.total_revenue or 0.0),
+            'last_interaction': self.last_interaction.isoformat() if self.last_interaction else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+    def __repr__(self):
+        return f'<CourierContact {self.name} (courier={self.courier_id})>'
+
+
+# ============================================================================
+# Courier Ledger / Wallet
+# ============================================================================
+
+class CourierWallet(db.Model):
+    __tablename__ = 'courier_wallets'
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False, unique=True)
+    balance = db.Column(db.Numeric(10, 2), default=0.00)
+    currency = db.Column(db.String(3), default='ILS')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    courier = db.relationship('Courier', backref=db.backref('wallet', uselist=False, cascade='all, delete-orphan'))
+
+class CourierLedgerEntry(db.Model):
+    __tablename__ = 'courier_ledger_entries'
+    id = db.Column(db.Integer, primary_key=True)
+    wallet_id = db.Column(db.Integer, db.ForeignKey('courier_wallets.id', ondelete='CASCADE'), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    entry_type = db.Column(db.String(20), nullable=False)  # mission_credit, withdrawal, admin_adjustment, reversal
+    reference_id = db.Column(db.String(100), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    balance_before = db.Column(db.Numeric(10, 2), nullable=False)
+    balance_after = db.Column(db.Numeric(10, 2), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    wallet = db.relationship('CourierWallet', backref=db.backref('ledger_entries', lazy='dynamic', cascade='all, delete-orphan'))
+
+class WithdrawalRequest(db.Model):
+    __tablename__ = 'withdrawal_requests'
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    payment_details = db.Column(db.String(200), nullable=True)
+    admin_notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    processed_at = db.Column(db.DateTime, nullable=True)
+    courier = db.relationship('Courier', backref=db.backref('withdrawal_requests', lazy='dynamic', cascade='all, delete-orphan'))
+
+class CourierPaymentMethod(db.Model):
+    __tablename__ = 'courier_payment_methods'
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
+    method_type = db.Column(db.String(20), nullable=False)  # bank_transfer, paypal, bit, cash
+    label = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.Text, nullable=False)  # JSON
+    is_default = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    courier = db.relationship('Courier', backref=db.backref('payment_methods', lazy='dynamic', cascade='all, delete-orphan'))
+
+# ============================================================================
+# Storage Type (Reference / Enum-like table for per-vehicle storage capabilities)
+# ============================================================================
+
+class StorageType(db.Model):
+    __tablename__ = 'storage_types'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)  # e.g. 'קירור', 'רגיל', 'שברירי'
+
+    def __repr__(self):
+        return f'<StorageType {self.name}>'
+
+
+# ============================================================================
+# Courier Vehicle (managed by the courier, linked to their Courier profile)
+# ============================================================================
+
+class CourierVehicle(db.Model):
+    __tablename__ = 'courier_vehicles'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
+    plate_number = db.Column(db.String(20), nullable=False)
+    vehicle_type = db.Column(
+        db.Enum('motorcycle', 'scooter', 'car', 'bicycle', 'van', name='vehicle_types'),
+        nullable=False
+    )
+    insurance_expiry = db.Column(db.Date, nullable=True)
+    test_expiry = db.Column(db.Date, nullable=True)
+    is_primary = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    courier = db.relationship('Courier', backref=db.backref('vehicles', lazy='dynamic', cascade='all, delete-orphan'))
+    storage_types = db.relationship(
+        'StorageType',
+        secondary='courier_vehicle_storage',
+        lazy='select',
+        backref=db.backref('vehicles', lazy=True)
+    )
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'courier_id': self.courier_id,
+            'plate_number': self.plate_number,
+            'vehicle_type': self.vehicle_type,
+            'insurance_expiry': self.insurance_expiry.isoformat() if self.insurance_expiry else None,
+            'test_expiry': self.test_expiry.isoformat() if self.test_expiry else None,
+            'is_primary': self.is_primary,
+            'storage_types': [s.name for s in self.storage_types],
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+    def __repr__(self):
+        return f'<CourierVehicle {self.plate_number} (courier={self.courier_id})>'
+
+
+# Association table for CourierVehicle <-> StorageType (many-to-many)
+courier_vehicle_storage = db.Table(
+    'courier_vehicle_storage',
+    db.Column('vehicle_id', db.Integer, db.ForeignKey('courier_vehicles.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('storage_type_id', db.Integer, db.ForeignKey('storage_types.id', ondelete='CASCADE'), primary_key=True),
+    extend_existing=True
+)
+
+
+# ============================================================================
+# Rating Feedback (customer comments on courier deliveries)
+# ============================================================================
+
+class RatingFeedback(db.Model):
+    __tablename__ = 'rating_feedbacks'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    rating_id = db.Column(db.Integer, db.ForeignKey('ratings.id', ondelete='CASCADE'), nullable=False)
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id', ondelete='CASCADE'), nullable=False)
+    tag = db.Column(db.String(50), nullable=False)  # e.g. 'Late Delivery', 'Friendly Service'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    rating = db.relationship('Rating', backref=db.backref('feedbacks', lazy='dynamic', cascade='all, delete-orphan'))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'tag': self.tag,
+            'comment': self.rating.comment if self.rating else None,
+            'rating_value': self.rating.rating if self.rating else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f'<RatingFeedback {self.tag} (courier={self.courier_id})>'
+
+
+# ============================================================================
+# Geocode Cache (hybrid geocoding result store)
+# Prevents repeated paid Google calls for the same normalized address.
+# ============================================================================
+
+class GeocodeCache(db.Model):
+    __tablename__ = 'geocode_cache'
+    __table_args__ = (
+        db.UniqueConstraint(
+            'address_normalized', 'city', 'country_code',
+            name='uq_geocode_lookup'
+        ),
+        {'extend_existing': True},
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    address_normalized = db.Column(db.String(400), nullable=False)
+    city = db.Column(db.String(100), nullable=True)
+    country_code = db.Column(db.String(2), default='IL')
+    raw_query = db.Column(db.Text, nullable=True)
+    lat = db.Column(db.Float, nullable=False)
+    lng = db.Column(db.Float, nullable=False)
+    score = db.Column(db.Float, nullable=True)  # geocoder confidence 0..1
+    provider = db.Column(db.String(20), nullable=False, default='google')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.utcnow() + timedelta(days=30)
+    )
+
+    def to_dict(self):
+        return {
+            'lat': self.lat,
+            'lng': self.lng,
+            'score': self.score,
+            'provider': self.provider,
+        }

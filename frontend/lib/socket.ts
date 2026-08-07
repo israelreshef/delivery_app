@@ -41,6 +41,9 @@ export const useSocket = (token: string | null, role: string | null) => {
             // Join relevant rooms based on role
             // Important: backend handle_join might need these fields
             socket.emit('join', { role, token, id: 'admin' });
+
+            // Join the support channel so the admin gets realtime ticket updates
+            socket.emit('join_support', { role, token });
         });
 
         socket.on('connect_error', (err) => {

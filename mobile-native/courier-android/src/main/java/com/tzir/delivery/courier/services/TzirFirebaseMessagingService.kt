@@ -32,7 +32,9 @@ class TzirFirebaseMessagingService : FirebaseMessagingService() {
         val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO)
         scope.launch {
             try {
-                com.tzir.delivery.courier.repository.AuthRepository.instance?.updateFcmToken(token)
+                val client = com.tzir.delivery.courier.network.KtorClientFactory.createClient()
+                val api = com.tzir.delivery.courier.network.DeliveryApiImpl(client)
+                api.updateFcmToken(com.tzir.delivery.courier.model.FcmTokenRequest(token))
             } catch (e: Exception) {
                 e.printStackTrace()
             }

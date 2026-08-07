@@ -24,11 +24,17 @@ interface DeliveryApi {
      * Returns null if no invoice found.
      */
     suspend fun getInvoiceDownloadUrl(orderId: String): String?
+
+    // ── Support Tickets API ──
+    suspend fun getSupportTickets(): List<CustomerSupportTicket>
+    suspend fun getSupportTicketDetail(ticketId: Int): CustomerSupportDetail?
+    suspend fun createSupportTicket(subject: String, message: String, priority: String = "medium"): CreateSupportTicketResponse?
+    suspend fun addSupportTicketMessage(ticketId: Int, message: String): AddSupportMessageResponse?
 }
 
 class DeliveryApiImpl(
     private val client: HttpClient,
-    private val baseUrl: String = "http://192.168.33.19:5000"
+    private val baseUrl: String = KtorClientFactory.resolveBaseUrl()
 ) : DeliveryApi {
 
     private fun formatError(e: Exception): String {
@@ -158,6 +164,53 @@ class DeliveryApiImpl(
             }
         } catch (e: Exception) {
             Log.e("DeliveryApi", "getInvoiceDownloadUrl exception", e)
+            null
+        }
+    }
+
+    // ── Support Tickets API Impl ──
+
+    override suspend fun getSupportTickets(): List<CustomerSupportTicket> {
+        return try {
+            client.get("$baseUrl/api/support/tickets").body()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getSupportTicketDetail(ticketId: Int): CustomerSupportDetail? {
+        return try {
+            client.get("$baseUrl/api/support/tickets/$ticketId").body()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun createSupportTicket(subject: String, message: String, priority: String): CreateSupportTicketResponse? {
+        return try {
+            client.post("$baseUrl/api/support/tickets") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf(
+                    "subject" to subject,
+                    "message" to message,
+                    "priority" to priority
+                ))
+            }.body()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun addSupportTicketMessage(ticketId: Int, message: String): AddSupportMessageResponse? {
+        return try {
+            client.post("$baseUrl/api/support/tickets/$ticketId/messages") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf(
+                    "message" to message,
+                    "is_internal" to false
+                ))
+            }.body()
+        } catch (e: Exception) {
             null
         }
     }

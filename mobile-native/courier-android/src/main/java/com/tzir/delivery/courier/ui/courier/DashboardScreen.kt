@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -47,6 +48,7 @@ import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.ui.theme.*
 import com.tzir.delivery.courier.model.User
 import com.tzir.delivery.courier.repository.CourierRepository
+import com.tzir.delivery.courier.repository.NotificationRepository
 import com.tzir.delivery.courier.location.LocationManager
 
 import kotlinx.coroutines.Dispatchers
@@ -62,8 +64,10 @@ import java.util.Calendar
 @Composable
 fun DashboardScreen(
     user: User,
+    viewModel: DashboardViewModel,
     repository: CourierRepository,
     locationManager: LocationManager,
+    notificationRepository: NotificationRepository? = null,
     onMenuClick: () -> Unit,
     onMissionClick: (Int) -> Unit,
     onNotificationClick: () -> Unit,
@@ -77,23 +81,19 @@ fun DashboardScreen(
     onClientsClick: () -> Unit = {},
     onAcademyClick: () -> Unit = {}
 ) {
-    val missions by repository.availableMissions.collectAsState()
-    val activeMissions by repository.activeMissions.collectAsState()
-    val stats by repository.stats.collectAsState()
-    
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
-    val activeMission = activeMissions.firstOrNull()
+    val activeMission = uiState.activeMissions.firstOrNull()
     var isLoading by remember { mutableStateOf(false) }
     val acceptedMissionIds = remember { mutableStateListOf<Int>() }
-    
+
     val scope = rememberCoroutineScope()
-    
-    // Route Planner State
+
     val stops = remember { mutableStateListOf<PlannerStop>() }
     var plannerMode by remember { mutableStateOf(PlannerMode.LIST) }
     var editingStopIndex by remember { mutableStateOf<Int?>(null) }
-    
-    // Polyline Geometry from routing API (if available)
+
     var routeGeometry by remember { mutableStateOf<List<LatLng>?>(null) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -114,18 +114,17 @@ fun DashboardScreen(
     }
 
     LaunchedEffect(Unit) {
-        // Initial fetch of status from server
-        repository.refreshStats()
-        repository.refreshActiveMissions()
-    }
-
-    LaunchedEffect(Unit) {
         com.tzir.delivery.courier.services.SocketManager.missionUpdates.collect {
-            repository.refreshActiveMissions()
+            viewModel.refresh()
         }
     }
 
-    // Reactive Service Management: Start/Stop LocationService based on isAppInForeground or activeMission
+    LaunchedEffect(Unit) {
+        com.tzir.delivery.courier.services.SocketManager.newOrderEvents.collect { orderJson ->
+            viewModel.refresh()
+        }
+    }
+
     LaunchedEffect(isAppInForeground, activeMission) {
         val courierId = user.courierId ?: ""
         if (courierId.isNotEmpty() && (isAppInForeground || activeMission != null)) {
@@ -143,7 +142,6 @@ fun DashboardScreen(
         }
     }
 
-    // --- 1. Google Map Background ---
     var hasLocationPermission by remember {
         mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
@@ -161,10 +159,8 @@ fun DashboardScreen(
     val telAviv = LatLng(32.0853, 34.7818)
     val cameraPositionState = rememberCameraPositionState { position = CameraPosition.fromLatLngZoom(telAviv, 13f) }
 
-    // Observe Location
-    val currentLocationFlow by locationManager.currentLocation.collectAsState(initial = null)
-    
-    // Auto-center camera on location once
+    val currentLocationFlow = uiState.currentLocation
+
     var hasCenteredCamera by remember { mutableStateOf(false) }
     LaunchedEffect(currentLocationFlow) {
         currentLocationFlow?.let { (lat, lng) ->
@@ -196,7 +192,6 @@ fun DashboardScreen(
                     compassEnabled = true
                 )
             ) {
-                // Show current location marker if map dot isn't enough
                 currentLocationFlow?.let { (lat, lng) ->
                     Marker(
                         state = rememberMarkerState(position = LatLng(lat, lng)),
@@ -205,7 +200,6 @@ fun DashboardScreen(
                     )
                 }
 
-                // Route Planner Polyline & Markers
                 if (routeGeometry != null && routeGeometry!!.isNotEmpty()) {
                     Polyline(
                         points = routeGeometry!!,
@@ -250,7 +244,6 @@ fun DashboardScreen(
                 }
             }
 
-            // --- 2. Top Bar (Floating Bell & Status Toggle) ---
             Row(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
@@ -261,27 +254,44 @@ fun DashboardScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Bell Card (Left)
-                GlassCard(
-                    modifier = Modifier.size(52.dp),
-                    cornerRadius = 26.dp
-                ) {
-                    IconButton(onClick = onNotificationClick, modifier = Modifier.fillMaxSize()) {
-                        Icon(Icons.Default.Notifications, contentDescription = null, tint = AmberGold, modifier = Modifier.size(24.dp))
+                val unreadCount by (notificationRepository?.unreadCount?.collectAsState()
+                    ?: remember { mutableStateOf(0) })
+
+                Box(modifier = Modifier.size(52.dp)) {
+                    GlassCard(
+                        modifier = Modifier.fillMaxSize(),
+                        cornerRadius = 26.dp
+                    ) {
+                        IconButton(onClick = onNotificationClick, modifier = Modifier.fillMaxSize()) {
+                            Icon(Icons.Default.Notifications, contentDescription = null, tint = BrandBlue, modifier = Modifier.size(24.dp))
+                        }
+                    }
+                    if (unreadCount > 0) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(x = (-2).dp, y = 2.dp)
+                                .size(20.dp)
+                                .background(Color(0xFFFF3B30), shape = CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (unreadCount > 99) "99+" else unreadCount.toString(),
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
-
             }
 
-            // --- 3. Bottom Dashboard Card ---
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .zIndex(10f)
             ) {
-
-                // Active Mission Overlay (if exists)
                 AnimatedVisibility(
                     visible = activeMission != null && (activeMission?.status != "assigned" || activeMission?.id in acceptedMissionIds),
                     modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)
@@ -298,21 +308,16 @@ fun DashboardScreen(
                             onAccept = {
                                 val mId = activeMission!!.id
                                 acceptedMissionIds.add(mId)
-                                scope.launch {
-                                    repository.acceptMission(mId)
-                                    onMissionClick(mId)
-                                }
+                                viewModel.acceptMission(mId)
+                                onMissionClick(mId)
                             },
                             onDecline = {
-                                scope.launch {
-                                    repository.rejectMission(activeMission!!.id)
-                                }
+                                viewModel.rejectMission(activeMission!!.id)
                             }
                         )
                     }
                 }
 
-                // Main Dashboard Panel (Route Planner)
                 RoutePlannerPanel(
                     repository = repository,
                     locationManager = locationManager,
@@ -324,7 +329,6 @@ fun DashboardScreen(
                     onRouteGeometryReady = { geometry -> routeGeometry = geometry }
                 )
 
-                // Navigation Spacer for System Bar
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }

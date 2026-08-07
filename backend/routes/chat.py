@@ -8,11 +8,12 @@ chat_bp = Blueprint('chat', __name__)
 @token_required
 def get_user_sessions(current_user):
     """Get all chat sessions for the current user"""
-    if current_user.role == 'admin':
+    is_staff = current_user.user_type == 'admin'
+    if is_staff:
         # Admins see all active sessions or recent ones
-        sessions = ChatSession.query.order_by(ChatSession.updated_at.desc()).limit(50).all()
+        sessions = ChatSession.query.order_by(ChatSession.created_at.desc()).limit(50).all()
     else:
-        sessions = ChatSession.query.filter_by(user_id=current_user.id).order_by(ChatSession.updated_at.desc()).all()
+        sessions = ChatSession.query.filter_by(user_id=current_user.id).order_by(ChatSession.created_at.desc()).all()
         
     result = []
     for s in sessions:
@@ -20,9 +21,10 @@ def get_user_sessions(current_user):
         result.append({
             'id': s.id,
             'status': s.status,
-            'user_name': s.user.username,
+            'user_name': s.user.username if s.user else 'Unknown',
             'last_message': last_msg.message if last_msg else '',
-            'updated_at': s.updated_at.isoformat()
+            'updated_at': (last_msg.timestamp.isoformat() if last_msg and last_msg.timestamp
+                           else (s.created_at.isoformat() if s.created_at else None))
         })
         
     return jsonify(result), 200
@@ -34,7 +36,7 @@ def get_chat_history(current_user, session_id):
     session = ChatSession.query.get_or_404(session_id)
     
     # Permission check
-    if current_user.role != 'admin' and session.user_id != current_user.id:
+    if current_user.user_type != 'admin' and session.user_id != current_user.id:
         return jsonify({'error': 'Unauthorized'}), 403
         
     messages = ChatMessage.query.filter_by(session_id=session_id).order_by(ChatMessage.timestamp.asc()).all()

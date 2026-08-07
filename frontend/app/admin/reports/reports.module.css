@@ -1,5 +1,5 @@
 .reportsContainer {
-    background-color: #0B0E14;
+    background-color: #07162C;
     color: #E2E8F0;
     min-height: 100vh;
     padding: 2rem;
@@ -20,7 +20,7 @@
 }
 
 .subtitle {
-    color: #94A3B8;
+    color: #5A8AC0;
     font-size: 1rem;
     margin-top: 0.5rem;
 }
@@ -57,7 +57,7 @@
 }
 
 .formLabel {
-    color: #94A3B8;
+    color: #5A8AC0;
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
     display: block;
@@ -75,8 +75,8 @@
 
 .searchInput:focus {
     outline: none;
-    border-color: #3B82F6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    border-color: #145DDB;
+    box-shadow: 0 0 0 2px rgba(20, 93, 219, 0.2);
 }
 
 .searchInput[type="date"]::-webkit-calendar-picker-indicator {
@@ -84,7 +84,7 @@
 }
 
 .btnPrimary {
-    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     color: white;
     border: none;
     border-radius: 8px;

@@ -62,7 +62,7 @@ fun MissionHistoryScreen(repository: CourierRepository, onBack: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = { /* Filter logic placeholder */ }) {
-                    Icon(Icons.Default.FilterList, contentDescription = null, tint = Color.Gray)
+                    Icon(Icons.Default.FilterList, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
@@ -79,7 +79,7 @@ fun MissionHistoryScreen(repository: CourierRepository, onBack: () -> Unit) {
                         onClick = { },
                         label = { Text(filter) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = PrimaryTurquoise,
+                            selectedContainerColor = BrandBlue,
                             selectedLabelColor = AppleWhite
                         )
                     )
@@ -94,7 +94,7 @@ fun MissionHistoryScreen(repository: CourierRepository, onBack: () -> Unit) {
                 }
             } else if (history.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.no_history_found), color = Color.Gray)
+                    Text(stringResource(R.string.no_history_found), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else {
                 var selectedMission by remember { mutableStateOf<Mission?>(null) }
@@ -143,7 +143,7 @@ fun HistoryCard(mission: Mission, onClick: () -> Unit) {
                 Text(
                     text = "₪${mission.estimatedPrice}",
                     fontWeight = FontWeight.Black,
-                    color = PrimaryTurquoise,
+                    color = BrandBlue,
                     fontSize = 22.sp
                 )
             }
@@ -206,7 +206,7 @@ fun DetailRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, color = Color.Gray)
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(value, fontWeight = FontWeight.SemiBold)
     }
 }

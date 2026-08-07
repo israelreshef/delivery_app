@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from models import db, Delivery, Address, PickupPoint, DeliveryPoint, Customer, User, Pricing, Invoice, Courier, DeliveryStatus
 from utils.decorators import token_required, role_required
 from utils.validation_helpers import is_valid_amount, is_valid_gps
+from utils.tax import VAT_RATE_FLOAT
 import logging
 from extensions import limiter
 from sqlalchemy.orm import joinedload
@@ -387,7 +388,7 @@ def create_order(current_user):
         db.session.flush()
         
         # 7. יצירת חשבונית
-        vat_amount = price * 0.17
+        vat_amount = price * VAT_RATE_FLOAT
         total_amount = price + vat_amount
         
         payment_method_data = data.get('payment', {}).get('paymentMethod', 'credit_card')

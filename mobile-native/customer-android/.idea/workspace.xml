@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="85a89c25-3df3-4627-922b-5f1479760ad2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/deps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/v1/api.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/v1/endpoints/auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/v1/endpoints/couriers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/v1/endpoints/notifications.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/v1/endpoints/orders.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/api/v1/endpoints/users.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/celery_app.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/db.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/google_auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/notifications.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/security.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/core/socket.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/crud/address.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/crud/courier.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/crud/notification.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/crud/order.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/crud/user.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/models/address.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/models/courier.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/models/notification.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/models/order.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/models/user.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/schemas/address.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/schemas/auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/schemas/courier.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/schemas/notification.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/app/schemas/order.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/delivery.db" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/delivery.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/logs/security.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/logs/security.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/socket_debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/socket_debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/stats_debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/stats_debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/app/tracking/[orderId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/app/tracking/[orderId]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/components/tracking/TrackingMap.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/components/tracking/TrackingMap.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/middleware.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/App.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/LocationService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/NotificationService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/AppNavigator.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/DeliveryDetailsScreen.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/HistoryScreen.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/HomeScreen.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/LoginScreen.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/ProfileScreen.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/screens/ProofOfDeliveryScreen.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/store.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mobile/tsconfig.json" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="3DytF7pMlPcuwiXyWs8DZCI0FK8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "android.gradle.sync.needed": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Israel/Desktop/delivery_app/mobile-native/customer-android"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="85a89c25-3df3-4627-922b-5f1479760ad2" name="Changes" comment="" />
+      <created>1779266030851</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779266030851</updated>
+    </task>
+    <servers />
+  </component>
+</project>

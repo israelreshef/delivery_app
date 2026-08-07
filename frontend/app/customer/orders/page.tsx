@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-    pending: { label: "ממתין", color: "bg-amber-100 text-amber-800 border-amber-200", icon: Clock },
+    pending: { label: "ממתין", color: "bg-ice text-brand-dark border-brand-light", icon: Clock },
     assigned: { label: "שליח בדרך", color: "bg-blue-100 text-blue-800 border-blue-200", icon: Truck },
     picked_up: { label: "נאסף", color: "bg-indigo-100 text-indigo-800 border-indigo-200", icon: Package },
     in_transit: { label: "בדרך ליעד", color: "bg-purple-100 text-purple-800 border-purple-200", icon: Truck },
@@ -74,7 +74,7 @@ export default function CustomerOrdersPage() {
                     </div>
                     <Button
                         onClick={() => router.push("/customer/orders/new")}
-                        className="bg-brand hover:bg-amber-600 text-navy-950 font-bold shadow-lg shadow-brand/25 gap-2"
+                        className="bg-brand hover:bg-brand-dark text-navy-950 font-bold shadow-lg shadow-brand/25 gap-2"
                     >
                         <PlusCircle className="w-4 h-4" />
                         הזמנה חדשה
@@ -116,7 +116,7 @@ export default function CustomerOrdersPage() {
                             </p>
                             <Button
                                 onClick={() => router.push("/customer/orders/new")}
-                                className="bg-brand hover:bg-amber-600 text-navy-950 font-bold gap-2"
+                                className="bg-brand hover:bg-brand-dark text-navy-950 font-bold gap-2"
                             >
                                 <PlusCircle className="w-4 h-4" />
                                 צור הזמנה חדשה

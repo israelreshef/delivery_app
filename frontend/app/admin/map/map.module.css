@@ -3,7 +3,7 @@
     height: 100vh;
     display: flex;
     position: relative;
-    background-color: #0B0E14;
+    background-color: #07162C;
     color: #E2E8F0;
     font-family: 'Inter', system-ui, sans-serif;
     direction: rtl;
@@ -48,7 +48,7 @@
 
 .headerSubtitle {
     font-size: 0.875rem;
-    color: #94A3B8;
+    color: #5A8AC0;
     margin-top: 0.25rem;
 }
 
@@ -64,7 +64,7 @@
     padding: 1rem 0;
     background: transparent;
     border: none;
-    color: #94A3B8;
+    color: #5A8AC0;
     font-weight: 500;
     font-size: 0.875rem;
     cursor: pointer;
@@ -77,7 +77,7 @@
 }
 
 .tabBtnActive {
-    color: #3B82F6;
+    color: #145DDB;
 }
 
 .tabBtnActive::after {
@@ -87,7 +87,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: #3B82F6;
+    background: #145DDB;
     border-radius: 2px 2px 0 0;
 }
 
@@ -112,14 +112,14 @@
 }
 
 .routeCard:hover {
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(20, 93, 219, 0.4);
     background: rgba(30, 41, 59, 0.8);
     transform: translateY(-2px);
 }
 
 .routeCardActive {
-    border-color: #3B82F6;
-    background: rgba(59, 130, 246, 0.1);
+    border-color: #145DDB;
+    background: rgba(20, 93, 219, 0.1);
 }
 
 .routeHeader {
@@ -140,7 +140,7 @@
     align-items: center;
     gap: 1rem;
     font-size: 0.75rem;
-    color: #94A3B8;
+    color: #5A8AC0;
     margin-bottom: 0.75rem;
 }
 
@@ -191,7 +191,7 @@
 }
 
 .mapToolBtn:hover {
-    background: #1E293B;
+    background: #112648;
     color: #fff;
     border-color: rgba(255, 255, 255, 0.2);
 }
@@ -214,7 +214,7 @@
 .layerBtn {
     background: transparent;
     border: none;
-    color: #94A3B8;
+    color: #5A8AC0;
     padding: 0.5rem;
     text-align: right;
     border-radius: 4px;
@@ -229,13 +229,13 @@
 }
 
 .layerBtnActive {
-    background: rgba(59, 130, 246, 0.1);
-    color: #60A5FA;
+    background: rgba(20, 93, 219, 0.1);
+    color: #5AA0FF;
 }
 
 /* Base button */
 .btnPrimary {
-    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -295,14 +295,14 @@
 
 .stopCardDelivery {
     background: rgba(16, 21, 32, 0.8);
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(20, 93, 219, 0.2);
     border-radius: 0.75rem;
     transition: all 0.2s;
     overflow: hidden;
 }
 
 .stopCardDelivery:hover {
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(20, 93, 219, 0.4);
 }
 
 .stopBody {

@@ -1,5 +1,5 @@
 .dashboardContainer {
-    background-color: #0B0E14;
+    background-color: #07162C;
     color: #E2E8F0;
     min-height: 100vh;
     padding: 2rem;
@@ -23,7 +23,7 @@
 }
 
 .subtitle {
-    color: #94A3B8;
+    color: #5A8AC0;
     font-size: 1rem;
     margin-top: 0.5rem;
 }
@@ -61,7 +61,7 @@
 
 .metricLabel {
     font-size: 0.875rem;
-    color: #94A3B8;
+    color: #5A8AC0;
     margin-bottom: 0.5rem;
 }
 
@@ -86,13 +86,13 @@
 }
 
 .iconBrand {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3B82F6;
+    background: rgba(20, 93, 219, 0.1);
+    color: #145DDB;
 }
 
-.iconOrange {
-    background: rgba(245, 158, 11, 0.1);
-    color: #F59E0B;
+.iconBlue {
+    background: rgba(20, 93, 219, 0.1);
+    color: #145DDB;
 }
 
 .iconPurple {
@@ -159,7 +159,7 @@
 }
 
 .panelDescription {
-    color: #94A3B8;
+    color: #5A8AC0;
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }
@@ -193,7 +193,7 @@
 
 .quickLinkCard:hover {
     background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(59, 130, 246, 0.5);
+    border-color: rgba(20, 93, 219, 0.5);
     transform: translateY(-2px);
 }
 
@@ -214,12 +214,12 @@
 
 .quickLinkDesc {
     font-size: 0.875rem;
-    color: #94A3B8;
+    color: #5A8AC0;
 }
 
 /* Buttons */
 .btnPrimary {
-    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     color: white;
     border: none;
     border-radius: 8px;

@@ -31,7 +31,7 @@ fun CustomerProfileScreen(
                 stringResource(R.string.my_profile),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Black,
-                color = AmberGold
+                color = BrandBlue
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -43,10 +43,10 @@ fun CustomerProfileScreen(
                         Surface(
                             modifier = Modifier.size(64.dp),
                             shape = androidx.compose.foundation.shape.CircleShape,
-                            color = AmberGold.copy(alpha = 0.2f)
+                            color = BrandBlue.copy(alpha = 0.2f)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.Person, contentDescription = null, tint = AmberGold, modifier = Modifier.size(32.dp))
+                                Icon(Icons.Default.Person, contentDescription = null, tint = BrandBlue, modifier = Modifier.size(32.dp))
                             }
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -71,7 +71,7 @@ fun CustomerProfileScreen(
                 // Navigate to notifications
             }
             ProfileMenuItem(icon = Icons.Default.Help, label = stringResource(R.string.support_and_help)) {
-                // Navigate to support
+                navController.navigate(CustomerScreen.Support.route)
             }
             
             Spacer(modifier = Modifier.weight(1f))
@@ -93,7 +93,7 @@ fun ProfileMenuItem(icon: androidx.compose.ui.graphics.vector.ImageVector, label
         contentPadding = PaddingValues(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Icon(icon, contentDescription = null, tint = AmberGold)
+            Icon(icon, contentDescription = null, tint = BrandBlue)
             Spacer(modifier = Modifier.width(16.dp))
             Text(label, color = Color.White, fontSize = 16.sp)
             Spacer(modifier = Modifier.weight(1f))

@@ -8,8 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -18,51 +21,86 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tzir.delivery.courier.model.CourierVehicle
+import com.tzir.delivery.courier.repository.VehicleRepository
 import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.ui.theme.*
-import java.util.Calendar
+import kotlinx.coroutines.launch
+import kotlinx.datetime.*
+import java.util.regex.Pattern
 
-data class Vehicle(
-    val id: Int,
-    val plate: String,
-    val type: String,
-    val insuranceExpiry: String,
-    val testExpiry: String,
-    val storageTypes: List<String>,
-    val isPrimary: Boolean = false
+// ─── Vehicle type mapping (API uses English enum, UI shows Hebrew) ───
+private val TYPE_LABELS = mapOf(
+    "motorcycle" to "אופנוע", "scooter" to "קטנוע", "car" to "מכונית",
+    "bicycle" to "אופניים", "van" to "ואן"
+)
+private val TYPE_EMOJI = mapOf(
+    "motorcycle" to "\uD83C\uDFCD️", "scooter" to "\uD83D\uDEF5", "car" to "\uD83D\uDE97",
+    "bicycle" to "\uD83D\uDEB2", "van" to "\uD83D\uDE90"
 )
 
-fun daysUntil(dateStr: String): Int {
+// Allowed Israeli license plate: 7-8 chars, e.g. 123-45-678
+private val PLATE_PATTERN = Pattern.compile("^\\d{1,2}-?\\d{2,3}-?\\d{3,4}$")
+
+fun daysUntil(date: LocalDate?): Int {
+    if (date == null) return 999
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    return date.toEpochDays() - now.toEpochDays()
+}
+
+// Convert "DD/MM/YYYY" (user input) to ISO "YYYY-MM-DD" for the API (null if invalid)
+fun toIsoDate(input: String): String? {
+    val trimmed = input.trim()
+    if (trimmed.isBlank()) return null
+    val parts = trimmed.split("/")
+    if (parts.size != 3) return null
     return try {
-        val parts = dateStr.split("/")
-        val cal = Calendar.getInstance()
-        val now = Calendar.getInstance()
-        cal.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-        ((cal.timeInMillis - now.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
-    } catch (e: Exception) { 999 }
+        val (d, m, y) = Triple(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
+        LocalDate(y, m, d).toString() // serializes as ISO
+    } catch (e: Exception) { null }
+}
+
+fun validatePlate(plate: String): String? {
+    if (plate.isBlank()) return "יש להזין מספר רישוי"
+    if (!PLATE_PATTERN.matcher(plate).matches()) return "מספר רישוי לא תקין (למשל 123-45-678)"
+    return null
+}
+
+fun validateExpiry(input: String, label: String): String? {
+    if (input.isBlank()) return null
+    val iso = toIsoDate(input) ?: return "תאריך לא תקין (DD/MM/YYYY)"
+    val date = LocalDate.parse(iso)
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    if (date < now) return "$label פג תוקף!"
+    if (date > now.plus(365 * 5, DateTimeUnit.DAY)) return "$label רחוק מדי"
+    return null
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VehicleScreen(onBack: () -> Unit) {
-    val sampleVehicles = remember { mutableStateListOf(
-        Vehicle(1, "123-45-678", "מכונית", "15/04/2026", "30/06/2026", listOf("קירור", "רגיל", "שברירי"), isPrimary = true),
-        Vehicle(2, "98-765-43", "קטנוע", "20/03/2026", "01/02/2027", listOf("רגיל", "מכתבים"))
-    )}
-    
+fun VehicleScreen(onBack: () -> Unit, vehicleRepository: VehicleRepository? = null) {
+    val vehicles by (vehicleRepository?.vehicles?.collectAsState() ?: remember { mutableStateOf(emptyList()) })
+    val isOffline by (vehicleRepository?.isOffline?.collectAsState() ?: remember { mutableStateOf(false) })
+    val scope = rememberCoroutineScope()
+
     var showAddDialog by remember { mutableStateOf(false) }
     var expandedId by remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(Unit) {
+        vehicleRepository?.refresh()
+    }
 
     PremiumBackground {
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text("ניהול כלי רכב", fontWeight = FontWeight.Black, color = AmberGold) },
+                    title = { Text("ניהול כלי רכב", fontWeight = FontWeight.Black, color = BrandBlue) },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "חזור", tint = AmberGold)
+                            Icon(Icons.Default.ArrowBack, contentDescription = "חזור", tint = BrandBlue)
                         }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
@@ -71,7 +109,7 @@ fun VehicleScreen(onBack: () -> Unit) {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showAddDialog = true },
-                    containerColor = AmberGold,
+                    containerColor = BrandBlue,
                     contentColor = Graphite950,
                     shape = RoundedCornerShape(16.dp),
                     elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 8.dp)
@@ -81,53 +119,69 @@ fun VehicleScreen(onBack: () -> Unit) {
             },
             containerColor = Color.Transparent
         ) { padding ->
-            LazyColumn(
-                modifier = Modifier.padding(padding).fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Alerts section
-                val urgentAlerts = sampleVehicles.filter { v ->
-                    daysUntil(v.insuranceExpiry) <= 30 || daysUntil(v.testExpiry) <= 30
+            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+                if (isOffline && vehicles.isNotEmpty()) {
+                    Text(
+                        "מצב לא מקוון — מציג נתונים שמורים",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
                 }
-                if (urgentAlerts.isNotEmpty()) {
-                    item {
-                        GlassCard(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("⚠️", fontSize = 18.sp)
-                                    Spacer(Modifier.width(8.dp))
-                                    Text("התראות פקיעה", fontWeight = FontWeight.Black, fontSize = 16.sp, color = AmberGold)
-                                }
-                                Spacer(Modifier.height(12.dp))
-                                urgentAlerts.forEach { v ->
-                                    val insDays = daysUntil(v.insuranceExpiry)
-                                    val testDays = daysUntil(v.testExpiry)
-                                    if (insDays <= 30) AlertRow("ביטוח ${v.plate}", "פג בעוד $insDays ימים", insDays <= 7)
-                                    if (testDays <= 30) AlertRow("טסט ${v.plate}", "פג בעוד $testDays ימים", testDays <= 7)
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().weight(1f),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    val urgentAlerts = vehicles.filter { v ->
+                        daysUntil(v.insuranceExpiry) <= 30 || daysUntil(v.testExpiry) <= 30
+                    }
+                    if (urgentAlerts.isNotEmpty()) {
+                        item {
+                            GlassCard(modifier = Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text("⚠️", fontSize = 18.sp)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text("התראות פקיעה", fontWeight = FontWeight.Black, fontSize = 16.sp, color = BrandBlue)
+                                    }
+                                    Spacer(Modifier.height(12.dp))
+                                    urgentAlerts.forEach { v ->
+                                        val insDays = daysUntil(v.insuranceExpiry)
+                                        val testDays = daysUntil(v.testExpiry)
+                                        if (insDays <= 30) AlertRow("ביטוח ${v.plate}", "פג בעוד $insDays ימים", insDays <= 7)
+                                        if (testDays <= 30) AlertRow("טסט ${v.plate}", "פג בעוד $testDays ימים", testDays <= 7)
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                // Vehicle cards
-                items(sampleVehicles, key = { it.id }) { vehicle ->
-                    VehiclePremiumCard(
-                        vehicle = vehicle,
-                        expanded = expandedId == vehicle.id,
-                        onExpand = { expandedId = if (expandedId == vehicle.id) null else vehicle.id },
-                        onSetPrimary = {
-                            val idx = sampleVehicles.indexOf(vehicle)
-                            sampleVehicles.indices.forEach { i ->
-                                sampleVehicles[i] = sampleVehicles[i].copy(isPrimary = i == idx)
+                    if (vehicles.isEmpty()) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().padding(top = 48.dp), contentAlignment = Alignment.Center) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(Icons.Default.DirectionsCar, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(64.dp))
+                                    Spacer(Modifier.height(12.dp))
+                                    Text("אין רכבים רשומים", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                                    Text("הוסף רכב עם כפתור ה+ למטה", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
                             }
-                        },
-                        onDelete = { sampleVehicles.remove(vehicle) }
-                    )
-                }
+                        }
+                    }
 
-                item { Spacer(Modifier.height(80.dp)) }
+                    items(vehicles, key = { it.id }) { vehicle ->
+                        VehiclePremiumCard(
+                            vehicle = vehicle,
+                            expanded = expandedId == vehicle.id,
+                            onExpand = { expandedId = if (expandedId == vehicle.id) null else vehicle.id },
+                            onSetPrimary = { scope.launch { vehicleRepository?.setPrimary(vehicle.id) } },
+                            onDelete = { scope.launch { vehicleRepository?.deleteVehicle(vehicle.id) } }
+                        )
+                    }
+
+                    item { Spacer(Modifier.height(80.dp)) }
+                }
             }
         }
     }
@@ -136,7 +190,14 @@ fun VehicleScreen(onBack: () -> Unit) {
         AddVehicleDialog(
             onDismiss = { showAddDialog = false },
             onSave = { plate, type, insExp, testExp, storage ->
-                sampleVehicles.add(Vehicle(sampleVehicles.size + 100, plate, type, insExp, testExp, storage, sampleVehicles.isEmpty()))
+                scope.launch {
+                    vehicleRepository?.addVehicle(
+                        plate = plate, type = type,
+                        insuranceExpiry = toIsoDate(insExp),
+                        testExpiry = toIsoDate(testExp),
+                        storageTypes = storage
+                    )
+                }
                 showAddDialog = false
             }
         )
@@ -146,20 +207,22 @@ fun VehicleScreen(onBack: () -> Unit) {
 @Composable
 fun AlertRow(label: String, msg: String, critical: Boolean) {
     Row(modifier = Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(6.dp).background(if (critical) Color.Red else AmberGold, CircleShape))
+        Box(modifier = Modifier.size(6.dp).background(if (critical) Color.Red else BrandBlue, CircleShape))
         Spacer(Modifier.width(10.dp))
         Column {
-            Text(label, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.White)
-            Text(msg, fontSize = 12.sp, color = Color.Gray)
+            Text(label, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+            Text(msg, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
 
 @Composable
-fun VehiclePremiumCard(vehicle: Vehicle, expanded: Boolean, onExpand: () -> Unit, onSetPrimary: () -> Unit, onDelete: () -> Unit) {
+fun VehiclePremiumCard(vehicle: CourierVehicle, expanded: Boolean, onExpand: () -> Unit, onSetPrimary: () -> Unit, onDelete: () -> Unit) {
     val insDays = daysUntil(vehicle.insuranceExpiry)
     val testDays = daysUntil(vehicle.testExpiry)
     val hasAlert = insDays <= 30 || testDays <= 30
+    val emoji = TYPE_EMOJI[vehicle.type] ?: "🚗"
+    val typeLabel = TYPE_LABELS[vehicle.type] ?: vehicle.type
 
     GlassCard(
         modifier = Modifier.fillMaxWidth().clickable { onExpand() },
@@ -167,45 +230,42 @@ fun VehiclePremiumCard(vehicle: Vehicle, expanded: Boolean, onExpand: () -> Unit
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val emoji = when (vehicle.type) {
-                    "קטנוע" -> "🛵"; "ואן" -> "🚐"; "משאית" -> "🚛"; else -> "🚗"
-                }
-                Surface(modifier = Modifier.size(48.dp), shape = CircleShape, color = AmberGold.copy(alpha = 0.1f)) {
+                Surface(modifier = Modifier.size(48.dp), shape = CircleShape, color = BrandBlue.copy(alpha = 0.1f)) {
                     Box(contentAlignment = Alignment.Center) { Text(emoji, fontSize = 24.sp) }
                 }
                 Spacer(Modifier.width(16.dp))
                 Column(Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(vehicle.plate, fontWeight = FontWeight.Black, fontSize = 18.sp, color = Color.White)
+                        Text(vehicle.plate, fontWeight = FontWeight.Black, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
                         if (vehicle.isPrimary) {
-                            Surface(color = AmberGold, shape = RoundedCornerShape(6.dp)) {
+                            Surface(color = BrandBlue, shape = RoundedCornerShape(6.dp)) {
                                 Text("ראשי", modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), fontSize = 10.sp, fontWeight = FontWeight.Black, color = Graphite950)
                             }
                         }
                     }
-                    Text(vehicle.type, fontSize = 13.sp, color = Color.Gray)
+                    Text(typeLabel, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Icon(if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null, tint = Color.Gray)
+                Icon(if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
                 Column(modifier = Modifier.padding(top = 20.dp)) {
-                    HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                     Spacer(Modifier.height(16.dp))
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        ExpiryBox("ביטוח", vehicle.insuranceExpiry, insDays, Modifier.weight(1f))
-                        ExpiryBox("טסט", vehicle.testExpiry, testDays, Modifier.weight(1f))
+                        ExpiryBox("ביטוח", vehicle.insuranceExpiry?.toString() ?: "—", insDays, Modifier.weight(1f))
+                        ExpiryBox("טסט", vehicle.testExpiry?.toString() ?: "—", testDays, Modifier.weight(1f))
                     }
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text("סוגי אחסון:", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
+                    Text("סוגי אחסון:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         vehicle.storageTypes.forEach { s ->
-                            Surface(color = Color.White.copy(alpha = 0.05f), shape = RoundedCornerShape(8.dp)) {
-                                Text(s, modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Medium)
+                            Surface(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), shape = RoundedCornerShape(8.dp)) {
+                                Text(s, modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
                             }
                         }
                     }
@@ -213,7 +273,7 @@ fun VehiclePremiumCard(vehicle: Vehicle, expanded: Boolean, onExpand: () -> Unit
                     Spacer(Modifier.height(24.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (!vehicle.isPrimary) {
-                            Button(onClick = onSetPrimary, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = AmberGold.copy(alpha = 0.15f), contentColor = AmberGold), shape = RoundedCornerShape(12.dp)) {
+                            Button(onClick = onSetPrimary, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = BrandBlue.copy(alpha = 0.15f), contentColor = BrandBlue), shape = RoundedCornerShape(12.dp)) {
                                 Text("הגדר כראשי", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             }
                         }
@@ -231,56 +291,82 @@ fun VehiclePremiumCard(vehicle: Vehicle, expanded: Boolean, onExpand: () -> Unit
 fun ExpiryBox(label: String, date: String, daysLeft: Int, modifier: Modifier = Modifier) {
     val color = when {
         daysLeft <= 7 -> Color.Red
-        daysLeft <= 30 -> AmberGold
+        daysLeft <= 30 -> BrandBlue
         else -> SuccessDark
     }
     Surface(modifier = modifier, color = color.copy(alpha = 0.1f), shape = RoundedCornerShape(14.dp)) {
         Column(modifier = Modifier.padding(14.dp)) {
-            Text(label, fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
+            Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
             Text(date, fontWeight = FontWeight.Black, fontSize = 15.sp, color = color)
             Text(if (daysLeft <= 0) "פג תוקף!" else "בעוד $daysLeft ימים", fontSize = 11.sp, color = color.copy(alpha = 0.7f))
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddVehicleDialog(onDismiss: () -> Unit, onSave: (String, String, String, String, List<String>) -> Unit) {
     var plate by remember { mutableStateOf("") }
-    var type by remember { mutableStateOf("מכונית") }
+    var type by remember { mutableStateOf("car") }
     var insExp by remember { mutableStateOf("") }
     var testExp by remember { mutableStateOf("") }
     val selectedStorage = remember { mutableStateListOf<String>() }
     val options = listOf("רגיל", "קירור", "שברירי", "מכתבים", "כבד")
 
+    var plateError by remember { mutableStateOf<String?>(null) }
+    var insError by remember { mutableStateOf<String?>(null) }
+    var testError by remember { mutableStateOf<String?>(null) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Graphite800,
-        title = { Text("הוסף כלי רכב", fontWeight = FontWeight.Black, color = Color.White) },
+        title = { Text("הוסף כלי רכב", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                TzirTextField(plate, { plate = it }, "לוחית רישוי *")
-                TzirTextField(insExp, { insExp = it }, "פקיעת ביטוח (DD/MM/YYYY) *")
-                TzirTextField(testExp, { testExp = it }, "פקיעת טסט")
-                
-                Text("סוגי אחסון:", fontSize = 13.sp, color = Color.Gray)
+                TzirTextField(plate, { plate = it; plateError = validatePlate(it) }, "לוחית רישוי *", isError = plateError != null, errorText = plateError)
+                TzirTextField(insExp, { insExp = it; insError = validateExpiry(it, "ביטוח") }, "פקיעת ביטוח (DD/MM/YYYY)", isError = insError != null, errorText = insError)
+                TzirTextField(testExp, { testExp = it; testError = validateExpiry(it, "טסט") }, "פקיעת טסט (DD/MM/YYYY)", isError = testError != null, errorText = testError)
+
+                Text("סוג רכב:", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TYPE_LABELS.forEach { (key, label) ->
+                        FilterChip(
+                            selected = type == key,
+                            onClick = { type = key },
+                            label = { Text(label) },
+                            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BrandBlue, selectedLabelColor = Graphite950)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(4.dp))
+                Text("סוגי אחסון:", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     options.forEach { s ->
                         FilterChip(
                             selected = selectedStorage.contains(s),
                             onClick = { if (selectedStorage.contains(s)) selectedStorage.remove(s) else selectedStorage.add(s) },
                             label = { Text(s) },
-                            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = AmberGold, selectedLabelColor = Graphite950)
+                            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = BrandBlue, selectedLabelColor = Graphite950)
                         )
                     }
                 }
             }
         },
         confirmButton = {
-            TzirButton(text = "שמור", onClick = { if(plate.isNotBlank()) onSave(plate, type, insExp, testExp, selectedStorage.toList()) }, modifier = Modifier.width(100.dp))
+            TzirButton(
+                text = "שמור",
+                onClick = {
+                    plateError = validatePlate(plate)
+                    insError = validateExpiry(insExp, "ביטוח")
+                    testError = validateExpiry(testExp, "טסט")
+                    if (plateError == null) onSave(plate, type, insExp, testExp, selectedStorage.toList())
+                },
+                modifier = Modifier.width(100.dp)
+            )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("ביטול", color = Color.Gray) }
+            TextButton(onClick = onDismiss) { Text("ביטול", color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
     )
 }

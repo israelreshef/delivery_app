@@ -47,3 +47,33 @@ def decrypt_data(token: str) -> str:
     except Exception as e:
         print(f"Decryption Error: {e}")
         return None
+
+
+def encrypt_bytes(data: bytes) -> bytes:
+    """Encrypts raw bytes using AES-256-GCM and returns the raw ciphertext.
+
+    Returns ``None`` for empty/falsy input. The 12-byte nonce is prepended to the
+    ciphertext so it can travel alongside the payload and be split on decrypt.
+    """
+    if not data:
+        return None
+
+    key = _get_key()
+    aesgcm = AESGCM(key)
+    nonce = os.urandom(12)
+    return nonce + aesgcm.encrypt(nonce, data, None)
+
+
+def decrypt_bytes(token: bytes) -> bytes:
+    """Decrypts bytes produced by :func:`encrypt_bytes` back to plaintext bytes."""
+    if not token:
+        return None
+
+    try:
+        nonce = token[:12]
+        key = _get_key()
+        aesgcm = AESGCM(key)
+        return aesgcm.decrypt(nonce, token[12:], None)
+    except Exception as e:
+        print(f"Decryption Error: {e}")
+        return None

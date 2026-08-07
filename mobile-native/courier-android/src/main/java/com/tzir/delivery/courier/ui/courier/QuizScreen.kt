@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,10 +51,10 @@ fun QuizScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("מבחן הסמכה", fontWeight = FontWeight.Black, color = Amber) },
+                title = { Text("מבחן הסמכה", fontWeight = FontWeight.Black, color = BrandBlue) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "חזור", tint = Amber)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "חזור", tint = BrandBlue)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent)
@@ -65,7 +66,7 @@ fun QuizScreen(
             Box(modifier = Modifier.fillMaxSize().padding(padding)) {
                 when {
                     isLoading -> {
-                        CircularProgressIndicator(color = Amber, modifier = Modifier.align(Alignment.Center))
+                        CircularProgressIndicator(color = BrandBlue, modifier = Modifier.align(Alignment.Center))
                     }
                     error != null -> {
                         Text(error!!, color = Color.Red, modifier = Modifier.align(Alignment.Center))
@@ -93,8 +94,8 @@ fun QuizScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(8.dp),
-                                color = Amber,
-                                trackColor = Color.White.copy(alpha = 0.2f),
+                                color = BrandBlue,
+                                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
                                 strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
                             )
                             
@@ -102,7 +103,7 @@ fun QuizScreen(
                             
                             Text(
                                 "שאלה ${currentQuestionIndex + 1} מתוך ${questions.size}",
-                                color = Color.White.copy(alpha = 0.6f),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 14.sp
                             )
                             
@@ -110,7 +111,7 @@ fun QuizScreen(
                             
                             Text(
                                 currentQuestion["question_text"] as String,
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 lineHeight = 28.sp
@@ -156,7 +157,7 @@ fun QuizScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(56.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = Navy950),
+                                colors = ButtonDefaults.buttonColors(containerColor = BrandBlue, contentColor = Navy950),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Text(
@@ -168,7 +169,7 @@ fun QuizScreen(
                         }
                     }
                     else -> {
-                        Text("אין שאלות זמינות לקורס זה", color = Color.White, modifier = Modifier.align(Alignment.Center))
+                        Text("אין שאלות זמינות לקורס זה", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }
@@ -183,11 +184,11 @@ fun OptionCard(text: String, isSelected: Boolean, onClick: () -> Unit) {
             .fillMaxWidth()
             .border(
                 width = 2.dp,
-                color = if (isSelected) Amber else Color.White.copy(alpha = 0.1f),
+                color = if (isSelected) BrandBlue else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(12.dp)
             )
             .background(
-                color = if (isSelected) Amber.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f),
+                color = if (isSelected) BrandBlue.copy(alpha = 0.1f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable(onClick = onClick)
@@ -195,7 +196,7 @@ fun OptionCard(text: String, isSelected: Boolean, onClick: () -> Unit) {
     ) {
         Text(
             text = text,
-            color = if (isSelected) Amber else Color.White,
+            color = if (isSelected) BrandBlue else MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
         )
@@ -230,7 +231,7 @@ fun QuizResultView(result: Map<String, Any>, onClose: () -> Unit) {
                 "ציון: $score%",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSurface
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -239,7 +240,7 @@ fun QuizResultView(result: Map<String, Any>, onClose: () -> Unit) {
                 "סקירת תשובות",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Amber,
+                color = BrandBlue,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Right
             )
@@ -271,7 +272,7 @@ fun QuizResultView(result: Map<String, Any>, onClose: () -> Unit) {
                         Text(
                             f["question_text"] as String,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     
@@ -289,7 +290,7 @@ fun QuizResultView(result: Map<String, Any>, onClose: () -> Unit) {
                     
                     Text(
                         f["explanation"] as String,
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         fontSize = 14.sp,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
                     )
@@ -305,7 +306,7 @@ fun QuizResultView(result: Map<String, Any>, onClose: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = Navy950),
+                colors = ButtonDefaults.buttonColors(containerColor = BrandBlue, contentColor = Navy950),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("סגור", fontWeight = FontWeight.Bold, fontSize = 18.sp)

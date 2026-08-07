@@ -17,6 +17,14 @@ object TokenManager {
 
     private var prefs: android.content.SharedPreferences? = null
 
+    /**
+     * Set to true when tokens are cleared outside of the normal logout flow
+     * (e.g. startup validation). AuthRepository reads this on init to
+     * ensure _currentUser stays null and the UI navigates to LoginScreen.
+     */
+    @Volatile
+    var sessionInvalidated: Boolean = false
+
     fun init(context: Context) {
         try {
             Log.d("TokenManager", "Initializing TokenManager...")
@@ -61,6 +69,7 @@ object TokenManager {
 
     fun clearTokens() {
         Log.d("TokenManager", "Clearing all tokens")
+        sessionInvalidated = true
         prefs?.edit()?.clear()?.commit()
     }
 }

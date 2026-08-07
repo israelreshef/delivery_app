@@ -8,12 +8,12 @@ export function middleware(request: NextRequest) {
 
     // Strict CSP Policy - Relaxed for development
     const scriptSrc = isDev
-        ? "'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com"
-        : `'self' 'nonce-${nonce}' 'strict-dynamic' https://accounts.google.com`;
+        ? "'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://maps.googleapis.com"
+        : `'self' 'nonce-${nonce}' 'strict-dynamic' https://accounts.google.com https://maps.googleapis.com`;
 
     const connectSrc = isDev
-        ? "'self' http://localhost:5000 ws://localhost:5000 http://localhost:3000 ws://localhost:3000 https://accounts.google.com"
-        : "'self' https://api.tzir-delivery.co.il https://accounts.google.com";
+        ? "'self' http://localhost:5000 ws://localhost:5000 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://maps.googleapis.com https://router.project-osrm.org"
+        : "'self' https://api.tzir-delivery.co.il https://accounts.google.com https://maps.googleapis.com https://router.project-osrm.org";
 
     const reportUri = isDev
         ? "http://localhost:5000/api/security/csp-report"
@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
     const cspHeader = `
     default-src 'self';
     script-src ${scriptSrc};
-    style-src 'self' 'unsafe-inline' https://accounts.google.com;
+    style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com;
     img-src 'self' blob: data: https: https://*.googleusercontent.com;
     connect-src ${connectSrc};
     font-src 'self' data: https://fonts.gstatic.com;

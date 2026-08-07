@@ -30,6 +30,7 @@ sealed class CustomerScreen(val route: String, val labelRes: Int, val icon: Imag
     object PaymentMethods : CustomerScreen("payment_methods", R.string.nav_payments, Icons.Default.AccountBalanceWallet)
     object AddressSelection : CustomerScreen("address_selection?protocol={protocol}", R.string.nav_address, Icons.Default.Place)
     object OrderSummary : CustomerScreen("order_summary?pickup={pickup}&delivery={delivery}&pLat={pLat}&pLng={pLng}&dLat={dLat}&dLng={dLng}&protocol={protocol}", R.string.nav_summary, Icons.Default.Description)
+    object Support : CustomerScreen("support", R.string.support_and_help, Icons.Default.Help)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,6 +112,13 @@ fun CustomerNavGraph(
             }
             composable(CustomerScreen.PaymentMethods.route) {
                 PaymentMethodsScreen(navController = navController)
+            }
+            composable(CustomerScreen.Support.route) {
+                CustomerSupportScreen(
+                    navController = navController,
+                    repository = customerRepository,
+                    customerId = currentUser.id
+                )
             }
             composable(
                 route = "address_selection?protocol={protocol}",

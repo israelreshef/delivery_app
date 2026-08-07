@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
                             <label className="text-sm font-medium text-navy-900">דואר אלקטרוני</label>
                             <Input type="email" placeholder="example@tzir.com" className="h-12" />
                         </div>
-                        <Button className="w-full h-12 bg-brand hover:bg-brand-dark text-navy-950 font-bold transition-all shadow-amber hover:shadow-amber-lg">
+                        <Button className="w-full h-12 bg-brand hover:bg-brand-dark text-navy-950 font-bold transition-all shadow-brand hover:shadow-brand-lg">
                             שלח קישור לאיפוס
                         </Button>
                     </form>

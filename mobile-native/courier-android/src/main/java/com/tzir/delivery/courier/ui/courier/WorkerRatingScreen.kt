@@ -19,11 +19,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.tzir.delivery.courier.R
+import com.tzir.delivery.courier.repository.RatingRepository
 import com.tzir.delivery.courier.ui.components.*
 import com.tzir.delivery.courier.ui.theme.*
 
 @Composable
-fun WorkerRatingScreen(onBack: () -> Unit) {
+fun WorkerRatingScreen(onBack: () -> Unit, ratingRepository: RatingRepository? = null) {
+    val stats by (ratingRepository?.stats?.collectAsState() ?: remember { mutableStateOf(com.tzir.delivery.courier.model.CourierRatingStats()) })
+    val feedback by (ratingRepository?.feedback?.collectAsState() ?: remember { mutableStateOf(emptyList()) })
+    val isOffline by (ratingRepository?.isOffline?.collectAsState() ?: remember { mutableStateOf(false) })
+
+    LaunchedEffect(Unit) {
+        ratingRepository?.refresh()
+    }
+
     PremiumBackground {
         Column(
             modifier = Modifier
@@ -50,9 +59,17 @@ fun WorkerRatingScreen(onBack: () -> Unit) {
                     color = TextOfficial
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
+            if (isOffline && stats.totalRatings == 0) {
+                Text(
+                    "מצב לא מקוון — מציג נתונים שמורים",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
             // Overall Rating Card
             GlassCard(modifier = Modifier.fillMaxWidth(), cornerRadius = 24.dp) {
                 Column(
@@ -61,15 +78,15 @@ fun WorkerRatingScreen(onBack: () -> Unit) {
                 ) {
                     Text(
                         stringResource(R.string.avg_rating),
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "4.9",
+                        String.format("%.1f", stats.averageRating),
                         fontSize = 56.sp,
                         fontWeight = FontWeight.Black,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         repeat(5) {
@@ -78,44 +95,56 @@ fun WorkerRatingScreen(onBack: () -> Unit) {
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        "Based on 154 deliveries",
-                        color = Color.White.copy(alpha=0.5f),
+                        "מבוסס על ${stats.totalRatings} משלוחים",
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         fontSize = 12.sp
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             Text(
                 stringResource(R.string.rating_details),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = TextOfficial
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Rating Breakdown
-            RatingCategory(stringResource(R.string.service_quality), 5.0f)
-            RatingCategory(stringResource(R.string.delivery_time), 4.8f)
-            RatingCategory(stringResource(R.string.reliability), 4.9f)
-            
+            RatingCategory(stringResource(R.string.service_quality), stats.serviceQuality)
+            RatingCategory(stringResource(R.string.delivery_time), stats.deliveryTime)
+            RatingCategory(stringResource(R.string.reliability), stats.reliability)
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             Text(
-                "Recently Reported Issues",
+                "משובות אחרונות",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = TextOfficial
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
-            // Feedback Items (Mock)
-            FeedbackItem("Late Delivery", "2 days ago", Color(0xFFFF5252))
-            FeedbackItem("Friendly Service", "5 days ago", Color(0xFF00E676))
-            FeedbackItem("Package Handling", "1 week ago", Color(0xFFFFD700))
+
+            if (feedback.isEmpty()) {
+                Text(
+                    "אין משובות להצגה עדיין",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp
+                )
+            } else {
+                feedback.forEach { fb ->
+                    val color = when {
+                        (fb.ratingValue ?: 3) >= 4 -> Color(0xFF00E676)
+                        (fb.ratingValue ?: 3) >= 3 -> Color(0xFFFFD700)
+                        else -> Color(0xFFFF5252)
+                    }
+                    FeedbackItem(fb.tag, fb.createdAt, color, fb.comment)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }
@@ -126,7 +155,7 @@ fun RatingCategory(label: String, rating: Float) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -134,12 +163,12 @@ fun RatingCategory(label: String, rating: Float) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(label, fontWeight = FontWeight.Bold, color = TextOfficial)
-            
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    rating.toString(),
+                    String.format("%.1f", rating),
                     fontWeight = FontWeight.Black,
-                    color = if(rating >= 4.5) Color(0xFF00E676) else if(rating >= 4.0) Color(0xFFFFD700) else Color(0xFFFF5252)
+                    color = if (rating >= 4.5) Color(0xFF00E676) else if (rating >= 4.0) Color(0xFFFFD700) else Color(0xFFFF5252)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFD700), modifier = Modifier.size(16.dp))
@@ -149,25 +178,31 @@ fun RatingCategory(label: String, rating: Float) {
 }
 
 @Composable
-fun FeedbackItem(tag: String, date: String, color: Color) {
+fun FeedbackItem(tag: String, date: String, color: Color, comment: String?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
             .background(Color.White, RoundedCornerShape(12.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            androidx.compose.foundation.layout.Box(
+            Box(
                 modifier = Modifier
                     .size(12.dp)
                     .background(color, CircleShape)
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(tag, fontWeight = FontWeight.Medium)
+            Column {
+                Text(tag, fontWeight = FontWeight.Medium)
+                if (!comment.isNullOrBlank()) {
+                    Text(comment, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
         }
-        Text(date, color = Color.Gray, fontSize = 12.sp)
+        if (date.isNotBlank()) {
+            Text(date, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+        }
     }
 }

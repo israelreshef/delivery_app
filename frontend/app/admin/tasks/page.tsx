@@ -17,6 +17,8 @@ interface Task {
     customer_name: string;
     assigned_to_name: string;
     created_at: string;
+    source?: string;
+    source_id?: string;
 }
 
 function formatDate(dateStr: string) {
@@ -59,7 +61,7 @@ export default function GlobalTasksPage() {
     const getPriorityColor = (priority: string) => {
         switch (priority) {
             case 'high': return 'bg-red-500/15 text-red-500';
-            case 'medium': return 'bg-amber-500/15 text-amber-500';
+            case 'medium': return 'bg-brand/15 text-brand';
             case 'low': return 'bg-emerald-500/15 text-emerald-500';
             default: return 'bg-muted/15 text-muted';
         }

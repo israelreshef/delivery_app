@@ -84,7 +84,7 @@ export default function MockPaymentForm({ amount, orderId, onSuccess, onCancel }
     return (
         <div className="space-y-6" dir="rtl">
             {/* Mock Notice */}
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800 flex items-center gap-2">
+            <div className="bg-ice border border-brand-light rounded-lg p-3 text-sm text-brand-dark flex items-center gap-2">
                 <Lock className="w-4 h-4 shrink-0" />
                 <span>דימוי סליקה — כרטיס דמה מוזן מראש לצורך בדיקה</span>
             </div>

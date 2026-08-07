@@ -23,8 +23,9 @@ def create_manual_income(current_user):
         data = request.json
         description = data.get('description')
         from decimal import Decimal, ROUND_HALF_UP
+        from utils.tax import VAT_RATE
         subtotal = Decimal(str(data.get('subtotal', 0)))
-        vat_rate = Decimal(str(data.get('vat_rate', 0.17)))
+        vat_rate = Decimal(str(data.get('vat_rate', VAT_RATE)))
         issue_date_str = data.get('issue_date') # Format: YYYY-MM-DD
         customer_id = data.get('customer_id')
         

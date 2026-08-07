@@ -1,12 +1,12 @@
-Flask==3.0.0
+Flask>=3.0.3,<3.1
 Flask-SQLAlchemy==3.1.1
 Flask-SocketIO==5.3.5
 Flask-CORS==4.0.0
 python-socketio==5.10.0
 python-engineio==4.8.0
-Werkzeug==3.0.1
+Werkzeug>=3.0.3,<3.1
 PyJWT==2.8.0
-SQLAlchemy==2.0.23
+SQLAlchemy>=2.0.51,<2.1
 
 # Database drivers (choose one)
 # For SQLite (included in Python)
@@ -24,7 +24,7 @@ flask-cors==4.0.0
 slowapi==0.1.9
 gevent==23.9.1
 psycopg2-binary==2.9.9
-gunicorn==21.2.0
+gunicorn>=23.0.0,<24
 eventlet==0.33.3
 
 # Reporting & Excel

@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "ollama-bridge": {
+      "command": "python",
+      "args": [
+        "mcp_server/mcp_server.py"
+      ],
+      "type": "stdio"
+    }
+  }
+}

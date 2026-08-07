@@ -6,6 +6,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -47,10 +50,10 @@ data class TZIRExtendedColors(
 val LightExtendedColors = TZIRExtendedColors(
     glass = GlassWhite,
     glassBorder = Color(0x1A000000), // 10% black border for light
-    amberGold = AmberGold,
-    amberGoldDark = AmberGoldDark,
-    amberGoldGlow = AmberGoldGlow,
-    amberGoldDim = AmberGoldDim,
+    amberGold = BrandBlue,
+    amberGoldDark = BrandBlueDark,
+    amberGoldGlow = BrandBlueGlow,
+    amberGoldDim = BrandBlueDim,
     success = SuccessLight,
     successBg = SuccessBgLight,
     warning = WarningLight,
@@ -67,10 +70,10 @@ val LightExtendedColors = TZIRExtendedColors(
 val DarkExtendedColors = TZIRExtendedColors(
     glass = GlassDark,
     glassBorder = GlassBorderDark,
-    amberGold = AmberGold,
-    amberGoldDark = AmberGoldDark,
-    amberGoldGlow = AmberGoldGlow,
-    amberGoldDim = AmberGoldDim,
+    amberGold = BrandBlue,
+    amberGoldDark = BrandBlueDark,
+    amberGoldGlow = BrandBlueGlow,
+    amberGoldDim = BrandBlueDim,
     success = SuccessDark,
     successBg = SuccessBgDark,
     warning = WarningDark,
@@ -91,15 +94,15 @@ val LocalTZIRColors = staticCompositionLocalOf { LightExtendedColors }
 // ════════════════════════════════════════
 
 private val TZIRLightColorScheme = lightColorScheme(
-    primary          = AmberGold,
-    onPrimary        = Graphite950,
-    primaryContainer = AmberGoldLight,
-    onPrimaryContainer = Graphite700,
+    primary          = BrandBlue,
+    onPrimary        = Paper,
+    primaryContainer = BrandBlueLight,
+    onPrimaryContainer = Navy950,
 
-    secondary        = Graphite600,
-    onSecondary      = Color.White,
-    secondaryContainer = Graphite50,
-    onSecondaryContainer = Graphite900,
+    secondary        = Navy600,
+    onSecondary      = Paper,
+    secondaryContainer = Ice,
+    onSecondaryContainer = Navy950,
 
     background       = BackgroundLight,
     onBackground     = TextPrimaryLight,
@@ -110,7 +113,7 @@ private val TZIRLightColorScheme = lightColorScheme(
     onSurfaceVariant = TextSecondaryLight,
 
     outline          = BorderLight,
-    outlineVariant   = Graphite50,
+    outlineVariant   = Ice,
 
     error            = ErrorLight,
     onError          = Color.White,
@@ -119,15 +122,15 @@ private val TZIRLightColorScheme = lightColorScheme(
 )
 
 private val TZIRDarkColorScheme = darkColorScheme(
-    primary          = AmberGold,
-    onPrimary        = Graphite950,
-    primaryContainer = Color(0xFF3D2800),
-    onPrimaryContainer = AmberGoldLight,
+    primary          = BrandBlue,
+    onPrimary        = Paper,
+    primaryContainer = BrandBlueDark,
+    onPrimaryContainer = BrandBlueLight,
 
-    secondary        = Graphite300,
-    onSecondary      = Graphite950,
-    secondaryContainer = Graphite700,
-    onSecondaryContainer = Graphite100,
+    secondary        = Navy400,
+    onSecondary      = Navy950,
+    secondaryContainer = Navy700,
+    onSecondaryContainer = Navy200,
 
     background       = BackgroundDark,
     onBackground     = TextPrimaryDark,
@@ -138,7 +141,7 @@ private val TZIRDarkColorScheme = darkColorScheme(
     onSurfaceVariant = TextSecondaryDark,
 
     outline          = BorderDark,
-    outlineVariant   = Graphite700,
+    outlineVariant   = Navy700,
 
     error            = ErrorDark,
     onError          = Color.White,
@@ -156,12 +159,20 @@ fun getDefaultTheme(): Boolean {
 }
 
 // ════════════════════════════════════════
+// Reactive dark-mode state (Feature #5)
+// Single source of truth shared by MainActivity (theme) and Settings toggle.
+// ════════════════════════════════════════
+object DarkModeState {
+    var isDarkTheme: Boolean by mutableStateOf(true)
+}
+
+// ════════════════════════════════════════
 // Theme Composable
 // ════════════════════════════════════════
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = getDefaultTheme(),
+    darkTheme: Boolean = DarkModeState.isDarkTheme,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) TZIRDarkColorScheme else TZIRLightColorScheme

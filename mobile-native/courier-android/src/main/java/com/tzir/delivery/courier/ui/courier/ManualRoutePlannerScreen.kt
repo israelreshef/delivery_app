@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +54,7 @@ data class RouteStop(
     var packageCount: Int = 1,
     var orderIndex: Int? = null,          // numeric ordering (null = auto)
     var notes: String = "",
-    var arrivalTime: String = "בכל עת",
+    var arrivalTime: String = "Anytime",
     var durationMinutes: Int = 3,
     val orderId: Any? = null,
     val isVerified: Boolean = true
@@ -144,7 +145,7 @@ fun ManualRoutePlannerScreen(
             if (stops.size >= 2) {
                 Polyline(
                     points = stops.map { LatLng(it.lat, it.lng) },
-                    color = AmberGold,
+                    color = BrandBlue,
                     width = 8f
                 )
             }
@@ -153,7 +154,7 @@ fun ManualRoutePlannerScreen(
                 Marker(
                     state = rememberMarkerState(position = LatLng(stop.lat, stop.lng)),
                     title = stop.address,
-                    snippet = if (stop.stopType == "pickup") "איסוף" else "מסירה",
+                    snippet = if (stop.stopType == "pickup") stringResource(R.string.planner_stop_type_pickup) else stringResource(R.string.planner_stop_type_delivery),
                     icon = BitmapDescriptorFactory.defaultMarker(
                         if (stop.stopType == "pickup") BitmapDescriptorFactory.HUE_AZURE
                         else BitmapDescriptorFactory.HUE_ORANGE
@@ -173,7 +174,7 @@ fun ManualRoutePlannerScreen(
                     ambientColor = Color.Black.copy(alpha = 0.4f)
                 )
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(Color(0xFF0E0E0E))
+                .background(BackgroundDark)
                 .padding(bottom = 16.dp)
         ) {
             // Handle bar
@@ -214,7 +215,7 @@ fun ManualRoutePlannerScreen(
                         .weight(1f)
                         .height(48.dp),
                     shape = RoundedCornerShape(24.dp),
-                    color = Color(0xFF1C1C1E),
+                    color = Surface2Dark,
                     border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.15f))
                 ) {
                     Row(
@@ -223,11 +224,11 @@ fun ManualRoutePlannerScreen(
                             .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Mic icon (amber)
+                        // Mic icon (BrandBlue)
                         Icon(
                             Icons.Default.Mic,
                             contentDescription = null,
-                            tint = AmberGold,
+                            tint = BrandBlue,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(Modifier.width(10.dp))
@@ -236,8 +237,8 @@ fun ManualRoutePlannerScreen(
                         Box(modifier = Modifier.weight(1f)) {
                             if (searchText.isEmpty()) {
                                 Text(
-                                    "הקישו להוספת עצירות...",
-                                    color = Color.Gray,
+                                    stringResource(R.string.planner_search_hint),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 15.sp
                                 )
                             }
@@ -245,7 +246,7 @@ fun ManualRoutePlannerScreen(
                                 value = searchText,
                                 onValueChange = { searchText = it },
                                 textStyle = LocalTextStyle.current.copy(
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 15.sp
                                 ),
                                 singleLine = true,
@@ -263,13 +264,13 @@ fun ManualRoutePlannerScreen(
                                 onClick = { searchText = ""; suggestions = emptyList(); showSuggestions = false },
                                 modifier = Modifier.size(18.dp)
                             ) {
-                                Icon(Icons.Default.Close, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.Close, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                             }
                         } else {
                             Icon(
                                 Icons.Default.Search,
                                 contentDescription = null,
-                                tint = AmberGold,
+                                tint = BrandBlue,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -313,7 +314,7 @@ fun ManualRoutePlannerScreen(
                                             )
                                             searchText = ""
                                         } else {
-                                            snackbarHostState.showSnackbar("לא ניתן לאמת את הכתובת")
+                                            snackbarHostState.showSnackbar(context.getString(R.string.planner_address_verify_error))
                                         }
                                         isLoading = false
                                     }
@@ -321,11 +322,11 @@ fun ManualRoutePlannerScreen(
                                 .padding(horizontal = 8.dp, vertical = 12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.LocationOn, null, tint = AmberGold, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.LocationOn, null, tint = BrandBlue, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(12.dp))
                             Column {
-                                Text(suggestion.description, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                                Text(suggestion.fullAddress, color = Color.Gray, fontSize = 11.sp, maxLines = 1)
+                                Text(suggestion.description, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(suggestion.fullAddress, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, maxLines = 1)
                             }
                         }
                         HorizontalDivider(color = Color.White.copy(alpha = 0.06f), thickness = 0.5.dp)
@@ -357,15 +358,15 @@ fun ManualRoutePlannerScreen(
                     }
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "הוסיפו את העצירות הראשונות שלכם",
-                        color = Color.White,
+                        stringResource(R.string.planner_add_first_stops),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center
                     )
                     Text(
                         "כדי להתחיל ביצירת המסלול",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center
                     )
@@ -376,7 +377,7 @@ fun ManualRoutePlannerScreen(
                         onClick = { focusManager.clearFocus() },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(18.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = AmberGold)
+                        colors = ButtonDefaults.buttonColors(containerColor = BrandBlue)
                     ) {
                         Icon(Icons.Default.Add, null, tint = Graphite950, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
@@ -392,7 +393,7 @@ fun ManualRoutePlannerScreen(
                         shape = RoundedCornerShape(14.dp),
                         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
                     ) {
-                        Text("להעתיק עצירות ממסלול קודם", color = Color.White, fontSize = 14.sp)
+                        Text(stringResource(R.string.planner_copy_from_previous), color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     }
                 }
             } else {
@@ -404,8 +405,8 @@ fun ManualRoutePlannerScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "• ${stops.size} עצירות",
-                        color = Color.Gray,
+                        context.getString(R.string.planner_stops_count, stops.size),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp,
                         modifier = Modifier.weight(1f)
                     )
@@ -444,7 +445,7 @@ fun ManualRoutePlannerScreen(
                                 }
                             }
                         ) {
-                            Text("⚡ אופטימיזציה", color = AmberGold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text("⚡ אופטימיזציה", color = BrandBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
                 }
@@ -489,17 +490,17 @@ fun ManualRoutePlannerScreen(
                             shape = RoundedCornerShape(14.dp),
                             border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
                         ) {
-                            Text("לשנות פרטים", color = Color.White, fontSize = 14.sp)
+                            Text("לשנות פרטים", color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                         }
                         Button(
                             onClick = {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("🚀 מסלול עם ${stops.size} עצירות מוכן!")
+                                    snackbarHostState.showSnackbar(context.getString(R.string.planner_route_ready, stops.size))
                                 }
                             },
                             modifier = Modifier.weight(2f).height(48.dp),
                             shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = AmberGold),
+                            colors = ButtonDefaults.buttonColors(containerColor = BrandBlue),
                             enabled = !isLoading
                         ) {
                             if (isLoading) {
@@ -529,7 +530,7 @@ fun ManualRoutePlannerScreen(
         ModalBottomSheet(
             onDismissRequest = { showStopDetail = false },
             sheetState = sheetState,
-            containerColor = Color(0xFF0E0E0E),
+            containerColor = BackgroundDark,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
             dragHandle = {
                 Box(
@@ -570,7 +571,7 @@ private fun RouteStopRow(index: Int, stop: RouteStop, onClick: () -> Unit) {
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .background(AmberGold),
+                .background(BrandBlue),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -586,15 +587,15 @@ private fun RouteStopRow(index: Int, stop: RouteStop, onClick: () -> Unit) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 stop.address,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
             Text(
-                if (stop.stopType == "pickup") "איסוף" else "מסירה",
-                color = if (stop.stopType == "pickup") Color(0xFF4FC3F7) else AmberGold,
+                if (stop.stopType == "pickup") stringResource(R.string.planner_stop_type_pickup) else stringResource(R.string.planner_stop_type_delivery),
+                color = if (stop.stopType == "pickup") BrandBlueLight else BrandBlue,
                 fontSize = 12.sp
             )
         }
@@ -604,7 +605,7 @@ private fun RouteStopRow(index: Int, stop: RouteStop, onClick: () -> Unit) {
         // Arrival time if set
         Text(
             stop.arrivalTime,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 12.sp
         )
 
@@ -613,7 +614,7 @@ private fun RouteStopRow(index: Int, stop: RouteStop, onClick: () -> Unit) {
         Icon(
             Icons.Default.ChevronRight,
             null,
-            tint = Color.Gray,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(16.dp)
         )
     }
@@ -627,6 +628,7 @@ private fun StopDetailSheet(
     onRemove: () -> Unit,
     onUpdate: (RouteStop) -> Unit
 ) {
+    val context = LocalContext.current
     var stopType by remember { mutableStateOf(stop.stopType) }
     var packageCount by remember { mutableIntStateOf(stop.packageCount) }
     var orderIndex by remember { mutableStateOf(stop.orderIndex?.toString() ?: "") }
@@ -660,26 +662,26 @@ private fun StopDetailSheet(
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
             Text(
                 stop.address.substringBefore(","),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Black,
                 fontSize = 20.sp
             )
             Text(
                 stop.address.substringAfter(",", "").trim(),
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = { /* access instructions */ },
                 shape = RoundedCornerShape(10.dp),
-                border = BorderStroke(1.dp, AmberGold.copy(alpha = 0.5f)),
+                border = BorderStroke(1.dp, BrandBlue.copy(alpha = 0.5f)),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 modifier = Modifier.height(34.dp)
             ) {
-                Icon(Icons.Default.Add, null, tint = AmberGold, modifier = Modifier.size(14.dp))
+                Icon(Icons.Default.Add, null, tint = BrandBlue, modifier = Modifier.size(14.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("הוראות גישה", color = AmberGold, fontSize = 13.sp)
+                Text("הוראות גישה", color = BrandBlue, fontSize = 13.sp)
             }
         }
 
@@ -693,9 +695,9 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("הוספת הערות", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text(stringResource(R.string.planner_notes_label), color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Spacer(Modifier.width(12.dp))
-                    Icon(Icons.Default.CameraAlt, null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                    Icon(Icons.Default.CameraAlt, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
             }
@@ -707,8 +709,8 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("איתור חבילות", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
-                    Text("לא הוגדר", color = Color.Gray, fontSize = 14.sp)
+                    Text("איתור חבילות", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("לא הוגדר", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
             }
@@ -720,17 +722,17 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("חבילות", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("חבילות", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = { if (packageCount > 1) packageCount-- },
                             modifier = Modifier.size(32.dp)
                         ) {
-                            Icon(Icons.Default.Remove, null, tint = AmberGold, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Remove, null, tint = BrandBlue, modifier = Modifier.size(18.dp))
                         }
                         Text(
                             packageCount.toString(),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             modifier = Modifier.width(32.dp),
@@ -740,7 +742,7 @@ private fun StopDetailSheet(
                             onClick = { packageCount++ },
                             modifier = Modifier.size(32.dp)
                         ) {
-                            Icon(Icons.Default.Add, null, tint = AmberGold, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Add, null, tint = BrandBlue, modifier = Modifier.size(18.dp))
                         }
                     }
                 }
@@ -754,13 +756,13 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("סידור", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("סידור", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("מיקום:", color = Color.Gray, fontSize = 12.sp)
+                        Text("מיקום:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         Spacer(Modifier.width(6.dp))
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = Color(0xFF1C1C1E),
+                            color = Surface2Dark,
                             border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
                             modifier = Modifier.width(56.dp).height(34.dp)
                         ) {
@@ -769,7 +771,7 @@ private fun StopDetailSheet(
                                     value = orderIndex,
                                     onValueChange = { v -> if (v.length <= 2 && (v.isEmpty() || v.toIntOrNull() != null)) orderIndex = v },
                                     textStyle = LocalTextStyle.current.copy(
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center
@@ -780,7 +782,7 @@ private fun StopDetailSheet(
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 if (orderIndex.isEmpty()) {
-                                    Text("אוטו", color = Color.Gray, fontSize = 11.sp, textAlign = TextAlign.Center)
+                                    Text("אוטו", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, textAlign = TextAlign.Center)
                                 }
                             }
                         }
@@ -796,21 +798,21 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("סוג", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("סוג", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf("מסירה" to "delivery", "איסוף" to "pickup").forEach { (label, value) ->
+                        listOf(context.getString(R.string.planner_stop_type_delivery) to "delivery", context.getString(R.string.planner_stop_type_pickup) to "pickup").forEach { (label, value) ->
                             Surface(
                                 modifier = Modifier
                                     .height(32.dp)
                                     .clickable { stopType = value },
                                 shape = RoundedCornerShape(10.dp),
-                                color = if (stopType == value) AmberGold else Color(0xFF1C1C1E),
-                                border = BorderStroke(0.5.dp, if (stopType == value) AmberGold else Color.White.copy(alpha = 0.15f))
+                                color = if (stopType == value) BrandBlue else Surface2Dark,
+                                border = BorderStroke(0.5.dp, if (stopType == value) BrandBlue else Color.White.copy(alpha = 0.15f))
                             ) {
                                 Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 14.dp)) {
                                     Text(
                                         label,
-                                        color = if (stopType == value) Graphite950 else Color.White,
+                                        color = if (stopType == value) Graphite950 else MaterialTheme.colorScheme.onSurface,
                                         fontWeight = if (stopType == value) FontWeight.Bold else FontWeight.Normal,
                                         fontSize = 13.sp
                                     )
@@ -829,11 +831,11 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("שעת הגעה", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("שעת הגעה", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(arrivalTime, color = Color.Gray, fontSize = 14.sp)
+                        Text(arrivalTime, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                         Spacer(Modifier.width(4.dp))
-                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                     }
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
@@ -846,11 +848,11 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("משך העצירה המשוערת", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("משך העצירה המשוערת", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("$durationMinutes דק׳", color = Color.Gray, fontSize = 14.sp)
+                        Text("$durationMinutes דק׳", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                         Spacer(Modifier.width(4.dp))
-                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                     }
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.12f), thickness = 1.dp)
@@ -863,11 +865,11 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("שינוי כתובת", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("שינוי כתובת", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Search, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                     }
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
@@ -879,11 +881,11 @@ private fun StopDetailSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("שכפול עצירה", color = Color.White, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                    Text("שכפול עצירה", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.CopyAll, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.CopyAll, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Icon(Icons.Default.ChevronLeft, null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.ChevronLeft, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                     }
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.07f))
@@ -911,8 +913,8 @@ private fun StopDetailSheet(
     if (showRemoveConfirm) {
         AlertDialog(
             onDismissRequest = { showRemoveConfirm = false },
-            title = { Text("הסרת עצירה", color = Color.White, fontWeight = FontWeight.Bold) },
-            text = { Text("האם להסיר את העצירה הזו מהמסלול?", color = Color.Gray) },
+            title = { Text("הסרת עצירה", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold) },
+            text = { Text("האם להסיר את העצירה הזו מהמסלול?", color = MaterialTheme.colorScheme.onSurfaceVariant) },
             confirmButton = {
                 TextButton(onClick = { showRemoveConfirm = false; onRemove() }) {
                     Text("הסר", color = Color(0xFFFF453A), fontWeight = FontWeight.Bold)
@@ -920,10 +922,10 @@ private fun StopDetailSheet(
             },
             dismissButton = {
                 TextButton(onClick = { showRemoveConfirm = false }) {
-                    Text("ביטול", color = Color.Gray)
+                    Text("ביטול", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
-            containerColor = Color(0xFF1C1C1E)
+            containerColor = Surface2Dark
         )
     }
 }

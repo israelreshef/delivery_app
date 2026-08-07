@@ -41,9 +41,10 @@ def create_invoice(current_user):
             return jsonify({'error': 'Cannot issue invoice without a linked customer'}), 400
             
         from decimal import Decimal, ROUND_HALF_UP
+        from utils.tax import VAT_RATE
         
-        # 1. Determine VAT Rate (0% for Eilat/Exempt, 18% otherwise via user requirements for 2026)
-        vat_rate_applicable = Decimal('0.0') if customer.vat_status == 'exempt' else Decimal('0.18')
+        # 1. Determine VAT Rate (0% for Eilat/Exempt, standard VAT otherwise)
+        vat_rate_applicable = Decimal('0.0') if customer.vat_status == 'exempt' else VAT_RATE
         
         subtotal = Decimal(str(data.get('subtotal', delivery.delivery_fee)))
         vat_amount = (subtotal * vat_rate_applicable).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)

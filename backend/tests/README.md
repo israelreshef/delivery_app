@@ -44,8 +44,8 @@ pytest -q
 If Windows `python` points to a broken Store shim, run with an explicit interpreter:
 
 ```bash
-C:\Users\Israel\anaconda3\python.exe -m pip install -r requirements-dev.txt
-C:\Users\Israel\anaconda3\python.exe -m pytest -q
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
 ```
 
 ## Compliance Notes

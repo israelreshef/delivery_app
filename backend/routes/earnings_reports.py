@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from models import db, Delivery, Courier
 from utils.decorators import token_required, role_required
+from utils.tax import VAT_RATE_FLOAT
 from datetime import datetime, timedelta
 import csv
 import io
@@ -109,7 +110,7 @@ def get_vat_summary(current_user):
         ).all()
         
         total_revenue = sum(float(d.price or 0) for d in deliveries)
-        vat_collected = total_revenue * 0.17 # Standard 17% VAT in Israel
+        vat_collected = total_revenue * VAT_RATE_FLOAT # Standard Israeli VAT
         
         # 2. VAT paid (Expenses recorded by the courier - fuel, repairs, etc.)
         # We need to filter expenses for THIS specific courier. 

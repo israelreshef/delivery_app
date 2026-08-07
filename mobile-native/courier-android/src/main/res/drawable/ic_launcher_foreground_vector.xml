@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   TZIR Courier App Icon — Foreground Vector
-  Design: "TZIR" bold text + amber gold forward arrow
+  Design: "TZIR" bold text + brand blue forward arrow
   Style: Minimal, premium, directional
+  Brand Kit V5: Navy #07162C + Blue #145DDB
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -15,32 +16,32 @@
     <!-- "TZIR" text represented as bold geometric shapes -->
     <!-- T -->
     <path
-        android:fillColor="#1A1A2E"
+        android:fillColor="#07162C"
         android:pathData="M22,34 L40,34 L40,38 L33,38 L33,58 L29,58 L29,38 L22,38 Z"/>
 
     <!-- Z -->
     <path
-        android:fillColor="#1A1A2E"
+        android:fillColor="#07162C"
         android:pathData="M42,34 L58,34 L58,38 L48,54 L58,54 L58,58 L42,58 L42,54 L52,38 L42,38 Z"/>
 
     <!-- I -->
     <path
-        android:fillColor="#1A1A2E"
+        android:fillColor="#07162C"
         android:pathData="M61,34 L65,34 L65,58 L61,58 Z"/>
 
     <!-- R -->
     <path
-        android:fillColor="#1A1A2E"
+        android:fillColor="#07162C"
         android:pathData="M68,34 L78,34 C82,34 85,37 85,41 C85,44 83,46.5 80,47.5 L86,58 L81.5,58 L76,48 L72,48 L72,58 L68,58 Z M72,38 L72,44 L78,44 C80,44 81,43 81,41 C81,39 80,38 78,38 Z"/>
 
-    <!-- Amber Arrow → below text -->
+    <!-- Blue Arrow → below text -->
     <!-- Arrow shaft -->
     <path
-        android:fillColor="#F5A623"
+        android:fillColor="#145DDB"
         android:pathData="M24,67 L78,67 L78,71 L24,71 Z"/>
     <!-- Arrow head -->
     <path
-        android:fillColor="#F5A623"
+        android:fillColor="#145DDB"
         android:pathData="M73,62 L86,69 L73,76 Z"/>
 
 </vector>

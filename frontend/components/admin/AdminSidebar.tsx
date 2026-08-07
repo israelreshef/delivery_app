@@ -40,7 +40,7 @@ export function AdminSidebar() {
     return (
         <div className="flex flex-col h-full w-64 bg-navy-950 text-white shadow-xl" dir="rtl">
             <div className="p-6 border-b border-navy-900">
-                <h2 className="text-2xl font-bold tracking-tight text-brand/80">TZIR ADMIN</h2>
+                <img src="/logo.png" alt="TZIR" className="h-8 w-auto mb-1" />
                 <p className="text-xs text-navy-200 mt-1">מערכת ניהול מתקדמת</p>
             </div>
 

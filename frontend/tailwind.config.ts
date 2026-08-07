@@ -10,11 +10,11 @@ const config: Config = {
         extend: {
             colors: {
                 brand: {
-                    DEFAULT: 'var(--amber)',
-                    dark: 'var(--amber-dark)',
-                    light: 'var(--amber-light)',
-                    dim: 'var(--amber-dim)',
-                    glow: 'var(--amber-glow)',
+                    DEFAULT: 'var(--brand)',
+                    dark: 'var(--brand-dark)',
+                    light: 'var(--brand-light)',
+                    dim: 'var(--brand-dim)',
+                    glow: 'var(--brand-glow)',
                 },
                 navy: {
                     950: 'var(--navy-950)',
@@ -23,13 +23,15 @@ const config: Config = {
                     700: 'var(--navy-700)',
                     600: 'var(--navy-600)',
                     400: 'var(--navy-400)',
+                    500: 'var(--navy-500)',
+                    300: 'var(--navy-300)',
                     200: 'var(--navy-200)',
                     100: 'var(--navy-100)',
                 },
                 success: 'hsl(var(--success))',
                 warning: '#D97706',
                 error: 'hsl(var(--destructive))',
-                info: '#2563EB',
+                info: '#145DDB',
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
@@ -72,14 +74,12 @@ const config: Config = {
                 xl: '18px',
             },
             boxShadow: {
-                'amber': '0 4px 14px color-mix(in srgb, var(--amber) 30%, transparent)',
-                'amber-lg': '0 8px 28px color-mix(in srgb, var(--amber) 25%, transparent)',
-                'brand': '0 4px 14px color-mix(in srgb, var(--amber) 30%, transparent)',
-                'brand-lg': '0 8px 28px color-mix(in srgb, var(--amber) 25%, transparent)',
-                'navy': '0 4px 20px rgba(5,16,31,0.12)',
+                'brand': '0 4px 14px color-mix(in srgb, var(--brand) 30%, transparent)',
+                'brand-lg': '0 8px 28px color-mix(in srgb, var(--brand) 25%, transparent)',
+                'navy': '0 4px 20px rgba(7,22,44,0.12)',
             },
             fontFamily: {
-                sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+                sans: ['var(--font-heebo)', 'Heebo', 'system-ui', 'sans-serif'],
                 mono: ['var(--font-mono)', 'monospace'],
             },
             keyframes: {

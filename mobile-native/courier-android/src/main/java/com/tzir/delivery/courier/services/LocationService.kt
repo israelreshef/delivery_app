@@ -1,9 +1,11 @@
 
 package com.tzir.delivery.courier.services
 
+import android.Manifest
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
@@ -25,6 +27,7 @@ class LocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var api: DeliveryApi
+    private var locationManager: LocationManager? = null
     
     // Courier ID from Intent
     private var courierId: String = "" 
@@ -36,6 +39,7 @@ class LocationService : Service() {
         // Initialize API using the common factory to ensure authentication headers
         val client = com.tzir.delivery.courier.network.KtorClientFactory.createClient()
         api = DeliveryApiImpl(client)
+        locationManager = LocationManager(api)
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -49,7 +53,7 @@ class LocationService : Service() {
                         courierId = courierId
                     )
                     
-                    LocationManager.getInstance(api).updateRealLocation(location.latitude, location.longitude)
+                    locationManager?.updateRealLocation(location.latitude, location.longitude)
                 }
             }
         }
@@ -72,6 +76,17 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // On Android 10+ a foreground service of type "location" requires the runtime
+        // location permission to be granted. If it isn't, startForeground() throws
+        // SecurityException and crashes the process. Stop gracefully instead.
+        val hasLocationPermission =
+            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (!hasLocationPermission) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         startForegroundService()
         
         val idFromIntent = intent?.getStringExtra("courier_id")
@@ -107,7 +122,11 @@ class LocationService : Service() {
             .build()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+            try {
+                startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+            } catch (e: SecurityException) {
+                stopSelf()
+            }
         } else {
             startForeground(1, notification)
         }

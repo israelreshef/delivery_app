@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Copy, Phone, User, Package, MapPin, Clock, CheckCircle2, Circle, Shield } from "lucide-react";
+import { Copy, Phone, User, Package, MapPin, Clock, CheckCircle2, Circle, Shield, FileText, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -86,7 +86,7 @@ export default function TrackingPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="min-h-screen bg-[#05101F] flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand"></div>
             </div>
         );
@@ -94,10 +94,10 @@ export default function TrackingPage() {
 
     if (!order) {
         return (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-                <Package className="w-16 h-16 text-slate-300 mb-4" />
-                <h1 className="text-2xl font-bold text-slate-800">הזמנה לא נמצאה</h1>
-                <p className="text-slate-500 mt-2">יתכן שמספר ההזמנה שגוי או שהמשלוח בוטל.</p>
+            <div className="min-h-screen bg-[#05101F] flex flex-col items-center justify-center p-4">
+                <Package className="w-16 h-16 text-slate-600 mb-4" />
+                <h1 className="text-2xl font-bold text-white">הזמנה לא נמצאה</h1>
+                <p className="text-slate-400 mt-2">יתכן שמספר ההזמנה שגוי או שהמשלוח בוטל.</p>
                 <Button className="mt-6" onClick={() => window.location.href = '/'}>חזרה לדף הבית</Button>
             </div>
         );
@@ -106,19 +106,19 @@ export default function TrackingPage() {
     const currentStatus = statusMap[order.status] || { label: order.status, step: 0, color: 'bg-slate-500' };
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20" dir="rtl">
+        <div className="min-h-screen bg-[#05101F] pb-20" dir="rtl">
             {/* Header */}
-            <div className="bg-white border-b sticky top-0 z-20">
+            <div className="bg-[#0A1929]/80 backdrop-blur-md border-b border-[#1A3557] sticky top-0 z-20">
                 <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
                     <div>
-                        <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <h1 className="text-lg font-bold text-white flex items-center gap-2">
                             מעקב משלוח
-                            <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-mono">
+                            <span className="bg-[#1A3557]/50 border border-[#1A3557] text-slate-200 px-2 py-1 rounded text-xs font-mono">
                                 {order.order_number}
                             </span>
                         </h1>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard(window.location.href)}>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard(window.location.href)} className="text-slate-300 hover:text-white hover:bg-[#1A3557]">
                         <Copy className="w-4 h-4 ml-2" />
                         שתף
                     </Button>
@@ -128,14 +128,14 @@ export default function TrackingPage() {
             <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
 
                 {/* Status Card */}
-                <div className="bg-white rounded-2xl shadow-sm p-6">
+                <div className="bg-[#0A1929]/60 backdrop-blur-sm rounded-2xl shadow-xl shadow-black/20 border border-[#1A3557] p-6">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <div className="text-sm text-slate-500 mb-1">סטטוס נוכחי</div>
+                            <div className="text-sm text-slate-400 mb-1">סטטוס נוכחי</div>
                             <div className={`text-2xl font-bold ${currentStatus.color.replace('bg-', 'text-')}`}>
                                 {currentStatus.label}
                             </div>
-                            <div className="text-sm text-slate-400 mt-1">
+                            <div className="text-sm text-slate-500 mt-1">
                                 {order.status_history[0] && format(new Date(order.status_history[0].timestamp), "HH:mm, dd/MM/yyyy")}
                             </div>
                         </div>
@@ -146,7 +146,7 @@ export default function TrackingPage() {
 
                     {/* Timeline */}
                     <div className="relative">
-                        <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 z-0"></div>
+                        <div className="absolute top-1/2 left-0 w-full h-1 bg-[#1A3557] -translate-y-1/2 z-0"></div>
                         <div
                             className={`absolute top-1/2 right-0 h-1 transition-all duration-1000 ease-out z-0 ${currentStatus.color}`}
                             style={{ width: `${(currentStatus.step / 5) * 100}%` }}
@@ -157,10 +157,10 @@ export default function TrackingPage() {
                                 const isCompleted = index < currentStatus.step; // Simplified logic
                                 return (
                                     <div key={step.key} className="flex flex-col items-center gap-2">
-                                        <div className={`w-4 h-4 rounded-full border-2 ${isCompleted ? `bg-white ${currentStatus.color.replace('bg-', 'border-')}` : 'bg-slate-100 border-slate-300'}`}>
+                                        <div className={`w-4 h-4 rounded-full border-2 ${isCompleted ? `bg-[#0A1929] ${currentStatus.color.replace('bg-', 'border-')}` : 'bg-[#05101F] border-[#1A3557]'}`}>
                                             {isCompleted && <div className={`w-full h-full rounded-full ${currentStatus.color} scale-50`}></div>}
                                         </div>
-                                        <span className={`text-xs ${isCompleted ? 'font-bold text-slate-800' : 'text-slate-400'}`}>
+                                        <span className={`text-xs ${isCompleted ? 'font-bold text-white' : 'text-slate-500'}`}>
                                             {step.label}
                                         </span>
                                     </div>
@@ -171,7 +171,7 @@ export default function TrackingPage() {
                 </div>
 
                 {/* Map */}
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden h-[400px] border border-slate-200 relative">
+                <div className="bg-[#0A1929]/60 backdrop-blur-sm rounded-2xl shadow-xl shadow-black/20 overflow-hidden h-[400px] border border-[#1A3557] relative">
                     <TrackingMap
                         pickup={{
                             lat: order.pickup.coords?.lat || 32.0853,
@@ -192,18 +192,18 @@ export default function TrackingPage() {
 
                     {/* Floating Courier Info (if assigned) */}
                     {order.courier && order.status !== 'pending' && (
-                        <div className="absolute bottom-4 right-4 z-[9999] bg-white p-4 rounded-xl shadow-lg border border-slate-100 max-w-[250px]">
+                        <div className="absolute bottom-4 right-4 z-[9999] bg-[#0A1929]/90 backdrop-blur-md p-4 rounded-xl shadow-xl shadow-black/30 border border-[#1A3557] max-w-[250px]">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-brand/20 rounded-full flex items-center justify-center text-brand">
                                     <User className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <div className="text-xs text-slate-500">השליח שלך</div>
-                                    <div className="font-bold text-slate-800">{order.courier.name}</div>
+                                    <div className="text-xs text-slate-400">השליח שלך</div>
+                                    <div className="font-bold text-white">{order.courier.name}</div>
                                 </div>
                             </div>
                             <div className="mt-3 flex gap-2">
-                                <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => window.location.href = `tel:${order.courier?.phone}`}>
+                                <Button size="sm" variant="outline" className="w-full text-xs border-[#1A3557] text-slate-200 hover:bg-[#1A3557] hover:text-white" onClick={() => window.location.href = `tel:${order.courier?.phone}`}>
                                     <Phone className="w-3 h-3 ml-1" />
                                     התקשר
                                 </Button>
@@ -213,7 +213,7 @@ export default function TrackingPage() {
                 </div>
 
                 {/* Trust Indicators (Psychology UX) */}
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap justify-between items-center text-sm text-slate-600 gap-4">
+                <div className="bg-[#0A1929]/40 border border-[#1A3557] rounded-xl p-4 flex flex-wrap justify-between items-center text-sm text-slate-300 gap-4">
                     <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                         <span>מעקב בזמן אמת</span>
@@ -228,24 +228,55 @@ export default function TrackingPage() {
                     </div>
                 </div>
 
+                {/* Order Summary & Receipt */}
+                <div className="bg-[#0A1929]/60 backdrop-blur-sm p-6 rounded-xl shadow-xl shadow-black/20 border border-[#1A3557]">
+                    <h3 className="font-semibold text-white flex items-center gap-2 mb-6 text-lg">
+                        <FileText className="w-5 h-5 text-brand" />
+                        סיכום משלוח
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
+                        <div>
+                            <div className="text-xs text-slate-400 mb-1">תאריך הזמנה</div>
+                            <div className="text-slate-200 flex items-center gap-2 font-medium">
+                                <CalendarDays className="w-4 h-4 text-brand" />
+                                {format(new Date(order.created_at || new Date()), "dd/MM/yyyy")}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="text-xs text-slate-400 mb-1">מזהה משלוח</div>
+                            <div className="text-slate-200 font-mono bg-[#1A3557]/50 px-2 py-0.5 rounded border border-[#1A3557] inline-block">{order.order_number}</div>
+                        </div>
+                        <div>
+                            <div className="text-xs text-slate-400 mb-1">עלות משלוח</div>
+                            <div className="text-white font-bold text-lg">₪{order.price || '---'}</div>
+                        </div>
+                        <div className="col-span-2 md:col-span-1 flex justify-end">
+                            <Button variant="outline" className="w-full border-brand/50 text-brand hover:bg-brand hover:text-white transition-all shadow-[0_0_15px_rgba(20,93,219,0.15)] bg-transparent">
+                                <FileText className="w-4 h-4 ml-2" />
+                                צפייה בקבלה
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Details Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                        <h3 className="font-semibold text-slate-700 flex items-center gap-2 mb-4">
+                    <div className="bg-[#0A1929]/60 backdrop-blur-sm p-5 rounded-xl shadow-xl shadow-black/20 border border-[#1A3557]">
+                        <h3 className="font-semibold text-white flex items-center gap-2 mb-4">
                             <MapPin className="w-4 h-4 text-green-500" />
                             פרטי איסוף
                         </h3>
                         <div className="space-y-3">
                             <div>
-                                <div className="text-xs text-slate-400">כתובת</div>
-                                <div className="text-slate-800">{order.pickup.address}</div>
+                                <div className="text-xs text-slate-500">כתובת</div>
+                                <div className="text-slate-200">{order.pickup.address}</div>
                             </div>
                             <div>
-                                <div className="text-xs text-slate-400">איש קשר</div>
-                                <div className="text-slate-800">{order.pickup.contact}</div>
+                                <div className="text-xs text-slate-500">איש קשר</div>
+                                <div className="text-slate-200">{order.pickup.contact}</div>
                             </div>
                             {order.pickup.phone && (
-                                <div className="inline-flex items-center text-sm text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                                <div className="inline-flex items-center text-sm text-slate-300 bg-[#1A3557]/50 border border-[#1A3557] px-2 py-1 rounded">
                                     <Phone className="w-3 h-3 ml-2" />
                                     {order.pickup.phone}
                                 </div>
@@ -253,22 +284,22 @@ export default function TrackingPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                        <h3 className="font-semibold text-slate-700 flex items-center gap-2 mb-4">
+                    <div className="bg-[#0A1929]/60 backdrop-blur-sm p-5 rounded-xl shadow-xl shadow-black/20 border border-[#1A3557]">
+                        <h3 className="font-semibold text-white flex items-center gap-2 mb-4">
                             <MapPin className="w-4 h-4 text-red-500" />
                             פרטי מסירה
                         </h3>
                         <div className="space-y-3">
                             <div>
-                                <div className="text-xs text-slate-400">כתובת</div>
-                                <div className="text-slate-800">{order.delivery.address}</div>
+                                <div className="text-xs text-slate-500">כתובת</div>
+                                <div className="text-slate-200">{order.delivery.address}</div>
                             </div>
                             <div>
-                                <div className="text-xs text-slate-400">מקבל</div>
-                                <div className="text-slate-800">{order.delivery.contact}</div>
+                                <div className="text-xs text-slate-500">מקבל</div>
+                                <div className="text-slate-200">{order.delivery.contact}</div>
                             </div>
                             {order.delivery.phone && (
-                                <div className="inline-flex items-center text-sm text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                                <div className="inline-flex items-center text-sm text-slate-300 bg-[#1A3557]/50 border border-[#1A3557] px-2 py-1 rounded">
                                     <Phone className="w-3 h-3 ml-2" />
                                     {order.delivery.phone}
                                 </div>
@@ -278,17 +309,17 @@ export default function TrackingPage() {
                 </div>
 
                 {/* Package Info */}
-                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-                    <h3 className="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <div className="bg-[#0A1929]/60 backdrop-blur-sm p-5 rounded-xl shadow-xl shadow-black/20 border border-[#1A3557]">
+                    <h3 className="font-semibold text-white flex items-center gap-2 mb-2">
                         <Package className="w-4 h-4 text-brand" />
                         פרטי חבילה
                     </h3>
                     <div className="flex gap-4 items-center">
-                        <div className="bg-slate-100 px-3 py-1 rounded text-sm text-slate-700">
-                            גודל: <strong>{order.package.size === 'envelope' ? 'מעטפה' : order.package.size}</strong>
+                        <div className="bg-[#1A3557]/50 border border-[#1A3557] px-3 py-1 rounded text-sm text-slate-200">
+                            גודל: <strong className="text-white">{order.package.size === 'envelope' ? 'מעטפה' : order.package.size}</strong>
                         </div>
                         {order.package.description && (
-                            <div className="text-sm text-slate-600 border-r border-slate-300 pr-4">
+                            <div className="text-sm text-slate-400 border-r border-[#1A3557] pr-4">
                                 "{order.package.description}"
                             </div>
                         )}

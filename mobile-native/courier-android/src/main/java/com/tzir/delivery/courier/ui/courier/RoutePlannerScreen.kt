@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import java.util.Calendar
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -53,6 +55,7 @@ import com.tzir.delivery.courier.R
 import com.tzir.delivery.courier.model.AutocompleteSuggestion
 import com.tzir.delivery.courier.repository.CourierRepository
 import com.tzir.delivery.courier.location.LocationManager
+import com.tzir.delivery.courier.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -60,19 +63,19 @@ import kotlin.math.roundToInt
 // ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•
 // OBSIDIAN MIST ג€” Route Planner Color Palette
 // ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•
-private val ObsidianBg        = Color(0xFF0A0A0C)
-private val ObsidianSurface   = Color(0xFF141416)
-private val ObsidianElevated  = Color(0xFF1C1C1E)
-private val ObsidianGlass     = Color(0x0FFFFFFF)   // 6% white
-private val ObsidianBorder    = Color(0x1AFFFFFF)    // 10% white
-private val ObsidianBorderSub = Color(0x0DFFFFFF)    // 5% white
-private val SoftMint          = Color(0xFF8ECFB9)
-private val SoftMintDim       = Color(0x268ECFB9)    // 15%
-private val SoftBlue          = Color(0xFFA0C4E8)
-private val TextPrimary       = Color(0xFFF0F0F2)
-private val TextSecondary     = Color(0xFF8E8E93)
-private val TextMuted         = Color(0xFF48484A)
-private val Danger            = Color(0xFFFF453A)
+private val ObsidianBg        = BackgroundDark
+private val ObsidianSurface   = SurfaceDark
+private val ObsidianElevated  = Surface2Dark
+private val ObsidianGlass     = GlassDark
+private val ObsidianBorder    = BorderDark
+private val ObsidianBorderSub = BorderDark.copy(alpha = 0.7f)
+private val SoftMint          = Ice
+private val SoftMintDim       = Ice.copy(alpha = 0.15f)
+private val SoftBlue          = BrandBlueLight
+private val TextPrimary       = TextPrimaryDark
+private val TextSecondary     = TextSecondaryDark
+private val TextMuted         = TextMutedDark
+private val Danger            = ErrorDark
 
 // ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•ג•
 // Data model for a planner stop
@@ -260,7 +263,7 @@ fun RoutePlannerPanel(
                                     }
                                     isLoading = false
                                 } else {
-                                    snackbarHostState.showSnackbar("לא ניתן לקבל מיקום נוכחי")
+                                    snackbarHostState.showSnackbar(context.getString(R.string.planner_location_unavailable))
                                 }
                             }
                         },
@@ -300,7 +303,7 @@ fun RoutePlannerPanel(
                                         onEditingStopIndexChange(stops.size - 1)
                                         onModeChange(PlannerMode.STOP_DETAIL)
                                     } else {
-                                        snackbarHostState.showSnackbar("לא ניתן לאמת את הכתובת")
+                                        snackbarHostState.showSnackbar(context.getString(R.string.planner_address_verify_error))
                                     }
                                     isLoading = false
                                 }
@@ -334,7 +337,7 @@ fun RoutePlannerPanel(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "${stops.size} עצירות",
+                                context.getString(R.string.planner_stops_count, stops.size),
                                 color = TextSecondary,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium
@@ -347,7 +350,7 @@ fun RoutePlannerPanel(
                                         .background(SoftMintDim)
                                         .padding(horizontal = 8.dp, vertical = 2.dp)
                                 ) {
-                                    Text("מוטב", color = SoftMint, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(R.string.planner_optimized_badge), color = SoftMint, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                                 }
                             }
                         }
@@ -423,9 +426,9 @@ fun RoutePlannerPanel(
                                             stops.addAll(reordered)
                                             isOptimized = true
                                             onRouteGeometryReady(if (result.routeGeometry.isNotEmpty()) result.routeGeometry.map { LatLng(it[1], it[0]) } else null)
-                                            snackbarHostState.showSnackbar("המסלול מוטב - ${result.totalDistanceKm.let { "%.1f".format(it) }} קמ")
+                                            snackbarHostState.showSnackbar(context.getString(R.string.planner_route_optimized, "%.1f".format(result.totalDistanceKm)))
                                         } else {
-                                            snackbarHostState.showSnackbar("שגיאה באופטימיזציה, נסה שוב")
+                                            snackbarHostState.showSnackbar(context.getString(R.string.planner_optimization_error))
                                         }
                                         isLoading = false
                                     }
@@ -452,7 +455,7 @@ fun RoutePlannerPanel(
                                         prefs.edit().putString("planned_routes_today", jsonArr.toString()).apply()
                                         
                                         scope.launch {
-                                            snackbarHostState.showSnackbar("המסלול נשמר ללוח השנה!")
+                                            snackbarHostState.showSnackbar(context.getString(R.string.planner_saved_to_calendar))
                                         }
                                         stops.clear()
                                         isOptimized = false
@@ -524,7 +527,7 @@ private fun SearchBarGlass(
         ) {
             Icon(
                 Icons.Default.MyLocation,
-                contentDescription = "מיקום נוכחי",
+                contentDescription = stringResource(R.string.planner_current_location_desc),
                 tint = SoftMint,
                 modifier = Modifier.size(18.dp)
             )
@@ -556,7 +559,7 @@ private fun SearchBarGlass(
                 Box(modifier = Modifier.weight(1f)) {
                     if (text.isEmpty()) {
                         Text(
-                            "חיפוש כתובת...",
+                            stringResource(R.string.planner_search_hint),
                             color = TextMuted,
                             fontSize = 14.sp
                         )
@@ -758,7 +761,7 @@ private fun StopRow(
                 )
             }
             Text(
-                if (stop.stopType == "pickup") "איסוף" else "מסירה",
+                if (stop.stopType == "pickup") stringResource(R.string.planner_stop_type_pickup) else stringResource(R.string.planner_stop_type_delivery),
                 color = if (stop.stopType == "pickup") SoftBlue else SoftMint,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium
@@ -831,7 +834,7 @@ private fun StopDetailPanel(
         // ג”€ג”€ Notes ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp)) {
             Text(
-                "הערות",
+                stringResource(R.string.planner_notes_label),
                 color = TextSecondary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
@@ -877,9 +880,9 @@ private fun StopDetailPanel(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("סוג עצירה", color = TextSecondary, fontSize = 13.sp)
+            Text(stringResource(R.string.planner_stop_type_label), color = TextSecondary, fontSize = 13.sp)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("מסירה" to "delivery", "איסוף" to "pickup").forEach { (label, value) ->
+                listOf(context.getString(R.string.planner_stop_type_delivery) to "delivery", context.getString(R.string.planner_stop_type_pickup) to "pickup").forEach { (label, value) ->
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
@@ -922,7 +925,7 @@ private fun StopDetailPanel(
                 .padding(horizontal = 20.dp, vertical = 14.dp)
         ) {
             Text(
-                "חלון זמן הגעה (משוער)",
+                stringResource(R.string.planner_time_window_label),
                 color = TextSecondary,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
@@ -944,7 +947,7 @@ private fun StopDetailPanel(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("תאריך", color = TextSecondary, fontSize = 13.sp)
+            Text(stringResource(R.string.planner_date_label), color = TextSecondary, fontSize = 13.sp)
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
@@ -1144,7 +1147,7 @@ private fun SaveRouteButton(
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                "שמור מסלול",
+                stringResource(R.string.planner_save_route),
                 color = ObsidianBg,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
@@ -1307,7 +1310,7 @@ private fun TimeRangeSelector(
             }
         }
 
-        Icon(Icons.Default.ArrowBack, contentDescription = null, tint = TextMuted, modifier = Modifier.size(20.dp))
+        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = TextMuted, modifier = Modifier.size(20.dp))
 
         // End Time (Left side in RTL)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

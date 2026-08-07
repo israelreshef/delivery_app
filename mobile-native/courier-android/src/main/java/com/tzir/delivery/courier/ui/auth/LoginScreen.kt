@@ -35,8 +35,10 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    var username by remember { mutableStateOf("demo_courier") }
-    var password by remember { mutableStateOf("TzirRiderSpeed!77") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var mfaToken by remember { mutableStateOf<String?>(null) }
+    var otpCode by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
@@ -56,7 +58,7 @@ fun LoginScreen(
                         .size(160.dp)
                         .background(
                             Brush.radialGradient(
-                                colors = listOf(AmberGold.copy(alpha = 0.3f), Color.Transparent)
+                                colors = listOf(BrandBlue.copy(alpha = 0.3f), Color.Transparent)
                             )
                         )
                 )
@@ -65,14 +67,14 @@ fun LoginScreen(
                         "TZIR",
                         fontSize = 56.sp,
                         fontWeight = FontWeight.Black,
-                        color = AmberGold,
+                        color = BrandBlue,
                         letterSpacing = 4.sp
                     )
                     Text(
                         "Delivery",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         letterSpacing = 2.sp
                     )
                 }
@@ -89,7 +91,7 @@ fun LoginScreen(
                 Column(modifier = Modifier.padding(24.dp)) {
                     Text(
                         stringResource(R.string.email_hint),
-                        color = Color.White.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         fontSize = 12.sp,
                         modifier = Modifier.align(Alignment.End)
                     )
@@ -103,7 +105,7 @@ fun LoginScreen(
 
                     Text(
                         stringResource(R.string.password),
-                        color = Color.White.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         fontSize = 12.sp,
                         modifier = Modifier.align(Alignment.End)
                     )
@@ -114,6 +116,24 @@ fun LoginScreen(
                         visualTransformation = PasswordVisualTransformation()
                     )
 
+                    mfaToken?.let {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            stringResource(R.string.mfa_otp_title),
+                            color = BrandBlue,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        TzirTextField(
+                            value = otpCode,
+                            onValueChange = { otpCode = it },
+                            label = stringResource(R.string.mfa_otp_hint),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                        )
+                    }
+
                     errorMessage?.let {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(it, color = Color.Red, fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
@@ -121,22 +141,58 @@ fun LoginScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    TzirButton(
-                        text = stringResource(R.string.login_btn),
-                        onClick = {
-                            scope.launch {
-                                isLoading = true
-                                val response = repository.login(username, password)
-                                isLoading = false
-                                if (response.success) {
-                                    onLoginSuccess()
-                                } else {
-                                    errorMessage = response.error ?: context.getString(R.string.error_login_failed)
+                    if (mfaToken == null) {
+                        TzirButton(
+                            text = stringResource(R.string.login_btn),
+                            onClick = {
+                                scope.launch {
+                                    isLoading = true
+                                    val response = repository.login(username, password)
+                                    isLoading = false
+                                    if (response.requires2fa) {
+                                        mfaToken = response.mfaToken
+                                        otpCode = ""
+                                        errorMessage = null
+                                    } else if (response.success) {
+                                        onLoginSuccess()
+                                    } else {
+                                        errorMessage = response.error ?: context.getString(R.string.error_login_failed)
+                                    }
                                 }
-                            }
-                        },
-                        isLoading = isLoading
-                    )
+                            },
+                            isLoading = isLoading
+                        )
+                    } else {
+                        TzirButton(
+                            text = stringResource(R.string.mfa_verify_btn),
+                            onClick = {
+                                scope.launch {
+                                    isLoading = true
+                                    val response = repository.loginVerifyMfa(mfaToken!!, otpCode)
+                                    isLoading = false
+                                    if (response.success) {
+                                        onLoginSuccess()
+                                    } else {
+                                        errorMessage = response.error ?: context.getString(R.string.mfa_otp_invalid)
+                                    }
+                                }
+                            },
+                            isLoading = isLoading
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            stringResource(R.string.mfa_back_to_login),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            fontSize = 13.sp,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .clickable {
+                                    mfaToken = null
+                                    otpCode = ""
+                                    errorMessage = null
+                                }
+                        )
+                    }
                 }
             }
 
@@ -144,10 +200,10 @@ fun LoginScreen(
 
             // --- 3. Footer Register Link ---
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.no_account), color = Color.White.copy(alpha = 0.7f))
+                Text(stringResource(R.string.no_account), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                 Text(
                     stringResource(R.string.register_link),
-                    color = AmberGold,
+                    color = BrandBlue,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { onNavigateToRegister() }
                 )

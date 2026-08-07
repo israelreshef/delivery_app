@@ -113,3 +113,11 @@
 {"timestamp": "2026-03-26T13:44:46.618297", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
 {"timestamp": "2026-04-08T19:59:58.924807", "action": "LOGIN", "user_id": 4, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User demo_courier logged in successfully"}
 {"timestamp": "2026-04-08T20:00:24.084543", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-07-22T19:15:15.880300", "action": "REGISTER_NEW_USER", "user_id": 8, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "User:8", "details": "New user registration: limittest_031e1p (courier)"}
+{"timestamp": "2026-07-22T19:15:53.712113", "action": "REGISTER_NEW_USER", "user_id": 9, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "User:9", "details": "New user registration: courier_sa5epm5w (courier)"}
+{"timestamp": "2026-07-22T19:15:56.141393", "action": "LOGIN", "user_id": 9, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User courier_sa5epm5w logged in successfully"}
+{"timestamp": "2026-07-22T19:16:02.790719", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-07-22T19:16:55.284580", "action": "REGISTER_NEW_USER", "user_id": 10, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": "User:10", "details": "New user registration: courier_epd39301 (courier)"}
+{"timestamp": "2026-07-22T19:16:57.716251", "action": "LOGIN", "user_id": 10, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User courier_epd39301 logged in successfully"}
+{"timestamp": "2026-07-22T19:17:04.234654", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}
+{"timestamp": "2026-07-22T19:30:44.769001", "action": "LOGIN", "user_id": 1, "ip_address": "127.0.0.1", "status": "SUCCESS", "resource": null, "details": "User super_admin logged in successfully"}

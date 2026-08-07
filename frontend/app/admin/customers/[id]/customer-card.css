@@ -4,10 +4,10 @@
     --surface2: #1e2232;
     --surface3: #252a3a;
     --border: #2a2f45;
-    --accent: #4f6ef7;
-    --accent2: #7c3aed;
+    --accent: #145DDB;
+    --accent2: #1048B0;
     --green: #10b981;
-    --amber: #f59e0b;
+    --brand: #145DDB;
     --red: #ef4444;
     --text: #e8eaf0;
     --muted: #7b83a6;
@@ -32,10 +32,10 @@
     --surface2: #1e2232;
     --surface3: #252a3a;
     --border: #2a2f45;
-    --accent: #4f6ef7;
-    --accent2: #7c3aed;
+    --accent: #145DDB;
+    --accent2: #1048B0;
     --green: #10b981;
-    --amber: #f59e0b;
+    --brand: #145DDB;
     --red: #ef4444;
     --text: #e8eaf0;
     --muted: #7b83a6;
@@ -156,7 +156,7 @@
 }
 
 .customer-card-app .btn-primary:hover {
-    background: #3d5ce8;
+    background: #1048B0;
 }
 
 /* ===== LEFT PANEL — Identity ===== */
@@ -238,7 +238,7 @@
 
 .customer-card-app .status-candidate {
     background: rgba(245, 158, 11, 0.15);
-    color: var(--amber);
+    color: var(--brand);
 }
 
 .customer-card-app .status-blocked {
@@ -317,7 +317,7 @@
 
 .customer-card-app .tag.vip {
     background: rgba(245, 158, 11, 0.15);
-    color: var(--amber);
+    color: var(--brand);
     border-color: rgba(245, 158, 11, 0.3);
 }
 
@@ -353,7 +353,7 @@
 }
 
 .customer-card-app .kpi-value.amber {
-    color: var(--amber);
+    color: var(--brand);
 }
 
 /* ===== CENTER PANEL ===== */
@@ -436,8 +436,8 @@
 }
 
 .customer-card-app .tl-icon.order {
-    background: rgba(79, 110, 247, 0.15);
-    border: 1px solid rgba(79, 110, 247, 0.3);
+    background: rgba(20, 93, 219, 0.15);
+    border: 1px solid rgba(20, 93, 219, 0.3);
 }
 
 .customer-card-app .tl-icon.payment {
@@ -456,8 +456,8 @@
 }
 
 .customer-card-app .tl-icon.email {
-    background: rgba(79, 110, 247, 0.15);
-    border: 1px solid rgba(79, 110, 247, 0.3);
+    background: rgba(20, 93, 219, 0.15);
+    border: 1px solid rgba(20, 93, 219, 0.3);
 }
 
 .customer-card-app .tl-icon.meeting {
@@ -580,7 +580,7 @@
 
 .customer-card-app .pill-amber {
     background: rgba(245, 158, 11, 0.15);
-    color: var(--amber);
+    color: var(--brand);
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
@@ -591,9 +591,9 @@
 }
 
 .customer-card-app .pill-blue {
-    background: rgba(79, 110, 247, 0.15);
+    background: rgba(20, 93, 219, 0.15);
     color: var(--accent);
-    border: 1px solid rgba(79, 110, 247, 0.3);
+    border: 1px solid rgba(20, 93, 219, 0.3);
 }
 
 /* Notes */
@@ -710,7 +710,7 @@
 }
 
 .customer-card-app .p-med {
-    background: var(--amber);
+    background: var(--brand);
 }
 
 .customer-card-app .p-low {
@@ -755,7 +755,7 @@
 }
 
 .customer-card-app .finance-value.amber {
-    color: var(--amber);
+    color: var(--brand);
 }
 
 .customer-card-app .progress-bar-wrap {

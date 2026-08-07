@@ -46,12 +46,12 @@ fun MissionDetailsScreen(
         when {
             isLoading -> {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = AmberGold)
+                    CircularProgressIndicator(color = BrandBlue)
                 }
             }
             mission == null -> {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.mission_not_found), color = Color.White)
+                    Text(stringResource(R.string.mission_not_found), color = MaterialTheme.colorScheme.onSurface)
                 }
             }
             else -> {
@@ -85,7 +85,7 @@ fun MissionDetailsScreen(
                     )
 
                     // GPS warning
-                    val locationManager = remember { LocationManager.getInstance(repository.getApi()) }
+                    val locationManager = remember { LocationManager(repository.getApi()) }
                     val currentLocation by locationManager.currentLocation.collectAsState()
                     if (currentLocation == null) {
                         Spacer(Modifier.height(12.dp))
@@ -239,7 +239,7 @@ fun StopRow(number: String, label: String, address: String, isDone: Boolean) {
             modifier = Modifier
                 .size(28.dp)
                 .background(
-                    if (isDone) Color(0xFF2E7D32) else PrimaryTurquoise.copy(alpha = 0.2f),
+                    if (isDone) Color(0xFF2E7D32) else BrandBlue.copy(alpha = 0.2f),
                     androidx.compose.foundation.shape.CircleShape
                 ),
             contentAlignment = Alignment.Center

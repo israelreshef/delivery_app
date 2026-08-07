@@ -1,6 +1,7 @@
 import re
 
-path = 'c:/Users/Israel/Desktop/delivery_app/mobile-native/courier-android/src/main/java/com/tzir/delivery/courier/ui/components/PremiumComponents.kt'
+import os
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mobile-native', 'courier-android', 'src', 'main', 'java', 'com', 'tzir', 'delivery', 'courier', 'ui', 'components', 'PremiumComponents.kt')
 
 with open(path, 'r', encoding='utf-8', errors='ignore') as f:
     text = f.read()

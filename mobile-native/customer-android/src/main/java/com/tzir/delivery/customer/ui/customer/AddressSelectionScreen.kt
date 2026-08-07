@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.tzir.delivery.customer.R
+import com.tzir.delivery.customer.network.KtorClientFactory
 import com.tzir.delivery.customer.ui.components.*
 import com.tzir.delivery.customer.ui.theme.*
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ data class AddressResult(
 // Backend endpoint helpers (public – no auth required)
 // ────────────────────────────────────────────────────────────────────────────
 
-private const val BASE_URL = "http://192.168.33.19:5000"
+private val BASE_URL: String = KtorClientFactory.resolveBaseUrl()
 
 private suspend fun searchAddressesBackend(query: String): List<AddressResult> = withContext(Dispatchers.IO) {
     try {
@@ -136,7 +137,7 @@ fun AddressSelectionScreen(navController: NavHostController, protocol: String = 
             // ─── Header ───────────────────────────────────────────────────
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = AmberGold)
+                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = BrandBlue)
                 }
                 Text(
                     text = stringResource(R.string.where_to),
@@ -160,7 +161,7 @@ fun AddressSelectionScreen(navController: NavHostController, protocol: String = 
                         },
                         label = stringResource(R.string.pickup_location),
                         placeholder = stringResource(R.string.enter_street_city),
-                        leadingIcon = { Icon(Icons.Default.MyLocation, null, tint = AmberGold) },
+                        leadingIcon = { Icon(Icons.Default.MyLocation, null, tint = BrandBlue) },
                         trailingIcon = if (pickupLatLng != null) {
                             { Icon(Icons.Default.CheckCircle, null, tint = Color.Green) }
                         } else null
@@ -189,7 +190,7 @@ fun AddressSelectionScreen(navController: NavHostController, protocol: String = 
             if (isSearching || geocodingBusy) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth().height(2.dp),
-                    color = AmberGold
+                    color = BrandBlue
                 )
                 Spacer(Modifier.height(8.dp))
             }
@@ -304,7 +305,7 @@ fun AddressSelectionScreen(navController: NavHostController, protocol: String = 
                     text = { Text("כתובת האיסוף שבחרת לא אומתה במערכת גוגל. האם ברצונך להמשיך?", color = Color.White) },
                     confirmButton = {
                         TextButton(onClick = { showPickupUnverifiedDialog = false }) {
-                            Text("המשך", color = AmberGold)
+                            Text("המשך", color = BrandBlue)
                         }
                     },
                     dismissButton = {
@@ -327,7 +328,7 @@ fun AddressSelectionScreen(navController: NavHostController, protocol: String = 
                     text = { Text("כתובת המסירה שבחרת לא אומתה במערכת גוגל. האם ברצונך להמשיך?", color = Color.White) },
                     confirmButton = {
                         TextButton(onClick = { showDeliveryUnverifiedDialog = false }) {
-                            Text("המשך", color = AmberGold)
+                            Text("המשך", color = BrandBlue)
                         }
                     },
                     dismissButton = {

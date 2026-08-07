@@ -64,20 +64,20 @@ fun MissionProtocolScreen(
                 CenterAlignedTopAppBar(
                     title = { Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("ביצוע פרוטוקול", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        Text(mission?.orderNumber ?: "", fontSize = 12.sp, color = AmberGold)
+                        Text(mission?.orderNumber ?: "", fontSize = 12.sp, color = BrandBlue)
                     }},
                     navigationIcon = {
-                        IconButton(onClick = onBack) { Icon(Icons.Default.Close, "סגור", tint = Color.White) }
+                        IconButton(onClick = onBack) { Icon(Icons.Default.Close, "סגור", tint = MaterialTheme.colorScheme.onSurface) }
                     },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent, titleContentColor = Color.White)
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.onSurface)
                 )
             },
             containerColor = Color.Transparent
         ) { padding ->
             if (isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = AmberGold) }
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = BrandBlue) }
             } else if (protocolSteps.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("לא נמצא פרוטוקול למשלוח זה", color = Color.White) }
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("לא נמצא פרוטוקול למשלוח זה", color = MaterialTheme.colorScheme.onSurface) }
             } else {
                 val currentStep = protocolSteps.getOrNull(currentStepIndex)
                 
@@ -85,12 +85,12 @@ fun MissionProtocolScreen(
                     // Progress Bar
                     LinearProgressIndicator(
                         progress = { (currentStepIndex + 1).toFloat() / protocolSteps.size },
-                        modifier = Modifier.fillMaxWidth().height(8.dp).background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(4.dp)),
-                        color = AmberGold,
+                        modifier = Modifier.fillMaxWidth().height(8.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), RoundedCornerShape(4.dp)),
+                        color = BrandBlue,
                         strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
                     )
                     Spacer(Modifier.height(8.dp))
-                    Text("שלב ${currentStepIndex + 1} מתוך ${protocolSteps.size}", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.align(Alignment.End))
+                    Text("שלב ${currentStepIndex + 1} מתוך ${protocolSteps.size}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.End))
 
                     Spacer(Modifier.height(32.dp))
 
@@ -141,7 +141,7 @@ fun ProtocolStepView(
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-        Surface(modifier = Modifier.size(80.dp), shape = CircleShape, color = AmberGold.copy(alpha = 0.15f)) {
+        Surface(modifier = Modifier.size(80.dp), shape = CircleShape, color = BrandBlue.copy(alpha = 0.15f)) {
             Box(contentAlignment = Alignment.Center) {
                 val icon = when (action) {
                     "collect_documents" -> Icons.Default.Description
@@ -151,14 +151,14 @@ fun ProtocolStepView(
                     "return_confirmation" -> Icons.Default.AssignmentReturn
                     else -> Icons.Default.Task
                 }
-                Icon(icon, null, tint = AmberGold, modifier = Modifier.size(40.dp))
+                Icon(icon, null, tint = BrandBlue, modifier = Modifier.size(40.dp))
             }
         }
 
         Spacer(Modifier.height(24.dp))
-        Text(label, fontWeight = FontWeight.Black, fontSize = 24.sp, color = Color.White, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        Text(label, fontWeight = FontWeight.Black, fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         Spacer(Modifier.height(12.dp))
-        Text(getStepDescription(action), fontSize = 15.sp, color = Color.Gray, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        Text(getStepDescription(action), fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
 
         Spacer(Modifier.height(48.dp))
 
@@ -169,7 +169,7 @@ fun ProtocolStepView(
                         onClick = { cameraLauncher.launch(null) },
                         modifier = Modifier.weight(1f).height(120.dp),
                         shape = RoundedCornerShape(20.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (capturedPhoto != null) SuccessDark.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f))
+                        colors = ButtonDefaults.buttonColors(containerColor = if (capturedPhoto != null) SuccessDark.copy(alpha = 0.2f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             if (capturedPhoto != null) {
@@ -177,7 +177,7 @@ fun ProtocolStepView(
                                 Text("צולם", color = SuccessDark, fontWeight = FontWeight.Bold)
                             } else {
                                 Icon(Icons.Default.AddAPhoto, null, modifier = Modifier.size(32.dp))
-                                Text("צילום", color = Color.White)
+                                Text("צילום", color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
                     }
@@ -186,7 +186,7 @@ fun ProtocolStepView(
                         onClick = { showSignaturePad = true },
                         modifier = Modifier.weight(1f).height(120.dp),
                         shape = RoundedCornerShape(20.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (signatureBitmap != null) SuccessDark.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f))
+                        colors = ButtonDefaults.buttonColors(containerColor = if (signatureBitmap != null) SuccessDark.copy(alpha = 0.2f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             if (signatureBitmap != null) {
@@ -194,7 +194,7 @@ fun ProtocolStepView(
                                 Text("חתום", color = SuccessDark, fontWeight = FontWeight.Bold)
                             } else {
                                 Icon(Icons.Default.Draw, null, modifier = Modifier.size(32.dp))
-                                Text("חתימה", color = Color.White)
+                                Text("חתימה", color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
                     }

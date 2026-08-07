@@ -72,7 +72,7 @@ fun OrderSummaryScreen(
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = AmberGold)
+                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = BrandBlue)
                 }
                 Text(stringResource(R.string.order_summary), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
@@ -89,7 +89,7 @@ fun OrderSummaryScreen(
                     Spacer(Modifier.height(12.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("סוג משלוח", color = Graphite400)
-                        Text(deliveryTypeLabel, color = AmberGold, fontWeight = FontWeight.SemiBold)
+                        Text(deliveryTypeLabel, color = BrandBlue, fontWeight = FontWeight.SemiBold)
                     }
                     Spacer(Modifier.height(12.dp))
                     HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
@@ -97,7 +97,7 @@ fun OrderSummaryScreen(
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("מסלול משוער", color = Graphite400)
                         if (isQuoteLoading) {
-                            CircularProgressIndicator(color = AmberGold, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                            CircularProgressIndicator(color = BrandBlue, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         } else {
                             Text("${distanceKm ?: "--"} ק״מ • ${durationMins ?: "--"} דק׳", color = Color.White, fontWeight = FontWeight.Bold)
                         }
@@ -106,9 +106,9 @@ fun OrderSummaryScreen(
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(stringResource(R.string.estimated_price), color = Graphite400)
                         if (isQuoteLoading) {
-                            CircularProgressIndicator(color = AmberGold, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                            CircularProgressIndicator(color = BrandBlue, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         } else {
-                            Text("₪ ${estimatedPrice ?: "--"}", color = AmberGold, fontWeight = FontWeight.Black, fontSize = 18.sp)
+                            Text("₪ ${estimatedPrice ?: "--"}", color = BrandBlue, fontWeight = FontWeight.Black, fontSize = 18.sp)
                         }
                     }
                 }
@@ -121,7 +121,7 @@ fun OrderSummaryScreen(
 
             GlassCard(modifier = Modifier.fillMaxWidth().clickable { /* TODO: Select card */ }) {
                 Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.CreditCard, null, tint = AmberGold)
+                    Icon(Icons.Default.CreditCard, null, tint = BrandBlue)
                     Spacer(Modifier.width(16.dp))
                     Text(stringResource(R.string.visa_test), color = Color.White)
                     Spacer(Modifier.weight(1f))
@@ -144,7 +144,7 @@ fun OrderSummaryScreen(
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = AmberGold
+                    color = BrandBlue
                 )
             } else {
                 TzirButton(
@@ -198,7 +198,7 @@ fun SummaryItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
     value: String,
-    iconColor: Color = AmberGold
+    iconColor: Color = BrandBlue
 ) {
     Row(verticalAlignment = Alignment.Top) {
         Icon(icon, null, tint = iconColor, modifier = Modifier.size(20.dp))

@@ -2,18 +2,27 @@ package com.tzir.delivery.courier.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.tzir.delivery.courier.R
 import com.tzir.delivery.courier.ui.theme.*
 
 // ════════════════════════════════════════
-// TZIR Typography — Apple-Inspired
-// Clean sans-serif, tight headings, airy body
+// TZIR Typography — Brand Kit V5 (Heebo)
 // ════════════════════════════════════════
 
-// System default sans-serif closely matches SF Pro geometry on modern Android
-val TZIRFontFamily = FontFamily.SansSerif
+val HeeboFamily = FontFamily(
+    Font(R.font.heebo_hebrew_400, FontWeight.Normal),
+    Font(R.font.heebo_hebrew_600, FontWeight.SemiBold),
+    Font(R.font.heebo_hebrew_800, FontWeight.ExtraBold),
+    Font(R.font.heebo_latin_400, FontWeight.Normal),
+    Font(R.font.heebo_latin_600, FontWeight.SemiBold),
+    Font(R.font.heebo_latin_800, FontWeight.ExtraBold),
+)
+
+val TZIRFontFamily = HeeboFamily
 
 val TZIRTypography = Typography(
     // Hero numbers, main headings

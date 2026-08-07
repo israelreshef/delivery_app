@@ -55,12 +55,26 @@ fun ShimmerItem(
 
 @Composable
 fun ShimmerMissionList() {
+    val isDark = TZIRTheme.colors == DarkExtendedColors
+    val shimmerColors = if (isDark) {
+        listOf(
+            Navy700.copy(alpha = 0.6f),
+            Navy700.copy(alpha = 0.2f),
+            Navy700.copy(alpha = 0.6f),
+        )
+    } else {
+        listOf(
+            Color.LightGray.copy(alpha = 0.6f),
+            Color.LightGray.copy(alpha = 0.2f),
+            Color.LightGray.copy(alpha = 0.6f),
+        )
+    }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         repeat(5) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(12.dp))
+                    .background(if (isDark) Navy800 else Color.White, RoundedCornerShape(12.dp))
                     .padding(16.dp)
             ) {
                 Column {

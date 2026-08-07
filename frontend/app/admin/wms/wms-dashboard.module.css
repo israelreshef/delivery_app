@@ -27,14 +27,14 @@
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #fff 0%, #5A8AC0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.02em;
 }
 
 .subtitle {
-    color: #94a3b8;
+    color: #5A8AC0;
     font-size: 1.1rem;
     margin: 0;
 }
@@ -92,8 +92,8 @@
 }
 
 .statIconPrimary {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+    background: rgba(20, 93, 219, 0.1);
+    color: #145DDB;
 }
 
 .statIconSuccess {
@@ -103,13 +103,13 @@
 
 .statIconWarning {
     background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+    color: #145DDB;
 }
 
 .statContent h3 {
     margin: 0;
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #5A8AC0;
     font-weight: 500;
 }
 
@@ -137,7 +137,7 @@
 
 .glassTable th {
     background: rgba(255, 255, 255, 0.02);
-    color: #94a3b8;
+    color: #5A8AC0;
     font-weight: 600;
     font-size: 0.875rem;
     padding: 1rem 1.5rem;
@@ -148,7 +148,7 @@
 
 .glassTable td {
     padding: 1.25rem 1.5rem;
-    color: #cbd5e1;
+    color: #B8CDE5;
     font-size: 0.95rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.02);
     vertical-align: middle;
@@ -174,7 +174,7 @@
 
 /* Buttons */
 .primaryButton {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #145DDB 0%, #1048B0 100%);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -185,12 +185,12 @@
     align-items: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(20, 93, 219, 0.3);
 }
 
 .primaryButton:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 6px 16px rgba(20, 93, 219, 0.4);
 }
 
 .secondaryButton {
@@ -246,7 +246,7 @@
 .zoneTitle {
     font-size: 1rem;
     font-weight: 500;
-    color: #94a3b8;
+    color: #5A8AC0;
     margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
@@ -275,7 +275,7 @@
 
 .binName {
     font-family: monospace;
-    color: #cbd5e1;
+    color: #B8CDE5;
     font-size: 0.875rem;
 }
 
@@ -288,13 +288,13 @@
 
 .progressFill {
     height: 100%;
-    background: linear-gradient(90deg, #10b981, #3b82f6);
+    background: linear-gradient(90deg, #10b981, #145DDB);
     border-radius: 3px;
     transition: width 0.5s ease;
 }
 
 .progressFillWarning {
-    background: linear-gradient(90deg, #f59e0b, #ef4444);
+    background: linear-gradient(90deg, #145DDB, #ef4444);
 }
 
 .binDetails {

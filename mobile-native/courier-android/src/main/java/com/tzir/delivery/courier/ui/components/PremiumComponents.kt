@@ -47,6 +47,7 @@ fun GlassCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 24.dp,
     opacity: Float = 0.85f,
+    onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
     val isDark = TZIRTheme.colors == DarkExtendedColors
@@ -55,6 +56,11 @@ fun GlassCard(
 
     Box(
         modifier = modifier
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else Modifier
+            )
             .shadow(
                 elevation = 12.dp,
                 shape = RoundedCornerShape(cornerRadius),
@@ -86,14 +92,14 @@ fun GlassCard(
 }
 
 /**
- * Glow Card ג€” glassmorphic card with animated amber glow.
+ * Glow Card ג€” glassmorphic card with animated BrandBlue glow.
  * Used for highlighted items like active missions.
  */
 @Composable
 fun GlowCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 24.dp,
-    glowColor: Color = AmberGold,
+    glowColor: Color = BrandBlue,
     content: @Composable BoxScope.() -> Unit
 ) {
     val isDark = TZIRTheme.colors == DarkExtendedColors
@@ -161,7 +167,7 @@ fun EarningsRow(
 }
 
 /**
- * Active Mission Card ג€” glassmorphic with amber glow accent.
+ * Active Mission Card ג€” glassmorphic with BrandBlue glow accent.
  */
 @Composable
 fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetailsClick: () -> Unit) {
@@ -182,8 +188,8 @@ fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetail
             .shadow(
                 elevation = 16.dp,
                 shape = RoundedCornerShape(24.dp),
-                spotColor = AmberGold.copy(alpha = 0.3f),
-                ambientColor = AmberGold.copy(alpha = 0.2f)
+                spotColor = BrandBlue.copy(alpha = 0.3f),
+                ambientColor = BrandBlue.copy(alpha = 0.2f)
             )
             .clip(RoundedCornerShape(24.dp))
             .clickable(interactionSource = interactionSource, indication = null, onClick = onDetailsClick),
@@ -195,7 +201,7 @@ fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetail
         Column(modifier = Modifier.padding(24.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
-                    color = AmberGold.copy(alpha = 0.15f),
+                    color = BrandBlue.copy(alpha = 0.15f),
                     shape = CircleShape,
                     modifier = Modifier.size(32.dp)
                 ) {
@@ -206,7 +212,7 @@ fun ActiveMissionCard(mission: com.tzir.delivery.courier.model.Mission, onDetail
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     androidx.compose.ui.res.stringResource(com.tzir.delivery.courier.R.string.status_btn_transit),
-                    color = AmberGold,
+                    color = BrandBlue,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
@@ -249,7 +255,7 @@ fun AppleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    containerColor: Color = AmberGold
+    containerColor: Color = BrandBlue
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -269,9 +275,9 @@ fun AppleButton(
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = Graphite950,
+            contentColor = Color.White,
             disabledContainerColor = containerColor.copy(alpha = 0.5f),
-            disabledContentColor = Graphite950.copy(alpha = 0.5f)
+            disabledContentColor = Color.White.copy(alpha = 0.5f)
         ),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 2.dp,
@@ -313,7 +319,7 @@ fun OrderOfferDialog(
                     text = "הצעה למשלוח חדש!",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = AmberGold
+                    color = BrandBlue
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -343,7 +349,7 @@ fun OrderOfferDialog(
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = Color.Gray.copy(alpha = 0.2f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Price
@@ -353,7 +359,7 @@ fun OrderOfferDialog(
                         text = "₪ $displayPrice",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Black,
-                        color = SuccessDark
+                        color = TZIRTheme.colors.success
                     )
                 }
 
@@ -361,13 +367,13 @@ fun OrderOfferDialog(
 
                 // Buttons
                 if (isLoading) {
-                    CircularProgressIndicator(color = AmberGold)
+                    CircularProgressIndicator(color = BrandBlue)
                 } else {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         Button(
                             onClick = onDecline,
                             modifier = Modifier.weight(1f).height(50.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray, contentColor = Color.White),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray, contentColor = MaterialTheme.colorScheme.onSurface),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text("דחה", fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -376,7 +382,7 @@ fun OrderOfferDialog(
                         Button(
                             onClick = onAccept,
                             modifier = Modifier.weight(1f).height(50.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = AmberGold, contentColor = Color.Black),
+                            colors = ButtonDefaults.buttonColors(containerColor = BrandBlue, contentColor = Color.White),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text("קבל", fontSize = 16.sp, fontWeight = FontWeight.Bold)

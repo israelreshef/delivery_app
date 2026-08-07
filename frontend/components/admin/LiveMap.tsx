@@ -15,7 +15,7 @@ import { api } from '@/lib/api';
 // Helper for custom colored icons
 const getCourierIcon = (isAvailable: boolean, activeDeliveryId: number | null, isLive: boolean) => {
     let color = '#94a3b8'; // gray-400 (offline)
-    if (activeDeliveryId) color = '#f59e0b'; // amber-500 (busy)
+    if (activeDeliveryId) color = '#145DDB'; // brand (busy)
     else if (isAvailable && isLive) color = '#10b981'; // emerald-500 (available)
 
     return L.divIcon({
@@ -231,7 +231,7 @@ export default function LiveMap() {
                         <span className="text-[10px] text-slate-200">זמינים</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-amber-500" />
+                        <div className="w-2 h-2 rounded-full bg-brand" />
                         <span className="text-[10px] text-slate-200">במשלוח</span>
                     </div>
                 </div>

@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.tzir.delivery.courier.ui.theme.*
 
 /**
- * Premium Background — theme-aware with subtle amber glow.
+ * Premium Background — theme-aware with subtle BrandBlue glow.
  */
 @Composable
 fun PremiumBackground(content: @Composable () -> Unit) {
@@ -19,9 +19,9 @@ fun PremiumBackground(content: @Composable () -> Unit) {
     val bgColor = if (isDark) BackgroundDark else BackgroundLight
     
     // Vibrant accent colors for the background "stylized" look
-    val primaryGlow = if (isDark) AmberGold.copy(alpha = 0.12f) else AmberGold.copy(alpha = 0.08f)
-    val secondaryGlow = if (isDark) Color(0xFF1A1A1A) else Color(0xFFF2F2F7)
-    val bottomGlow = if (isDark) Color(0xFF080808) else Color(0xFFFFFFFF)
+    val primaryGlow = if (isDark) BrandBlue.copy(alpha = 0.12f) else BrandBlue.copy(alpha = 0.08f)
+    val secondaryGlow = if (isDark) Navy900 else Ice
+    val bottomGlow = if (isDark) Navy950 else Color(0xFFFFFFFF)
 
     Box(
         modifier = Modifier
@@ -39,7 +39,7 @@ fun PremiumBackground(content: @Composable () -> Unit) {
                 )
         )
 
-        // 1. Top-Right Amber Glow (Primary)
+        // 1. Top-Right BrandBlue Glow (Primary)
         Box(
             modifier = Modifier
                 .fillMaxWidth()

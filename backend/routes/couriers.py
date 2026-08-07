@@ -371,7 +371,7 @@ def update_location(current_user):
         }
         
         # Broadcast to admin room
-        print(f" 📡 Sending location fix to admin_room: Courier {courier.id} at {lat}, {lng}")
+        print(f"Sending location fix to admin_room: Courier {courier.id} at {lat}, {lng}")
         socketio.emit('courier_location_update', location_data, room='admin_room')
         
         if active_order:
@@ -387,7 +387,7 @@ def update_location(current_user):
 
 # --- תוספות עבור אפליקציית השליח (שבוע 2 + 3 + 4) ---
 
-@couriers_bp.route('/available-orders', methods=['GET'])
+@couriers_bp.route('/available-orders', methods=['GET', 'POST'])
 @token_required
 @role_required('courier')
 def get_available_orders(current_user):
@@ -781,18 +781,16 @@ def send_order_otp(current_user, order_id):
         messaging_result = MessagingService.send_otp(recipient_phone, otp)
         
         if messaging_result.get('success'):
-            logging.info(f"OTP {otp} for Order {delivery.order_number} sent via {messaging_result.get('provider')}")
+            logging.info(f"OTP for Order {delivery.order_number} sent via {messaging_result.get('provider')}")
             return jsonify({
-                'success': True, 
-                'message': f'OTP sent successfully via {messaging_result.get("provider")}',
-                'debug_otp': otp # Include for easier emulator testing
+                'success': True,
+                'message': f'OTP sent successfully via {messaging_result.get("provider")}'
             }), 200
         else:
-             logging.error(f"Failed to send OTP to {recipient_phone}: {messaging_result.get('error')}")
+             logging.error(f"Failed to send OTP for Order {delivery.order_number}: {messaging_result.get('error')}")
              return jsonify({
-                'success': False, 
-                'error': f"Failed to send message: {messaging_result.get('error')}",
-                'debug_otp': otp # Fallback for dev even on error
+                'success': False,
+                'error': 'Failed to send verification code. Please try again.'
              }), 500
              
     except Exception as e:
@@ -937,7 +935,7 @@ def get_shift_status(current_user):
 @couriers_bp.route('/gamification/leaderboard', methods=['GET'])
 @token_required
 @role_required(['courier', 'admin'])
-def get_gamification_leaderboard():
+def get_gamification_leaderboard(current_user):
     """החזרת טבלת המובילים ב-Gamification"""
     try:
         from services.gamification import GamificationService

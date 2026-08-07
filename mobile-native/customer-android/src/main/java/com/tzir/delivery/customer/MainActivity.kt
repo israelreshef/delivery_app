@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.tzir.delivery.customer.ui.theme.MyApplicationTheme
@@ -17,6 +18,8 @@ import com.tzir.delivery.customer.ui.customer.CustomerNavGraph
 import com.tzir.delivery.customer.network.DeliveryApiImpl
 import com.tzir.delivery.customer.network.KtorClientFactory
 import com.tzir.delivery.customer.network.TokenManager
+import com.tzir.delivery.customer.security.IncompatibleDeviceScreen
+import com.tzir.delivery.customer.security.SecurityEnforcer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.tzir.delivery.customer.repository.AuthRepository
@@ -36,6 +39,11 @@ class MainActivity : ComponentActivity() {
         val customerRepository = CustomerRepository.getInstance(api)
 
         setContent {
+            val deviceCompatible = remember { SecurityEnforcer.isDeviceCompatible() }
+            if (!deviceCompatible) {
+                IncompatibleDeviceScreen()
+                return@setContent
+            }
             MyApplicationTheme {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     Surface(
@@ -46,6 +54,14 @@ class MainActivity : ComponentActivity() {
                         var isRegistering by remember { mutableStateOf(false) }
                         var showSplash by remember { mutableStateOf(true) }
                         val navController = rememberNavController()
+
+                        // Restore a persisted session (token) into memory before deciding
+                        // the start screen, so the user isn't bounced to login on restart.
+                        LaunchedEffect(showSplash) {
+                            if (!showSplash) {
+                                authRepository.restoreSessionIfNeeded(api)
+                            }
+                        }
 
                         if (showSplash) {
                             SplashScreen(onAnimationFinish = { showSplash = false })

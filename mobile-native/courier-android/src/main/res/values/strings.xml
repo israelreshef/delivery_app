@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TZIR Delivery</string>
+    <string name="app_name">TZIR Courier</string>
     <string name="google_maps_key">AIzaSyCCmP-545jtS4rtdOPFZKe0tQa05Pz9f8g</string>
     <string name="dashboard">דשבורד</string>
     <string name="missions">משלוחים</string>
@@ -79,6 +79,11 @@
     <string name="login_btn">התחבר</string>
     <string name="err_invalid_creds">שם משתמש או סיסמה שגויים</string>
     <string name="err_inactive_user">החשבון אינו פעיל</string>
+    <string name="mfa_otp_title">אימות דו-שלבי</string>
+    <string name="mfa_otp_hint">קוד אימות (6 ספרות)</string>
+    <string name="mfa_verify_btn">אמת קוד</string>
+    <string name="mfa_back_to_login">חזרה להתחברות</string>
+    <string name="mfa_otp_invalid">קוד אימות לא תקין</string>
     <string name="err_generic_msg">שגיאה: %1$s</string>
     <string name="err_network">שגיאת תקשורת: %1$s</string>
     <string name="err_register_failed">הרשמה נכשלה. אנא בדוק את הפרטים ונסה שוב.</string>
@@ -234,4 +239,47 @@
     <string name="monthly_trend">מגמה חודשית</string>
     <string name="email_hint">אימייל או מספר טלפון</string>
     <string name="password_hint">הזן סיסמה</string>
+
+    <!-- Route Optimization Screen -->
+    <string name="route_optimization_title">Route Optimization</string>
+    <string name="route_optimization_desc">Plan the optimal route for your active deliveries</string>
+    <string name="route_optimization_area_hint">Preferred area</string>
+    <string name="route_optimization_time_hint">Preferred arrival time</string>
+    <string name="route_optimization_calc_btn">Calculate Optimal Route</string>
+    <string name="route_optimization_calculating">Calculating the fastest route…</string>
+    <string name="route_optimization_calculating_sub">Checking active deliveries and route order</string>
+    <string name="route_optimization_result_title">Route Optimization Result</string>
+    <string name="route_optimization_summary">Summary</string>
+    <string name="route_optimization_estimated_distance">Est. distance: %1$s km</string>
+    <string name="route_optimization_estimated_duration">Est. duration: %1$s min</string>
+    <string name="route_optimization_stops">Stops</string>
+    <string name="route_optimization_no_deliveries">No active deliveries found for optimization</string>
+    <string name="route_optimization_connected_msg">This result is connected to the server optimization engine</string>
+    <string name="route_optimization_approve_btn">Approve Route</string>
+    <string name="route_optimization_step_label">Step %1$d</string>
+    <string name="route_optimization_type_pickup">Pickup</string>
+    <string name="route_optimization_type_current">Current location</string>
+    <string name="route_optimization_type_dropoff">Drop-off</string>
+    <string name="route_optimization_order_prefix">Order #%1$d</string>
+
+    <!-- Route Planner Screen -->
+    <string name="planner_current_location_desc">Current location</string>
+    <string name="planner_search_hint">Search address…</string>
+    <string name="planner_stops_count">%d stops</string>
+    <string name="planner_optimized_badge">Optimized</string>
+    <string name="planner_route_optimized">Route optimized — %s km</string>
+    <string name="planner_optimization_error">Optimization error, please try again</string>
+    <string name="planner_saved_to_calendar">Route saved to calendar!</string>
+    <string name="planner_location_unavailable">Cannot get current location</string>
+    <string name="planner_address_verify_error">Cannot verify this address</string>
+    <string name="planner_stop_type_pickup">Pickup</string>
+    <string name="planner_stop_type_delivery">Delivery</string>
+    <string name="planner_notes_label">Notes</string>
+    <string name="planner_stop_type_label">Stop type</string>
+    <string name="planner_time_window_label">Est. arrival time window</string>
+    <string name="planner_date_label">Date</string>
+    <string name="planner_save_route">Save Route</string>
+    <string name="planner_add_first_stops">Add your first stops</string>
+    <string name="planner_copy_from_previous">Copy stops from previous route</string>
+    <string name="planner_route_ready">🚀 Route with %d stops ready!</string>
 </resources>

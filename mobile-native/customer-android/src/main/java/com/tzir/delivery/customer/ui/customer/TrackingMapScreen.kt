@@ -110,7 +110,7 @@ fun TrackingMapScreen(
             modifier = Modifier.statusBarsPadding().padding(16.dp).size(48.dp)
         ) {
             Surface(shape = androidx.compose.foundation.shape.CircleShape, color = Graphite950.copy(alpha = 0.8f)) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null, tint = AmberGold, modifier = Modifier.padding(12.dp))
+                Icon(Icons.Default.ArrowBack, contentDescription = null, tint = BrandBlue, modifier = Modifier.padding(12.dp))
             }
         }
 
@@ -121,13 +121,13 @@ fun TrackingMapScreen(
             GlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(24.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(shape = androidx.compose.foundation.shape.CircleShape, color = AmberGold.copy(alpha = 0.1f)) {
-                            Icon(Icons.Default.LocalShipping, contentDescription = null, tint = AmberGold, modifier = Modifier.padding(12.dp))
+                        Surface(shape = androidx.compose.foundation.shape.CircleShape, color = BrandBlue.copy(alpha = 0.1f)) {
+                            Icon(Icons.Default.LocalShipping, contentDescription = null, tint = BrandBlue, modifier = Modifier.padding(12.dp))
                         }
                         Spacer(Modifier.width(16.dp))
                         Column {
                             Text(stringResource(R.string.fast_delivery), fontWeight = FontWeight.Bold, color = Color.White)
-                            Text(stringResource(R.string.active), color = AmberGold, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.active), color = BrandBlue, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                     Spacer(Modifier.height(16.dp))

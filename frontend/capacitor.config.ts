@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
     appId: 'com.tzir.app',
-    appName: 'TZIR Delivery',
+    appName: 'Tzir Customers',
     webDir: 'out',
     server: {
         // Live production server

@@ -53,3 +53,25 @@ def is_valid_card_format(card_number):
     # Remove whitespace/dashes
     clean_num = re.sub(r'\s+|-', '', str(card_number))
     return clean_num.isdigit() and 13 <= len(clean_num) <= 19
+
+def is_valid_israeli_id(id_number):
+    """
+    Validate an Israeli national ID (תעודת זהות) using the official
+    check-digit algorithm. Accepts 5-9 digit inputs (padded to 9).
+    """
+    if id_number is None:
+        return False
+    clean = re.sub(r'\D', '', str(id_number))
+    if not clean or len(clean) > 9:
+        return False
+    clean = clean.zfill(9)
+
+    total = 0
+    for index, ch in enumerate(clean):
+        digit = int(ch)
+        # Weight alternates 1, 2 across the 9 digits.
+        step = digit * (1 if index % 2 == 0 else 2)
+        if step > 9:
+            step -= 9
+        total += step
+    return total % 10 == 0

@@ -38,7 +38,7 @@ class CustomerRepository private constructor(private val api: DeliveryApi) {
     }
 
     /**
-     * Returns the full URL to download the invoice PDF for a given order ID.
+     * Returns the full URL to download the PDF invoice for a given order ID.
      * Backend: GET /api/invoices/by-order/<orderId>/download
      * Returns null if no invoice is found.
      */
@@ -50,6 +50,40 @@ class CustomerRepository private constructor(private val api: DeliveryApi) {
             null
         }
     }
+
+    // ── Support Tickets ──
+
+    suspend fun getSupportTickets(): List<CustomerSupportTicket> =
+        try {
+            api.getSupportTickets()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+
+    suspend fun getSupportTicketDetail(ticketId: Int): CustomerSupportDetail? =
+        try {
+            api.getSupportTicketDetail(ticketId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+
+    suspend fun createSupportTicket(subject: String, message: String, priority: String = "medium"): CreateSupportTicketResponse? =
+        try {
+            api.createSupportTicket(subject, message, priority)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+
+    suspend fun addSupportTicketMessage(ticketId: Int, message: String): AddSupportMessageResponse? =
+        try {
+            api.addSupportTicketMessage(ticketId, message)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
 
     companion object {
         private var instance: CustomerRepository? = null

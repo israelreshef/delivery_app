@@ -1,0 +1,59 @@
+# Self-hosted routing + tiles stack for TZIR delivery app
+# - Valhalla: local routing + matrix engine (replaces paid Google / public OSRM)
+# - Nominatim: free local geocoding fallback (used only if Google fails)
+# - Martin (Rust): self-hosted vector tile server (replaces Carto CDN, zero external dependency)
+# All of Israel is loaded (PBF ~150MB). No coastal-only slicing.
+
+services:
+  valhalla:
+    image: ghcr.io/valhalla/valhalla-scripted:latest
+    container_name: tzir-valhalla
+    ports:
+      - "8002:8002"
+    environment:
+      # PBF mounted locally (downloaded once to ./israel-latest.osm.pbf)
+      tile_urls: "file:///custom_files/israel-latest.osm.pbf"
+      build_time_zones: "True"
+      build_elevation: "False"
+    volumes:
+      - valhalla_tiles:/custom_files
+      - ./valhalla.json:/custom_files/valhalla.json:rw
+      - ./israel-latest.osm.pbf:/custom_files/israel-latest.osm.pbf:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 300s
+
+  nominatim:
+    image: mediagis/nominatim:4.3
+    container_name: tzir-nominatim
+    ports:
+      - "8080:8080"
+    environment:
+      NOMINATIM_REPLICATION_URL: "https://download.geofabrik.de/asia/israel-and-palestine-updates/"
+      NOMINATIM_WALDMEISTER_DATA: "false"
+      PBF_URL: "https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf"
+    volumes:
+      - nominatim_data:/var/lib/postgresql/14/main
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: tzir-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "900", "1", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/status.php"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 600s
+
+volumes:
+  valhalla_tiles:
+  nominatim_data:

@@ -194,14 +194,11 @@ export default function CustomerCardPage({ params }: { params: { id: string } })
 
     return (
         <>
-            {/* Load Heebo font */}
-            <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
             <div className="customer-card-app">
                 {/* Top Navigation Bar */}
                 <nav className="topnav">
                     {/* Logo */}
-                    <div className="logo">⬡ CRM</div>
+                    <div className="logo"><img src="/logo.png" alt="TZIR" style={{height: '24px'}} /> CRM</div>
 
                     {/* Breadcrumb */}
                     <div className="breadcrumb">

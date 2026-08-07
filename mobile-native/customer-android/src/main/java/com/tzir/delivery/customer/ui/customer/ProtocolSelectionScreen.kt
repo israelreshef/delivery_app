@@ -41,7 +41,7 @@ fun ProtocolSelectionScreen(navController: NavHostController) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = AmberGold)
+                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = BrandBlue)
                 }
                 Text(stringResource(R.string.select_delivery_type), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
@@ -67,15 +67,15 @@ fun ProtocolCard(protocol: DeliveryProtocol, onClick: () -> Unit) {
         onClick = onClick
     ) {
         Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
-            Surface(shape = androidx.compose.foundation.shape.CircleShape, color = AmberGold.copy(alpha = 0.1f)) {
-                Icon(protocol.icon, contentDescription = null, tint = AmberGold, modifier = Modifier.padding(12.dp))
+            Surface(shape = androidx.compose.foundation.shape.CircleShape, color = BrandBlue.copy(alpha = 0.1f)) {
+                Icon(protocol.icon, contentDescription = null, tint = BrandBlue, modifier = Modifier.padding(12.dp))
             }
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(protocol.title, fontWeight = FontWeight.Bold, color = Color.White, fontSize = 16.sp)
                 Text(protocol.description, color = Graphite400, fontSize = 12.sp)
             }
-            Text("${stringResource(R.string.price_from)} ${protocol.pricePrefix}", color = AmberGold, fontWeight = FontWeight.Black, fontSize = 14.sp)
+            Text("${stringResource(R.string.price_from)} ${protocol.pricePrefix}", color = BrandBlue, fontWeight = FontWeight.Black, fontSize = 14.sp)
         }
     }
 }

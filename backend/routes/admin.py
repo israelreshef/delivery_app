@@ -13,6 +13,10 @@ from models import (
     Permission,
     UserGroup,
     GroupPermission,
+    Courier,
+    CourierWallet,
+    CourierLedgerEntry,
+    WithdrawalRequest,
 )
 from utils.decorators import token_required, role_required
 from utils.config_helpers import get_protocol_setting, save_protocol_setting
@@ -1179,4 +1183,134 @@ def unblock_ip_route(current_user, ip):
             return jsonify({'success': True, 'message': f'IP {ip} has been unblocked'}), 200
         return jsonify({'error': 'IP not found in blocked list'}), 404
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# =============================================================================
+# Withdrawal Management (finance_admin / super_admin)
+# =============================================================================
+
+def _emit_wallet_update(courier_id, event_type, data):
+    """Send wallet_update WebSocket event to a specific courier."""
+    try:
+        from extensions import socketio
+        payload = {'event': event_type, 'data': data}
+        socketio.emit('wallet_update', payload, room=f'courier_{courier_id}')
+    except Exception as e:
+        logging.warning(f"Failed to emit wallet_update for courier {courier_id}: {e}")
+
+
+@admin_bp.route('/withdrawals/pending', methods=['GET'])
+@token_required
+@role_required(['super_admin', 'finance_admin'])
+def get_pending_withdrawals(current_user):
+    """List all pending withdrawal requests with courier details."""
+    try:
+        pending = (
+            WithdrawalRequest.query
+            .filter_by(status='pending')
+            .order_by(WithdrawalRequest.created_at.asc())
+            .all()
+        )
+        result = []
+        for w in pending:
+            courier = Courier.query.get(w.courier_id)
+            user = User.query.get(courier.user_id) if courier else None
+            wallet = CourierWallet.query.filter_by(courier_id=w.courier_id).first()
+            result.append({
+                'id': w.id,
+                'courier_id': w.courier_id,
+                'courier_name': courier.full_name if courier else 'Unknown',
+                'courier_phone': user.phone if user else '',
+                'amount': float(w.amount),
+                'payment_details': w.payment_details or '',
+                'current_balance': float(wallet.balance) if wallet else 0.0,
+                'created_at': w.created_at.isoformat() if w.created_at else None,
+            })
+        return jsonify({'withdrawals': result}), 200
+    except Exception as e:
+        logging.error(f"Error fetching pending withdrawals: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/withdrawals/<int:withdrawal_id>/status', methods=['POST'])
+@token_required
+@role_required(['super_admin', 'finance_admin'])
+def update_withdrawal_status(current_user, withdrawal_id):
+    """Approve or reject a withdrawal request with balance rollback on reject."""
+    try:
+        data = request.get_json(force=True)
+        new_status = data.get('status', '').strip().lower()
+        admin_notes = data.get('admin_notes', '')
+
+        if new_status not in ('approved', 'rejected'):
+            return jsonify({'error': 'Status must be "approved" or "rejected"'}), 400
+
+        req = WithdrawalRequest.query.get(withdrawal_id)
+        if not req:
+            return jsonify({'error': 'Withdrawal request not found'}), 404
+        if req.status != 'pending':
+            return jsonify({'error': f'Withdrawal already {req.status}'}), 400
+
+        if new_status == 'approved':
+            req.status = 'approved'
+            req.admin_notes = admin_notes
+            req.processed_at = datetime.utcnow()
+            db.session.commit()
+
+            _emit_wallet_update(req.courier_id, 'withdrawal_approved', {
+                'withdrawal_id': req.id,
+                'amount': float(req.amount),
+                'admin_notes': admin_notes,
+                'processed_at': req.processed_at.isoformat(),
+            })
+
+            return jsonify({
+                'message': 'Withdrawal approved',
+                'withdrawal_id': req.id,
+                'status': 'approved'
+            }), 200
+
+        # REJECTED — rollback: restore balance + reversal ledger entry
+        wallet = CourierWallet.query.filter_by(courier_id=req.courier_id).first()
+        if not wallet:
+            db.session.rollback()
+            return jsonify({'error': 'Courier wallet not found'}), 500
+
+        balance_before = float(wallet.balance)
+        wallet.balance = float(wallet.balance) + float(req.amount)
+        reversal = CourierLedgerEntry(
+            wallet_id=wallet.id,
+            amount=float(req.amount),
+            entry_type='reversal',
+            reference_id=str(req.id),
+            description=f'Withdrawal #{req.id} rejected — balance restored',
+            balance_before=balance_before,
+            balance_after=float(wallet.balance),
+        )
+        db.session.add(reversal)
+
+        req.status = 'rejected'
+        req.admin_notes = admin_notes
+        req.processed_at = datetime.utcnow()
+        db.session.commit()
+
+        _emit_wallet_update(req.courier_id, 'withdrawal_rejected', {
+            'withdrawal_id': req.id,
+            'amount': float(req.amount),
+            'admin_notes': admin_notes,
+            'new_balance': float(wallet.balance),
+            'processed_at': req.processed_at.isoformat(),
+        })
+
+        return jsonify({
+            'message': 'Withdrawal rejected — balance restored',
+            'withdrawal_id': req.id,
+            'status': 'rejected',
+            'restored_balance': float(wallet.balance),
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error updating withdrawal {withdrawal_id}: {e}")
         return jsonify({'error': str(e)}), 500

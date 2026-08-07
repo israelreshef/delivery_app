@@ -1,6 +1,7 @@
 import sqlite3
 
-db_path = r'c:\Users\Israel\Desktop\delivery_app\backend\delivery.db'
+import os
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'delivery.db')
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
 

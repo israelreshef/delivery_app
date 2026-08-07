@@ -15,7 +15,7 @@ import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 
 const packageSizes = [
     { value: "small", label: "קטן", desc: "מעטפה / עד 2 ק\"ג", icon: Mail, color: "border-blue-200 bg-blue-50 text-blue-700", active: "border-blue-500 bg-blue-100 ring-2 ring-blue-500/30" },
-    { value: "medium", label: "בינוני", desc: "קופסה / עד 10 ק\"ג", icon: Bike, color: "border-amber-200 bg-amber-50 text-amber-700", active: "border-amber-500 bg-amber-100 ring-2 ring-amber-500/30" },
+    { value: "medium", label: "בינוני", desc: "קופסה / עד 10 ק\"ג", icon: Bike, color: "border-blue-200 bg-blue-50 text-blue-700", active: "border-blue-500 bg-blue-100 ring-2 ring-blue-500/30" },
     { value: "large", label: "גדול", desc: "ארגז / מעל 10 ק\"ג", icon: Car, color: "border-purple-200 bg-purple-50 text-purple-700", active: "border-purple-500 bg-purple-100 ring-2 ring-purple-500/30" },
 ];
 
@@ -281,7 +281,7 @@ export default function NewOrderWizard() {
                     </CardContent>
 
                     <CardFooter className="bg-slate-50 border-t border-slate-100 p-5 flex justify-end">
-                        <Button onClick={goToStep2} className="bg-brand hover:bg-amber-600 text-navy-950 font-bold w-36 h-11 gap-2">
+                        <Button onClick={goToStep2} className="bg-brand hover:bg-brand-dark text-navy-950 font-bold w-36 h-11 gap-2">
                             המשך ליעד
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
@@ -347,7 +347,7 @@ export default function NewOrderWizard() {
                         <Button variant="ghost" onClick={() => setStep(1)} className="text-slate-500 hover:text-slate-900 gap-2">
                             <ChevronRight className="w-4 h-4" /> חזור
                         </Button>
-                        <Button onClick={goToStep3} className="bg-brand hover:bg-amber-600 text-navy-950 font-bold w-36 h-11 gap-2">
+                        <Button onClick={goToStep3} className="bg-brand hover:bg-brand-dark text-navy-950 font-bold w-36 h-11 gap-2">
                             המשך לחבילה
                             <ChevronLeft className="w-4 h-4" />
                         </Button>

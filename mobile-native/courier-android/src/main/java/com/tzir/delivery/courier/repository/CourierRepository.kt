@@ -7,6 +7,7 @@ import com.tzir.delivery.courier.database.MissionEntity
 import com.tzir.delivery.courier.database.TzirDatabase
 import com.tzir.delivery.courier.model.*
 import com.tzir.delivery.courier.network.DeliveryApi
+import com.tzir.delivery.courier.services.SyncManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,18 +25,10 @@ import kotlinx.serialization.json.intOrNull
 
 class CourierRepository(
     private val api: DeliveryApi,
-    private val database: TzirDatabase? = null
+    private val database: TzirDatabase? = null,
+    private val syncManager: SyncManager? = null
 ) {
     fun getApi() = api
-
-    companion object {
-        private var instance: CourierRepository? = null
-        fun getInstance(api: DeliveryApi, database: TzirDatabase? = null): CourierRepository {
-            return instance ?: synchronized(this) {
-                instance ?: CourierRepository(api, database).also { instance = it }
-            }
-        }
-    }
 
     private val _availableMissions = MutableStateFlow<List<Mission>>(emptyList())
     val availableMissions: StateFlow<List<Mission>> = _availableMissions.asStateFlow()
@@ -64,6 +57,9 @@ class CourierRepository(
     private val _academyProtocolCourses = MutableStateFlow<List<Map<String, Any>>>(emptyList())
     val academyProtocolCourses: StateFlow<List<Map<String, Any>>> = _academyProtocolCourses.asStateFlow()
 
+    private val _myCertifications = MutableStateFlow<List<Map<String, Any>>>(emptyList())
+    val myCertifications: StateFlow<List<Map<String, Any>>> = _myCertifications.asStateFlow()
+
     suspend fun refreshGamificationProfile() {
         try {
             val profile = jsonObjectToMap(api.getGamificationProfile().asJsonObject()).toMutableMap()
@@ -87,6 +83,60 @@ class CourierRepository(
         }
     }
 
+    suspend fun getTaxForms(): List<Map<String, Any>> {
+        return try {
+            jsonArrayToListOfMaps(api.getTaxForms().asJsonArray())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    suspend fun generateTaxForm(formId: String, month: Int?, year: Int): ByteArray? {
+        return try {
+            api.generateTaxForm(formId, month, year)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun downloadBlankForm(formId: String): ByteArray? {
+        return try {
+            api.downloadBlankForm(formId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun getReportHistory(): List<Map<String, Any>> {
+        return try {
+            jsonArrayToListOfMaps(api.getReportHistory().asJsonArray())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    suspend fun downloadReport(reportId: Int): ByteArray? {
+        return try {
+            api.downloadReport(reportId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun deleteReport(reportId: Int): Boolean {
+        return try {
+            api.deleteReport(reportId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
     suspend fun refreshAcademyCourses() {
         try {
             val courses = jsonArrayToListOfMaps(api.getAcademyCourses().asJsonArray())
@@ -106,6 +156,15 @@ class CourierRepository(
             database?.academyCourseDao()?.insertCourses(courses.map { AcademyCourseEntity.fromMap(it, "protocol") })
         } catch (e: Exception) {
             _academyProtocolCourses.value = database?.academyCourseDao()?.getCoursesByType("protocol")?.map { it.toMap() } ?: emptyList()
+        }
+    }
+
+    suspend fun refreshMyCertifications() {
+        try {
+            val certs = jsonArrayToListOfMaps(api.getMyCertifications().asJsonArray())
+            _myCertifications.value = certs
+        } catch (e: Exception) {
+            _myCertifications.value = emptyList()
         }
     }
 
@@ -265,21 +324,30 @@ class CourierRepository(
 
 
     suspend fun acceptMission(missionId: Int): Boolean {
-        val success = api.acceptOrder(missionId)
-        if (success) {
-            refreshAvailableMissions()
-            refreshActiveMissions()
+        return try {
+            val success = api.acceptOrder(missionId)
+            if (success) {
+                refreshAvailableMissions()
+                refreshActiveMissions()
+            }
+            success
+        } catch (e: Exception) {
+            syncManager?.enqueue("ACCEPT_ORDER", "/api/orders/$missionId/accept", """{"mission_id": $missionId}""", "POST")
+            false
         }
-        return success
     }
 
     suspend fun rejectMission(missionId: Int): Boolean {
-        val success = api.rejectOrder(missionId)
-        if (success) {
-            refreshAvailableMissions()
-            refreshActiveMissions()
+        return try {
+            val success = api.rejectOrder(missionId)
+            if (success) {
+                refreshAvailableMissions()
+                refreshActiveMissions()
+            }
+            success
+        } catch (e: Exception) {
+            false
         }
-        return success
     }
 
     suspend fun updateMissionStatus(
@@ -290,12 +358,23 @@ class CourierRepository(
         podSignature: String? = null,
         podImage: String? = null
     ): Boolean {
-        val request = StatusUpdateRequest(status, lat, lng, podSignature, podImage)
-        val success = api.updateStatus(missionId, request)
-        if (success) {
-            refreshActiveMissions()
+        return try {
+            val request = StatusUpdateRequest(status, lat, lng, podSignature, podImage)
+            val success = api.updateStatus(missionId, request)
+            if (success) {
+                refreshActiveMissions()
+            }
+            success
+        } catch (e: Exception) {
+            val payload = buildString {
+                append("""{"status": "$status"""")
+                if (lat != null) append(""", "lat": $lat""")
+                if (lng != null) append(""", "lng": $lng""")
+                append("}")
+            }
+            syncManager?.enqueue("UPDATE_STATUS", "/api/orders/$missionId/status", payload, "PUT")
+            false
         }
-        return success
     }
 
     suspend fun uploadImage(imageBytes: ByteArray): String? {

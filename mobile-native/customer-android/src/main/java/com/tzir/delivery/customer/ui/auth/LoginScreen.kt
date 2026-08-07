@@ -38,7 +38,7 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit
 ) {
     val context = LocalContext.current
-    var password by remember { mutableStateOf("Tzir2026!") }
+    var password by remember { mutableStateOf("demo_client2026!") }
     var username by remember { mutableStateOf("demo_client") } 
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -58,7 +58,7 @@ fun LoginScreen(
                         .size(160.dp)
                         .background(
                             Brush.radialGradient(
-                                colors = listOf(AmberGold.copy(alpha = 0.3f), Color.Transparent)
+                                colors = listOf(BrandBlue.copy(alpha = 0.3f), Color.Transparent)
                             )
                         )
                 )
@@ -67,7 +67,7 @@ fun LoginScreen(
                         "ציר",
                         fontSize = 56.sp,
                         fontWeight = FontWeight.Black,
-                        color = AmberGold,
+                        color = BrandBlue,
                         letterSpacing = 4.sp
                     )
                     Text(
@@ -157,7 +157,7 @@ fun LoginScreen(
                 Text(stringResource(R.string.no_account_yet), color = Color.White.copy(alpha = 0.7f))
                 Text(
                     stringResource(R.string.register_now),
-                    color = AmberGold,
+                    color = BrandBlue,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { onNavigateToRegister() }
                 )

@@ -39,13 +39,13 @@ fun OrderHistoryScreen(
                 stringResource(R.string.order_history),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Black,
-                color = AmberGold
+                color = BrandBlue
             )
             Spacer(modifier = Modifier.height(24.dp))
 
             if (isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = AmberGold)
+                    CircularProgressIndicator(color = BrandBlue)
                 }
             } else if (orderHistory.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -79,9 +79,9 @@ fun OrderCard(order: Order, onClick: () -> Unit) {
             Column {
                 Text(order.type.name.replace("_", " "), fontWeight = FontWeight.Bold, color = Color.White)
                 Text(order.id.take(8).uppercase(), fontSize = 12.sp, color = Graphite400)
-                Text(order.status.name, fontSize = 12.sp, color = AmberGold)
+                Text(order.status.name, fontSize = 12.sp, color = BrandBlue)
             }
-            Text("₪ ${order.price}", fontWeight = FontWeight.Black, color = AmberGold, fontSize = 18.sp)
+            Text("₪ ${order.price}", fontWeight = FontWeight.Black, color = BrandBlue, fontSize = 18.sp)
         }
     }
 }

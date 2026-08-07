@@ -11,6 +11,13 @@ data class LoginRequest(
 )
 
 @Serializable
+data class MfaVerifyRequest(
+    @SerialName("mfa_token")
+    val mfaToken: String,
+    val code: String
+)
+
+@Serializable
 data class RegisterRequest(
     val username: String,
     val email: String,
@@ -34,10 +41,20 @@ data class AuthResponse(
     val message: String? = null,
     @SerialName("access_token")
     val accessToken: String? = null,
+    @SerialName("refresh_token")
+    val refreshToken: String? = null,
     val user: User? = null,
     val error: String? = null,
     @SerialName("requires_2fa")
     val requires2fa: Boolean = false,
     @SerialName("mfa_token")
     val mfaToken: String? = null
+)
+
+@Serializable
+data class RefreshTokenResponse(
+    @SerialName("access_token")
+    val accessToken: String,
+    @SerialName("refresh_token")
+    val refreshToken: String
 )

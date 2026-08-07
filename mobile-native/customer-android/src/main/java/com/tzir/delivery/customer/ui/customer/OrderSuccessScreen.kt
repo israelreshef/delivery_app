@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.tzir.delivery.customer.ui.components.PremiumBackground
 import com.tzir.delivery.customer.ui.components.TzirButton
-import com.tzir.delivery.customer.ui.theme.AmberGold
+import com.tzir.delivery.customer.ui.theme.BrandBlue
 import com.tzir.delivery.customer.ui.theme.Graphite400
 
 @Composable
@@ -29,7 +29,7 @@ fun OrderSuccessScreen(orderNumber: String, navController: NavController) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
-                tint = AmberGold,
+                tint = BrandBlue,
                 modifier = Modifier.size(80.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -43,7 +43,7 @@ fun OrderSuccessScreen(orderNumber: String, navController: NavController) {
             Text(
                 text = "מספר הזמנה: $orderNumber",
                 style = MaterialTheme.typography.bodyLarge,
-                color = AmberGold,
+                color = BrandBlue,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(8.dp))

@@ -41,9 +41,9 @@ fun ErrorState(
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = com.tzir.delivery.customer.ui.theme.Amber)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
         ) {
-            Text(stringResource(R.string.try_again), color = Color.White, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.try_again), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold)
         }
     }
 }

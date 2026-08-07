@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tzir.delivery.customer.ui.theme.AmberGold
+import com.tzir.delivery.customer.ui.theme.BrandBlue
 
 /**
  * Monitors network connectivity and exposes [isConnected] as a State.

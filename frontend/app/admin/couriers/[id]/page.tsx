@@ -134,8 +134,6 @@ export default function CourierCardPage({ params }: { params: { id: string } }) 
 
     return (
         <>
-            <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
             <div className="customer-card-app">
                 {/* Top Navigation Bar */}
                 <nav className="topnav">

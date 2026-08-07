@@ -42,7 +42,7 @@ fun PaymentMethodsScreen(navController: NavHostController) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = AmberGold)
+                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = BrandBlue)
                 }
                 Text(stringResource(R.string.payment_methods), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
@@ -93,7 +93,7 @@ fun PaymentCardItem(card: CreditCard, onDelete: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.CreditCard, contentDescription = null, tint = AmberGold)
+                Icon(Icons.Default.CreditCard, contentDescription = null, tint = BrandBlue)
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text("${card.brand} **** ${card.last4}", color = Color.White, fontWeight = FontWeight.Bold)

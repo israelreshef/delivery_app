@@ -2,8 +2,17 @@ import os
 from datetime import timedelta
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production!'
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-very-secure-2025'
+    _IS_PRODUCTION = os.environ.get('FLASK_ENV') == 'production'
+
+    SECRET_KEY = os.environ.get('SECRET_KEY') or (
+        None if _IS_PRODUCTION else 'dev-secret-key-change-in-production!'
+    )
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or SECRET_KEY
+
+    if _IS_PRODUCTION and (not SECRET_KEY or not JWT_SECRET_KEY):
+        raise RuntimeError(
+            "SECRET_KEY and JWT_SECRET_KEY must be set in the environment for production."
+        )
     
     # Database Configuration
     # Prioritize environment variable, fallback to local Docker connection

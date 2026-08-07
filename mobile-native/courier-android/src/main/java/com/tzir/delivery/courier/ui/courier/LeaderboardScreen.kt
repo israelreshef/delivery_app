@@ -74,7 +74,7 @@ fun LeaderboardScreen(
 
             if (isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = PrimaryTurquoise)
+                    CircularProgressIndicator(color = BrandBlue)
                 }
             } else if (leaderboardData.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -179,7 +179,7 @@ fun LeaderboardCard(
                     text = "$xp XP",
                     fontWeight = FontWeight.Black,
                     fontSize = 16.sp,
-                    color = PrimaryTurquoise
+                    color = BrandBlue
                 )
                 Text(
                     text = "רמה $level",

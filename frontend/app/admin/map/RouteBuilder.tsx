@@ -107,7 +107,7 @@ export default function RouteBuilder() {
     const [isSaving, setIsSaving] = useState(false);
 
     // Shipment color palette for visual linking
-    const SHIPMENT_COLORS = ['#10b981', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16'];
+    const SHIPMENT_COLORS = ['#10b981', '#3b82f6', '#a855f7', '#145DDB', '#ef4444', '#06b6d4', '#ec4899', '#84cc16'];
     const getShipmentColor = (shipmentId: string) => {
         const ids = Array.from(new Set(plannedStops.map(s => s.shipment_id).filter(Boolean)));
         const idx = ids.indexOf(shipmentId);
@@ -658,7 +658,7 @@ export default function RouteBuilder() {
                             className={cn(
                                 "flex-1 h-7 rounded-md text-[9px] font-bold flex items-center justify-center gap-1 transition-all border",
                                 routeMode === 'multi-pickup'
-                                    ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                                    ? 'bg-blue-500/20 border-blue-500 text-blue-400'
                                     : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
                             )}
                         >
@@ -847,9 +847,9 @@ export default function RouteBuilder() {
                                             <div className="text-lg font-black text-violet-400">{routeSummary.totalPackages}</div>
                                             <div className="text-[9px] text-violet-500/80 font-bold">חבילות סה״כ</div>
                                         </div>
-                                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-2.5 text-center">
-                                            <div className="text-lg font-black text-amber-400">{routeSummary.shipments}</div>
-                                            <div className="text-[9px] text-amber-500/80 font-bold">משלוחים</div>
+                                        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-2.5 text-center">
+                                            <div className="text-lg font-black text-blue-400">{routeSummary.shipments}</div>
+                                            <div className="text-[9px] text-blue-500/80 font-bold">משלוחים</div>
                                         </div>
                                     </div>
 
@@ -886,12 +886,12 @@ export default function RouteBuilder() {
                                     {/* Warnings */}
                                     {routeSummary.warnings.length > 0 && (
                                         <div className="space-y-1.5">
-                                            <div className="text-[9px] font-bold text-amber-500 uppercase flex items-center gap-1.5">
+                                            <div className="text-[9px] font-bold text-blue-500 uppercase flex items-center gap-1.5">
                                                 <AlertTriangle className="w-3 h-3" />
                                                 אזהרות
                                             </div>
                                             {routeSummary.warnings.map((w, i) => (
-                                                <div key={i} className="flex items-center gap-2 bg-amber-500/5 border border-amber-500/20 rounded-lg p-2 text-[10px] text-amber-400">
+                                                <div key={i} className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/20 rounded-lg p-2 text-[10px] text-blue-400">
                                                     <AlertTriangle className="w-3 h-3 flex-shrink-0" />
                                                     {w}
                                                 </div>
@@ -1068,12 +1068,12 @@ export default function RouteBuilder() {
                                         <div className="space-y-2">
                                             <Label className="text-[10px] font-black text-slate-500 uppercase">מזהה משלוח</Label>
                                             <div className="relative">
-                                                <Package className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-amber-500/60" />
+                                                <Package className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-blue-500/60" />
                                                 <Input
                                                     placeholder={`אוטומטי: S${String(shipmentCounter).padStart(3, '0')}`}
                                                     value={configuringStop.shipment_id || ""}
                                                     onChange={e => setConfiguringStop({ ...configuringStop, shipment_id: e.target.value })}
-                                                    className="h-9 bg-amber-500/5 border-amber-500/20 text-amber-300 pr-9 text-xs rounded-lg placeholder:text-amber-500/30 font-bold"
+                                                    className="h-9 bg-blue-500/5 border-blue-500/20 text-blue-300 pr-9 text-xs rounded-lg placeholder:text-blue-500/30 font-bold"
                                                 />
                                             </div>
                                             <p className="text-[9px] text-slate-600 leading-snug">מקשר איסוף למסירה. אותו ID = אותה חבילה.</p>
