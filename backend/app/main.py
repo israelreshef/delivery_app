@@ -28,9 +28,3 @@ def health_check():
 @app.get("/")
 def root():
     return {"message": "Welcome to TZIR Delivery API"}
-
-# Mount Socket.IO — keep `app` as the FastAPI instance for imports/tests,
-# and expose `application` as the ASGI entry point for uvicorn.
-from app.core.socket import sio
-import socketio
-application = socketio.ASGIApp(sio, app)

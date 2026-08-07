@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from app.crud.notification import notification as crud_notification
 from app.schemas.notification import NotificationCreate
 from app.models.notification import NotificationType, NotificationChannel
-from app.core.socket import sio
 
 async def send_notification(
     db: Session,
@@ -30,19 +29,19 @@ async def send_notification(
         channel=channel,
         order_id=order_id
     ))
-    
-    # 2. Emit Socket.IO Event
-    # We broadcast to the specific user room if we have a pattern like 'user_{id}'
-    # In socket.py we joined 'tracking_courier_{id}', let's assume we might have 'user_{id}' too 
-    # or just emit to 'tracking_courier_{id}' if it's a courier.
-    # For now, let's try to emit to 'user_{user_id}' and also 'tracking_courier_{user_id}' just in case.
-    await sio.emit('notification', {
-        'id': notification.id,
-        'title': title,
-        'message': message,
-        'type': type.value if hasattr(type, 'value') else str(type)
-    }, room=f"user_{user_id}")
-    
+    # 2. Emit Socket.IO Event (via the live Flask-SocketIO server, when running)
+    # The legacy async server (app/core/socket.py) was removed — emit through
+    # the Flask-SocketIO instance instead, if it has been initialized.
+    try:
+        from extensions import socketio as flask_sio
+        flask_sio.emit('notification', {
+            'id': notification.id,
+            'title': title,
+            'message': message,
+            'type': type.value if hasattr(type, 'value') else str(type)
+        }, room=f"user_{user_id}")
+    except Exception as emit_err:
+        print(f"[notifications] socket emit skipped (no live server): {emit_err}")
     # 3. Mock External Provider
     if channel == NotificationChannel.SMS:
         print(f"[MOCK SMS] To User {user_id}: {message}")

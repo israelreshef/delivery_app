@@ -20,12 +20,12 @@ export const useSocket = (token: string | null, role: string | null) => {
 
         console.log(`🔌 Attempting socket connection to ${SOCKET_URL} with role: ${role}`);
 
-        // Initialize socket connection with explicit auth and query
-        // We use both to ensure the backend gets it no matter how it looks (auth object vs query param)
+        // Initialize socket connection with explicit auth (token via handshake)
+        // NOTE: token is intentionally NOT sent in the URL query — query strings
+        // leak into server logs / proxies.
         socketRef.current = io(SOCKET_URL, {
             autoConnect: true,
             auth: { token },
-            query: { token, role },
             reconnectionAttempts: 10,
             reconnectionDelay: 2000,
             // Allow polling as initial transport for reliability on varied environments

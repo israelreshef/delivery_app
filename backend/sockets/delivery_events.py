@@ -41,14 +41,30 @@ def get_socket_user():
         if not token:
             with _socket_auth_lock:
                 token = _socket_auth.get(getattr(request, 'sid', None))
-        if not token:
-            token = request.args.get('token')
+        # NOTE: the query string is intentionally NOT accepted here — tokens must
+        # never travel in URLs (they leak into server logs / proxies).
         if token:
             decoded = decode_token(token)
             return decoded['sub']
     except Exception:
         return None
     return None
+
+
+def get_socket_user_record():
+    """Return the `User` record for the authenticated socket, or None.
+
+    Uses the connect-time JWT captured in `_socket_auth` (never client-supplied
+    event data), so downstream handlers get a server-authoritative identity.
+    """
+    from models import User
+    user_id = get_socket_user()
+    if user_id is None:
+        return None
+    try:
+        return User.query.get(int(user_id))
+    except (TypeError, ValueError):
+        return None
 
 def socket_auth_required(allowed_roles=None, self_check_field=None):
     """Decorator for socket event handlers.
@@ -245,14 +261,49 @@ def register_socket_events(socketio):
             socket_log(f' Join rejected: {str(e)} (SID: {request.sid})')
     
     @socketio.on('join_delivery_room')
-    @socket_auth_required(allowed_roles={'customer', 'admin'})
+    @socket_auth_required(allowed_roles={'customer', 'courier', 'admin'})
     def handle_join_delivery_room(data):
-        """Customer joins the tracking room for a specific delivery"""
+        """Customer/courier joins the tracking room for a specific delivery.
+
+        Ownership is enforced server-side (BOLA/IDOR guard): the authenticated
+        user may only track a delivery they own (as a customer) or are assigned
+        to (as a courier), unless they are an admin.
+        """
+        from models import Customer, Courier, Delivery
+
         delivery_id = data.get('delivery_id')
-        if delivery_id:
-            join_room(f'delivery_{delivery_id}')
-            socket_log(f' Socket {request.sid} joined delivery_{delivery_id}')
-            emit('joined_delivery_room', {'delivery_id': delivery_id})
+        if not delivery_id:
+            emit('error', {'message': 'delivery_id is required'})
+            return
+
+        delivery = Delivery.query.filter_by(id=delivery_id).first()
+        if not delivery:
+            emit('error', {'message': 'Delivery not found'})
+            return
+
+        user = get_socket_user_record()
+        if user is None:
+            emit('error', {'message': 'Authentication required'})
+            return
+
+        allowed = False
+        if user.user_type == 'admin':
+            allowed = True
+        elif user.user_type == 'customer' and delivery.customer_id:
+            cust = Customer.query.filter_by(id=delivery.customer_id).first()
+            allowed = bool(cust and cust.user_id == user.id)
+        elif user.user_type == 'courier' and delivery.courier_id:
+            cor = Courier.query.filter_by(id=delivery.courier_id).first()
+            allowed = bool(cor and cor.user_id == user.id)
+
+        if not allowed:
+            socket_log(f' 🚫 Blocked: user {user.id} tried to track delivery_{delivery_id}')
+            emit('error', {'message': 'You are not allowed to track this delivery'})
+            return
+
+        join_room(f'delivery_{delivery_id}')
+        socket_log(f' Socket {request.sid} joined delivery_{delivery_id}')
+        emit('joined_delivery_room', {'delivery_id': delivery_id})
 
     @socketio.on('leave')
     def handle_leave(data):

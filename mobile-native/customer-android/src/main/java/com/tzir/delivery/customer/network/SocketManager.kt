@@ -90,7 +90,6 @@ object SocketManager {
             val currentToken = TokenManager.token
             if (!currentToken.isNullOrEmpty()) {
                 options.auth = mapOf("token" to currentToken)
-                options.query = "token=$currentToken"
             }
 
             mSocket = IO.socket(SOCKET_URL, options)
