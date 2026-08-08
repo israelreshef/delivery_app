@@ -8,6 +8,7 @@ wms_bp = Blueprint('wms', __name__)
 
 @wms_bp.route('/topology', methods=['GET'])
 @token_required
+@role_required(['admin', 'logistics_manager', 'operations_manager', 'warehouse_staff'])
 def get_topology(current_user):
     """Returns the macro overview of Warehouses -> Zones -> Bins with volume metrics"""
     try:
@@ -64,6 +65,7 @@ def get_topology(current_user):
 
 @wms_bp.route('/inventory', methods=['GET'])
 @token_required
+@role_required(['admin', 'logistics_manager', 'operations_manager', 'warehouse_staff'])
 def get_inventory(current_user):
     """List all inventory items with mapping of physical locations (Bin paths)"""
     try:

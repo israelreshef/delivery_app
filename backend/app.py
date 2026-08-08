@@ -115,6 +115,9 @@ def create_app():
     app.config['SECURITY_HMAC_SECRET'] = os.environ.get('SECURITY_HMAC_SECRET', 'dev-device-hmac-key')
     app.config['SECURITY_HMAC_ENFORCED'] = os.environ.get('SECURITY_HMAC_ENFORCED', 'false').lower() == 'true'
     app.config['SECURITY_ANOMALY_ENABLED'] = os.environ.get('SECURITY_ANOMALY_ENABLED', 'false').lower() == 'true'
+    # In-process WAF layer (S3): on by default in production, opt-in elsewhere.
+    _waf_default = 'true' if os.environ.get('FLASK_ENV') == 'production' else 'false'
+    app.config['SECURITY_WAF_ENABLED'] = os.environ.get('SECURITY_WAF_ENABLED', _waf_default).lower() == 'true'
     
     # Logging Configuration
     import logging
@@ -176,9 +179,42 @@ def create_app():
     def not_found(e):
         return jsonify({'error': 'הדף לא נמצא'}), 404
 
+    @app.errorhandler(403)
+    def forbidden(e):
+        # Consistent JSON for security denials (WAF block, role checks, etc.)
+        description = getattr(e, 'description', None) or 'Forbidden'
+        return jsonify({
+            'error': 'FORBIDDEN',
+            'message': description,
+            'description': description,
+        }), 403
+
+    @app.errorhandler(413)
+    def payload_too_large(e):
+        return jsonify({'error': 'BODY_TOO_LARGE', 'message': 'Request body too large'}), 413
+
     @app.errorhandler(429)
     def rate_limit_exceeded(e):
-        return jsonify({'error': 'RATE_LIMIT', 'message': 'יותר מדי בקשות, נסה שוב מאוחר יותר'}), 429
+        from flask_limiter import RateLimitExceeded
+        response = jsonify({'error': 'RATE_LIMIT', 'message': 'יותר מדי בקשות, נסה שוב מאוחר יותר'})
+        response.status_code = 429
+        # Set Retry-After and inform the client of the active/reset window.
+        limit_info = getattr(e, 'limit', None)
+        if hasattr(e, 'reset_at') and getattr(e, 'reset_at'):
+            import time
+            wait = max(1, int(e.reset_at - time.time()))
+            response.headers['Retry-After'] = str(wait)
+        elif limit_info is not None:
+            response.headers['Retry-After'] = '60'
+        try:
+            from extensions import limiter as _limiter
+            window = _limiter._get_window_stats(request.endpoint, request.environ.get('REMOTE_ADDR'))
+            if window:
+                remaining = window[0] or 0
+                response.headers['X-RateLimit-Remaining'] = str(max(0, remaining))
+        except Exception:
+            pass
+        return response
 
     @app.errorhandler(Exception)
     def handle_unexpected_exception(e):
@@ -457,10 +493,12 @@ def create_app():
 
     # Health check endpoint for Docker and load balancers
     @app.route('/api/health')
+    @limiter.exempt
     def health_check():
         return {'status': 'healthy', 'service': 'tzir-backend'}, 200
 
     @app.route('/api/security/csp-report', methods=['POST'])
+    @limiter.exempt
     def csp_report():
         # ORB (Opaque Response Blocking) requires a valid content-type for non-opaque responses
         return jsonify({'status': 'received'}), 204
@@ -526,6 +564,12 @@ def create_app():
     # is set or when a client actually sends signature headers.
     from middleware.api_security import security_guard
     app.before_request(security_guard)
+
+    # OpenAPI 3.0 spec (/api/openapi.json), API reference page (/api/docs) and
+    # runtime JSON schema validation (S3). Registered last so every blueprint's
+    # routes are included in the URL map.
+    from utils.openapi import register_openapi
+    register_openapi(app)
     
     # Create database tables & Auto-Seed
     with app.app_context():

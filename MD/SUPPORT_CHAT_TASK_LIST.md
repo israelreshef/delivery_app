@@ -174,6 +174,7 @@
 - [ ] Offline storage persistence
 - [x] Max 2 tickets enforcement
 - [ ] Real-time Socket.IO updates (requires WebSocket client)
+- [x] **Socket.IO security hardening (2026-08-07)** — BOLA fixes verified by `test_websocket_integration.py` (13 tests): `support_events.py` rewritten (`support_agents`/`user_<id>`/`ticket_<id>` rooms, JWT-only via `get_socket_user_record()`, ticket-room ownership = owner OR `assigned_to` OR staff); dead parallel socket server `backend/app/core/socket.py` deleted; query-string token removed from `frontend/lib/socket.ts` (auth-object only)
 
 ---
 

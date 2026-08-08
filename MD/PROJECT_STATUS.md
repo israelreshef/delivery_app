@@ -19,7 +19,7 @@
 | Authentication + Refresh | ✅ Done | SecureStorage(Keystore) + Bearer refresh |
 | MFA | 🟡 Partial | Backend + web WebAuthn done; **Mobile MFA missing** |
 | API Layer | ✅ Done | 33+ courier endpoints wired |
-| WebSocket Service | ✅ Done | Handlers + reconnection; unit tests missing |
+| WebSocket Service | ✅ Done | Handlers + reconnection; 13 backend integration tests (incl. BOLA) + 6 customer SocketManager unit tests |
 | Database (Room) | ✅ Done | v5, 8 entities, offline + SyncManager |
 | SyncManager / Offline Queue | ✅ Done | DI wired; SEND_LOCATION handler pending |
 | Tax Reports (Section 7) | ✅ Done | History/refresh/delete + web/mobile UI; 81 backend tests |
@@ -33,6 +33,7 @@
 | **Security/Compliance hardening** | 🟡 Open | S2–S8, R1–R7 items pending |
 
 **Latest Verified Updates:**
+- **2026-08-07** — Global rate limiting per-user/per-IP + global BOLA/IDOR sweep (checklist: `docs/SECURITY_RATE_LIMIT_BOLA_PLAN.md`): composite key (`utils/rate_limits.py`), Redis storage fallback, tiered limits for 2FA/refresh/OTP, 429 headers + exemptions; BOLA inventorization (`scripts/bola_inventory.py` → `docs/bola_inventory.md`) fixed invoice download/by-order scoping (`invoices.py`) + WMS role gating (`wms.py`); new suites `test_rate_limits.py` (5) + `test_bola_sweep.py` (7) — **backend suite 107 passed**. Socket.IO BOLA hardening + dead socket server deletion (same day): 13/13 socket tests, `next build` ✅, both Android apps BUILD SUCCESSFUL.
 - **2026-08-06** — Tax report history flow (Section 7) fully closed: model, migration, generate/save/delete endpoints, BOLA/IDOR protection, web+mobile UI, 81 backend tests passing; Support-chat send-failure UI fix.
 - **2026-08-05** — Safe Mobile upgrades completed (Kotlin 2.2.21, KSP 2.2.21-2.0.5, AGP 8.10.1, Compose 1.8.2, M3 1.3.2, Ktor 3.5.2, Firebase BOM 33.16.0, compileSdk 35). Frontend build green after duplicate-route cleanup.
 - **2026-08-04** — Vision/brand (phase A), calendar click-to-create, pension/study-fund lines, courier title, profile photo, and per-screen light/dark hardcoded-color removal completed.
@@ -48,7 +49,7 @@
 | 1 | **External PSP (Stripe/Razorpay) integration & verification** | `backend/routes/courier_wallet.py`, mobile `PaymentRepository`, `BalanceScreen` | Internal wallet + withdrawals wired; real PSP unverified |
 | 2 | **Mobile MFA in login flow** (currently admin-opt-in only) | `AuthRepository`/`LoginScreen` | Missing |
 | 3 | **Activate `security_middleware` + remove hardcoded keys** | `backend/middleware/api_security.py`, `auth.py`, `secrets_manager.py` | Dead code; keys hardcoded (`dev-device-hmac-key`, fallback secret) |
-| 4 | **Global rate limiting** (not only auth/addresses/orders) | extensions.py/app.py | Partial |
+| 4 | **Global rate limiting** (not only auth/addresses/orders) | extensions.py/app.py | ✅ Done 2026-08-07 (per-user/per-IP, Redis fallback; see plan doc) |
 | 5 | **Mobile privacy consent flow** | mobile `Privacy` | Missing |
 | 6 | **Root/Jailbreak detection + Room encryption** | SecurityEnforcer, security-crypto | Missing |
 

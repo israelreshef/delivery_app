@@ -26,8 +26,8 @@
 - [x] `LaunchedEffect` אוסף `SocketManager.newOrderEvents` ומרענן את ה-ViewModel
 
 ### מה עדיין לא נעשה
-- Backend tests ל-WebSocket — ✅ **4/4 PASSED** (אחרי התקנת dependencies חסרות)
-- Mobile unit tests ל-SocketManager — עדיין חסר
+- Backend tests ל-WebSocket — ✅ **13/13 PASSED** (`test_websocket_integration.py`, כולל 7 בדיקות BOLA/אבטחה ל-`delivery_events`/`support_events`/`chat_events`)
+- Mobile unit tests ל-SocketManager — ✅ **בוצע 2026-08-07**: `customer-android/.../SocketManagerTest.kt` (6 בדיקות: auth-object בלבד, ללא token ב-query; trackDelivery/joinSupportRoom/sendChatMessage/disconnect) + `testOptions { unitTests.isReturnDefaultValues = true }`
 
 ### תלויות / קבצים רלוונטיים
 - `mobile-native/.../services/SocketManager.kt`
@@ -217,7 +217,7 @@ Performance, memory, battery, E2E — לא התחיל.
 |---|---|---|---|
 | 1 | 1-2 | Payment System | 85% |
 | 1 | 3-4 | Room Database | 40% |
-| 1 | 5 | WebSocket | 35% |
+| 1 | 5 | WebSocket | ✅ 100% |
 | 2 | 1-2 | Academy | 80% |
 | 2 | 3 | Route Optimization | 90% |
 | 2 | 4-5 | Testing | 10% |

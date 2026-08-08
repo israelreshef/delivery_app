@@ -9,6 +9,7 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=production
+      - SECURITY_WAF_ENABLED=true
       - DATABASE_URL=postgresql://delivery_user:delivery_pass@db:5432/delivery_db
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-prod-secret-key-CHANGE-ME}

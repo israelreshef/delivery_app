@@ -44,3 +44,7 @@ backend/uploads/
 # Logs — may contain sensitive data
 *.log
 backend/courier_debug.log
+
+backend/certs/
+
+*.log

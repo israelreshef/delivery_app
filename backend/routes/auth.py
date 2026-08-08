@@ -195,7 +195,7 @@ def login():
 # ─── Fix 8: Refresh token rotation ────────────────────────────────────────────
 
 @auth_bp.route('/refresh', methods=['POST'])
-@limiter.limit("20 per minute")
+@limiter.limit("20 per minute; 100 per hour")
 def refresh_token():
     """Issue a new access + refresh token pair; blacklist the old refresh token."""
     from flask_jwt_extended import (
@@ -572,6 +572,7 @@ def admin_reset_password(current_user):
 # ============================================================================
 
 @auth_bp.route('/2fa/setup', methods=['POST'])
+@limiter.limit("10 per hour")
 @token_required
 def setup_2fa(current_user):
     """התחלת הגדרת 2FA - ייצור סיקרט ו-QR Code"""
@@ -594,6 +595,7 @@ def setup_2fa(current_user):
     })
 
 @auth_bp.route('/2fa/verify-and-enable', methods=['POST'])
+@limiter.limit("10 per minute; 30 per hour")
 @token_required
 def verify_and_enable_2fa(current_user):
     """אימות קוד ראשוני והפעלת ה-2FA סופית"""
@@ -612,6 +614,7 @@ def verify_and_enable_2fa(current_user):
         return jsonify({'error': 'Invalid verification code'}), 400
 
 @auth_bp.route('/2fa/login-verify', methods=['POST'])
+@limiter.limit("10 per minute; 50 per hour")
 def login_verify_2fa():
     """אימות קוד OTP במהלך ההתחברות"""
     from utils.two_factor import verify_totp_code

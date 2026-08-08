@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from models import db, Courier, User, Delivery, ShiftSession, CourierGamification, DailyMission
 from werkzeug.security import generate_password_hash
 from utils.decorators import token_required, role_required
+from extensions import limiter
 from utils.validation_helpers import is_valid_gps
 from utils.config_helpers import get_protocol_setting
 from utils.geo_utils import haversine_distance
@@ -538,8 +539,8 @@ def get_courier_history(current_user):
                 'id': d.id,
                 'order_number': d.order_number,
                 'completed_at': d.updated_at.isoformat() if d.updated_at else None,
-                'pickup_address': d.pickup_address,
-                'dropoff_address': d.delivery_address,
+                'pickup_address': f"{d.pickup_point.address.street} {d.pickup_point.address.building_number}, {d.pickup_point.address.city}" if d.pickup_point and d.pickup_point.address else "כתובת איסוף חסרה",
+                'dropoff_address': f"{d.delivery_point.address.street} {d.delivery_point.address.building_number}, {d.delivery_point.address.city}" if d.delivery_point and d.delivery_point.address else "כתובת מסירה חסרה",
                 'earning': earning,
                 'distance_km': d.distance_km or 0.0,
                 'duration_mins': duration_mins,
@@ -760,6 +761,7 @@ def update_delivery_status(current_user, order_id):
         return jsonify({'error': str(e)}), 500
 
 @couriers_bp.route('/orders/<int:order_id>/send-otp', methods=['POST'])
+@limiter.limit("10 per minute; 30 per hour")
 @token_required
 @role_required('courier')
 def send_order_otp(current_user, order_id):
@@ -797,6 +799,7 @@ def send_order_otp(current_user, order_id):
         return jsonify({'error': str(e)}), 500
 
 @couriers_bp.route('/orders/<int:order_id>/verify-otp', methods=['POST'])
+@limiter.limit("15 per minute; 60 per hour")
 @token_required
 @role_required('courier')
 def verify_order_otp(current_user, order_id):

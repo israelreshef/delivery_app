@@ -80,8 +80,59 @@ def _log_hmac_failure():
         pass
 
 
+def _waf_block_check():
+    """In-process WAF layer (S3): blocks request when obvious attack artifacts
+    are found in the URI / body / headers. Opt-in via SECURITY_WAF_ENABLED
+    (default in production). Mirrors the edge WAF (nginx / AWS WAFv2)."""
+    hits = []
+    try:
+        from utils.request_waf import waf_enabled, inspect_request
+        if not waf_enabled():
+            return None
+
+        raw = request.get_data()
+        body = None
+        if raw:
+            import json as _json
+            try:
+                body = _json.loads(raw)
+            except Exception:
+                # Non-JSON bodies (multipart, files) skip body inspection.
+                body = None
+
+        headers = {k: v for k, v in request.headers.items()
+                   if k in ("User-Agent", "Referer", "X-Forwarded-For")}
+        uri = (request.path + ("?" + request.query_string.decode("utf-8", "ignore") if request.query_string else ""))
+        hits = inspect_request(uri, body, headers)
+    except Exception:
+        # Never let WAF failure take the API down — fail open.
+        return None
+
+    if not hits:
+        return None
+
+    from utils.audit import log_audit
+    log_audit('WAF_BLOCK', user_id=_current_identity(),
+              resource_type='api', details=f"{request.path} rules={hits}", status='CRITICAL')
+    abort(403, description="Request blocked by Web Application Firewall.")
+
+
+def _current_identity():
+    try:
+        from flask_jwt_extended import get_jwt_identity
+        identity = get_jwt_identity()
+        if identity:
+            return int(identity)
+    except Exception:
+        pass
+    return None
+
+
 def _run_security_checks():
-    """Shared checks: threat intelligence + anomaly + HMAC. Aborts on failure."""
+    """Shared checks: WAF + threat intelligence + anomaly + HMAC. Aborts on failure."""
+    # 0. WAF (in-process): obvious injection artifacts → 403.
+    _waf_block_check()
+
     # 1. Threat Intelligence: drop IPs already blocked by ip_blocker.
     if _is_blocked(request.remote_addr):
         abort(403, description="Access denied by security policy.")

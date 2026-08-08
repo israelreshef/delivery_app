@@ -10,13 +10,13 @@
 | **UI Screens** | 🟢 Built | 95% | ✅ | 20+ screens exist, mostly functional |
 | **API Integration** | 🟡 Partial | 70% | 🔴 | 21 endpoints defined, some mocked |
 | **Location Services** | 🟢 Working | 95% | ✅ | Background service fully implemented |
-| **WebSocket (Socket.IO)** | 🟡 Partial | 60% | 🔴 CRITICAL | SocketManager exists, needs real backend testing |
+| **WebSocket (Socket.IO)** | 🟢 Working | 95% | ✅ | SocketManager wired (`new_order_available`, `order_assigned_to_you`, time-window alerts, reconnection); BOLA-security validated by 13 backend integration tests + 6 customer unit tests |
 | **Academy System** | 🟡 Partial | 50% | 🔴 | Screens exist, logic mostly mocked |
 | **Route Optimization** | 🟡 Partial | 40% | 🔴 | API endpoint exists, UI not fully integrated |
 | **Payment Integration** | ❌ Missing | 0% | 🔴 CRITICAL | No payment system whatsoever |
-| **Database (Room)** | ❌ Missing | 0% | 🔴 | No local persistence layer |
-| **Offline Mode** | ❌ Missing | 0% | 🟡 | No queue/sync system |
-| **Testing** | ❌ Missing | 0% | 🟡 | No unit/UI tests |
+| **Database (Room)** | 🟡 Partial | 60% | 🔴 | v5, 8 entities + SyncManager offline queue (SEND_LOCATION handler pending) |
+| **Offline Mode** | 🟡 Partial | 50% | 🟡 | SyncManager queue established (ACCEPT_ORDER/UPDATE_STATUS/SEND_LOCATION) |
+| **Testing** | 🟡 Partial | 30% | 🟡 | Backend 95 tests + 6 customer SocketManager unit tests; more needed |
 
 ---
 
@@ -554,13 +554,13 @@ class DashboardViewModel @Inject constructor(
 
 ---
 
-## 🧪 Testing - COMPLETELY MISSING
+## 🧪 Testing - PARTIALLY COVERED (backend + socket; mobile still thin)
 
 | Test Type | Status | Files | Effort |
 |-----------|--------|-------|--------|
-| Unit Tests | ❌ | 0 files | 2-3 days |
+| Unit Tests | 🟡 | `backend/tests/` (95 passed); customer `SocketManagerTest.kt` (6 tests) | 2-3 days more |
 | UI Tests (Compose) | ❌ | 0 files | 2-3 days |
-| Integration Tests | ❌ | 0 files | 2 days |
+| Integration Tests | 🟡 | `test_websocket_integration.py` 13/13 (BOLA/auth) | 2 days more |
 | API Mocking | ❌ | 0 files | 1 day |
 
 **Recommendation:** Add MockK + JUnit testing framework
@@ -610,11 +610,11 @@ class DashboardViewModel @Inject constructor(
 - Implement offline queue manager
 - Add sync-on-reconnect logic
 
-**Priority 3:** WebSocket Integration Testing (1-2 days)
-- Test SocketManager against real backend
-- Add missing event handlers
-- Implement error recovery
-- Add reconnection strategy
+**Priority 3:** WebSocket Integration Testing ✅ (done 2026-08-07)
+- Test SocketManager against real backend — ✅ 13 backend integration tests (BOLA/auth) + 6 customer unit tests
+- Add missing event handlers — ✅ `new_order_available`, `order_assigned_to_you`, reconnection wired
+- Implement error recovery — ✅ send-failure banners (support chat), reconnection backoff
+- Add reconnection strategy — ✅ finite attempts + exponential backoff
 
 **Deliverable:** App works fully offline, payments integrated, real-time features in place
 

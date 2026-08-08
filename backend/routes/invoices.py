@@ -120,8 +120,16 @@ def download_invoice(current_user, invoice_id):
         if not invoice:
             return jsonify({'error': 'Invoice not found'}), 404
             
-        # Security: Customer can only download their own, Admins can download all
-        if current_user.user_type == 'customer' and current_user.customer.id != invoice.customer_id:
+        # Security: Customers can only download their own; couriers must be
+        # assigned to the order; everyone else (admin/finance) sees all.
+        if current_user.user_type == 'customer':
+            if current_user.customer.id != invoice.customer_id:
+                return jsonify({'error': 'Unauthorized to view this invoice'}), 403
+        elif current_user.user_type == 'courier':
+            delivery = invoice.delivery
+            if not delivery or delivery.courier_id != current_user.courier.id:
+                return jsonify({'error': 'Unauthorized to view this invoice'}), 403
+        elif current_user.user_type != 'admin':
             return jsonify({'error': 'Unauthorized to view this invoice'}), 403
             
         pdf_filename = f"{invoice.invoice_number}.pdf"
@@ -168,11 +176,17 @@ def get_invoice_by_order(current_user, order_id):
         if not delivery:
             return jsonify({'error': 'Order not found'}), 404
 
-        # Customers can only see their own invoices
+        # Customers can only see their own invoices; couriers only their
+        # assigned orders; everyone else (admin/finance) sees all.
         if current_user.user_type == 'customer':
             customer = Customer.query.filter_by(user_id=current_user.id).first()
             if not customer or delivery.customer_id != customer.id:
                 return jsonify({'error': 'Unauthorized'}), 403
+        elif current_user.user_type == 'courier':
+            if delivery.courier_id != current_user.courier.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+        elif current_user.user_type != 'admin':
+            return jsonify({'error': 'Unauthorized'}), 403
 
         invoice = delivery.invoice
         if not invoice:
@@ -202,11 +216,17 @@ def download_invoice_by_order(current_user, order_id):
         if not delivery:
             return jsonify({'error': 'Order not found'}), 404
 
-        # Customers can only download their own invoices
+        # Customers can only download their own invoices; couriers only their
+        # assigned orders; everyone else (admin/finance) downloads all.
         if current_user.user_type == 'customer':
             customer = Customer.query.filter_by(user_id=current_user.id).first()
             if not customer or delivery.customer_id != customer.id:
                 return jsonify({'error': 'Unauthorized'}), 403
+        elif current_user.user_type == 'courier':
+            if delivery.courier_id != current_user.courier.id:
+                return jsonify({'error': 'Unauthorized'}), 403
+        elif current_user.user_type != 'admin':
+            return jsonify({'error': 'Unauthorized'}), 403
 
         invoice = delivery.invoice
         if not invoice:
