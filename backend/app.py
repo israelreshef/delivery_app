@@ -679,9 +679,33 @@ def create_app():
             print(f"Warning: backup scheduler disabled due to error: {scheduler_error}")
 
     return app
+
+def _tls_context():
+    """Env-driven TLS for the dev server: an ssl.SSLContext if TZIR_TLS_CERT/KEY
+    are set, else None (plain HTTP). gevent's WSGIServer requires a context
+    object, not a (cert, key) tuple.
+
+    Cert swap (self-signed -> real CA) is a config change only: replace the files
+    these env vars point at (see docs/TLS_CERT_SWAP_PLAN.md).
+    """
+    cert = os.environ.get('TZIR_TLS_CERT')
+    key = os.environ.get('TZIR_TLS_KEY')
+    if not cert or not key:
+        return None
+    import ssl
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ctx.load_cert_chain(certfile=cert, keyfile=key)
+    return ctx
+
 if __name__ == '__main__':
     app = create_app()
     port = int(os.environ.get('PORT', '5000'))
     debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
-    socketio.run(app, debug=debug, use_reloader=debug, host='0.0.0.0', port=port)
+    # gevent's WSGIServer crashes when ssl_context is passed as None (it uses
+    # the key directly), so only include the kwarg when TLS is actually enabled.
+    tls = _tls_context()
+    run_kwargs = {}
+    if tls is not None:
+        run_kwargs['ssl_context'] = tls
+    socketio.run(app, debug=debug, use_reloader=debug, host='0.0.0.0', port=port, **run_kwargs)
 

@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Development/local: allow plain HTTP to the dev hosts (emulator alias + LAN IP) -->
-    <domain-config cleartextTrafficPermitted="true">
+    <!-- Global: HTTPS only. System trust anchors only. -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Dev/local: HTTPS + trust our self-signed mini CA for the dev hosts.
+         Swap to a real CA by replacing res/raw/tzir_dev_ca.pem (or removing
+         this domain-config) — no code changes. See docs/TLS_CERT_SWAP_PLAN.md -->
+    <domain-config>
         <domain includeSubdomains="true">10.0.2.2</domain>
         <domain includeSubdomains="true">192.168.33.18</domain>
         <domain includeSubdomains="true">192.168.33.13</domain>
         <domain includeSubdomains="true">localhost</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="@raw/tzir_dev_ca" />
+        </trust-anchors>
     </domain-config>
+
     <debug-overrides>
         <trust-anchors>
             <certificates src="system" />

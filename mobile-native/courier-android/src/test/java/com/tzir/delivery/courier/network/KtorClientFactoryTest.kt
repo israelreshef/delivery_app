@@ -22,6 +22,7 @@ class KtorClientFactoryTest {
         every { TokenManager.token = any() } just runs
         every { TokenManager.saveRefreshToken(any()) } just runs
         every { TokenManager.clearTokens() } just runs
+        KtorClientFactory.setBackendHost("")
     }
 
     @After
@@ -47,10 +48,27 @@ class KtorClientFactoryTest {
     }
 
     @Test
-    fun `resolveBaseUrl returns an http URL on port 5000`() {
+    fun `resolveBaseUrl returns an https URL on port 5000 by default`() {
         val url = KtorClientFactory.resolveBaseUrl()
         assertNotNull(url)
-        assert(url.startsWith("http://"))
+        assert(url.startsWith("https://"))
         assert(url.endsWith(":5000"))
+    }
+
+    @Test
+    fun `resolveBaseUrl honors a full URL host override`() {
+        KtorClientFactory.setBackendHost("https://api.example.com:8443")
+        val url = KtorClientFactory.resolveBaseUrl()
+        assertNotNull(url)
+        assert(url == "https://api.example.com:8443")
+    }
+
+    @Test
+    fun `resolveBaseUrl wraps a bare host override with configured scheme and port`() {
+        KtorClientFactory.setBackendHost("10.0.2.2")
+        val url = KtorClientFactory.resolveBaseUrl()
+        assertNotNull(url)
+        assert(url == "https://10.0.2.2:5000")
+        KtorClientFactory.setBackendHost("")
     }
 }

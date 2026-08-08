@@ -27,6 +27,16 @@ android {
             "BACKEND_HOST",
             "\"${project.findProperty("backendHost") ?: "192.168.33.13"}\""
         )
+        buildConfigField(
+            "String",
+            "BACKEND_SCHEME",
+            "\"${project.findProperty("backendScheme") ?: "https"}\""
+        )
+        buildConfigField(
+            "String",
+            "BACKEND_PORT",
+            "\"${project.findProperty("backendPort") ?: "5000"}\""
+        )
     }
     buildFeatures {
         compose = true

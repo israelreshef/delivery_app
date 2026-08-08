@@ -31,8 +31,9 @@ object KtorClientFactory {
     private var hostOverride: String? = null
 
     /**
-     * Override the backend host at runtime (e.g. from a debug/settings screen).
+     * Override the backend base URL at runtime (e.g. from a debug/settings screen).
      * Takes precedence over the BuildConfig value until the process restarts.
+     * May be a bare host ("10.0.2.2"), host:port, or full URL ("https://api.x:5000").
      */
     fun setBackendHost(host: String) {
         hostOverride = host.trim().removeSuffix("/")
@@ -43,17 +44,23 @@ object KtorClientFactory {
      * On the Android emulator the host machine is reachable via 10.0.2.2,
      * NOT localhost or the host LAN IP. On a physical device we use the
      * host machine's LAN IP.
-     * The backend serves plain HTTP on port 5000 (no TLS).
+     * Scheme/port come from build config (BACKEND_SCHEME/BACKEND_PORT) so the
+     * cert/server swap is a build-time config change, never a code change.
      */
     fun resolveBaseUrl(): String {
-        val host = if (!hostOverride.isNullOrBlank()) {
-            hostOverride
-        } else if (isProbablyEmulator()) {
+        val scheme = BuildConfig.BACKEND_SCHEME.takeIf { it.isNotBlank() } ?: "https"
+        val port = BuildConfig.BACKEND_PORT.takeIf { it.isNotBlank() } ?: "5000"
+        val raw = if (isProbablyEmulator()) {
             "10.0.2.2"
         } else {
             BuildConfig.BACKEND_HOST.takeIf { it.isNotBlank() } ?: "192.168.33.13"
         }
-        return "http://$host:5000"
+        val effective = hostOverride?.takeIf { it.isNotBlank() } ?: raw
+        return if (effective.startsWith("http://") || effective.startsWith("https://")) {
+            effective
+        } else {
+            "$scheme://$effective:$port"
+        }
     }
 
     private fun isProbablyEmulator(): Boolean {
